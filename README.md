@@ -183,7 +183,7 @@ Create your own management.sh script and add to crontab.
 
 ### Permissions
 
-- **checkin.checkin**: Allows user to check-in hackers with QR and list view
+- **checkin.check_in**: Allows user to check-in hackers with QR and list view
 - **register.invite**: Allows user to invite hackers. Needs to be staff first and needs to be able to edit applications.
 - **register.vote**: Allows user to vote and review applications
 - **register.ranking**: Allows user to see ranking of reviewiers.
