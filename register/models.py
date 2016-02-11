@@ -96,6 +96,7 @@ class Hacker(models.Model):
 
     # Info for swag and food
     diet = models.CharField(max_length=300, choices=DIETS)
+    other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default='M', choices=TSHIRT_SIZES)
 
 

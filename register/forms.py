@@ -1,5 +1,4 @@
 from django import forms
-
 from register import models
 
 
@@ -13,7 +12,7 @@ class HackerForm(forms.ModelForm):
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
     university = forms.CharField(required=True, widget=forms.TextInput(
-        attrs={'class': 'typeahead-schools','autocomplete':'off'}))
+        attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
     class Meta:
         model = models.Hacker

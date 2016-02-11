@@ -17,14 +17,14 @@
                 }).done(function (res) {
                    $(".typeahead-schools").typeahead({source: res});
                 }).fail(function (jqXHR, textStatus, errorThrown) {
-                    alert("AJAX call failed: " + textStatus + ", " + errorThrown);
+                    console.error("AJAX call failed: " + textStatus + ", " + errorThrown);
                 });
-{#                debugger;#}
-{#                $.get("{% static 'schools.txt' %}", function (data) {#}
-{#                    debugger;#}
-{#                    console.log("TEST")#}
-{#                    $(".typeahead-schools").typeahead({source: data});#}
-{#                }, 'json');#}
+                var other_diet = $('id_other_diet');
+                var parent = other_diet.parent('div').parent('div')
+                other_diet.on('change', function() {
+                    alert(other_diet.val());
+                })
+
             }
     )
 
