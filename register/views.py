@@ -1,11 +1,16 @@
-from django.shortcuts import render
-from django.views import generic
 # Create your views here.
-from register import models
+from django.http import HttpResponse
+from django.views import View
+from register import models, serializers
+from register.forms import TypeformFetcher
+from rest_framework import generics
 
 
-class ApplicationListView(generic.ListView):
-    model = models.Application.objects.all()
-    context_object_name = 'applications'
-    template_name = 'app_list.html'
+class ApplicationListView(generics.ListAPIView):
+    queryset = models.Application.objects.all()
+    serializer_class = serializers.ApplicationsSerializer
 
+
+class UpdateApplications(View):
+    def get(self, request):
+        return HttpResponse(TypeformFetcher().update_forms())

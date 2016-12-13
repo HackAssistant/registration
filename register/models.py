@@ -31,18 +31,18 @@ class Application(models.Model):
     site = models.URLField()
 
     # Self improvement
-    first_timer = models.BooleanField()
+    first_timer = models.NullBooleanField()
     description = models.TextField()
     projects = models.TextField()
     diet = models.TextField()
     country = models.TextField()
-    schoolarship = models.BooleanField()
+    schoolarship = models.NullBooleanField()
 
     # Needs to be set to true -> else rejected
-    authorized_mlh = models.BooleanField()
-    status = models.CharField(choices=status, default='P')
+    authorized_mlh = models.NullBooleanField()
+    status = models.CharField(choices=status, default='P',max_length=1)
 
-    # TODO: TEAM
+    # TODO: TEAM EXTERNAL
 
     def invite(self):
         if self.status != 'A':
