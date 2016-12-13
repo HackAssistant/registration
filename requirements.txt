@@ -1,2 +1,8 @@
 Django==1.10.4
-wheel==0.24.0
+django-filter==1.0.1
+djangorestframework==3.5.3
+Markdown==2.6.7
+python-http-client==2.2.1
+requests==2.12.3
+sendgrid==3.6.3
+sendgrid-django==4.0.4
