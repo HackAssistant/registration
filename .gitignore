@@ -1,0 +1,7 @@
+.idea
+env
+*.swp
+*.pyc
+
+
+*.sqlite3
