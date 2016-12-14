@@ -15,7 +15,7 @@ class UpdateApplications(View):
     def get(self, request):
         return HttpResponse(TypeformFetcher().update_forms())
 
-
+# TODO: Set actions to POST
 class ConfirmApplication(View):
     def get(self, request, token):
         application = models.Application.objects.get(id=token)
@@ -34,4 +34,4 @@ class CancelApplication(View):
     def get(self, request, token):
         application = models.Application.objects.get(id=token)
         application.cancel()
-        return HttpResponse('INVITED')
+        return HttpResponse('CANCELLED')
