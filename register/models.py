@@ -51,14 +51,17 @@ class Application(models.Model):
             raise ValueError('You can\'t invite a non accepted application')
         self._send_invite(request)
         self.status = 'I'
+        self.save()
 
     def confirm(self):
         if self.status != 'I':
             raise ValueError('Application hasn\'t been invited yet')
         self.status = 'C'
+        self.save()
 
     def cancel(self):
         self.status = 'X'
+        self.save()
 
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
