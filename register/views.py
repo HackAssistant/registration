@@ -28,3 +28,10 @@ class InviteApplication(View):
         application = models.Application.objects.get(id=token)
         application.invite(request)
         return HttpResponse('INVITED')
+
+
+class CancelApplication(View):
+    def get(self, request, token):
+        application = models.Application.objects.get(id=token)
+        application.cancel()
+        return HttpResponse('INVITED')

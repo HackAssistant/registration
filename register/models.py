@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from register.emails import sendgrid_send
 from rest_framework.reverse import reverse
 
 status = [
@@ -48,45 +50,35 @@ class Application(models.Model):
 
     def invite(self, request):
         if self.status != 'A':
-            raise ValueError('You can\'t invite a non accepted application')
+            raise ValidationError('Application needs to be pending to send. Current status: %s' % self.status)
         self._send_invite(request)
         self.status = 'I'
         self.save()
 
     def confirm(self):
         if self.status != 'I':
-            raise ValueError('Application hasn\'t been invited yet')
+            raise ValidationError('Application hasn\'t been invited yet')
         self.status = 'C'
         self.save()
 
     def cancel(self):
+        if self.status != 'C' or self.status != 'I':
+            raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
         self.status = 'X'
         self.save()
 
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
 
-    @property
-    def cancelation_url(self):
-        return ''
+    def cancelation_url(self,request=None):
+        return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
-    def _send_invite(self,request):
-        # send_mail("Your Subject", "This is a simple text email body.",
-        #           "Gerard Casas <info@hackupc.com>", [self.email])
-
-        mail = EmailMultiAlternatives(
-            subject="[HackUPC] Invite to participate",
-            body='-',
-            from_email="HackUPC Team <info@hackupc.com>",
-            to=[self.email],
+    def _send_invite(self, request,name,email):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] Invite to participate",
+            {'%name%': self.name,
+             '%confirmation_url%': self.confirmation_url(request),
+             '%cancellation_url%': self.cancelation_url(request)},
+            '513b4761-9c40-4f54-9e76-225c2835b529'
         )
-        # Add template
-        mail.attach_alternative(
-            "<p>Invite email to HackUPC</p>", "text/html"
-        )
-        mail.template_id = '513b4761-9c40-4f54-9e76-225c2835b529'
-
-        # Replace substitutions in sendgrid template
-        mail.substitutions = {'%name%': self.name, '%confirmation_url%': self.confirmation_url(request), }
-
-        mail.send()
