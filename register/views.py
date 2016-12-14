@@ -14,3 +14,17 @@ class ApplicationListView(generics.ListAPIView):
 class UpdateApplications(View):
     def get(self, request):
         return HttpResponse(TypeformFetcher().update_forms())
+
+
+class ConfirmApplication(View):
+    def get(self, request, token):
+        application = models.Application.objects.get(id=token)
+        application.confirm()
+        return HttpResponse('CONFIRMED')
+
+
+class InviteApplication(View):
+    def get(self, request, token):
+        application = models.Application.objects.get(id=token)
+        application.invite(request)
+        return HttpResponse('INVITED')

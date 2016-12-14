@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
+from rest_framework.reverse import reverse
 
 status = [
     ('A', 'Accepted'),
@@ -40,13 +42,14 @@ class Application(models.Model):
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=status, default='P',max_length=1)
+    status = models.CharField(choices=status, default='P', max_length=1)
 
     # TODO: TEAM EXTERNAL
 
-    def invite(self):
+    def invite(self, request):
         if self.status != 'A':
             raise ValueError('You can\'t invite a non accepted application')
+        self._send_invite(request)
         self.status = 'I'
 
     def confirm(self):
@@ -57,10 +60,30 @@ class Application(models.Model):
     def cancel(self):
         self.status = 'X'
 
-    @property
-    def confirmation_url(self):
-        return ''
+    def confirmation_url(self, request=None):
+        return reverse('confirm_app', kwargs={'token': self.id}, request=request)
 
     @property
     def cancelation_url(self):
         return ''
+
+    def _send_invite(self,request):
+        # send_mail("Your Subject", "This is a simple text email body.",
+        #           "Gerard Casas <info@hackupc.com>", [self.email])
+
+        mail = EmailMultiAlternatives(
+            subject="[HackUPC] Invite to participate",
+            body='-',
+            from_email="HackUPC Team <info@hackupc.com>",
+            to=[self.email],
+        )
+        # Add template
+        mail.attach_alternative(
+            "<p>Invite email to HackUPC</p>", "text/html"
+        )
+        mail.template_id = '513b4761-9c40-4f54-9e76-225c2835b529'
+
+        # Replace substitutions in sendgrid template
+        mail.substitutions = {'%name%': self.name, '%confirmation_url%': self.confirmation_url(request), }
+
+        mail.send()
