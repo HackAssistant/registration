@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.views.generic import TemplateView
 from register import models
-from register.forms import TypeformFetcher
+from register.forms import ApplicationsTypeform
 
 
 class UpdateApplications(View):
