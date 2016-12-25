@@ -100,7 +100,7 @@ class Application(models.Model):
     def cancelation_url(self, request=None):
         return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
-    def test_url(self,request=None):
+    def test_url(self, request=None):
         return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
     def _send_invite(self, request):
@@ -112,35 +112,6 @@ class Application(models.Model):
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
         )
-
-    # def notify_application(self, subject, reason):
-    #     sendgrid_send(
-    #         [self.email],
-    #         subject,
-    #         {'%name%': self.name,
-    #          '%reason%': reason,
-    #          },
-    #         '513b4761-9c40-4f54-9e76-225c2835b529'
-    #     )
-
-    # def save(self, force_insert=False, force_update=False, using=None,
-    #          update_fields=None):
-    #     if not self.authorized_mlh:
-    #         self.status = 'R'
-    #         self.notify_application('Application cancelled',
-    #                                 """
-    #                                 You haven't accepted MLH Code of conduct.
-    #                                  Please apply again and accept it to opt in HackUPC.
-    #                                 """)
-    #     else:
-    #         # self.notify_application('Application received',
-    #         #                         """
-    #         #                         Thanks for applying to HackUPC. We have received your application.
-    #         #                         We can take some time as we review them manually, so please
-    #         #                         """)
-    #         pass
-    #
-    #     super(Application, self).save(force_insert, force_update, using, update_fields)
 
     class Meta:
         permissions = (
