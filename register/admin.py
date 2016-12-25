@@ -14,7 +14,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ('status', 'first_timer', 'scholarship', 'university')
     search_fields = ('name', 'lastname', 'email')
     ordering = ('-submission_date',)
-    actions = ['invite', 'update_applications', 'accept_application',
+    actions = ['invite', 'update_applications', 'accept_application', 'reject_application',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
 
     def get_actions(self, request):
@@ -28,10 +28,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
-        readonly_fields = list(set(
-            [field.name for field in self.opts.local_fields] +
-            [field.name for field in self.opts.local_many_to_many]
-        ))
+        readonly_fields =  [field.name for field in self.opts.local_fields]
         if 'status' in readonly_fields:
             readonly_fields.remove('status')
         return readonly_fields
