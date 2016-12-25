@@ -12,7 +12,8 @@ status = [
     ('R', 'Rejected'),
     ('I', 'Invited'),
     ('C', 'Confirmed'),
-    ('X', 'Cancelled')
+    ('X', 'Cancelled'),
+    ('T', 'Attended'),
 ]
 
 
@@ -62,6 +63,8 @@ class Application(models.Model):
     # TODO: TEAM EXTERNAL
 
     def invite(self, request):
+        if not request.user.has_perm('register.invite_application'):
+            raise ValidationError('User doesn\'t have permission to invite user')
         if self.status != 'A':
             raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
@@ -94,6 +97,15 @@ class Application(models.Model):
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
+        )
+
+    class Meta:
+         permissions = (
+            ("accept_application", "Can accept applications"),
+            ("invite_application", "Can invite applications"),
+            ("attended_application", "Can mark as attended applications"),
+            ("reject_application", "Can reject applications"),
+            ("force_status", "Can force status application"),
         )
 
 

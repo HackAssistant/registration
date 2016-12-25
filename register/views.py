@@ -29,16 +29,3 @@ class CancelApplication(View):
         application = models.Application.objects.get(id=token)
         application.cancel()
         return HttpResponse('Cancelled')
-
-class InviteApplication(View):
-    def get(self, request, token):
-        application = models.Application.objects.get(id=token)
-        application.invite(request)
-        return HttpResponse('INVITED')
-
-
-class CancelApplication(View):
-    def get(self, request, token):
-        application = models.Application.objects.get(id=token)
-        application.cancel()
-        return HttpResponse('CANCELLED')
