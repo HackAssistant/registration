@@ -3,17 +3,19 @@ from django.contrib import admin
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from register import models
+from register.csv import export_as_csv_action
 from register.forms import ApplicationsTypeform
 
 admin.site.disable_action('delete_selected')
 
 
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'lastname', 'email', 'votes', 'test_url', 'status')
+    list_display = ('id', 'name', 'lastname', 'email', 'votes', 'status')
     list_filter = ('status', 'first_timer', 'scholarship', 'university')
     search_fields = ('name', 'lastname', 'email')
     ordering = ('-submission_date',)
-    actions = ['invite', 'update_applications', 'accept_application']
+    actions = ['invite', 'update_applications', 'accept_application',
+               export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
@@ -23,14 +25,16 @@ class ApplicationAdmin(admin.ModelAdmin):
 
         return actions
 
-    def get_fieldsets(self, request, obj=None):
-        if request.user.is_superuser:
-            return super(ApplicationAdmin, self).get_fieldsets(request, obj)
-        if request.user.has_perm('register.force_status'):
-            return (None, {
-                'fields': ('status',),
-            }),
-        return []
+    def get_readonly_fields(self, request, obj=None):
+        # make all fields readonly
+        # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
+        readonly_fields = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        if 'status' in readonly_fields:
+            readonly_fields.remove('status')
+        return readonly_fields
 
     def invite(self, request, queryset):
         invited = 0
@@ -69,6 +73,17 @@ class ApplicationAdmin(admin.ModelAdmin):
             queryset.update(status='A')
             count = queryset.count()
             self.message_user(request, '%s applications accepted' % count)
+
+    accept_application.short_description = 'Accept selected applications'
+
+    def reject_application(self, request, queryset):
+        if queryset.exclude(status='P'):
+            self.message_user(request, 'Applications couldn\'t be updated, check that they are pending before',
+                              messages.ERROR)
+        else:
+            queryset.update(status='R')
+            count = queryset.count()
+            self.message_user(request, '%s applications rejected' % count)
 
     accept_application.short_description = 'Accept selected applications'
 
