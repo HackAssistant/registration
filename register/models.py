@@ -4,7 +4,7 @@ from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
 from register.emails import sendgrid_send
-from rest_framework.reverse import reverse
+from register.utils import reverse
 
 status = [
     ('A', 'Accepted'),
@@ -89,7 +89,7 @@ class Application(models.Model):
         self.save()
 
     def cancel(self):
-        if self.status != 'C' or self.status != 'I':
+        if self.status != 'C' and self.status != 'I':
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
         self.status = 'X'
         self.save()
