@@ -3,15 +3,8 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.views import View
 from django.views.generic import TemplateView
-from register import models, serializers
+from register import models
 from register.forms import TypeformFetcher
-from rest_framework import generics
-
-
-class ApplicationListView(generics.ListAPIView):
-    queryset = models.Application.objects.all()
-    serializer_class = serializers.ApplicationsSerializer
-    renderer_classes = (renderers.AdminRenderer, renderers.JSONRenderer,)
 
 
 class UpdateApplications(View):
@@ -38,13 +31,6 @@ class ConfirmApplication(TemplateView):
             })
 
         return context
-
-
-class InviteApplication(View):
-    def get(self, request, token):
-        application = models.Application.objects.get(id=token)
-        application.invite(request)
-        return HttpResponse('INVITED')
 
 
 class CancelApplication(View):
