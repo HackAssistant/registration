@@ -62,7 +62,7 @@ class Application(models.Model):
         self.save()
 
     def cancel(self):
-        if self.status != 'C' or self.status != 'I':
+        if self.status != 'C' and self.status != 'I':
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
         self.status = 'X'
         self.save()
