@@ -153,9 +153,9 @@ class Application(models.Model):
 
 
 VOTES = (
-    ('Positive', 1),
-    ('Negative', -1),
-    ('Skipped', 0)
+    (1, 'Positive'),
+    (-1, 'Negative'),
+    (0, 'Skipped'),
 )
 
 
