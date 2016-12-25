@@ -4,7 +4,7 @@ from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
 from register.emails import sendgrid_send
-from rest_framework.reverse import reverse
+from register.utils import reverse
 
 status = [
     ('A', 'Accepted'),
