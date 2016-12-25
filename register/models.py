@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from register.emails import sendgrid_send
 from rest_framework.reverse import reverse
@@ -70,7 +70,7 @@ class Application(models.Model):
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
 
-    def cancelation_url(self,request=None):
+    def cancelation_url(self, request=None):
         return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
     def _send_invite(self, request):
@@ -82,3 +82,19 @@ class Application(models.Model):
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
         )
+
+
+VOTES = (
+    ('Positive', 1),
+    ('Negative', -1),
+    ('Skipped', 0)
+)
+
+
+class Vote(models.Model):
+    application = models.ForeignKey(Application)
+    user = models.ForeignKey(admin_models.User)
+    vote = models.IntegerField(choices=VOTES)
+
+    class Meta:
+        unique_together = ('application', 'user')
