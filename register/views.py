@@ -2,7 +2,7 @@
 from django.http import HttpResponse
 from django.views import View
 from register import models, serializers
-from register.forms import TypeformFetcher
+from register.forms import ApplicationsTypeform
 from rest_framework import generics, renderers
 
 
@@ -14,7 +14,7 @@ class ApplicationListView(generics.ListAPIView):
 
 class UpdateApplications(View):
     def get(self, request):
-        return HttpResponse(TypeformFetcher().update_forms())
+        return HttpResponse(ApplicationsTypeform().update_forms())
 
 # TODO: Set actions to POST
 class ConfirmApplication(View):

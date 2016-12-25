@@ -21,13 +21,16 @@ status = [
 
 class Application(models.Model):
     id = models.TextField(primary_key=True)
+    submission_date = models.DateTimeField()
 
     # Personal data
     name = models.TextField()
     lastname = models.TextField()
     email = models.EmailField()
-    graduation = models.TextField()
+    graduation = models.DateField()
     university = models.TextField()
+    degree = models.TextField(default='Computer Science')
+    under_age = models.NullBooleanField()
 
     # URLs
     github = models.URLField()
@@ -40,12 +43,18 @@ class Application(models.Model):
     description = models.TextField()
     projects = models.TextField()
     diet = models.TextField()
+    tshirt_size = models.CharField(max_length=3,default='M')
     country = models.TextField()
-    schoolarship = models.NullBooleanField()
+    scholarship = models.NullBooleanField()
+    lennyface = models.TextField(default='-.-')
+
+    # Team
+    team = models.NullBooleanField()
+    teammates = models.TextField(default='None')
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=status, default='P', max_length=1)
+    status = models.CharField(choices=status, default='P', max_length=2)
 
     @property
     def positive_votes(self):
@@ -57,8 +66,8 @@ class Application(models.Model):
 
     @property
     def votes(self):
-        total= self.vote_set.count()
-        return str(self.positive_votes)+' - '+str(self.negative_votes)+'/'+str(total)
+        total = self.vote_set.count()
+        return str(self.positive_votes) + ' - ' + str(self.negative_votes) + '/' + str(total)
 
     # TODO: TEAM EXTERNAL
 
@@ -99,8 +108,37 @@ class Application(models.Model):
             '513b4761-9c40-4f54-9e76-225c2835b529'
         )
 
+    # def notify_application(self, subject, reason):
+    #     sendgrid_send(
+    #         [self.email],
+    #         subject,
+    #         {'%name%': self.name,
+    #          '%reason%': reason,
+    #          },
+    #         '513b4761-9c40-4f54-9e76-225c2835b529'
+    #     )
+
+    # def save(self, force_insert=False, force_update=False, using=None,
+    #          update_fields=None):
+    #     if not self.authorized_mlh:
+    #         self.status = 'R'
+    #         self.notify_application('Application cancelled',
+    #                                 """
+    #                                 You haven't accepted MLH Code of conduct.
+    #                                  Please apply again and accept it to opt in HackUPC.
+    #                                 """)
+    #     else:
+    #         # self.notify_application('Application received',
+    #         #                         """
+    #         #                         Thanks for applying to HackUPC. We have received your application.
+    #         #                         We can take some time as we review them manually, so please
+    #         #                         """)
+    #         pass
+    #
+    #     super(Application, self).save(force_insert, force_update, using, update_fields)
+
     class Meta:
-         permissions = (
+        permissions = (
             ("accept_application", "Can accept applications"),
             ("invite_application", "Can invite applications"),
             ("attended_application", "Can mark as attended applications"),
