@@ -24,7 +24,7 @@ class Application(models.Model):
     # Personal data
     name = models.TextField()
     lastname = models.TextField()
-    email = models.TextField()
+    email = models.EmailField()
     graduation = models.TextField()
     university = models.TextField()
 
@@ -46,11 +46,24 @@ class Application(models.Model):
     authorized_mlh = models.NullBooleanField()
     status = models.CharField(choices=status, default='P', max_length=1)
 
+    @property
+    def positive_votes(self):
+        return self.vote_set.filter(vote=1).count()
+
+    @property
+    def negative_votes(self):
+        return self.vote_set.filter(vote=-1).count()
+
+    @property
+    def votes(self):
+        total= self.vote_set.count()
+        return str(self.positive_votes)+' - '+str(self.negative_votes)+'/'+str(total)
+
     # TODO: TEAM EXTERNAL
 
     def invite(self, request):
         if self.status != 'A':
-            raise ValidationError('Application needs to be pending to send. Current status: %s' % self.status)
+            raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
         self.status = 'I'
         self.save()
