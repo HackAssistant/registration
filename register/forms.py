@@ -20,8 +20,10 @@ class ApplicationFormFetcher(object):
 
     def update_forms(self):
         forms = self.fetch()
+        if not forms:
+            return []
         applications = map(self.map, forms)
-        return map(self.save, applications)
+        return [app.save() for app in applications]
 
 
 class TypeformFetcher(ApplicationFormFetcher):

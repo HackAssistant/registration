@@ -43,7 +43,7 @@ class Application(models.Model):
     description = models.TextField()
     projects = models.TextField()
     diet = models.TextField()
-    tshirt_size = models.CharField(max_length=3,default='M')
+    tshirt_size = models.CharField(max_length=3, default='M')
     country = models.TextField()
     scholarship = models.NullBooleanField()
     lennyface = models.TextField(default='-.-')
@@ -67,7 +67,9 @@ class Application(models.Model):
     @property
     def votes(self):
         total = self.vote_set.count()
-        return str(self.positive_votes) + ' - ' + str(self.negative_votes) + '/' + str(total)
+        if not total:
+            return total
+        return self.positive_votes - (self.negative_votes * 3) / total
 
     # TODO: TEAM EXTERNAL
 
@@ -96,6 +98,9 @@ class Application(models.Model):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
 
     def cancelation_url(self, request=None):
+        return reverse('cancel_app', kwargs={'token': self.id}, request=request)
+
+    def test_url(self,request=None):
         return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
     def _send_invite(self, request):
