@@ -28,8 +28,6 @@ ALLOWED_HOSTS = []
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY', 'test'),
-    'applications_form_id': os.environ.get('A_TP_ID', 'JCVBqv'),
-
 }
 
 # Application definition

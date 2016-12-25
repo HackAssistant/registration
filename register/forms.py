@@ -102,4 +102,4 @@ class ApplicationsTypeform(TypeformFetcher):
 
     @property
     def form_id(self):
-        return settings.REGISTER_APP['applications_form_id']
+        return 'JCVBqv'
