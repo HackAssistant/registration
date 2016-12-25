@@ -2,6 +2,7 @@
 env
 *.swp
 *.pyc
+/staticfiles
 
 
 *.sqlite3
