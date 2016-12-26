@@ -25,11 +25,11 @@ class ConfirmApplication(TemplateView):
                 'application': application,
                 'cancel': application.cancelation_url(request)
             })
-        except ValidationError:
+        except ValidationError as e:
             context.update({
-                'error': "application can't be confirmed",
+                'application': application,
+                'error': e.message,
             })
-
 
         return context
 
