@@ -57,19 +57,13 @@ class Application(models.Model):
     status = models.CharField(choices=status, default='P', max_length=2)
 
     @property
-    def positive_votes(self):
-        return self.vote_set.filter(vote=1).count()
-
-    @property
-    def negative_votes(self):
-        return self.vote_set.filter(vote=-1).count()
-
-    @property
     def votes(self):
         total = self.vote_set.count()
         if not total:
             return total
-        return self.positive_votes - (self.negative_votes * 3) / total
+        positive = self.vote_set.filter(vote=1).count()
+        negative = self.vote_set.filter(vote=-1).count()
+        return positive - (negative * 3) / total
 
     # TODO: TEAM EXTERNAL
 
