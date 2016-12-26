@@ -100,9 +100,6 @@ class Application(models.Model):
     def cancelation_url(self, request=None):
         return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
-    def test_url(self, request=None):
-        return reverse('cancel_app', kwargs={'token': self.id}, request=request)
-
     def _send_invite(self, request):
         sendgrid_send(
             [self.email],
