@@ -28,13 +28,12 @@ ALLOWED_HOSTS = []
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY', 'test'),
-    'applications_form_id': os.environ.get('A_TP_ID', 'JCVBqv'),
-
 }
 
 # Application definition
 
 INSTALLED_APPS = [
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,6 +118,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR+'/staticfiles'
 
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SG_KEY','.')

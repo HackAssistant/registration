@@ -4,12 +4,12 @@ from django.http import HttpResponse
 from django.views import View
 from django.views.generic import TemplateView
 from register import models
-from register.forms import TypeformFetcher
+from register.forms import ApplicationsTypeform
 
 
 class UpdateApplications(View):
     def get(self, request):
-        return HttpResponse(TypeformFetcher().update_forms())
+        return HttpResponse(ApplicationsTypeform().update_forms())
 
 
 class ConfirmApplication(TemplateView):
@@ -29,6 +29,7 @@ class ConfirmApplication(TemplateView):
             context.update({
                 'error': "application can't be confirmed",
             })
+
 
         return context
 
