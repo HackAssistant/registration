@@ -27,14 +27,18 @@
                     <h3 class="panel-title">Thanks for confirming, {{ application.name }}!</h3>
                 </div>
                 <div class="panel-body">
-                    Panel content
+
+                    {% if reconfirming %}
+                        You already confirmed your spot before, {{ application.name }}. But we love your enthusiasm :)
+                    {% else %}
+                        {{ application.name }}, you just confirmed your spot at HackUPC Spring 2017!
+                    {% endif %}
+                    We can't wait to have you here.
+
                 </div>
             </div>
-
-
-                Hey, {{ application.name }}! You just confirmed your spot at HackUPC Spring 2017! We can't wait to have you here.
-                If you can't make it anymore, you can still cancel your participation <a href="{{ cancel }}">here</a>.
             {% endif %}
+            If you can't make it anymore, you can still cancel your participation <a href="{{ cancel }}">here</a>.
         </div>
     </div>
 {% endblock %}

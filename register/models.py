@@ -82,8 +82,11 @@ class Application(models.Model):
         self.status = 'I'
         self.save()
 
+    def is_confirmed(self):
+        return self.status == 'C'
+
     def confirm(self):
-        if self.status != 'I':
+        if self.status != 'I' and self.status != 'C':
             raise ValidationError('Application hasn\'t been invited yet')
         self.status = 'C'
         self.save()
