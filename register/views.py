@@ -20,11 +20,12 @@ class ConfirmApplication(TemplateView):
         application = models.Application.objects.get(id=context['token'])
         request = self.request
         already_confirmed = application.is_confirmed()
+        cancellation_url = application.cancelation_url(request)
         try:
-            application.confirm()
+            application.confirm(cancellation_url)
             context.update({
                 'application': application,
-                'cancel': application.cancelation_url(request),
+                'cancel': cancellation_url,
                 'reconfirming': already_confirmed
             })
         except ValidationError as e:

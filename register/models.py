@@ -85,9 +85,10 @@ class Application(models.Model):
     def is_confirmed(self):
         return self.status == 'C'
 
-    def confirm(self):
+    def confirm(self, cancellation_url):
         if self.status != 'I' and self.status != 'C':
             raise ValidationError('Application hasn\'t been invited yet')
+        self._send_confirmation_ack(cancellation_url)
         self.status = 'C'
         self.save()
 
@@ -114,6 +115,15 @@ class Application(models.Model):
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
+        )
+
+    def _send_confirmation_ack(self, cancellation_url):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] You confirmed your attendance!",
+            {'%name%': self.name,
+             '%cancellation_url%': cancellation_url},
+            'placeholder'  # TODO: get sendgrid user and create template
         )
 
     class Meta:
