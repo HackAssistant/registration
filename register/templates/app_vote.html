@@ -1,0 +1,27 @@
+{%  extends "base.html" %}
+
+{% block body %}
+    <div style="text-align: center;">
+        <h2>{{ name }}</h2>
+        <p><b>From: </b>{{ from }}</p>
+        <p><b>University: </b>{{ university }}</p>
+        <p><b>Degree: </b>{{ degree }}</p>
+        <p><b>Excited about: </b>{{ excitet }}</p>
+
+        <div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <button name="Accept" value="Accept">Accept</button>
+            </form>
+            <form action="" method="post">
+                {% csrf_token %}
+                <button name="Decline" value="Decline">Decline</button>
+            </form>
+        </div>
+
+        <p>
+            <a href="{{ dp_link }}"> <img src="{{ dp_image_src }} " style="width:70px;height:70px;"> </a>
+            <a href="{{ github_link }}"> <img src="{{ github_image_src }} " style="width:70px;height:70px;"> </a>
+        </p>
+    </div>
+{% endblock %}

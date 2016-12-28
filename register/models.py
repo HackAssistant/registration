@@ -12,7 +12,8 @@ status = [
     ('R', 'Rejected'),
     ('I', 'Invited'),
     ('C', 'Confirmed'),
-    ('X', 'Cancelled')
+    ('X', 'Cancelled'),
+    ('T', 'Attended'),
 ]
 
 
@@ -20,13 +21,16 @@ status = [
 
 class Application(models.Model):
     id = models.TextField(primary_key=True)
+    submission_date = models.DateTimeField()
 
     # Personal data
     name = models.TextField()
     lastname = models.TextField()
-    email = models.TextField()
-    graduation = models.TextField()
+    email = models.EmailField()
+    graduation = models.DateField()
     university = models.TextField()
+    degree = models.TextField(default='Computer Science')
+    under_age = models.NullBooleanField()
 
     # URLs
     github = models.URLField()
@@ -39,18 +43,35 @@ class Application(models.Model):
     description = models.TextField()
     projects = models.TextField()
     diet = models.TextField()
+    tshirt_size = models.CharField(max_length=3, default='M')
     country = models.TextField()
-    schoolarship = models.NullBooleanField()
+    scholarship = models.NullBooleanField()
+    lennyface = models.TextField(default='-.-')
+
+    # Team
+    team = models.NullBooleanField()
+    teammates = models.TextField(default='None')
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=status, default='P', max_length=1)
+    status = models.CharField(choices=status, default='P', max_length=2)
+
+    @property
+    def votes(self):
+        total = self.vote_set.count()
+        if not total:
+            return total
+        positive = self.vote_set.filter(vote=1).count()
+        negative = self.vote_set.filter(vote=-1).count()
+        return positive - (negative * 3) / total
 
     # TODO: TEAM EXTERNAL
 
     def invite(self, request):
+        if not request.user.has_perm('register.invite_application'):
+            raise ValidationError('User doesn\'t have permission to invite user')
         if self.status != 'A':
-            raise ValidationError('Application needs to be pending to send. Current status: %s' % self.status)
+            raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
         self.status = 'I'
         self.save()
@@ -83,11 +104,20 @@ class Application(models.Model):
             '513b4761-9c40-4f54-9e76-225c2835b529'
         )
 
+    class Meta:
+        permissions = (
+            ("accept_application", "Can accept applications"),
+            ("invite_application", "Can invite applications"),
+            ("attended_application", "Can mark as attended applications"),
+            ("reject_application", "Can reject applications"),
+            ("force_status", "Can force status application"),
+        )
+
 
 VOTES = (
-    ('Positive', 1),
-    ('Negative', -1),
-    ('Skipped', 0)
+    (1, 'Positive'),
+    (-1, 'Negative'),
+    (0, 'Skipped'),
 )
 
 
