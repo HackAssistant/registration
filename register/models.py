@@ -123,7 +123,7 @@ class Application(models.Model):
             "[HackUPC] You confirmed your attendance!",
             {'%name%': self.name,
              '%cancellation_url%': cancellation_url},
-            'placeholder'  # TODO: get sendgrid user and create template
+            'c4d4d758-974f-437b-af9a-d8532f96d670'
         )
 
     class Meta:
