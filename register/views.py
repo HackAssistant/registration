@@ -1,4 +1,6 @@
 # Create your views here.
+from __future__ import print_function
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -12,42 +14,60 @@ class UpdateApplications(View):
     def get(self, request):
         return HttpResponse(ApplicationsTypeform().update_forms())
 
-class VoteApplicationView(TemplateView):
+class VoteApplicationView(LoginRequiredMixin, TemplateView):
+
+    login_url = '/accounts/login/'
+    redirect_field_name = '/vote/'
 
     template_name = 'app_vote.html'
+
 
     def get_user_unvotted_applications(self):
         votes = list(models.Vote.objects.all())
         applications = list(models.Application.objects.all())
         for vote in votes:
-            if (vote.user_id == 3):
+            if (vote.user_id == self.request.user.id):
                 applications.remove(vote.application)
-
+        print(len(applications))
         return applications#sorted(applications, key=votes)
 
     def post(self, request, *args, **kwargs):
-
-        v = models.Vote()
-        v.user_id = 3
-        applications = models.Application.objects.all()
-        a = applications.first()
-        v.application = a
-
-        if (request.POST.get('Accept')):
+        if request.POST.get('Accept'):
+            v = models.Vote()
+            v.user_id = request.user.id
+            applications = models.Application.objects.all()
+            a = applications.first()
+            v.application = a
             v.vote = 1
-        if (request.POST.get('Declone')):
-            v.vote = -1
-        if (request.POST.get('Pass')):
-            v.vote = 0
+            v.save()
 
-        v.save()
+        if request.POST.get('Declone'):
+            v = models.Vote()
+            v.user_id = request.user.id
+            applications = models.Application.objects.all()
+            a = applications.first()
+            v.application = a
+            v.vote = -1
+            v.save()
+
+        if request.POST.get('Pass'):
+            v = models.Vote()
+            v.user_id = request.user.id
+            applications = models.Application.objects.all()
+            a = applications.first()
+            v.application = a
+            v.vote = 0
+            v.save()
+
         return HttpResponseRedirect('/vote')
 
     def get_context_data(self, **kwargs):
+        print ("asdasdasd")
         context = super(VoteApplicationView, self).get_context_data(**kwargs)
         applications = self.get_user_unvotted_applications()
 
         if len(applications) == 0:
+            print("No applications")
             self.template_name = 'no_applications_left.html'
             context["title"] = "There are no applications to vote."
             return context
