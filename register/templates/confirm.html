@@ -13,7 +13,7 @@
             {% if error %}
             <div class="panel panel-danger">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Hey, {{ application.name }}!</h3>
+                    <h3 class="panel-title">We are sorry, {{application.name}}</h3>
                 </div>
                 <div class="panel-body">
                     {{ error }}
@@ -37,8 +37,8 @@
 
                 </div>
             </div>
-            {% endif %}
             If you can't make it anymore, you can still cancel your participation <a href="{{ cancel }}">here</a>.
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -82,9 +82,10 @@ class Application(models.Model):
     def confirm(self, cancellation_url):
         if self.status != 'I' and self.status != 'C':
             raise ValidationError('Application hasn\'t been invited yet')
-        self._send_confirmation_ack(cancellation_url)
-        self.status = 'C'
-        self.save()
+        if self.status != 'C':
+            self._send_confirmation_ack(cancellation_url)
+            self.status = 'C'
+            self.save()
 
     def cancel(self):
         if self.status != 'C' and self.status != 'I':
