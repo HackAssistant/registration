@@ -19,17 +19,20 @@ class ConfirmApplication(TemplateView):
         context = super(ConfirmApplication, self).get_context_data(**kwargs)
         application = models.Application.objects.get(id=context['token'])
         request = self.request
+        already_confirmed = application.is_confirmed()
+        cancellation_url = application.cancelation_url(request)
         try:
-            application.confirm()
+            application.confirm(cancellation_url)
             context.update({
                 'application': application,
-                'cancel': application.cancelation_url(request)
+                'cancel': cancellation_url,
+                'reconfirming': already_confirmed
             })
-        except ValidationError:
+        except ValidationError as e:
             context.update({
-                'error': "application can't be confirmed",
+                'application': application,
+                'error': "This application hasn't been invited yet.",
             })
-
 
         return context
 
