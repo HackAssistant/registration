@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% endblock %}
+
+{% block body %}
+
+    <div class="confirm-content">
+        <div class="col-md-8 col-md-offset-2">
+            {{ self.title }}
+
+            {% if error %}
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            {% if application %}
+                                Dear {{ application.name }}
+                            {% else %}
+                                ¯\_(ツ)_/¯
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ error }}
+                    </div>
+                </div>
+
+            {% else %}
+
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Warning!</h3>
+                    </div>
+                    <div class="panel-body">
+                        After cancelling your application you will lose the right to attend the hackathon as a
+                        participant.
+                    </div>
+                    <div class="panel-footer">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" value="cancel_anyway" name="action">
+                            <button class="btn btn-danger btn-lg btn-block">Cancel anyways</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

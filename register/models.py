@@ -6,14 +6,22 @@ from django.db import models
 from register.emails import sendgrid_send
 from register.utils import reverse
 
-status = [
-    ('A', 'Accepted'),
-    ('P', 'Pending'),
-    ('R', 'Rejected'),
-    ('I', 'Invited'),
-    ('C', 'Confirmed'),
-    ('X', 'Cancelled'),
-    ('T', 'Attended'),
+APP_ACCEPTED = 'A'
+APP_PENDING = 'P'
+APP_REJECTED = 'R'
+APP_INVITED = 'I'
+APP_CONFIRMED = 'C'
+APP_CANCELLED = 'X'
+APP_ATTENDED = 'T'
+
+STATUS = [
+    (APP_ACCEPTED, 'Accepted'),
+    (APP_PENDING, 'Pending'),
+    (APP_REJECTED, 'Rejected'),
+    (APP_INVITED, 'Invited'),
+    (APP_CONFIRMED, 'Confirmed'),
+    (APP_CANCELLED, 'Cancelled'),
+    (APP_ATTENDED, 'Attended'),
 ]
 
 
@@ -54,7 +62,7 @@ class Application(models.Model):
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=status, default='P', max_length=2)
+    status = models.CharField(choices=STATUS, default='P', max_length=2)
 
     @property
     def votes(self):
@@ -87,8 +95,11 @@ class Application(models.Model):
             self.status = 'C'
             self.save()
 
+    def can_be_cancelled(self):
+        return self.status == 'C' or self.status == 'I'
+
     def cancel(self):
-        if self.status != 'C' and self.status != 'I':
+        if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
         self.status = 'X'
         self.save()
