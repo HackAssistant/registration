@@ -48,7 +48,7 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
         vote_type = models.VOTE_SKIP
         if request.POST.get('accept'):
             vote_type = models.VOTE_POSITIVE
-        if request.POST.get('decline'):
+        elif request.POST.get('decline'):
             vote_type = models.VOTE_NEGATIVE
 
         add_vote(self.get_next_application(), request.user, vote_type)
@@ -56,11 +56,7 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(VoteApplicationView, self).get_context_data(**kwargs)
-        application = self.get_next_application()
-
-        context['app'] = application
-        context["dp_image_src"] = "https://maxcdn.icons8.com/Share/icon/ios7/Logos//devpost1600.png"
-        context["github_image_src"] = "https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-512.png"
+        context['app'] = self.get_next_application()
         return context
 
 
