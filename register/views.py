@@ -1,7 +1,7 @@
 # Create your views here.
 from django import http
 from django.core.exceptions import ValidationError
-from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 from register import models
@@ -79,4 +79,4 @@ class CancelApplication(TemplateView):
         except ValidationError:
             pass
 
-        return render(request, self.template_name, self.get_context_data(**kwargs))
+        return http.HttpResponseRedirect(reverse('cancel_app', args=(application.id,)))

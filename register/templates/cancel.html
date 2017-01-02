@@ -11,14 +11,12 @@
 
     <div class="confirm-content">
         <div class="col-md-8 col-md-offset-2">
-            {{ self.title }}
-
             {% if error %}
                 <div class="panel panel-danger">
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             {% if application %}
-                                Dear {{ application.name }}
+                                Hey {{ application.name }}
                             {% else %}
                                 ¯\_(ツ)_/¯
                             {% endif %}
