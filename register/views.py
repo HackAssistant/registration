@@ -57,7 +57,7 @@ class CancelApplication(TemplateView):
                 'error':
                     """
                     Thank you for responding.
-                    We are sorry you can't attend to HackUPC. Hope to see you next edition!
+                     We're sorry you won't be able to make it to. Hope to see you next edition!
                     """
             })
         elif not application.can_be_cancelled():
