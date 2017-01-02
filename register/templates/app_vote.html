@@ -1,27 +1,57 @@
-{%  extends "base.html" %}
+{% extends "base.html" %}
 
 {% block body %}
-    <div style="text-align: center;">
-        <h2>{{ name }}</h2>
-        <p><b>From: </b>{{ from }}</p>
-        <p><b>University: </b>{{ university }}</p>
-        <p><b>Degree: </b>{{ degree }}</p>
-        <p><b>Excited about: </b>{{ excitet }}</p>
+    <div class="row margin-top">
+        <div class="col-md-6 col-md-offset-3">
+            {% if app %}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>{HackUPC application</h4>
+                    </div>
+                    <div class="panel-body">
 
-        <div>
-            <form action="" method="post">
-                {% csrf_token %}
-                <button name="Accept" value="Accept">Accept</button>
-            </form>
-            <form action="" method="post">
-                {% csrf_token %}
-                <button name="Decline" value="Decline">Decline</button>
-            </form>
+                        <dl class="dl-horizontal">
+                            <dt>Name,Last name:</dt>
+                            <dd>{{ app.name }}, {{ app.lastname }}</dd>
+                            <dt>From:</dt>
+                            <dd>{{ app.country }}</dd>
+                            <dt>University</dt>
+                            <dd>{{ app.university }}</dd>
+                        </dl>
+                        <p><b>University: </b>{{ app.university }}</p>
+
+                        <p><b>Degree: </b>{{ app.degree }}</p>
+
+                        <p><b>Excited about: </b>{{ app.excited }}</p>
+
+
+                        <p>
+                            {% if app.devpost %}
+                                <a href="{{ app.devpost }}"> <img src="{{ dp_image_src }} "
+                                                                  style="width:70px;height:70px;">
+                                </a>
+                            {% endif %}
+                            {% if app.github %}
+                                <a href="{{ app.github }}"> <img src="{{ dp_image_src }} "
+                                                                 style="width:70px;height:70px;">
+                                </a>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="panel-footer">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-success btn-block" name="accept" value="accept">Accept</button>
+                        </form>
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <button name="decline" class="btn btn-danger btn-block" value="decline">Decline</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                No applications left to be voted.<br> Good job! Enjoy the sun outside!
+            {% endif %}
         </div>
-
-        <p>
-            <a href="{{ dp_link }}"> <img src="{{ dp_image_src }} " style="width:70px;height:70px;"> </a>
-            <a href="{{ github_link }}"> <img src="{{ github_image_src }} " style="width:70px;height:70px;"> </a>
-        </p>
     </div>
 {% endblock %}

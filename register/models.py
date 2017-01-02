@@ -127,11 +127,13 @@ class Application(models.Model):
             ("force_status", "Can force status application"),
         )
 
-
+VOTE_POSITIVE = 1
+VOTE_NEGATIVE = -1
+VOTE_SKIP = 0
 VOTES = (
-    (1, 'Positive'),
-    (-1, 'Negative'),
-    (0, 'Skipped'),
+    (VOTE_POSITIVE, 'Positive'),
+    (VOTE_NEGATIVE, 'Negative'),
+    (VOTE_SKIP, 'Skipped'),
 )
 
 

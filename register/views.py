@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 from register import models
@@ -17,10 +18,19 @@ class UpdateApplications(View):
         return HttpResponse(ApplicationsTypeform().update_forms())
 
 
+def add_vote(application, user, vote_type):
+    v = models.Vote()
+    v.user = user
+    v.application = application
+    v.vote = vote_type
+    v.save()
+    return v
+
+
 class VoteApplicationView(LoginRequiredMixin, TemplateView):
     template_name = 'app_vote.html'
 
-    def get_user_unvotted_applications(self):
+    def get_next_application(self):
         """
         Django model to the rescue. This is transformed to an SQL sentence that does exactly what we need
         :return: pending aplication that has not been voted by the current user and that has less votes and its older
@@ -33,51 +43,21 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
             .first()
 
     def post(self, request, *args, **kwargs):
+
+        vote_type = models.VOTE_SKIP
         if request.POST.get('Accept'):
-            v = models.Vote()
-            v.user_id = request.user.id
-            applications = self.get_user_unvotted_applications()
-            a = applications
-            v.application = a
-            v.vote = 1
-            v.save()
-
+            vote_type = models.VOTE_POSITIVE
         if request.POST.get('Declone'):
-            v = models.Vote()
-            v.user_id = request.user.id
-            applications = models.Application.objects.all()
-            a = applications.first()
-            v.application = a
-            v.vote = -1
-            v.save()
+            vote_type = models.VOTE_NEGATIVE
 
-        if request.POST.get('Pass'):
-            v = models.Vote()
-            v.user_id = request.user.id
-            applications = models.Application.objects.all()
-            a = applications.first()
-            v.application = a
-            v.vote = 0
-            v.save()
-
-        return HttpResponseRedirect('/vote')
+        add_vote(self.get_next_application(), request.user, vote_type)
+        return HttpResponseRedirect(reverse('vote'))
 
     def get_context_data(self, **kwargs):
-        print("asdasdasd")
         context = super(VoteApplicationView, self).get_context_data(**kwargs)
-        applications = self.get_user_unvotted_applications()
+        application = self.get_next_application()
 
-        if not applications:
-            print("No applications")
-            self.template_name = 'no_applications_left.html'
-            context["title"] = "There are no applications to vote."
-            return context
-
-        a = applications
-        context["name"] = a.name
-        context["from"] = a.country
-        context["university"] = a.university
-        context["degree"] = a.degree
+        context['app'] = application
 
         context["dp_image_src"] = "https://maxcdn.icons8.com/Share/icon/ios7/Logos//devpost1600.png"
         context["github_image_src"] = "https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-512.png"
