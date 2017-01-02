@@ -62,7 +62,7 @@ class Application(models.Model):
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=STATUS, default='P', max_length=2)
+    status = models.CharField(choices=STATUS, default=APP_PENDING, max_length=2)
 
     @property
     def votes(self):
@@ -78,30 +78,30 @@ class Application(models.Model):
     def invite(self, request):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite user')
-        if self.status != 'A':
+        if self.status != APP_ACCEPTED:
             raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
-        self.status = 'I'
+        self.status = APP_INVITED
         self.save()
 
     def is_confirmed(self):
-        return self.status == 'C'
+        return self.status == APP_CONFIRMED
 
     def confirm(self, cancellation_url):
-        if self.status != 'I' and self.status != 'C':
+        if self.status != APP_INVITED and self.status != APP_CONFIRMED:
             raise ValidationError('Application hasn\'t been invited yet')
-        if self.status != 'C':
+        if self.status != APP_CONFIRMED:
             self._send_confirmation_ack(cancellation_url)
-            self.status = 'C'
+            self.status = APP_CONFIRMED
             self.save()
 
     def can_be_cancelled(self):
-        return self.status == 'C' or self.status == 'I'
+        return self.status == APP_CONFIRMED or self.status == APP_INVITED
 
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
-        self.status = 'X'
+        self.status = APP_CANCELLED
         self.save()
 
     def confirmation_url(self, request=None):
