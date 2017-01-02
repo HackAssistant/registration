@@ -45,9 +45,9 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
 
         vote_type = models.VOTE_SKIP
-        if request.POST.get('Accept'):
+        if request.POST.get('accept'):
             vote_type = models.VOTE_POSITIVE
-        if request.POST.get('Declone'):
+        if request.POST.get('decline'):
             vote_type = models.VOTE_NEGATIVE
 
         add_vote(self.get_next_application(), request.user, vote_type)
