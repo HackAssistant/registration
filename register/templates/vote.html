@@ -16,7 +16,7 @@
                     <div class="panel-body">
                         <h4 class="text-center">Personal</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='Name' value=app.name|add:', '|add:app.lastname %}
+                            {% include 'include/field.html' with desc='Name' value=app.name|add:' '|add:app.lastname %}
                             {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
                             {% include 'include/field.html' with desc='Country' value=app.country %}
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
