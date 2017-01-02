@@ -29,7 +29,7 @@ def add_vote(application, user, vote_type):
 
 
 class VoteApplicationView(LoginRequiredMixin, TemplateView):
-    template_name = 'app_vote.html'
+    template_name = 'vote.html'
 
     def get_next_application(self):
         """
