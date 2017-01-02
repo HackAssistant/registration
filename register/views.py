@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponse
@@ -58,7 +59,6 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
         application = self.get_next_application()
 
         context['app'] = application
-
         context["dp_image_src"] = "https://maxcdn.icons8.com/Share/icon/ios7/Logos//devpost1600.png"
         context["github_image_src"] = "https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-512.png"
         return context

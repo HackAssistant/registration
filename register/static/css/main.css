@@ -1,6 +1,26 @@
 .confirm-content {
     margin-top: 40px
 }
+
 .margin-top {
     margin-top: 40px;
+}
+
+
+a.icon {
+    text-decoration: none;
+    position: relative;
+    color: black;
+    font-size: 70px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+img.icon {
+    height: 70px;
+    width: 70px;
+}
+
+.btn-block {
+    margin-top: 5px;
 }
