@@ -113,11 +113,11 @@ class ApplicationsTypeform(TypeformFetcher):
             'devpost': lambda x: x['website_37466603'],
             'site': lambda x: x['website_37466605'],
             'first_timer': lambda x: x['yesno_37466598'],
-            'team':lambda x:x['yesno_37466600'],
-            'lennyface':lambda x:x['textfield_37466591'],
-            'under_age': lambda x: x['yesno_37466597'],
-            'description': lambda x: x['textarea_37466607'] + '\n' + x['textarea_37466606']
-            if 'textarea_37466606' in x else x['textarea_37466607'],
+            'team': lambda x: x['yesno_37466600'],
+            'lennyface': lambda x: x['textfield_37466591'],
+            # This is the negation, we ask if they will be >18 or not. we keep if they are <18
+            'under_age': lambda x: x['yesno_37466597'] == '0',
+            'description': lambda x: x['textarea_37466606'],
             'projects': lambda x: x['textarea_37466607'],
             'diet': lambda x: x['list_37466610_choice'],
             'country': lambda x: x['dropdown_37466595'],
