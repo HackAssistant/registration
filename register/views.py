@@ -1,4 +1,5 @@
 # Create your views here.
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.views import View
@@ -7,9 +8,10 @@ from register import models
 from register.forms import ApplicationsTypeform
 
 
-class UpdateApplications(View):
-    def get(self, request):
-        return HttpResponse(ApplicationsTypeform().update_forms())
+@staff_member_required
+def update_applications(request):
+    ApplicationsTypeform().update_forms()
+    return HttpResponse(request.META.get('HTTP_REFERER') or '.')
 
 
 class ConfirmApplication(TemplateView):
@@ -29,7 +31,6 @@ class ConfirmApplication(TemplateView):
             context.update({
                 'error': "application can't be confirmed",
             })
-
 
         return context
 
