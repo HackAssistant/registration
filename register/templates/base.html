@@ -12,6 +12,17 @@
 
     <title>{% block title %}HackUPC Registration app{% endblock %}</title>
 </head>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">HackUPC 2017</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li {% if request.path == '/vote/' %}class="active"{% endif %}><a href="/vote">Vote Applications</a></li>
+    </ul>
+  </div>
+</nav>
 <body>
 <div class="content container">
 
@@ -19,5 +30,7 @@
     {% endblock %}
 
 </div>
+    <div style="text-align: center;"><a href="/accounts/password/">Change my password</a></div>
+    <div style="text-align: center;"><a href="/accounts/logout/">Log out</a></div>
 </body>
 </html>
