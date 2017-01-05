@@ -2,7 +2,6 @@
 from __future__ import print_function
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponse
@@ -26,6 +25,10 @@ def add_vote(application, user, vote_type):
     v.vote = vote_type
     v.save()
     return v
+
+
+def root_view(request):
+    return HttpResponseRedirect(reverse('vote'))
 
 
 class VoteApplicationView(LoginRequiredMixin, TemplateView):

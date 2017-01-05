@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block head %}
@@ -13,24 +12,27 @@
     <title>{% block title %}HackUPC Registration app{% endblock %}</title>
 </head>
 
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">HackUPC 2017</a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li {% if request.path == '/vote/' %}class="active"{% endif %}><a href="/vote">Vote Applications</a></li>
-    </ul>
-  </div>
-</nav>
+
 <body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">HackUPC 2017</a>
+        </div>
+        {% if request.user.is_authenticated %}
+            <p class="navbar-text">Signed id as {{ request.user.username }}</p>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'password_change' %}">Change password</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+
+            </ul>
+        {% endif %}
+    </div>
+</nav>
 <div class="content container">
 
     {% block body %}
     {% endblock %}
-
 </div>
-    <div style="text-align: center;"><a href="/accounts/password/">Change my password</a></div>
-    <div style="text-align: center;"><a href="/accounts/logout/">Log out</a></div>
 </body>
 </html>
