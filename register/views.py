@@ -1,11 +1,11 @@
 # Create your views here.
 from __future__ import print_function
 
+from django import http
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponseRedirect
-from django import http
-from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
@@ -18,6 +18,10 @@ class UpdateApplications(View):
         return http.HttpResponse(ApplicationsTypeform().update_forms())
 
 
+def root_view(request):
+    return HttpResponseRedirect(reverse('vote'))
+
+
 def add_vote(application, user, vote_type):
     v = models.Vote()
     v.user = user
@@ -25,10 +29,6 @@ def add_vote(application, user, vote_type):
     v.vote = vote_type
     v.save()
     return v
-
-
-def root_view(request):
-    return HttpResponseRedirect(reverse('vote'))
 
 
 class VoteApplicationView(LoginRequiredMixin, TemplateView):
@@ -107,7 +107,7 @@ class CancelApplication(TemplateView):
                 'error':
                     """
                     Thank you for responding.
-                     We're sorry you won't be able to make it to. Hope to see you next edition!
+                     We're sorry you won't be able to make it to HackUPC. Hope to see you next edition!
                     """
             })
         elif not application.can_be_cancelled():
