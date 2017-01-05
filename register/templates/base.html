@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block head %}
@@ -20,8 +24,11 @@
             <a class="navbar-brand" href="/">HackUPC 2017</a>
         </div>
         {% if request.user.is_authenticated %}
-            <p class="navbar-text">Signed id as {{ request.user.username }}</p>
+            <p class="navbar-text">Signed in as {{ request.user.username }}</p>
             <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_staff %}
+                    <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                {% endif %}
                 <li><a href="{% url 'password_change' %}">Change password</a></li>
                 <li><a href="{% url 'logout' %}">Logout</a></li>
 
