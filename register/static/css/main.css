@@ -1,3 +1,45 @@
+body {
+    background-color: #303F9F;
+}
+
+nav.navbar {
+    -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    background-color: white;
+}
+
+div.panel {
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
 .confirm-content {
-    margin-top: 40px
+    margin-top: 70px
+}
+
+.margin-top {
+    margin-top: 70px;
+}
+
+a.icon {
+    text-decoration: none;
+    position: relative;
+    color: black;
+    font-size: 70px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+img.icon {
+    height: 70px;
+    width: 70px;
+}
+
+.btn-block {
+    margin-top: 5px;
 }

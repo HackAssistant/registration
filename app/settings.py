@@ -27,7 +27,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 REGISTER_APP = {
-    'typeform_key': os.environ.get('TP_KEY', 'test'),
+    'typeform_key': os.environ.get('TP_KEY'),
 }
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'register',
@@ -121,4 +122,4 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR+'/staticfiles'
 
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
-SENDGRID_API_KEY = os.environ.get('SG_KEY','.')
+SENDGRID_API_KEY = os.environ.get('SG_KEY')
