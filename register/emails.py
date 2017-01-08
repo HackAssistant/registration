@@ -37,32 +37,23 @@ class MailListManager:
             raise ConnectionError  # TODO: raise an appropriate exception/error
 
     def add_applicant_to_list(self, application, list_id):
-        #response = self.sg.client.access_settings.whitelist.get()
-        #print(response)
         # Test if application contains recipientid
         # If it doesn't, create recipient and store its id
 
         # Create recipient
         recipient = [
             {
+                "application_id": application.id,
                 "email": application.email,
                 "first_name": application.name,
                 "last_name": application.lastname,
-            },
-            {
-                "email": "pppp@qqq.com",
-                "first_name": "P",
-                "last_name": "Q",
-            },
-
+            }
         ]
         response = self.sg.client.contactdb.recipients.post(request_body=recipient)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
+
         body = json.loads(response.body.decode('utf-8'))
 
-        if response.status_code != 201 or len(body["persisted_recipients"]) < 1:
+        if response.status_code != 201 or len(body["persisted_recipients"]) != 1:
             raise ConnectionError # TODO: raise an appropriate exception/error
 
         recipient_id = body["persisted_recipients"][0]
