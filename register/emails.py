@@ -30,37 +30,34 @@ class MailListManager:
         self.sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
 
     def add_recipient_to_list(self, recipient_id, list_id):
-        response = self.sg.client.contactdb.lists.get()
-        print(response)
         response = self.sg.client.contactdb.lists._(list_id).recipients._(recipient_id).post()
         if response.status_code != 201:
             raise ConnectionError  # TODO: raise an appropriate exception/error
 
     def add_applicant_to_list(self, application, list_id):
         # Test if application contains recipientid
-        # If it doesn't, create recipient and store its id
+        if application.sendgrid_id != "":
+            recipient_id = application.sendgrid_id
 
-        # Create recipient
-        recipient = [
-            {
-                "application_id": application.id,
-                "email": application.email,
-                "first_name": application.name,
-                "last_name": application.lastname,
-            }
-        ]
-        response = self.sg.client.contactdb.recipients.post(request_body=recipient)
+        else:
+            # If it doesn't, create recipient on sendgrid and store its id
+            recipient = [
+                {
+                    "application_id": application.id,
+                    "email": application.email,
+                    "first_name": application.name,
+                    "last_name": application.lastname,
+                }
+            ]
+            response = self.sg.client.contactdb.recipients.post(request_body=recipient)
+            body = json.loads(response.body.decode('utf-8'))
 
-        body = json.loads(response.body.decode('utf-8'))
+            if response.status_code != 201 or len(body["persisted_recipients"]) != 1:
+                raise ConnectionError # TODO: raise an appropriate exception/error
 
-        if response.status_code != 201 or len(body["persisted_recipients"]) != 1:
-            raise ConnectionError # TODO: raise an appropriate exception/error
-
-        recipient_id = body["persisted_recipients"][0]
-
-        # Update application: add recipientid
-        #application.recipientid = recipient_id
-        #application.save()
+            recipient_id = body["persisted_recipients"][0]
+            application.sendgrid_id = recipient_id
+            application.save()
 
         # Add recipient to list
         self.add_recipient_to_list(recipient_id, list_id)

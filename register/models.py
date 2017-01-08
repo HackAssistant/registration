@@ -30,6 +30,7 @@ STATUS = [
 class Application(models.Model):
     id = models.TextField(primary_key=True)
     submission_date = models.DateTimeField()
+    sendgrid_id = models.TextField(default="")
 
     # Personal data
     name = models.TextField()
