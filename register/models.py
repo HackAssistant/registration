@@ -125,6 +125,7 @@ class Application(models.Model):
             [self.email],
             "[HackUPC] You confirmed your attendance!",
             {'%name%': self.name,
+             '%token%': self.id,
              '%cancellation_url%': cancellation_url},
             'c4d4d758-974f-437b-af9a-d8532f96d670'
         )
@@ -139,10 +140,13 @@ class Application(models.Model):
         )
 
 
+VOTE_POSITIVE = 1
+VOTE_NEGATIVE = -1
+VOTE_SKIP = 0
 VOTES = (
-    (1, 'Positive'),
-    (-1, 'Negative'),
-    (0, 'Skipped'),
+    (VOTE_POSITIVE, 'Positive'),
+    (VOTE_NEGATIVE, 'Negative'),
+    (VOTE_SKIP, 'Skipped'),
 )
 
 

@@ -116,8 +116,7 @@ class ApplicationsTypeform(TypeformFetcher):
             'team':lambda x:x['yesno_37466600'],
             'lennyface':lambda x:x['textfield_37466591'],
             'under_age': lambda x: x['yesno_37466597'],
-            'description': lambda x: x['textarea_37466607'] + '\n' + x['textarea_37466606']
-            if 'textarea_37466606' in x else x['textarea_37466607'],
+            'description': lambda x: x['textarea_37466606'],
             'projects': lambda x: x['textarea_37466607'],
             'diet': lambda x: x['list_37466610_choice'],
             'country': lambda x: x['dropdown_37466595'],
