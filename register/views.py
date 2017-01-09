@@ -7,15 +7,8 @@ from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views import View
 from django.views.generic import TemplateView
 from register import models
-from register.forms import ApplicationsTypeform
-
-
-class UpdateApplications(View):
-    def get(self, request):
-        return http.HttpResponse(ApplicationsTypeform().update_forms())
 
 
 def root_view(request):
