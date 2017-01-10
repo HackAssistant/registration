@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
-from register.emails import sendgrid_send
+from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
 
 APP_ACCEPTED = 'A'
@@ -92,6 +92,8 @@ class Application(models.Model):
         if self.status != APP_INVITED and self.status != APP_CONFIRMED:
             raise ValidationError('Application hasn\'t been invited yet')
         if self.status != APP_CONFIRMED:
+            m = MailListManager()
+            m.add_applicant_to_list(self, m.WINTER_17_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
             self.save()
@@ -102,8 +104,11 @@ class Application(models.Model):
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
-        self.status = APP_CANCELLED
-        self.save()
+        if self.status != APP_CANCELLED:
+            self.status = APP_CANCELLED
+            self.save()
+            m = MailListManager()
+            m.remove_recipient_from_list(self.sendgrid_id, m.WINTER_17_LIST_ID)
 
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
