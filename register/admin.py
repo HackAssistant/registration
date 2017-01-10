@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from register import models
-from register.csv import export_as_csv_action
+from register.utils import export_as_csv_action
 from register.forms import ApplicationsTypeform
 
 admin.site.disable_action('delete_selected')
