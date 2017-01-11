@@ -2,6 +2,7 @@ import json
 
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from logging import error
 import sendgrid
 
 
@@ -32,7 +33,8 @@ class MailListManager:
     def _add_recipient_to_list(self, recipient_id, list_id):
         response = self.sg.client.contactdb.lists._(list_id).recipients._(recipient_id).post()
         if response.status_code != 201:
-            raise ConnectionError  # TODO: raise an appropriate exception/error
+            error('Could not add recipient {} to list. SendGrid API responded with status code {}.'
+                  .format(recipient_id, response.status_code))
 
     def add_applicant_to_list(self, application, list_id):
         # Test if application contains recipientid
@@ -53,7 +55,9 @@ class MailListManager:
             body = json.loads(response.body.decode('utf-8'))
 
             if response.status_code != 201 or len(body["persisted_recipients"]) != 1:
-                raise ConnectionError # TODO: raise an appropriate exception/error
+                error('Could not create a recipient for the applicant {} ({}). '
+                      'SendGrid API responded with status code {}.'
+                      .format(application.id, application.name, response.status_code))
 
             recipient_id = body["persisted_recipients"][0]
             application.sendgrid_id = recipient_id
@@ -68,4 +72,5 @@ class MailListManager:
         response = lists._(list_id).recipients._(recipient_id).delete(query_params=params)
 
         if response.status_code != 201:
-            raise ConnectionError
+            error('Could not remove recipient {} from the mail list. SendGrid API responded with status code {}.'
+                  .format(recipient_id, response.status_code))
