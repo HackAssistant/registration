@@ -26,6 +26,10 @@ div.panel {
     margin-top: 70px;
 }
 
+.white-text {
+    color:white;
+}
+
 a.icon {
     text-decoration: none;
     position: relative;
