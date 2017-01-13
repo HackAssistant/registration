@@ -72,7 +72,7 @@ class Application(models.Model):
             return total
         positive = self.vote_set.filter(vote=1).count()
         negative = self.vote_set.filter(vote=-1).count()
-        return positive - (negative * 3) / total
+        return positive - negative / total
 
     # TODO: TEAM EXTERNAL
 

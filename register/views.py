@@ -2,20 +2,21 @@
 from __future__ import print_function
 
 from django import http
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
-from django.views import View
 from django.views.generic import TemplateView
 from register import models
 from register.forms import ApplicationsTypeform
 
 
-class UpdateApplications(View):
-    def get(self, request):
-        return http.HttpResponse(ApplicationsTypeform().update_forms())
+@staff_member_required
+def update_applications(request):
+    ApplicationsTypeform().update_forms()
+    return HttpResponse(request.META.get('HTTP_REFERER') or '.')
 
 
 def root_view(request):
