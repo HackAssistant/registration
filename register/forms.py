@@ -61,7 +61,7 @@ class TypeformFetcher(ApplicationFormFetcher):
     def fetch(self):
         resp = requests.get(self.url, params={'key': typeform_key, 'completed': 'true', 'offset': self.get_offset()})
         if resp.status_code != 200:
-            error('The API responded with {}, status code:' + resp.status_code)
+            error('The API responded with {}, status code:' + str(resp.status_code))
             return []
         return json.loads(resp.text)['responses']
 

@@ -19,3 +19,9 @@ Add 2 environment variables:
 
 Run server to 0.0.0.0
 `python manage.py runserver 0.0.0.0:8000`
+
+## Fetch last forms
+
+- Set environment variable: **TP_KEY**=Typeform_API_key
+- Activate virtualenv (optional)
+- Run: `python manange.py fetchforms`

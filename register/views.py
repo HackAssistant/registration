@@ -10,13 +10,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
 from register import models
-from register.forms import ApplicationsTypeform
-
-
-@staff_member_required
-def update_applications(request):
-    ApplicationsTypeform().update_forms()
-    return HttpResponse(request.META.get('HTTP_REFERER') or '.')
 
 
 def root_view(request):
