@@ -1,9 +1,9 @@
 import json
-
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
 from logging import error
+
 import sendgrid
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
 
 def sendgrid_send(recipients, subject, substitutions, template_id):
@@ -71,6 +71,6 @@ class MailListManager:
         lists = self.sg.client.contactdb.lists
         response = lists._(list_id).recipients._(recipient_id).delete(query_params=params)
 
-        if response.status_code != 201:
+        if response.status_code != 204 and response.status_code != 201:
             error('Could not remove recipient {} from the mail list. SendGrid API responded with status code {}.'
                   .format(recipient_id, response.status_code))
