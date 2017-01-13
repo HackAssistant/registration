@@ -62,6 +62,7 @@
                     <div class="panel-footer">
                         <form action="" method="post">
                             {% csrf_token %}
+                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
                             <button class="btn btn-success btn-block" name="accept" value="accept">Get him in!</button>
                             <button name="skip" class="btn btn-default btn-block" value="skip">Skip application</button>
                             <button name="decline" class="btn btn-danger btn-block" value="decline">Nop</button>
