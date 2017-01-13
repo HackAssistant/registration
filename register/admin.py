@@ -2,8 +2,9 @@ from django.contrib import admin
 # Register your models here.
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
+from django.db.models import Avg
 from register import models
-from register.csv import export_as_csv_action
+from register.utils import export_as_csv_action
 from register.forms import ApplicationsTypeform
 
 admin.site.disable_action('delete_selected')
@@ -14,9 +15,18 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ('status', 'first_timer', 'scholarship', 'university')
     list_per_page = 2000
     search_fields = ('name', 'lastname', 'email')
-    ordering = ('-submission_date',)
-    actions = ['invite', 'update_applications', 'accept_application', 'reject_application',
+    ordering = ('submission_date',)
+    actions = ['update_applications', 'accept_application', 'reject_application',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
+
+    def votes(self, app):
+        return app.votes
+
+    votes.admin_order_field = 'vote_avg'
+
+    def get_queryset(self, request):
+        qs = super(ApplicationAdmin, self).get_queryset(request)
+        return qs.annotate(vote_avg=Avg('vote__vote'))
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
@@ -29,7 +39,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
-        readonly_fields =  [field.name for field in self.opts.local_fields]
+        readonly_fields = [field.name for field in self.opts.local_fields]
         if 'status' in readonly_fields:
             readonly_fields.remove('status')
         return readonly_fields
