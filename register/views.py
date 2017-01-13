@@ -53,8 +53,8 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
             vote_type = models.VOTE_POSITIVE
         elif request.POST.get('decline'):
             vote_type = models.VOTE_NEGATIVE
-
-        add_vote(self.get_next_application(), request.user, vote_type)
+        application = models.Application.objects.get(id=request.POST.get('app_id'))
+        add_vote(application, request.user, vote_type)
         return HttpResponseRedirect(reverse('vote'))
 
     def get_context_data(self, **kwargs):
