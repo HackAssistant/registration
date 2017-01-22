@@ -12,7 +12,7 @@ admin.site.disable_action('delete_selected')
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'lastname', 'email', 'votes', 'status')
-    list_filter = ('status', 'first_timer', 'scholarship', 'university')
+    list_filter = ('status', 'first_timer', 'scholarship', 'university', 'country')
     list_per_page = 200
     search_fields = ('name', 'lastname', 'email')
     ordering = ('submission_date',)
