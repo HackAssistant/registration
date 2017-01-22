@@ -4,5 +4,6 @@ env
 *.pyc
 /staticfiles
 fetch.sh
+app/db_settings.py
 
 *.sqlite3
