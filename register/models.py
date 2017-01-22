@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Avg, F
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
 
@@ -146,20 +147,35 @@ class Application(models.Model):
         )
 
 
-VOTE_POSITIVE = 1
-VOTE_NEGATIVE = -1
-VOTE_SKIP = 0
 VOTES = (
-    (VOTE_POSITIVE, 'Positive'),
-    (VOTE_NEGATIVE, 'Negative'),
-    (VOTE_SKIP, 'Skipped'),
+    (1, '1'),
+    (2, '2'),
+    (3, '3'),
+    (4, '4'),
+    (5, '5'),
+    (6, '6'),
+    (7, '7'),
+    (8, '8'),
+    (9, '9'),
+    (10, '10'),
 )
 
 
 class Vote(models.Model):
     application = models.ForeignKey(Application)
     user = models.ForeignKey(admin_models.User)
-    vote = models.IntegerField(choices=VOTES)
+    tech = models.IntegerField(choices=VOTES, null=True)
+    personal = models.IntegerField(choices=VOTES, null=True)
+    calculated_vote = models.FloatField(null=True)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super(Vote, self).save(force_insert, force_update, using, update_fields)
+        avgs = admin_models.User.objects.filter(id=self.user_id).aggregate(t_avg=Avg('vote__tech'),
+                                                                           p_avg=Avg('vote__personal'))
+        Vote.objects.filter(user=self.user).update(
+            calculated_vote=0.8 * (F('personal') - round(avgs['p_avg'], 2)) + 0.2 * (
+            F('tech') - round(avgs['t_avg'], 2)))
 
     class Meta:
         unique_together = ('application', 'user')

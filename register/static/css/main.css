@@ -48,3 +48,10 @@ img.icon {
 .btn-block {
     margin-top: 5px;
 }
+
+.col-centered{
+    width: 380px;
+    position: absolute;
+    margin: 0 0 0 -190px;
+    left: 50%;
+}
