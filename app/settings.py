@@ -24,7 +24,7 @@ SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost',]
+ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com']
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
