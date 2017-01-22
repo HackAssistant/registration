@@ -64,12 +64,13 @@
                         <form action="" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                            <h4>Technical Skills</h4>
-                            {% include 'include/number10.html' with name='tech_rat' %}
-                            <br>
-                            <h4>Personal Skills</h4>
-                            {% include 'include/number10.html' with name='pers_rat' %}
-                            <br><br>
+                            <h4 class="text-center">Score</h4>
+                            <dl class="dl-horizontal">
+                                <dt>Technical Skills</dt>
+                                <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                                <dt>Personal Skills</dt>
+                                <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+                            </dl>
                             <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
                             <button name="skip" class="btn btn-default btn-block" value="skip">Skip
                                 application
