@@ -66,14 +66,6 @@ class Application(models.Model):
     authorized_mlh = models.NullBooleanField()
     status = models.CharField(choices=STATUS, default=APP_PENDING, max_length=2)
 
-    @property
-    def votes(self):
-        total = self.vote_set.count()
-        if not total:
-            return total
-        positive = self.vote_set.filter(vote=1).count()
-        negative = self.vote_set.filter(vote=-1).count()
-        return positive - negative / total
 
     # TODO: TEAM EXTERNAL
 
@@ -159,7 +151,6 @@ VOTES = (
     (9, '9'),
     (10, '10'),
 )
-
 
 class Vote(models.Model):
     application = models.ForeignKey(Application)
