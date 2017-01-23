@@ -16,7 +16,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_per_page = 200
     search_fields = ('name', 'lastname', 'email')
     ordering = ('submission_date',)
-    actions = ['update_applications', 'accept_application', 'reject_application',
+    actions = ['update_applications', 'accept_application', 'reject_application', 'invite',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
 
     def votes(self, app):
@@ -74,11 +74,13 @@ class ApplicationAdmin(admin.ModelAdmin):
     update_applications.short_description = 'Fetch new applications from Typeform'
 
     def accept_application(self, request, queryset):
-        if queryset.exclude(status='P'):
+        if queryset.exclude(status='P').exists():
             self.message_user(request, 'Applications couldn\'t be updated, check that they are pending before',
                               messages.ERROR)
         else:
-            queryset.update(status='A')
+            # We have to use this because queryset has been anotated
+            # See: http://stackoverflow.com/questions/13559944/how-to-update-a-queryset-that-has-been-annotated
+            models.Application.objects.filter(id__in=queryset.values_list('id', flat=True)).update(status='A')
             count = queryset.count()
             self.message_user(request, '%s applications accepted' % count)
 
@@ -89,7 +91,8 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, 'Applications couldn\'t be updated, check that they are pending before',
                               messages.ERROR)
         else:
-            queryset.update(status='R')
+            # Same as above
+            models.Application.objects.filter(id__in=queryset.values_list('id', flat=True)).update(status='R')
             count = queryset.count()
             self.message_user(request, '%s applications rejected' % count)
 
