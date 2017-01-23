@@ -1,6 +1,7 @@
 Django==1.10.4
 django-filter==1.0.1
 django-jet==1.0.4
+gunicorn==19.6.0
 Markdown==2.6.7
 python-http-client==2.2.1
 requests==2.12.3
