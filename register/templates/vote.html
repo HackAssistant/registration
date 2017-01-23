@@ -4,6 +4,7 @@
 {% block title %}Vote applications - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
@@ -63,17 +64,36 @@
                         <form action="" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                            <button class="btn btn-success btn-block" name="accept" value="accept">Get him in!</button>
-                            <button name="skip" class="btn btn-default btn-block" value="skip">Skip application</button>
-                            <button name="decline" class="btn btn-danger btn-block" value="decline">Nop</button>
+                            <h4 class="text-center">Score</h4>
+                            <dl class="dl-horizontal">
+                                <dt>Technical Skills</dt>
+                                <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                                <dt>Personal Skills</dt>
+                                <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+                            </dl>
+                            <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+                            <button name="skip" class="btn btn-default btn-block" value="skip">Skip
+                                application
+                            </button>
                         </form>
 
 
                     </div>
                 </div>
             {% else %}
-                <h4 class="text-center" style="color: white;">No applications left to be voted.<br> Good job! Enjoy the sun outside!</h4>
+                <h4 class="text-center" style="color: white;">No applications left to be voted.<br> Good job! Enjoy the
+                    sun outside!</h4>
             {% endif %}
         </div>
     </div>
+    <script src="{% static 'lib/barrating.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('.barrating').barrating({
+                theme: 'bars-square',
+                showValues: true,
+                showSelectedRating: false
+            });
+        });
+    </script>
 {% endblock %}

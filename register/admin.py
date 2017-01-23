@@ -12,21 +12,21 @@ admin.site.disable_action('delete_selected')
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'lastname', 'email', 'votes', 'status')
-    list_filter = ('status', 'first_timer', 'scholarship', 'university')
-    list_per_page = 2000
+    list_filter = ('status', 'first_timer', 'scholarship', 'university', 'country')
+    list_per_page = 200
     search_fields = ('name', 'lastname', 'email')
     ordering = ('submission_date',)
-    actions = ['update_applications', 'accept_application', 'reject_application',
+    actions = ['update_applications', 'accept_application', 'reject_application', 'invite',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
 
     def votes(self, app):
-        return app.votes
+        return app.vote_avg
 
     votes.admin_order_field = 'vote_avg'
 
     def get_queryset(self, request):
         qs = super(ApplicationAdmin, self).get_queryset(request)
-        return qs.annotate(vote_avg=Avg('vote__vote'))
+        return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
@@ -74,11 +74,13 @@ class ApplicationAdmin(admin.ModelAdmin):
     update_applications.short_description = 'Fetch new applications from Typeform'
 
     def accept_application(self, request, queryset):
-        if queryset.exclude(status='P'):
+        if queryset.exclude(status='P').exists():
             self.message_user(request, 'Applications couldn\'t be updated, check that they are pending before',
                               messages.ERROR)
         else:
-            queryset.update(status='A')
+            # We have to use this because queryset has been anotated
+            # See: http://stackoverflow.com/questions/13559944/how-to-update-a-queryset-that-has-been-annotated
+            models.Application.objects.filter(id__in=queryset.values_list('id', flat=True)).update(status='A')
             count = queryset.count()
             self.message_user(request, '%s applications accepted' % count)
 
@@ -89,7 +91,8 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, 'Applications couldn\'t be updated, check that they are pending before',
                               messages.ERROR)
         else:
-            queryset.update(status='R')
+            # Same as above
+            models.Application.objects.filter(id__in=queryset.values_list('id', flat=True)).update(status='R')
             count = queryset.count()
             self.message_user(request, '%s applications rejected' % count)
 

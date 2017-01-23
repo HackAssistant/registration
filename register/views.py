@@ -2,11 +2,10 @@
 from __future__ import print_function
 
 from django import http
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db.models import Count
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
 from register import models
@@ -16,11 +15,12 @@ def root_view(request):
     return HttpResponseRedirect(reverse('vote'))
 
 
-def add_vote(application, user, vote_type):
+def add_vote(application, user, tech_rat, pers_rat):
     v = models.Vote()
     v.user = user
     v.application = application
-    v.vote = vote_type
+    v.tech = tech_rat
+    v.personal = pers_rat
     v.save()
     return v
 
@@ -41,14 +41,13 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
             .first()
 
     def post(self, request, *args, **kwargs):
-
-        vote_type = models.VOTE_SKIP
-        if request.POST.get('accept'):
-            vote_type = models.VOTE_POSITIVE
-        elif request.POST.get('decline'):
-            vote_type = models.VOTE_NEGATIVE
+        tech_vote = request.POST.get('tech_rat',None)
+        pers_vote = request.POST.get('pers_rat',None)
         application = models.Application.objects.get(id=request.POST.get('app_id'))
-        add_vote(application, request.user, vote_type)
+        if request.POST.get('skip'):
+            add_vote(application, request.user, None, None)
+        else:
+            add_vote(application, request.user, tech_vote, pers_vote)
         return HttpResponseRedirect(reverse('vote'))
 
     def get_context_data(self, **kwargs):
