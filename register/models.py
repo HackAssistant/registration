@@ -177,6 +177,11 @@ class Vote(models.Model):
         By casassg
         """
         super(Vote, self).save(force_insert, force_update, using, update_fields)
+
+        # only recalculate when values are different than None
+        if not self.personal or not self.tech:
+            return
+
         # Retrieve averages
         avgs = admin_models.User.objects.filter(id=self.user_id).aggregate(tech=Avg('vote__tech'),
                                                                            pers=Avg('vote__personal'))
