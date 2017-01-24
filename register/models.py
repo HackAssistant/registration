@@ -192,8 +192,10 @@ class Vote(models.Model):
         sds = admin_models.User.objects.filter(id=self.user_id).aggregate(
             tech=Avg((F('vote__tech') - t_avg) * (F('vote__tech') - t_avg)),
             pers=Avg((F('vote__personal') - p_avg) * (F('vote__personal') - p_avg)))
-        p_sd = round(sds['pers'], 2)
-        t_sd = round(sds['tech'], 2)
+
+        # Alternatively, if standard deviation is 0.0, set it as 1.0 to avoid division by 0.0 in the update statement
+        p_sd = round(sds['pers'], 2) or 1.0
+        t_sd = round(sds['tech'], 2) or 1.0
 
         # Apply standarization. Standarization formula:
         # x(new) = (x - u)/o
@@ -201,8 +203,10 @@ class Vote(models.Model):
         #
         # See this: http://www.dataminingblog.com/standardization-vs-normalization/
         Vote.objects.filter(user=self.user).update(
-            calculated_vote=PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd + TECH_WEIGHT * (
-                F('tech') - t_avg) / t_sd)
+            calculated_vote=
+            PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd +
+            TECH_WEIGHT * (F('tech') - t_avg) / t_sd
+        )
 
     class Meta:
         unique_together = ('application', 'user')
