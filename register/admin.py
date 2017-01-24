@@ -3,8 +3,10 @@ from django.contrib import admin
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
+from django.utils.timesince import timesince
 from register import models
-from register.utils import export_as_csv_action
+from register.models import APP_INVITED
+from register.utils import export_as_csv_action, create_modeladmin
 from register.forms import ApplicationsTypeform
 
 admin.site.disable_action('delete_selected')
@@ -99,4 +101,52 @@ class ApplicationAdmin(admin.ModelAdmin):
     accept_application.short_description = 'Accept selected applications'
 
 
+class InvitationAdmin(ApplicationAdmin):
+    list_display = ('id', 'name', 'lastname', 'email', 'pending_since')
+    ordering = ('invitation_date',)
+    # Why aren't these overriding super actions?
+    actions = ['update_applications', 'reject_application', 'send_reminder',
+               export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
+
+    def get_actions(self, request):
+        actions = super(ApplicationAdmin, self).get_actions(request)
+        del actions['invite']
+        del actions['update_applications']
+        del actions['accept_application']
+        return actions
+
+    def pending_since(self, app):
+        return timesince(app.invitation_date)
+
+    pending_since.admin_order_field = 'invitation_date'
+
+    def send_reminder(self, request, queryset):
+        sent = 0
+        errors = 0
+        for app in queryset:
+            try:
+                app.send_reminder(request)
+                sent += 1
+            except ValidationError:
+                errors += 1
+
+        if sent > 0 and errors > 0:
+            self.message_user(request, (
+                "%s reminders sent, %s reminders cancelled" % (
+                    sent, errors)),
+                              level=messages.WARNING)
+        elif sent > 0:
+            self.message_user(request, '%s reminders sent' % sent)
+        else:
+            self.message_user(request, 'Reminders couldn\'t be sent!',
+                              level=messages.ERROR)
+
+    def get_queryset(self, request):
+        return self.model.objects.filter(status=APP_INVITED)
+
+
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
+create_modeladmin(InvitationAdmin, name='invitation', model=models.Application)
+admin.site.site_header = 'HackUPC Admin'
+admin.site.site_title = 'HackUPC Admin'
+admin.site.index_title = 'Home'

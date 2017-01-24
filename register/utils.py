@@ -1,5 +1,5 @@
 import csv
-
+from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import reverse as django_reverse
 
@@ -50,3 +50,20 @@ def export_as_csv_action(description="Export selected objects as CSV file",
 
     export_as_csv.short_description = description
     return export_as_csv
+
+
+def create_modeladmin(modeladmin, model, name = None):
+    """
+    Allows to register a model in multiple views
+    http://stackoverflow.com/questions/2223375/multiple-modeladmins-views-for-same-model-in-django-admin
+    """
+    class  Meta:
+        proxy = True
+        app_label = model._meta.app_label
+
+    attrs = {'__module__': '', 'Meta': Meta}
+
+    newmodel = type(name, (model,), attrs)
+
+    admin.site.register(newmodel, modeladmin)
+    return modeladmin

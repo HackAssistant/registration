@@ -4,8 +4,10 @@ from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
+from django.utils import timezone
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
+
 
 TECH_WEIGHT = 0.2
 
@@ -35,6 +37,7 @@ STATUS = [
 class Application(models.Model):
     id = models.TextField(primary_key=True)
     submission_date = models.DateTimeField()
+    invitation_date = models.DateTimeField(blank=True, null=True)
     sendgrid_id = models.TextField(default="")
 
     # Personal data
@@ -79,7 +82,13 @@ class Application(models.Model):
             raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
         self.status = APP_INVITED
+        self.invitation_date = timezone.now()
         self.save()
+
+    def send_reminder(self, request):
+        if not request.user.has_perm('register.invite_application'):
+            raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
+        self._send_reminder(request)
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
@@ -121,6 +130,18 @@ class Application(models.Model):
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
         )
+
+    def _send_reminder(self, request):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] Missing answer",
+            {'%name%': self.name,
+             '%confirmation_url%': self.confirmation_url(request),
+             '%cancellation_url%': self.cancelation_url(request)},
+            '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
+
+        )
+        
 
     def _send_confirmation_ack(self, cancellation_url):
         sendgrid_send(
@@ -177,6 +198,11 @@ class Vote(models.Model):
         By casassg
         """
         super(Vote, self).save(force_insert, force_update, using, update_fields)
+
+        # only recalculate when values are different than None
+        if not self.personal or not self.tech:
+            return
+
         # Retrieve averages
         avgs = admin_models.User.objects.filter(id=self.user_id).aggregate(tech=Avg('vote__tech'),
                                                                            pers=Avg('vote__personal'))
@@ -187,8 +213,10 @@ class Vote(models.Model):
         sds = admin_models.User.objects.filter(id=self.user_id).aggregate(
             tech=Avg((F('vote__tech') - t_avg) * (F('vote__tech') - t_avg)),
             pers=Avg((F('vote__personal') - p_avg) * (F('vote__personal') - p_avg)))
-        p_sd = round(sds['pers'], 2)
-        t_sd = round(sds['tech'], 2)
+
+        # Alternatively, if standard deviation is 0.0, set it as 1.0 to avoid division by 0.0 in the update statement
+        p_sd = round(sds['pers'], 2) or 1.0
+        t_sd = round(sds['tech'], 2) or 1.0
 
         # Apply standarization. Standarization formula:
         # x(new) = (x - u)/o
@@ -196,8 +224,10 @@ class Vote(models.Model):
         #
         # See this: http://www.dataminingblog.com/standardization-vs-normalization/
         Vote.objects.filter(user=self.user).update(
-            calculated_vote=PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd + TECH_WEIGHT * (
-                F('tech') - t_avg) / t_sd)
+            calculated_vote=
+            PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd +
+            TECH_WEIGHT * (F('tech') - t_avg) / t_sd
+        )
 
     class Meta:
         unique_together = ('application', 'user')
