@@ -34,7 +34,7 @@
                         </dl>
                         <h4 class="text-center">Background</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='First time' value=app.first_time|yesno:'Yes,No,Maybe' %}
+                            {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
                             {% include 'include/field.html' with desc='Description' value=app.description %}
                             {% include 'include/field.html' with desc='Projects' value=app.projects %}
                             {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
