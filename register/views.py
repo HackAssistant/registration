@@ -36,7 +36,7 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
         return models.Application.objects \
             .exclude(vote__user_id=self.request.user.id) \
             .filter(status='P') \
-            .annotate(count=Count('vote')) \
+            .annotate(count=Count('vote__calculated_vote')) \
             .order_by('count', 'submission_date') \
             .first()
 
