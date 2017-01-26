@@ -34,6 +34,7 @@ REGISTER_APP = {
 
 INSTALLED_APPS = [
     'jet',
+    'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,17 +120,17 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR+'/staticfiles'
+STATIC_ROOT = BASE_DIR + '/staticfiles'
 
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
-SENDGRID_API_KEY = os.environ.get('SG_KEY','.')
+SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
 
 # JET
 JET_THEMES = [
     {
-        'theme': 'default', # theme folder name
-        'color': '#47bac1', # color of the theme's button in user menu
-        'title': 'Default' # theme title
+        'theme': 'default',  # theme folder name
+        'color': '#47bac1',  # color of the theme's button in user menu
+        'title': 'Default'  # theme title
     },
     {
         'theme': 'green',
