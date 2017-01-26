@@ -16,7 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.views.generic import RedirectView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -29,6 +30,7 @@ urlpatterns = [
     url(r'^accounts/password/done/$', auth_views.password_change_done, name='password_change_done'),
 
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    url(r'^', include('register.urls'))
+    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    url(r'^', include('register.urls')),
+    url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico')))
 ]
-
