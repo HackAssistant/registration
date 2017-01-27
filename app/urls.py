@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.views.generic import RedirectView
+from jet.dashboard.dashboard_modules import google_analytics_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

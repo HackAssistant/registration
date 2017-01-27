@@ -60,7 +60,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['register/templates','app/templates'],
+        'DIRS': ['register/templates', 'app/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,4 +159,5 @@ JET_THEMES = [
     }
 ]
 JET_SIDE_MENU_COMPACT = True
+JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secret.json')
 JET_INDEX_DASHBOARD = 'app.dashboard.CustomIndexDashboard'

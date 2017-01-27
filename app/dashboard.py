@@ -2,6 +2,7 @@ from app import dashboard_modules
 from django.utils.translation import ugettext_lazy as _
 from jet.dashboard import modules
 from jet.dashboard.dashboard import Dashboard
+from jet.dashboard.dashboard_modules import google_analytics
 
 
 class CustomIndexDashboard(Dashboard):
@@ -11,6 +12,9 @@ class CustomIndexDashboard(Dashboard):
         self.available_children.append(modules.LinkList)
         self.available_children.append(modules.ModelList)
         self.available_children.append(dashboard_modules.BestReviewers)
+        self.available_children.append(google_analytics.GoogleAnalyticsVisitorsTotals)
+        self.available_children.append(google_analytics.GoogleAnalyticsVisitorsChart)
+        self.available_children.append(google_analytics.GoogleAnalyticsPeriodVisitors)
         self.children.append(modules.LinkList(
             _('HackUPC URLs'),
             children=[
