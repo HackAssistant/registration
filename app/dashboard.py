@@ -10,6 +10,7 @@ class CustomIndexDashboard(Dashboard):
     def init_with_context(self, context):
         self.available_children.append(modules.LinkList)
         self.available_children.append(modules.ModelList)
+        self.available_children.append(dashboard_modules.BestReviewers)
         self.children.append(modules.LinkList(
             _('HackUPC URLs'),
             children=[
