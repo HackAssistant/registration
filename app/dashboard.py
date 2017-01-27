@@ -1,3 +1,4 @@
+from app import dashboard_modules
 from django.utils.translation import ugettext_lazy as _
 from jet.dashboard import modules
 from jet.dashboard.dashboard import Dashboard
@@ -36,3 +37,4 @@ class CustomIndexDashboard(Dashboard):
             column=0,
             order=0
         ))
+        self.children.append(dashboard_modules.BestReviewers(_('Reviewer Leaderboard'), column=1, order=0))
