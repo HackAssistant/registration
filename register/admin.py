@@ -100,3 +100,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
+admin.site.site_header = 'HackUPC Admin'
+admin.site.site_title = 'HackUPC Admin'
+admin.site.index_title = 'Home'

@@ -1,0 +1,17 @@
+{% load humanize %}
+
+<ul>
+    {% for reviewer in module.children %}
+        <li>
+            {{ forloop.counter|ordinal }} -  <b>{{ reviewer.username }}</b>
+            <span class="float-right">
+                {{ reviewer.vote_count }}
+                <span class="icon-book"></span>
+            </span>
+        </li>
+    {% empty %}
+        <li>
+            Nothing to show
+        </li>
+    {% endfor %}
+</ul>
