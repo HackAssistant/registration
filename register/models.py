@@ -89,7 +89,9 @@ class Application(models.Model):
             raise ValidationError('Application hasn\'t been invited yet')
         if self.status != APP_CONFIRMED:
             m = MailListManager()
-            m.add_applicant_to_list(self, m.WINTER_17_LIST_ID)
+            m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
+            if self.scholarship:
+                m.add_applicant_to_list(self, m.W17_TRAVEL_REIMB_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
             self.save()
@@ -104,7 +106,9 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.save()
             m = MailListManager()
-            m.remove_recipient_from_list(self.sendgrid_id, m.WINTER_17_LIST_ID)
+            m.remove_recipient_from_list(self.sendgrid_id, m.W17_GENERAL_LIST_ID)
+            if self.scholarship:
+                m.remove_recipient_from_list(self.sendgrid_id, m.W17_TRAVEL_REIMB_LIST_ID)
 
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
