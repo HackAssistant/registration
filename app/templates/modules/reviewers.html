@@ -3,10 +3,10 @@
 <ul>
     {% for reviewer in module.children %}
         <li>
-            {{ reviewer.username }}
+            {{ forloop.counter|ordinal }} -  <b>{{ reviewer.username }}</b>
             <span class="float-right">
-                    {{ reviewer.vote_count }}
-        <span class="icon-book"></span>
+                {{ reviewer.vote_count }}
+                <span class="icon-book"></span>
             </span>
         </li>
     {% empty %}

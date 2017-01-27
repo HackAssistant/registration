@@ -34,7 +34,10 @@ class CustomIndexDashboard(Dashboard):
         ))
         self.children.append(modules.ModelList(
             _('Models'),
-            column=0,
+            column=1,
             order=0
         ))
-        self.children.append(dashboard_modules.BestReviewers(_('Reviewer Leaderboard'), column=1, order=0))
+        self.children.append(dashboard_modules.BestReviewers(
+            _('Reviewer Leaderboard'),
+            column=0, order=0)
+        )

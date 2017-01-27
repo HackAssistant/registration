@@ -4,14 +4,15 @@ from django.db.models import Count
 from jet.dashboard.modules import DashboardModule
 
 
-class LinkListSettingsForm(forms.Form):
-    layout = forms.IntegerField(label='Limit', min_value=1)
+class BestReviewerForm(forms.Form):
+    limit = forms.IntegerField(label='Reviewers shown', min_value=1)
 
 
 class BestReviewers(DashboardModule):
     title = 'Recent tickets'
     template = 'modules/reviewers.html'
     limit = 10
+    settings_form = BestReviewerForm
 
     def settings_dict(self):
         return {
@@ -19,7 +20,7 @@ class BestReviewers(DashboardModule):
         }
 
     def load_settings(self, settings):
-        self.limit = settings.get('limit', self.layout)
+        self.limit = settings.get('limit', self.limit)
 
     def init_with_context(self, context):
         self.children = User.objects.annotate(vote_count=Count('vote__calculated_vote')) \
