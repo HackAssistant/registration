@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% block title %}Reviewers Ranking - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">HackUPC Reviewer Leaderboard</div>
+                <div class="panel-body">
+                    <p>So you think you have reviewed tons, huh?</p>
+                    <p>Drop your self esteem and look at the ranking</p>
+                </div>
+
+                <!-- Table -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th>Position</th>
+                        <th>Name</th>
+                        <th>Reviews</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in ranking %}
+                        <tr>
+                            <td>
+                                {{forloop.counter}}
+                            </td>
+                            <td>
+                                {{user.username}}
+                            </td>
+                            <td>
+                                {{user.vote_count}}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
