@@ -9,7 +9,7 @@ class BestReviewerForm(forms.Form):
 
 
 class BestReviewers(DashboardModule):
-    title = 'Recent tickets'
+    title = 'Best reviewers'
     template = 'modules/reviewers.html'
     limit = 10
     settings_form = BestReviewerForm
