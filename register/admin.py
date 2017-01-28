@@ -16,7 +16,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'lastname', 'email', 'votes', 'status')
     list_filter = ('status', 'first_timer', 'scholarship', 'university', 'country')
     list_per_page = 200
-    search_fields = ('name', 'lastname', 'email')
+    search_fields = ('name', 'lastname', 'email', 'description')
     ordering = ('submission_date',)
     actions = ['update_applications', 'accept_application', 'reject_application', 'invite',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
