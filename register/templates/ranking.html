@@ -13,30 +13,22 @@
                 <div class="panel-heading">HackUPC Reviewer Leaderboard</div>
                 <div class="panel-body">
                     <p>So you think you have reviewed tons, huh?</p>
-                    <p>Drop your self esteem and look at the ranking</p>
+                    <p>Drop your self esteem and look at the ranking.</p>
                 </div>
-
-                <!-- Table -->
                 <table class="table">
                     <thead>
                         <tr>
-                        <th>Position</th>
-                        <th>Name</th>
-                        <th>Reviews</th>
+                            <th>Position</th>
+                            <th>Name</th>
+                            <th>Reviews</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in ranking %}
                         <tr>
-                            <td>
-                                {{forloop.counter}}
-                            </td>
-                            <td>
-                                {{user.username}}
-                            </td>
-                            <td>
-                                {{user.vote_count}}
-                            </td>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.vote_count}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
