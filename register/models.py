@@ -4,8 +4,10 @@ from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
+from django.utils import timezone
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
+
 
 TECH_WEIGHT = 0.2
 
@@ -35,6 +37,7 @@ STATUS = [
 class Application(models.Model):
     id = models.TextField(primary_key=True)
     submission_date = models.DateTimeField()
+    invitation_date = models.DateTimeField(blank=True, null=True)
     sendgrid_id = models.TextField(default="")
 
     # Personal data
@@ -79,7 +82,13 @@ class Application(models.Model):
             raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
         self.status = APP_INVITED
+        self.invitation_date = timezone.now()
         self.save()
+
+    def send_reminder(self, request):
+        if not request.user.has_perm('register.invite_application'):
+            raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
+        self._send_reminder(request)
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
@@ -121,6 +130,18 @@ class Application(models.Model):
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
         )
+
+    def _send_reminder(self, request):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] Missing answer",
+            {'%name%': self.name,
+             '%confirmation_url%': self.confirmation_url(request),
+             '%cancellation_url%': self.cancelation_url(request)},
+            '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
+
+        )
+        
 
     def _send_confirmation_ack(self, cancellation_url):
         sendgrid_send(
