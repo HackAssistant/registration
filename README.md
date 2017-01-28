@@ -10,6 +10,14 @@ Needs: Python 3.5
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
 
+## Load dummy data
+
+In order to help outside developers boarding, we provide an option to work with 3 dummy applications.
+Our applications data may be private but anyone is welcome to help us on this project!
+
+- Execute: `python manage.py loaddata fixtures/applications.json`
+
+
 ## Run server
 
 Add 2 environment variables:
