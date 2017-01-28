@@ -5,7 +5,7 @@ env
 /staticfiles
 fetch.sh
 app/db_settings.py
-
+db.json
 *.sqlite3
 client_secret.json
 
