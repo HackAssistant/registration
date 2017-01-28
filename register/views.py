@@ -3,6 +3,7 @@ from __future__ import print_function
 
 from django import http
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.http import HttpResponseRedirect
@@ -23,6 +24,14 @@ def add_vote(application, user, tech_rat, pers_rat):
     v.personal = pers_rat
     v.save()
     return v
+
+class RankingView(LoginRequiredMixin, TemplateView):
+    template_name = 'ranking.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RankingView, self).get_context_data(**kwargs)
+        context['ranking'] = list(User.objects.annotate(vote_count=Count('vote__calculated_vote')).order_by('-vote_count')[:10].values('vote_count', 'username'))
+        return context
 
 
 class VoteApplicationView(LoginRequiredMixin, TemplateView):
