@@ -25,7 +25,7 @@
                     <tbody>
                         {% for user in ranking %}
                         <tr>
-			    <td>{{forloop.counter | ordinal}}</td>
+                            <td>{{forloop.counter | ordinal}}</td>
                             <td>{{user.username}}</td>
                             <td>{{user.vote_count}}</td>
                         </tr>
