@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Avg
 from django.utils.timesince import timesince
 from register import models
-from register.models import APP_INVITED
 from register.utils import export_as_csv_action, create_modeladmin
 from register.forms import ApplicationsTypeform
 
@@ -16,7 +15,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'lastname', 'email', 'votes', 'status')
     list_filter = ('status', 'first_timer', 'scholarship', 'university', 'country')
     list_per_page = 200
-    search_fields = ('name', 'lastname', 'email', 'description')
+    search_fields = ('name', 'lastname', 'email', 'description', 'id')
     ordering = ('submission_date',)
     actions = ['update_applications', 'accept_application', 'reject_application', 'invite',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
@@ -102,14 +101,15 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 class InvitationAdmin(ApplicationAdmin):
-    list_display = ('id', 'name', 'lastname', 'email', 'pending_since')
+    list_display = ('id', 'name', 'email', 'scholarship', 'pending_since','reimbursement_money', 'status')
     ordering = ('invitation_date',)
     # Why aren't these overriding super actions?
-    actions = ['update_applications', 'reject_application', 'send_reminder',
+    actions = ['update_applications', 'reject_application', 'send_reminder', 'send_reimbursement',
                export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
+        # Remove some unnecessary actions
         del actions['invite']
         del actions['update_applications']
         del actions['accept_application']
@@ -138,11 +138,31 @@ class InvitationAdmin(ApplicationAdmin):
         elif sent > 0:
             self.message_user(request, '%s reminders sent' % sent)
         else:
-            self.message_user(request, 'Reminders couldn\'t be sent!',
+            self.message_user(request, 'Reminders couldn\'t be sent!', level=messages.ERROR)
+
+    def send_reimbursement(self, request, queryset):
+        sent = 0
+        errors = 0
+        for app in queryset:
+            try:
+                app.send_reimbursement(request)
+                sent += 1
+            except ValidationError:
+                errors += 1
+
+        if sent > 0 and errors > 0:
+            self.message_user(request, (
+                "%s reimbursement sent, %s reimbursement cancelled" % (
+                    sent, errors)),
+                              level=messages.WARNING)
+        elif sent > 0:
+            self.message_user(request, '%s reimbursements sent' % sent)
+        else:
+            self.message_user(request, 'Reimbursements couldn\'t be sent!',
                               level=messages.ERROR)
 
     def get_queryset(self, request):
-        return self.model.objects.filter(status=APP_INVITED)
+        return self.model.objects.filter(status__in=[models.APP_INVITED, models.APP_CONFIRMED, models.APP_ATTENDED])
 
 
 admin.site.register(models.Application, admin_class=ApplicationAdmin)

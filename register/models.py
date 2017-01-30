@@ -8,7 +8,6 @@ from django.utils import timezone
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
 
-
 TECH_WEIGHT = 0.2
 
 PERSONAL_WEIGHT = 0.8
@@ -39,6 +38,7 @@ class Application(models.Model):
     submission_date = models.DateTimeField()
     invitation_date = models.DateTimeField(blank=True, null=True)
     sendgrid_id = models.TextField(default="")
+    reimbursement_money = models.IntegerField(blank=True, null=True)
 
     # Personal data
     name = models.TextField()
@@ -93,6 +93,17 @@ class Application(models.Model):
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
+    def send_reimbursement(self, request):
+        if self.status != APP_INVITED and self.status != APP_CONFIRMED:
+            raise ValidationError('Application can\'t be reimbursed as it hasn\'t been invited yet')
+        if not self.scholarship:
+            raise ValidationError('Application didn\'t ask for reimbursement')
+        self.reimbursement_money = 100
+        if self.country == 'Spain':
+            self.reimbursement_money = 50
+        self._send_reimbursement(request)
+        self.save()
+
     def confirm(self, cancellation_url):
         if self.status != APP_INVITED and self.status != APP_CONFIRMED:
             raise ValidationError('Application hasn\'t been invited yet')
@@ -141,7 +152,6 @@ class Application(models.Model):
             '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
 
         )
-        
 
     def _send_confirmation_ack(self, cancellation_url):
         sendgrid_send(
@@ -151,6 +161,20 @@ class Application(models.Model):
              '%token%': self.id,
              '%cancellation_url%': cancellation_url},
             'c4d4d758-974f-437b-af9a-d8532f96d670'
+        )
+
+    def _send_reimbursement(self, request):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] Reimbursement granted",
+            {'%name%': self.name,
+             '%token%': self.id,
+             '%money%': self.reimbursement_money,
+             '%country%': self.country,
+             '%confirmation_url%': self.confirmation_url(request),
+             '%cancellation_url%': self.cancelation_url(request)},
+            '06d613dd-cf70-427b-ae19-6cfe7931c193',
+            from_email='HackUPC Reimbursements Team <reimbursements@hackupc.com>'
         )
 
     class Meta:
