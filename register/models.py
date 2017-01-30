@@ -113,9 +113,8 @@ class Application(models.Model):
         if not self.scholarship:
             raise ValidationError('Application didn\'t ask for reimbursement')
         if not self.reimbursement_money:
-            raise ValidationError('Application has been notified by reimbursements')
+            self.reimbursement_money = calculate_reimbursement(self.country)
 
-        self.reimbursement_money = calculate_reimbursement(self.country)
         self._send_reimbursement(request)
         self.save()
 
