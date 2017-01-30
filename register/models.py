@@ -8,9 +8,15 @@ from django.utils import timezone
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
 
+# Votes weight
 TECH_WEIGHT = 0.2
-
 PERSONAL_WEIGHT = 0.8
+
+# Reimbursement tiers
+COUNTRIES_REIMBURSEMENT = [
+    (['Spain', ], 50),
+]
+DEFAULT_REIMBURSEMENT = 100
 
 APP_ACCEPTED = 'A'
 APP_PENDING = 'P'
@@ -32,6 +38,14 @@ STATUS = [
 
 
 # Create your models here.
+
+def calculate_reimbursement(country):
+    for countries, amount in COUNTRIES_REIMBURSEMENT:
+        if country in countries:
+            return amount
+
+    return DEFAULT_REIMBURSEMENT
+
 
 class Application(models.Model):
     id = models.TextField(primary_key=True)
@@ -98,9 +112,8 @@ class Application(models.Model):
             raise ValidationError('Application can\'t be reimbursed as it hasn\'t been invited yet')
         if not self.scholarship:
             raise ValidationError('Application didn\'t ask for reimbursement')
-        self.reimbursement_money = 100
-        if self.country == 'Spain':
-            self.reimbursement_money = 50
+
+        self.reimbursement_money = calculate_reimbursement(self.country)
         self._send_reimbursement(request)
         self.save()
 

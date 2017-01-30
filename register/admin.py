@@ -101,7 +101,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 class InvitationAdmin(ApplicationAdmin):
-    list_display = ('id', 'name', 'email', 'scholarship', 'pending_since','reimbursement_money', 'status')
+    list_display = ('id', 'name', 'email', 'country', 'scholarship', 'pending_since','reimbursement_money', 'status')
     ordering = ('invitation_date',)
     # Why aren't these overriding super actions?
     actions = ['update_applications', 'reject_application', 'send_reminder', 'send_reimbursement',
@@ -116,6 +116,8 @@ class InvitationAdmin(ApplicationAdmin):
         return actions
 
     def pending_since(self, app):
+        if not app.invitation_date:
+            return None
         return timesince(app.invitation_date)
 
     pending_since.admin_order_field = 'invitation_date'
