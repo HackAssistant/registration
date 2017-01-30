@@ -1,5 +1,9 @@
 from __future__ import unicode_literals
 
+import csv
+
+import os
+from django.conf import settings
 from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -40,9 +44,11 @@ STATUS = [
 # Create your models here.
 
 def calculate_reimbursement(country):
-    for countries, amount in COUNTRIES_REIMBURSEMENT:
-        if country in countries:
-            return amount
+    with open(os.path.join(settings.BASE_DIR, 'reimbursements.csv')) as reimbursements:
+        reader = csv.reader(reimbursements, delimiter=',')
+        for row in reader:
+            if country in row[0]:
+                return int(row[1])
 
     return DEFAULT_REIMBURSEMENT
 
