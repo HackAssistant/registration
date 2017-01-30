@@ -6,8 +6,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
 
-def sendgrid_send(recipients, subject, substitutions, template_id):
-    from_email = "HackUPC Team <contact@hackupc.com>"
+def sendgrid_send(recipients, subject, substitutions, template_id, from_email='HackUPC Team <contact@hackupc.com>'):
     mail = EmailMultiAlternatives(
         subject=subject,
         body='-',
