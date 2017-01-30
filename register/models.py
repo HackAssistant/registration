@@ -17,9 +17,6 @@ TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
 # Reimbursement tiers
-COUNTRIES_REIMBURSEMENT = [
-    (['Spain', ], 50),
-]
 DEFAULT_REIMBURSEMENT = 100
 
 APP_ACCEPTED = 'A'
