@@ -41,8 +41,12 @@ class ApplicationAdmin(admin.ModelAdmin):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
         readonly_fields = [field.name for field in self.opts.local_fields]
-        if 'status' in readonly_fields:
-            readonly_fields.remove('status')
+        user = request.user
+        if user.has_perm('register.invite_application'):
+            if 'status' in readonly_fields:
+                readonly_fields.remove('status')
+            if 'email' in readonly_fields:
+                readonly_fields.remove('email')
         return readonly_fields
 
     def invite(self, request, queryset):
@@ -101,7 +105,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 class InvitationAdmin(ApplicationAdmin):
-    list_display = ('id', 'name', 'email', 'country', 'scholarship', 'pending_since','reimbursement_money', 'status')
+    list_display = ('id', 'name', 'email', 'country', 'scholarship', 'pending_since', 'reimbursement_money', 'status')
     ordering = ('invitation_date',)
     # Why aren't these overriding super actions?
     actions = ['update_applications', 'reject_application', 'send_reminder', 'send_reimbursement',
@@ -114,6 +118,19 @@ class InvitationAdmin(ApplicationAdmin):
         del actions['update_applications']
         del actions['accept_application']
         return actions
+
+    def get_readonly_fields(self, request, obj=None):
+        # make all fields readonly
+        # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
+        readonly_fields = [field.name for field in self.opts.local_fields]
+
+        user = request.user
+        if user.has_perm('register.invite_application'):
+            if 'status' in readonly_fields:
+                readonly_fields.remove('status')
+            if 'email' in readonly_fields:
+                readonly_fields.remove('email')
+        return readonly_fields
 
     def pending_since(self, app):
         if not app.invitation_date:
