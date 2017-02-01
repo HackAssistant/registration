@@ -5,6 +5,7 @@ from django import http
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -53,10 +54,14 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
         tech_vote = request.POST.get('tech_rat',None)
         pers_vote = request.POST.get('pers_rat',None)
         application = models.Application.objects.get(id=request.POST.get('app_id'))
-        if request.POST.get('skip'):
-            add_vote(application, request.user, None, None)
-        else:
-            add_vote(application, request.user, tech_vote, pers_vote)
+        try:
+            if request.POST.get('skip'):
+                add_vote(application, request.user, None, None)
+            else:
+                add_vote(application, request.user, tech_vote, pers_vote)
+        # If application has already been voted -> Skip and bring next application
+        except IntegrityError:
+            pass
         return HttpResponseRedirect(reverse('vote'))
 
     def get_context_data(self, **kwargs):
