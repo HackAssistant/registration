@@ -25,6 +25,11 @@ class CheckInList(LoginRequiredMixin, TemplateView):
     template_name = 'templates/check-in-list.html'
     hackersList = getNotCheckedInhackersList()
 
+    def get_context_data(self, **kwargs):
+        context = super(CheckInList, self).get_context_data(**kwargs)
+        context['applications'] = getNotCheckedInhackersList()
+        return context
+
 
 class CheckInHacker(LoginRequiredMixin, TemplateView):
     template_name = 'templates/check-in-hacker.html'

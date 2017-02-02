@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% block title %}Vote applications - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {# We set the title as lennyface, in out efforts to anonimize the data.. Okay, maybe no #}
+                        <h4 class="text-center">Check In</h4>
+                    </div>
+                    <div class="panel-body">
 
-</body>
-</html>
+                        {% for application in applications %}
+                            <h4>sadjlsakds</h4>
+                        {% endfor %}
+
+
+                    </div>
+                </div>
+        </div>
+    </div>
+{% endblock %}
