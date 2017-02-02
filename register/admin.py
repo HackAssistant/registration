@@ -70,8 +70,6 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were accepted before?',
                               level=messages.ERROR)
 
-    invite.short_description = 'Invite selected applications to HackUPC'
-
     def update_applications(self, request, queryset):
         count = len(ApplicationsTypeform().update_forms())
         self.message_user(request, 'Added %s applications' % count)
@@ -114,7 +112,6 @@ class InvitationAdmin(ApplicationAdmin):
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
         # Remove some unnecessary actions
-        del actions['invite']
         del actions['update_applications']
         del actions['accept_application']
         return actions
