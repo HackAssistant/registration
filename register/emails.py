@@ -24,7 +24,8 @@ def sendgrid_send(recipients, subject, substitutions, template_id, from_email='H
 
 
 class MailListManager:
-    WINTER_17_LIST_ID = "876178"
+    W17_GENERAL_LIST_ID = "876178"
+    W17_TRAVEL_REIMB_LIST_ID = "986640"
 
     def __init__(self):
         self.sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
