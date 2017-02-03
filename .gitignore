@@ -8,5 +8,6 @@ app/db_settings.py
 db.json
 *.sqlite3
 client_secret.json
+insert_missing.sh
 
 app/prod_settings.py
