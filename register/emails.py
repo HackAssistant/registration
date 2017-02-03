@@ -4,6 +4,7 @@ from logging import error
 import sendgrid
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from requests import HTTPError
 
 
 def sendgrid_send(recipients, subject, substitutions, template_id, from_email='HackUPC Team <contact@hackupc.com>'):
@@ -68,7 +69,10 @@ class MailListManager:
     def remove_recipient_from_list(self, recipient_id, list_id):
         params = {'recipient_id': recipient_id, 'list_id': list_id}
         lists = self.sg.client.contactdb.lists
-        response = lists._(list_id).recipients._(recipient_id).delete(query_params=params)
+        try:
+            response = lists._(list_id).recipients._(recipient_id).delete(query_params=params)
+        except HTTPError:
+            error('Could not remove recipient {} from the mail list. Error when calling SendGrid API')
 
         if response.status_code != 204 and response.status_code != 201:
             error('Could not remove recipient {} from the mail list. SendGrid API responded with status code {}.'
