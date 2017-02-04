@@ -16,7 +16,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             {% if application %}
-                                Hey {{ application.name }}
+                                We are sorry {{ application.name }}
                             {% else %}
                                 ¯\_(ツ)_/¯
                             {% endif %}
@@ -24,6 +24,9 @@
                     </div>
                     <div class="panel-body">
                         {{ error }}
+                    </div>
+                    <div class="panel-footer">
+                        Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>
                     </div>
                 </div>
 

@@ -117,6 +117,13 @@ class CancelApplication(TemplateView):
                      We're sorry you won't be able to make it to HackUPC. Hope to see you next edition!
                     """
             })
+        elif application.status == models.APP_EXPIRED:
+            context.update({
+                'error':
+                """
+                Unfortunately your invite has expired.
+                """
+            })
         elif not application.can_be_cancelled():
             context.update({
                 'error':
