@@ -16,14 +16,13 @@ class Command(BaseCommand):
         self.stdout.write('Checking reminders...%s found' % reminders.count())
         self.stdout.write('Sending reminders...')
 
-        count_reminder = len([app.send_last_reminder() for app in reminders])
-        self.stdout.write(self.style.SUCCESS('Sending reminders...Successfully sent %s reminders' % count_reminder))
+        count = len([app.send_last_reminder() for app in reminders])
+        self.stdout.write(self.style.SUCCESS('Sending reminders...Successfully sent %s reminders' % count))
 
         onedayago = datetime.today() - timedelta(days=1)
         self.stdout.write('Checking expired...')
         expired = models.Application.objects.filter(last_reminder__lte=onedayago, status=models.APP_INVITED)
         self.stdout.write('Checking expired...%s found' % expired.count())
         self.stdout.write('Setting expired...')
-
-        count_reminder = len([app.send_last_reminder() for app in reminders])
-        self.stdout.write(self.style.SUCCESS('Setting reminders...Successfully sent %s reminders' % count_reminder))
+        count = len([app.expire() for app in expired])
+        self.stdout.write(self.style.SUCCESS('Setting expired...Successfully expired %s applications' % count))

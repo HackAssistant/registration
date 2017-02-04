@@ -119,6 +119,10 @@ class Application(models.Model):
         self.last_reminder = timezone.now()
         self.save()
 
+    def expire(self):
+        self.status = APP_EXPIRED
+        self.save()
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
