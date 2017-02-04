@@ -26,6 +26,7 @@ APP_INVITED = 'I'
 APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
 APP_ATTENDED = 'T'
+APP_EXPIRED = 'E'
 
 STATUS = [
     (APP_ACCEPTED, 'Accepted'),
@@ -35,6 +36,7 @@ STATUS = [
     (APP_CONFIRMED, 'Confirmed'),
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
+    (APP_EXPIRED, 'Expired'),
 ]
 
 
@@ -54,6 +56,7 @@ class Application(models.Model):
     id = models.TextField(primary_key=True)
     submission_date = models.DateTimeField()
     invitation_date = models.DateTimeField(blank=True, null=True)
+    last_reminder = models.DateTimeField(blank=True, null=True)
     sendgrid_id = models.TextField(default="")
     reimbursement_money = models.IntegerField(blank=True, null=True)
 
@@ -105,7 +108,16 @@ class Application(models.Model):
     def send_reminder(self, request):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
+        if self.status != APP_INVITED:
+            raise ValidationError('Reminder can\'t be sent to none pending applications')
         self._send_reminder(request)
+
+    def send_last_reminder(self):
+        if self.status != APP_INVITED:
+            raise ValidationError('Reminder can\'t be sent to none pending applications')
+        self._send_last_reminder()
+        self.last_reminder = timezone.now()
+        self.save()
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
@@ -167,6 +179,17 @@ class Application(models.Model):
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
+
+        )
+
+    def _send_last_reminder(self):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] Invite expires in 24h",
+            {'%name%': self.name,
+             '%token%': self.id,
+             },
+            '4295b92e-b71d-4b6d-89ec-a4c5fe75a5f6'
 
         )
 
