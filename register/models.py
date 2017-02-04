@@ -8,6 +8,7 @@ from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
+from django.http import Http404
 from django.utils import timezone
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
@@ -138,8 +139,14 @@ class Application(models.Model):
         self.save()
 
     def confirm(self, cancellation_url):
+        if self.status in [APP_ACCEPTED,APP_PENDING,APP_REJECTED]:
+            raise Http404('Unfortunately this invite doesn\'t even exist')
+        elif self.status == APP_CANCELLED:
+            raise ValidationError('This invite has been cancelled.')
+        elif self.status == APP_EXPIRED:
+            raise ValidationError('Unfortunately your invite has expired.')
         if self.status != APP_INVITED and self.status != APP_CONFIRMED:
-            raise ValidationError('Application hasn\'t been invited yet')
+            pass
         if self.status != APP_CONFIRMED:
             m = MailListManager()
             m.add_applicant_to_list(self, m.WINTER_17_LIST_ID)

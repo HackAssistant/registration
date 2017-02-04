@@ -89,7 +89,7 @@ class ConfirmApplication(TemplateView):
         except ValidationError as e:
             context.update({
                 'application': application,
-                'error': "This application hasn't been invited yet.",
+                'error': e.message,
             })
 
         return context
