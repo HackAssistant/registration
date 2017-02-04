@@ -56,14 +56,13 @@ class MailListManager:
 
     def add_applicant_to_list(self, application, list_id):
         # Test if application contains recipientid
-        if application.sendgrid_id != "":
-            recipient_id = application.sendgrid_id
-
-        else:
+        if not application.sendgrid_id:
             # If it doesn't, create recipient on sendgrid and store its id
             recipient_id = self._create_sendgrid_recipient(application)
             application.sendgrid_id = recipient_id
             application.save()
+
+        recipient_id = application.sendgrid_id
 
         # Add recipient to list
         self._add_recipient_to_list(recipient_id, list_id)
@@ -82,9 +81,8 @@ class MailListManager:
 
     def remove_applicant_from_list(self, application, list_id):
 
-        if application.sendgrid_id != "":
-            recipient_id = application.sendgrid_id
-            self._remove_recipient_from_list(recipient_id, list_id)
+        if application.sendgrid_id:
+            self._remove_recipient_from_list(application.sendgrid_id, list_id)
 
         else:
             # If it doesn't have a SG id, we still create and save the
