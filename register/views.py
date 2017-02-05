@@ -89,7 +89,7 @@ class ConfirmApplication(TemplateView):
         except ValidationError as e:
             context.update({
                 'application': application,
-                'error': "This application hasn't been invited yet.",
+                'error': e.message,
             })
 
         return context
@@ -116,6 +116,13 @@ class CancelApplication(TemplateView):
                     Thank you for responding.
                      We're sorry you won't be able to make it to HackUPC. Hope to see you next edition!
                     """
+            })
+        elif application.status == models.APP_EXPIRED:
+            context.update({
+                'error':
+                """
+                Unfortunately your invite has expired.
+                """
             })
         elif not application.can_be_cancelled():
             context.update({
