@@ -8,7 +8,6 @@ from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
-from django.http import Http404
 from django.utils import timezone
 from register.emails import sendgrid_send, MailListManager
 from register.utils import reverse
@@ -110,12 +109,12 @@ class Application(models.Model):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
         if self.status != APP_INVITED:
-            raise ValidationError('Reminder can\'t be sent to none pending applications')
+            raise ValidationError('Reminder can\'t be sent to non-pending applications')
         self._send_reminder(request)
 
     def send_last_reminder(self):
         if self.status != APP_INVITED:
-            raise ValidationError('Reminder can\'t be sent to none pending applications')
+            raise ValidationError('Reminder can\'t be sent to non-pending applications')
         self._send_last_reminder()
         self.last_reminder = timezone.now()
         self.save()
@@ -139,15 +138,13 @@ class Application(models.Model):
         self.save()
 
     def confirm(self, cancellation_url):
-        if self.status in [APP_ACCEPTED,APP_PENDING,APP_REJECTED]:
-            raise Http404('Unfortunately this invite doesn\'t even exist')
+        if self.status in [APP_ACCEPTED, APP_PENDING, APP_REJECTED]:
+            raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
         elif self.status == APP_CANCELLED:
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
-        if self.status != APP_INVITED and self.status != APP_CONFIRMED:
-            pass
-        if self.status != APP_CONFIRMED:
+        if self.status == APP_ATTENDED:
             m = MailListManager()
             m.add_applicant_to_list(self, m.WINTER_17_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
