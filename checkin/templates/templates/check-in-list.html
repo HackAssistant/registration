@@ -16,10 +16,8 @@
                     <div class="panel-body">
 
                         {% for application in applications %}
-                            <a href="/checkin/hacker?id={{ application.id }}"><h4>{{ application.name }} {{ application.lastname }}</h4></a>
+                            <a href="/checkin/hacker/{{ application.id }}"><h4>{{ application.name }} {{ application.lastname }}</h4></a>
                         {% endfor %}
-
-
                     </div>
                 </div>
         </div>

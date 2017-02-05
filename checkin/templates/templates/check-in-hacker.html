@@ -13,7 +13,13 @@
                         <h4 class="text-center">{{ app.lennyface }}</h4>
                     </div>
                     <div class="panel-body">
-                        <h4 class="text-center">{{ app.name }} {{ app.lastname }}</h4>
+                        <h4 class="text-center">
+                            {% include 'include/field.html' with desc='Name' value=app.name|add:' '|add:app.lastname %}
+                        </h4>
+                        <h4 class="text-center">
+                            {% include 'include/field.html' with desc='Email' value=app.email %}
+                        </h4>
+
                         <dl class="dl-horizontal">
 
                         </dl>

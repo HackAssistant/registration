@@ -24,7 +24,7 @@ SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost',]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'register',
+    'checkin'
 ]
 
 MIDDLEWARE = [
