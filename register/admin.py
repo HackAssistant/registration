@@ -8,6 +8,8 @@ from register import models
 from register.utils import export_as_csv_action, create_modeladmin
 from register.forms import ApplicationsTypeform
 
+EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
+
 admin.site.disable_action('delete_selected')
 
 
@@ -18,7 +20,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     search_fields = ('name', 'lastname', 'email', 'description', 'id')
     ordering = ('submission_date',)
     actions = ['update_applications', 'accept_application', 'reject_application', 'invite',
-               export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
+               export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
 
     def votes(self, app):
         return app.vote_avg
@@ -110,7 +112,7 @@ class InvitationAdmin(ApplicationAdmin):
     ordering = ('invitation_date',)
     # Why aren't these overriding super actions?
     actions = ['update_applications', 'reject_application', 'send_reminder', 'send_reimbursement',
-               export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
+               export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
