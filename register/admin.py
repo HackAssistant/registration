@@ -120,6 +120,8 @@ class InvitationAdmin(ApplicationAdmin):
         return actions
 
     def last_reminder_sent(self, app):
+        if not app.invitation_date:
+            return None
         return timesince(app.last_reminder)
 
     last_reminder_sent.admin_order_field = 'last_reminder'
