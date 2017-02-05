@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from django.db import models
 
-# Create your views here.
+from django.urls import reverse
 from django.views.generic import TemplateView
 from models import CheckIn
 
@@ -17,7 +18,7 @@ def checkInHacker(application):
 
 
 def getNotCheckedInhackersList():
-    hackersList = Application.objects.exclude(id__in=[checkin.application for checkin in CheckIn.objects.all()])
+    hackersList = Application.objects.exclude(id__in=[checkin.application.id for checkin in CheckIn.objects.all()])
     return hackersList
 
 
@@ -42,3 +43,11 @@ class CheckInHackerView(LoginRequiredMixin, TemplateView):
             'app': app,
         })
         return context
+
+    def post(self, request, *args, **kwargs):
+        appid = request.POST.get('app_id')
+        app = Application.objects.filter(id=appid)[0]
+        checkInHacker(app)
+        url = reverse('check_in_list')
+        return HttpResponseRedirect(url)
+

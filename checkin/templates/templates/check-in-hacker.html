@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% load static %}
-{% block title %}Vote applications - {% endblock %}
+{% block title %}Check In - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
@@ -29,7 +29,7 @@
                         <form action="" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                            <button class="btn btn-success btn-block" name="Check In" value="checkin">Check In!</button>
+                            <button class="btn btn-success btn-block" name="checkin" value="checkin">Check In!</button>
                         </form>
 
 
