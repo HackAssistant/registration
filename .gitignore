@@ -6,3 +6,4 @@ env
 fetch.sh
 
 *.sqlite3
+app/settings.py

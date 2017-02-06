@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from models import CheckIn
 
+from tables import ApplicationsTable
+
 from register.models import Application
 
 
@@ -28,9 +30,11 @@ class CheckInListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(CheckInListView, self).get_context_data(**kwargs)
-        context['applications'] = getNotCheckedInhackersList()
+        applications = getNotCheckedInhackersList()
+        context['applications'] = applications
+        applicationsTable = ApplicationsTable(applications)
+        context['applicationsTable'] = applicationsTable
         return context
-
 
 class CheckInHackerView(LoginRequiredMixin, TemplateView):
     template_name = 'templates/check-in-hacker.html'
@@ -50,4 +54,3 @@ class CheckInHackerView(LoginRequiredMixin, TemplateView):
         checkInHacker(app)
         url = reverse('check_in_list')
         return HttpResponseRedirect(url)
-

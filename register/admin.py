@@ -36,13 +36,13 @@ class ApplicationAdmin(admin.ModelAdmin):
 
         return actions
 
-    def get_readonly_fields(self, request, obj=None):
+    '''def get_readonly_fields(self, request, obj=None):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
         readonly_fields = [field.name for field in self.opts.local_fields]
         if 'status' in readonly_fields:
             readonly_fields.remove('status')
-        return readonly_fields
+        return readonly_fields'''
 
     def invite(self, request, queryset):
         invited = 0

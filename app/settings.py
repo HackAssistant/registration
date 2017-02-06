@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'register',
-    'checkin'
+    'checkin',
+    'table'
 ]
 
 MIDDLEWARE = [
