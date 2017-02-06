@@ -1,12 +1,12 @@
+import json
 from urllib.error import HTTPError
 
-from django.core.management.base import BaseCommand
-import json
-
-from register.models import Application
-from register.emails import MailListManager
-from django.conf import settings
 import sendgrid
+from django.conf import settings
+from django.core.management.base import BaseCommand
+
+from register.emails import MailListManager
+from register.models import Application
 
 
 class Command(BaseCommand):
