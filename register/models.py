@@ -144,7 +144,7 @@ class Application(models.Model):
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
-        if self.status == APP_ACCEPTED:
+        if self.status == APP_INVITED:
             m = MailListManager()
             m.add_applicant_to_list(self, m.WINTER_17_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
