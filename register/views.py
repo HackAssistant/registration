@@ -5,6 +5,7 @@ from django import http
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -53,10 +54,14 @@ class VoteApplicationView(LoginRequiredMixin, TemplateView):
         tech_vote = request.POST.get('tech_rat',None)
         pers_vote = request.POST.get('pers_rat',None)
         application = models.Application.objects.get(id=request.POST.get('app_id'))
-        if request.POST.get('skip'):
-            add_vote(application, request.user, None, None)
-        else:
-            add_vote(application, request.user, tech_vote, pers_vote)
+        try:
+            if request.POST.get('skip'):
+                add_vote(application, request.user, None, None)
+            else:
+                add_vote(application, request.user, tech_vote, pers_vote)
+        # If application has already been voted -> Skip and bring next application
+        except IntegrityError:
+            pass
         return HttpResponseRedirect(reverse('vote'))
 
     def get_context_data(self, **kwargs):
@@ -84,7 +89,7 @@ class ConfirmApplication(TemplateView):
         except ValidationError as e:
             context.update({
                 'application': application,
-                'error': "This application hasn't been invited yet.",
+                'error': e.message,
             })
 
         return context
@@ -111,6 +116,13 @@ class CancelApplication(TemplateView):
                     Thank you for responding.
                      We're sorry you won't be able to make it to HackUPC. Hope to see you next edition!
                     """
+            })
+        elif application.status == models.APP_EXPIRED:
+            context.update({
+                'error':
+                """
+                Unfortunately your invite has expired.
+                """
             })
         elif not application.can_be_cancelled():
             context.update({

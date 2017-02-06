@@ -8,6 +8,8 @@ from register import models
 from register.utils import export_as_csv_action, create_modeladmin
 from register.forms import ApplicationsTypeform
 
+EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
+
 admin.site.disable_action('delete_selected')
 
 
@@ -18,7 +20,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     search_fields = ('name', 'lastname', 'email', 'description', 'id')
     ordering = ('submission_date',)
     actions = ['update_applications', 'accept_application', 'reject_application', 'invite',
-               export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
+               export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
 
     def votes(self, app):
         return app.vote_avg
@@ -41,8 +43,12 @@ class ApplicationAdmin(admin.ModelAdmin):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
         readonly_fields = [field.name for field in self.opts.local_fields]
-        if 'status' in readonly_fields:
-            readonly_fields.remove('status')
+        user = request.user
+        if user.has_perm('register.invite_application'):
+            if 'status' in readonly_fields:
+                readonly_fields.remove('status')
+            if 'email' in readonly_fields:
+                readonly_fields.remove('email')
         return readonly_fields
 
     def invite(self, request, queryset):
@@ -65,8 +71,6 @@ class ApplicationAdmin(admin.ModelAdmin):
         else:
             self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were accepted before?',
                               level=messages.ERROR)
-
-    invite.short_description = 'Invite selected applications to HackUPC'
 
     def update_applications(self, request, queryset):
         count = len(ApplicationsTypeform().update_forms())
@@ -101,19 +105,28 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 class InvitationAdmin(ApplicationAdmin):
-    list_display = ('id', 'name', 'email', 'country', 'scholarship', 'pending_since','reimbursement_money', 'status')
+    list_display = (
+        'id', 'name', 'email', 'country', 'scholarship', 'reimbursement_money', 'pending_since', 'last_reminder_sent',
+        'status'
+    )
     ordering = ('invitation_date',)
     # Why aren't these overriding super actions?
     actions = ['update_applications', 'reject_application', 'send_reminder', 'send_reimbursement',
-               export_as_csv_action(fields=['name', 'lastname', 'university', 'country'])]
+               export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
         # Remove some unnecessary actions
-        del actions['invite']
         del actions['update_applications']
         del actions['accept_application']
         return actions
+
+    def last_reminder_sent(self, app):
+        if not app.last_reminder:
+            return None
+        return timesince(app.last_reminder)
+
+    last_reminder_sent.admin_order_field = 'last_reminder'
 
     def pending_since(self, app):
         if not app.invitation_date:

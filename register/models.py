@@ -26,6 +26,7 @@ APP_INVITED = 'I'
 APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
 APP_ATTENDED = 'T'
+APP_EXPIRED = 'E'
 
 STATUS = [
     (APP_ACCEPTED, 'Accepted'),
@@ -35,6 +36,7 @@ STATUS = [
     (APP_CONFIRMED, 'Confirmed'),
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
+    (APP_EXPIRED, 'Expired'),
 ]
 
 
@@ -54,6 +56,7 @@ class Application(models.Model):
     id = models.TextField(primary_key=True)
     submission_date = models.DateTimeField()
     invitation_date = models.DateTimeField(blank=True, null=True)
+    last_reminder = models.DateTimeField(blank=True, null=True)
     sendgrid_id = models.TextField(default="")
     reimbursement_money = models.IntegerField(blank=True, null=True)
 
@@ -105,7 +108,20 @@ class Application(models.Model):
     def send_reminder(self, request):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
+        if self.status != APP_INVITED:
+            raise ValidationError('Reminder can\'t be sent to non-pending applications')
         self._send_reminder(request)
+
+    def send_last_reminder(self):
+        if self.status != APP_INVITED:
+            raise ValidationError('Reminder can\'t be sent to non-pending applications')
+        self._send_last_reminder()
+        self.last_reminder = timezone.now()
+        self.save()
+
+    def expire(self):
+        self.status = APP_EXPIRED
+        self.save()
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
@@ -122,11 +138,15 @@ class Application(models.Model):
         self.save()
 
     def confirm(self, cancellation_url):
-        if self.status != APP_INVITED and self.status != APP_CONFIRMED:
-            raise ValidationError('Application hasn\'t been invited yet')
-        if self.status != APP_CONFIRMED:
+        if self.status in [APP_ACCEPTED, APP_PENDING, APP_REJECTED]:
+            raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
+        elif self.status == APP_CANCELLED:
+            raise ValidationError('This invite has been cancelled.')
+        elif self.status == APP_EXPIRED:
+            raise ValidationError('Unfortunately your invite has expired.')
+        if self.status == APP_ATTENDED:
             m = MailListManager()
-            m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
+            m.add_applicant_to_list(self, m.WINTER_17_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
             self.save()
@@ -141,7 +161,7 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.save()
             m = MailListManager()
-            m.remove_recipient_from_list(self.sendgrid_id, m.W17_GENERAL_LIST_ID)
+            m.remove_applicant_from_list(self, m.WINTER_17_LIST_ID)
 
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
@@ -167,6 +187,17 @@ class Application(models.Model):
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
+
+        )
+
+    def _send_last_reminder(self):
+        sendgrid_send(
+            [self.email],
+            "[HackUPC] Invite expires in 24h",
+            {'%name%': self.name,
+             '%token%': self.id,
+             },
+            '4295b92e-b71d-4b6d-89ec-a4c5fe75a5f6'
 
         )
 
