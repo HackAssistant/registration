@@ -19,11 +19,12 @@
                         <h4 class="text-center">
                             {% include 'include/field.html' with desc='Email' value=app.email %}
                         </h4>
-
-                        <dl class="dl-horizontal">
-
-                        </dl>
-
+                        <h4 class="text-center">
+                            {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
+                        </h4>
+                        <h4 class="text-center">
+                            {% include 'include/field.html' with desc='Diet' value=app.diet %}
+                        </h4>
                     </div>
                     <div class="panel-footer">
                         <form action="" method="post">
