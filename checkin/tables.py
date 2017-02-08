@@ -1,3 +1,5 @@
+from django.urls import reverse_lazy
+
 from models import CheckIn
 from register.models import Application
 
@@ -14,5 +16,3 @@ class ApplicationsTable(Table):
     class Meta:
         model = Application
         search = True
-        ajax = True
-        a

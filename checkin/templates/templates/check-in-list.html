@@ -5,11 +5,14 @@
 {% block title %}Check In - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
         <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-default">
+            <div style="text-align: center;">
+                <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="text-center">Check In</h4>
                     </div>
@@ -17,6 +20,7 @@
                         {% render_table applicationsTable %}
                     </div>
                 </div>
-        </div>
+            </div>
+            </center>
     </div>
 {% endblock %}

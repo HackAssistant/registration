@@ -6,6 +6,8 @@ from django.db import models
 
 from django.urls import reverse
 from django.views.generic import TemplateView
+from table.views import FeedDataView
+
 from models import CheckIn
 
 from tables import ApplicationsTable
@@ -23,18 +25,10 @@ def getNotCheckedInhackersList():
     hackersList = Application.objects.exclude(id__in=[checkin.application.id for checkin in CheckIn.objects.all()])
     return hackersList
 
-
-class CheckInListView(LoginRequiredMixin, TemplateView):
-    template_name = 'templates/check-in-list.html'
-    hackersList = getNotCheckedInhackersList()
-
-    def get_context_data(self, **kwargs):
-        context = super(CheckInListView, self).get_context_data(**kwargs)
-        applications = getNotCheckedInhackersList()
-        context['applications'] = applications
-        applicationsTable = ApplicationsTable(applications)
-        context['applicationsTable'] = applicationsTable
-        return context
+def CheckInList(request):
+    applications = getNotCheckedInhackersList()
+    table = ApplicationsTable(applications)
+    return render(request, 'templates/check-in-list.html', {'applicationsTable': table})
 
 class CheckInHackerView(LoginRequiredMixin, TemplateView):
     template_name = 'templates/check-in-hacker.html'
