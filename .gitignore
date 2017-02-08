@@ -4,6 +4,10 @@ env
 *.pyc
 /staticfiles
 fetch.sh
-
+app/db_settings.py
+db.json
 *.sqlite3
-app/settings.py
+client_secret.json
+insert_missing.sh
+check_invites.sh
+app/prod_settings.py

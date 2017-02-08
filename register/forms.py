@@ -9,14 +9,14 @@ typeform_key = settings.REGISTER_APP['typeform_key']
 
 
 class ApplicationFormFetcher(object):
-    def fetch(self):
+    def _fetch(self):
         """
         Fetches data from external form
         :return: List of python objects
         """
         raise NotImplemented
 
-    def load(self, obj):
+    def _load(self, obj):
         """
         Given a python object load to model
         :param obj: python object obtained from from
@@ -29,11 +29,29 @@ class ApplicationFormFetcher(object):
         Outside method. Loads all data, loads to models and saves them
         :return: List n None, where n is the number of objects saved to the database
         """
-        forms = self.fetch()
+        forms = self._fetch()
         if not forms:
             return []
-        applications = map(self.load, forms)
+        applications = map(self._load, forms)
         return [app.save() for app in applications]
+
+    def insert_forms(self):
+        """
+        Outside method. Loads all data, loads to models and saves them. If existing, only updates given fields
+        :return: List n None, where n is the number of objects saved to the database
+        """
+        forms = self._fetch()
+        if not forms:
+            return []
+        applications = map(self._load, forms)
+        ret = []
+        for app in applications:
+            try:
+                ret += [app.save(force_insert=True)]
+            except Exception as e:
+                pass
+
+        return ret
 
 
 class TypeformFetcher(ApplicationFormFetcher):
@@ -58,14 +76,14 @@ class TypeformFetcher(ApplicationFormFetcher):
         """
         return self.base_url + self.form_id
 
-    def fetch(self):
+    def _fetch(self):
         resp = requests.get(self.url, params={'key': typeform_key, 'completed': 'true', 'offset': self.get_offset()})
         if resp.status_code != 200:
             error('The API responded with {}, status code:' + str(resp.status_code))
             return []
         return json.loads(resp.text)['responses']
 
-    def load(self, obj):
+    def _load(self, obj):
         a = self.get_model()()
         a.id = obj['token']
         a.submission_date = obj['metadata']['date_submit']
@@ -129,3 +147,8 @@ class ApplicationsTypeform(TypeformFetcher):
     @property
     def form_id(self):
         return 'JCVBqv'
+
+
+class ApplicationsTypeformAll(ApplicationsTypeform):
+    def get_offset(self):
+        return 0
