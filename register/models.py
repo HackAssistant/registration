@@ -98,11 +98,12 @@ class Application(models.Model):
     def invite(self, request):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite user')
-        if self.status != APP_ACCEPTED:
+        if self.status not in [APP_ACCEPTED, APP_EXPIRED]:
             raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
         self._send_invite(request)
         self.status = APP_INVITED
         self.invitation_date = timezone.now()
+        self.last_reminder = None
         self.save()
 
     def send_reminder(self, request):
