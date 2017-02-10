@@ -15,7 +15,7 @@ admin.site.disable_action('delete_selected')
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'lastname', 'email', 'votes', 'status')
-    list_filter = ('status', 'first_timer', 'scholarship', 'university', 'country')
+    list_filter = ('status', 'first_timer', 'scholarship', 'university', 'country', 'under_age')
     list_per_page = 200
     search_fields = ('name', 'lastname', 'email', 'description', 'id')
     ordering = ('submission_date',)
@@ -107,7 +107,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 class InvitationAdmin(ApplicationAdmin):
     list_display = (
         'id', 'name', 'email', 'country', 'scholarship', 'reimbursement_money', 'pending_since', 'last_reminder_sent',
-        'status'
+        'status',
     )
     ordering = ('invitation_date',)
     # Why aren't these overriding super actions?
