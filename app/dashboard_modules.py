@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Sum
 from jet.dashboard.modules import DashboardModule
 from register.models import Application, STATUS
 
@@ -54,3 +54,4 @@ class AppsStats(DashboardModule):
 
         self.tshirts = qs.values('tshirt_size').annotate(count=Count('tshirt_size'))
         self.diets = qs.values('diet').annotate(count=Count('diet'))
+        self.amount = qs.aggregate(total=Sum('reimbursement_money'))

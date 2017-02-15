@@ -10,11 +10,11 @@
     </tr>
     </thead>
     <tbody>
-        <tr>
-            {% for tshirt in module.tshirts %}
-                <td width="1" align="center">{{ tshirt.count }}</td>
-            {% endfor %}
-        </tr>
+    <tr>
+        {% for tshirt in module.tshirts %}
+            <td width="1" align="center">{{ tshirt.count }}</td>
+        {% endfor %}
+    </tr>
     </tbody>
 </table>
 <h4>Diet</h4>
@@ -27,10 +27,12 @@
     </tr>
     </thead>
     <tbody>
-        <tr>
-            {% for diet in module.diets %}
-                <td width="1" align="center">{{ diet.count }}</td>
-            {% endfor %}
-        </tr>
+    <tr>
+        {% for diet in module.diets %}
+            <td width="1" align="center">{{ diet.count }}</td>
+        {% endfor %}
+    </tr>
     </tbody>
 </table>
+<h4>Reimbursement money</h4>
+<h2>{{ module.amount.total }} €</h2>
