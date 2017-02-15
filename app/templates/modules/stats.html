@@ -34,5 +34,22 @@
     </tr>
     </tbody>
 </table>
+<h4>Status</h4>
+<table class="table">
+    <thead>
+    <tr>
+        {% for status in module.count_status %}
+            <th>{{ status.status }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        {% for status in module.count_status %}
+            <td width="1" align="center">{{ status.count }}</td>
+        {% endfor %}
+    </tr>
+    </tbody>
+</table>
 <h4>Reimbursement money</h4>
 <h2>{{ module.amount.total }} €</h2>

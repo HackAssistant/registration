@@ -55,3 +55,4 @@ class AppsStats(DashboardModule):
         self.tshirts = qs.values('tshirt_size').annotate(count=Count('tshirt_size'))
         self.diets = qs.values('diet').annotate(count=Count('diet'))
         self.amount = qs.aggregate(total=Sum('reimbursement_money'))
+        self.count_status = Application.objects.all().values('status').annotate(count=Count('status'))
