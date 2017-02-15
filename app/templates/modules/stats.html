@@ -1,0 +1,36 @@
+{% load humanize %}
+
+<h4>T-Shirts</h4>
+<table class="table">
+    <thead>
+    <tr>
+        {% for tshirt in module.tshirts %}
+            <th>{{ tshirt.tshirt_size }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for tshirt in module.tshirts %}
+                <td width="1" align="center">{{ tshirt.count }}</td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+<h4>Diet</h4>
+<table class="table">
+    <thead>
+    <tr>
+        {% for diet in module.diets %}
+            <th>{{ diet.diet }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for diet in module.diets %}
+                <td width="1" align="center">{{ diet.count }}</td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>

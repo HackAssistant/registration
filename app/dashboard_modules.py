@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Count
 from jet.dashboard.modules import DashboardModule
+from register.models import Application, STATUS
 
 
 class BestReviewerForm(forms.Form):
@@ -25,3 +26,31 @@ class BestReviewers(DashboardModule):
     def init_with_context(self, context):
         self.children = User.objects.annotate(vote_count=Count('vote__calculated_vote')) \
                             .order_by('-vote_count')[:self.limit]
+
+
+class AppsStatsForm(forms.Form):
+    status = forms.ChoiceField(label='Status', choices=STATUS+[('__all__','All')])
+
+
+class AppsStats(DashboardModule):
+    title = 'Stats'
+    template = 'modules/stats.html'
+    status = '__all__'
+    settings_form = AppsStatsForm
+
+    def settings_dict(self):
+        return {
+            'status': self.status
+        }
+
+    def load_settings(self, settings):
+        self.status = settings.get('status', self.status)
+
+    def init_with_context(self, context):
+        qs = Application.objects.all()
+
+        if self.status != '__all__':
+            qs = qs.filter(status=self.status)
+
+        self.tshirts = qs.values('tshirt_size').annotate(count=Count('tshirt_size'))
+        self.diets = qs.values('diet').annotate(count=Count('diet'))
