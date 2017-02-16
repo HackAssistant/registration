@@ -18,9 +18,13 @@
                     </div>
                     <div class="panel-body">
                         {% render_table applicationsTable %}
+                    </div>
+                    <div class="panel-footer">
                         {% block extra_buttons %}
-                            <a class="btn btn-default" href="{% url 'check_in_all_list' %}">Get non-confirmed applications</a>
+                            <a class="btn btn-default btn-block" href="{% url 'check_in_all_list' %}">Non-confirmed
+                                applications</a>
                         {% endblock %}
+                        <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">QR Scanner</a>
                     </div>
                 </div>
             </div>

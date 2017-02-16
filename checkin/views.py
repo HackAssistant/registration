@@ -1,6 +1,7 @@
 from checkin.tables import ApplicationsTable
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
 from register import models
@@ -30,6 +31,10 @@ class CheckInAllList(CheckInList):
         return models.Application.objects.exclude(status=models.APP_ATTENDED)
 
 
+class QRView(CheckInList):
+    template_name = 'checkin/test.html'
+
+
 class CheckInHackerView(PermissionRequiredMixin, TemplateView):
     template_name = 'checkin/hacker.html'
     permission_required = 'application.attended_application'
@@ -37,8 +42,9 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
+        app = get_object_or_404(models.Application,pk=appid)
         context.update({
-            'app': (models.Application.objects.get(id=appid)),
+            'app': app
         })
         return context
 
