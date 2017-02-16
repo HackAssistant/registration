@@ -10,17 +10,20 @@
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-10 col-md-offset-1">
             <div style="text-align: center;">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4 class="text-center">Check In</h4>
+                        <h4 class="text-center">{% block panel_title %}Confirmed applications{% endblock %}</h4>
                     </div>
                     <div class="panel-body">
                         {% render_table applicationsTable %}
+                        {% block extra_buttons %}
+                            <a class="btn btn-default" href="{% url 'check_in_all_list' %}">Get non-confirmed applications</a>
+                        {% endblock %}
                     </div>
                 </div>
             </div>
-            </center>
+        </div>
     </div>
 {% endblock %}

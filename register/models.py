@@ -169,6 +169,10 @@ class Application(models.Model):
     def cancelation_url(self, request=None):
         return reverse('cancel_app', kwargs={'token': self.id}, request=request)
 
+    def check_in(self):
+        self.status = APP_ATTENDED
+        self.save()
+
     def _send_invite(self, request):
         sendgrid_send(
             [self.email],
@@ -229,7 +233,8 @@ class Application(models.Model):
         permissions = (
             ("accept_application", "Can accept applications"),
             ("invite_application", "Can invite applications"),
-            ("attended_application", "Can mark as attended applications"),
+            ("vote", "Can invite applications"),
+            ("checkin", "Can mark as attended applications"),
             ("reject_application", "Can reject applications"),
             ("force_status", "Can force status application"),
         )

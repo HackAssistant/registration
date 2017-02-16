@@ -33,5 +33,5 @@ urlpatterns = [
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^', include('register.urls')),
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
-    url(r'^', include('checkin.urls'))
+    url(r'^checkin/', include('checkin.urls'))
 ]
