@@ -13,8 +13,7 @@ from django.views.generic import TemplateView
 from register import models
 
 
-def root_view(request):
-    return HttpResponseRedirect(reverse('vote'))
+
 
 
 def add_vote(application, user, tech_rat, pers_rat):
