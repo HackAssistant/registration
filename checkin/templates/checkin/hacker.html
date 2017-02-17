@@ -13,6 +13,13 @@
                     <h4 class="text-center">{{ app.lennyface }}</h4>
                 </div>
                 <div class="panel-body">
+                    {% if checkedin %}
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <strong>Hacker checked-in!</strong> Good job! Nothing else to see here, you can move on :D
+                        </div>
+                    {% endif %}
                     <dl class="dl-horizontal">
                         {% include 'include/field.html' with desc='Name' value=app.name|add:' '|add:app.lastname %}
                         {% include 'include/field.html' with desc='Email' value=app.email %}
@@ -21,13 +28,19 @@
                     </dl>
                 </div>
                 <div class="panel-footer">
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                        <button class="btn btn-success btn-block" name="checkin" value="checkin">Check In!</button>
-                    </form>
-                    <a class="btn btn-default btn-block" href="javascript:history.back()">Go back</a>
-
+                    {% if checkedin %}
+                        <h4>Let's keep this up!</h4>
+                        <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers manually...</a>
+                        <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">... or try the QR
+                            better?</a>
+                    {% else %}
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                            <button class="btn btn-success btn-block" name="checkin" value="checkin">Check In!</button>
+                        </form>
+                        <a class="btn btn-default btn-block" href="javascript:history.back()">Go back</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
