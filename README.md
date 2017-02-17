@@ -1,4 +1,8 @@
-# HackUPC Backend
+<br>
+<p align="center">
+  <img alt="HackUPC Fall 2016" src="https://github.com/hackupc/frontend/raw/master/src/images/hackupc-header-blue.png" width="620"/>
+</p>
+<br>
 
 Backend for application management. Automatically retrieves Typeform applications. Review application interface. Sends invites and controls confirmation and cancellation application flow. Check-in interface. Admin dashboard with stats. Uses Sendgrid API for email management.
 
