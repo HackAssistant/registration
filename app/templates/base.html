@@ -47,11 +47,11 @@
                     {% if request.user.is_staff %}
                         <li><a href="{% url 'admin:index' %}">Admin</a></li>
                     {% endif %}
-                    {% if perms.application.vote %}
+                    {% if perms.register.vote %}
                         <li><a href="{% url 'vote' %}">Vote</a></li>
                         <li><a href="{% url 'ranking' %}">Ranking</a></li>
                     {% endif %}
-                    {% if perms.application.checkin %}
+                    {% if perms.register.checkin %}
                         <li><a href="{% url 'check_in_list' %}">Check-in</a></li>
                     {% endif %}
                     <li><a href="{% url 'password_change' %}">Change password</a></li>

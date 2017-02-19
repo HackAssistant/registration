@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 from django import http
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -25,7 +25,8 @@ def add_vote(application, user, tech_rat, pers_rat):
     v.save()
     return v
 
-class RankingView(LoginRequiredMixin, TemplateView):
+class RankingView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'register.vote'
     template_name = 'ranking.html'
 
     def get_context_data(self, **kwargs):
@@ -34,7 +35,8 @@ class RankingView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class VoteApplicationView(LoginRequiredMixin, TemplateView):
+class VoteApplicationView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'register.vote'
     template_name = 'vote.html'
 
     def get_next_application(self):
