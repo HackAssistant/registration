@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load table_tags %}
+{% load static %}
+{% block title %}Check In - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        <div class="col-md-10 col-md-offset-1">
+            <div style="text-align: center;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="text-center">{% block panel_title %}Confirmed applications{% endblock %}</h4>
+                    </div>
+                    <div class="panel-body">
+                        {% render_table applicationsTable %}
+                    </div>
+                    <div class="panel-footer">
+                        {% block extra_buttons %}
+                            <a class="btn btn-default btn-block" href="{% url 'check_in_all_list' %}">Non-confirmed
+                                applications</a>
+                        {% endblock %}
+                        <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">QR Scanner</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

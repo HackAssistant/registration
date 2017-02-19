@@ -43,6 +43,10 @@ class ApplicationAdmin(admin.ModelAdmin):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
         readonly_fields = [field.name for field in self.opts.local_fields]
+        if 'status' in readonly_fields:
+            readonly_fields.remove('status')
+        return readonly_fields
+
         user = request.user
         if user.has_perm('register.invite_application'):
             if 'status' in readonly_fields:
