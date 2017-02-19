@@ -33,8 +33,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
-        user = request.user
-        if not user.has_perm('register.invite_application') and 'invite' in actions:
+        if not request.user.has_perm('register.invite_application') and 'invite' in actions:
             del actions['invite']
 
         return actions
@@ -43,12 +42,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         # make all fields readonly
         # Inspired in: https://gist.github.com/vero4karu/d028f7c1f76563a06b8e
         readonly_fields = [field.name for field in self.opts.local_fields]
-        if 'status' in readonly_fields:
-            readonly_fields.remove('status')
-        return readonly_fields
-
-        user = request.user
-        if user.has_perm('register.invite_application'):
+        if request.user.has_perm('register.invite_application'):
             if 'status' in readonly_fields:
                 readonly_fields.remove('status')
             if 'email' in readonly_fields:
