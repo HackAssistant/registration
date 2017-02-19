@@ -16,7 +16,9 @@
                         <h4 class="text-center">{% block panel_title %}Confirmed applications{% endblock %}</h4>
                     </div>
                     <div class="panel-body">
-                        {% render_table applicationsTable %}
+                        <div class="table-responsive">
+                            {% render_table applicationsTable %}
+                        </div>
                     </div>
                     <div class="panel-footer">
                         {% block extra_buttons %}
