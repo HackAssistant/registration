@@ -1,3 +1,4 @@
+from checkin.models import CheckIn
 from checkin.tables import ApplicationsTable
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
@@ -53,4 +54,8 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
         appid = request.POST.get('app_id')
         app = models.Application.objects.get(id=appid)
         app.check_in()
+        ci =CheckIn()
+        ci.user = request.user
+        ci.application = app
+        ci.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
