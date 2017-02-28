@@ -95,6 +95,9 @@ class Application(models.Model):
 
     # TODO: TEAM EXTERNAL
 
+    def __str__(self):
+        return self.name + ' ' + self.lastname
+
     def invite(self, request):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite user')
