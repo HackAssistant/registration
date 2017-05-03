@@ -86,3 +86,7 @@ Sends last reminder email to applications invited (not confirmed or cancelled) t
 - Activate virtualenv (optional)
 - Run: `python manange.py check_invites`
 
+
+# License
+
+MIT © Hackers@UPC
