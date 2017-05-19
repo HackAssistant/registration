@@ -4,6 +4,8 @@
 </p>
 <br>
 
+[![Code Climate](https://codeclimate.com/github/hackupc/backend/badges/gpa.svg)](https://codeclimate.com/github/hackupc/backend)
+
 Backend for application management. Automatically retrieves Typeform applications. Review application interface. Sends invites and controls confirmation and cancellation application flow. Check-in interface. Admin dashboard with stats. Uses Sendgrid API for email management.
 
 
