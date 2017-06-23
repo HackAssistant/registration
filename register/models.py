@@ -1,16 +1,19 @@
 from __future__ import unicode_literals
 
 import csv
-
 import os
+
 from django.conf import settings
 from django.contrib.auth import models as admin_models
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
-from register.emails import sendgrid_send, MailListManager
-from register.utils import reverse
+
+from app.emails import sendgrid_send, MailListManager
+from app.utils import reverse
 
 # Votes weight
 TECH_WEIGHT = 0.2
@@ -19,8 +22,8 @@ PERSONAL_WEIGHT = 0.8
 # Reimbursement tiers
 DEFAULT_REIMBURSEMENT = 100
 
-APP_ACCEPTED = 'A'
-APP_PENDING = 'P'
+APP_STARTED = 'S'
+APP_COMPLETED = 'P'
 APP_REJECTED = 'R'
 APP_INVITED = 'I'
 APP_CONFIRMED = 'C'
@@ -29,8 +32,8 @@ APP_ATTENDED = 'T'
 APP_EXPIRED = 'E'
 
 STATUS = [
-    (APP_ACCEPTED, 'Accepted'),
-    (APP_PENDING, 'Pending'),
+    (APP_STARTED, 'Started'),
+    (APP_COMPLETED, 'Completed'),
     (APP_REJECTED, 'Rejected'),
     (APP_INVITED, 'Invited'),
     (APP_CONFIRMED, 'Confirmed'),
@@ -58,31 +61,40 @@ class Application(models.Model):
     invitation_date = models.DateTimeField(blank=True, null=True)
     last_reminder = models.DateTimeField(blank=True, null=True)
     sendgrid_id = models.TextField(default="")
-    reimbursement_money = models.IntegerField(blank=True, null=True)
 
     # Personal data
     name = models.TextField()
     lastname = models.TextField()
     email = models.EmailField()
-    graduation = models.DateField()
+    country = models.TextField()
+    under_age = models.NullBooleanField()
+    gender = models.TextField(null=True)
+
+    # University
+    graduationYear = models.IntegerField()
     university = models.TextField()
     degree = models.TextField(default='Computer Science')
-    under_age = models.NullBooleanField()
 
     # URLs
     github = models.URLField()
     devpost = models.URLField()
     linkedin = models.URLField()
     site = models.URLField()
+    resume = models.URLField()
 
-    # Self improvement
+    # About you
     first_timer = models.NullBooleanField()
     description = models.TextField()
     projects = models.TextField()
+
+    # Info for swag
     diet = models.TextField()
     tshirt_size = models.CharField(max_length=3, default='M')
-    country = models.TextField()
+
+    # Reimbursement
     scholarship = models.NullBooleanField()
+    reimbursement_money = models.IntegerField(blank=True, null=True)
+
     lennyface = models.TextField(default='-.-')
 
     # Team
@@ -91,30 +103,29 @@ class Application(models.Model):
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=STATUS, default=APP_PENDING, max_length=2)
+    status = models.CharField(choices=STATUS, default=APP_STARTED, max_length=2)
+
+    invited_by = models.TextField(null=True)
 
     # TODO: TEAM EXTERNAL
 
-    def __str__(self):
+    def __repr__(self):
         return self.name + ' ' + self.lastname
 
     def invite(self, request):
         if not request.user.has_perm('register.invite_application'):
             raise ValidationError('User doesn\'t have permission to invite user')
-        if self.status not in [APP_ACCEPTED, APP_EXPIRED]:
-            raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
-        self._send_invite(request)
+        # We can re-invite someone invited
+        if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED]:
+            raise ValidationError('Application needs to be completed to invite. Current status: %s' % self.status)
+        if self.status == APP_INVITED:
+            self._send_invite(request, mail_title="[HackUPC] Missing answer")
+        else:
+            self._send_invite(request)
         self.status = APP_INVITED
         self.invitation_date = timezone.now()
         self.last_reminder = None
         self.save()
-
-    def send_reminder(self, request):
-        if not request.user.has_perm('register.invite_application'):
-            raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
-        if self.status != APP_INVITED:
-            raise ValidationError('Reminder can\'t be sent to non-pending applications')
-        self._send_reminder(request)
 
     def send_last_reminder(self):
         if self.status != APP_INVITED:
@@ -142,9 +153,7 @@ class Application(models.Model):
         self.save()
 
     def confirm(self, cancellation_url):
-        if self.status in [APP_ACCEPTED, APP_PENDING, APP_REJECTED]:
-            raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
-        elif self.status == APP_CANCELLED:
+        if self.status == APP_CANCELLED:
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
@@ -154,6 +163,8 @@ class Application(models.Model):
             self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
             self.save()
+        else:
+            raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED
@@ -177,25 +188,14 @@ class Application(models.Model):
         self.status = APP_ATTENDED
         self.save()
 
-    def _send_invite(self, request):
+    def _send_invite(self, request, mail_title="[HackUPC] You are invited!"):
         sendgrid_send(
             [self.email],
-            "[HackUPC] You are invited!",
+            mail_title,
             {'%name%': self.name,
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
-        )
-
-    def _send_reminder(self, request):
-        sendgrid_send(
-            [self.email],
-            "[HackUPC] Missing answer",
-            {'%name%': self.name,
-             '%confirmation_url%': self.confirmation_url(request),
-             '%cancellation_url%': self.cancelation_url(request)},
-            '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
-
         )
 
     def _send_last_reminder(self):
@@ -235,12 +235,11 @@ class Application(models.Model):
 
     class Meta:
         permissions = (
-            ("accept_application", "Can accept applications"),
-            ("invite_application", "Can invite applications"),
-            ("vote", "Can invite applications"),
-            ("checkin", "Can mark as attended applications"),
-            ("reject_application", "Can reject applications"),
-            ("force_status", "Can force status application"),
+            ("invite", "Can invite applications"),
+            ("vote", "Can review applications"),
+            ("checkin", "Can check-in applications"),
+            ("reject", "Can reject applications"),
+            ("ranking", "Can view voting ranking"),
         )
 
 
