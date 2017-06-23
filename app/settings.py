@@ -24,7 +24,6 @@ SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1']
 
 REGISTER_APP = {
@@ -38,6 +37,10 @@ INSTALLED_APPS = [
     'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.humanize',
@@ -47,6 +50,14 @@ INSTALLED_APPS = [
     'checkin',
     'table'
 ]
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,6 +82,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
+
             ],
         },
     },
@@ -164,3 +177,13 @@ JET_THEMES = [
 JET_SIDE_MENU_COMPACT = True
 JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secret.json')
 JET_INDEX_DASHBOARD = 'app.dashboard.CustomIndexDashboard'
+
+
+SITE_ID = 1
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+ACCOUNT_USER_DISPLAY = lambda x:x.email
+ACCOUNT_USERNAME_REQUIRED=False
