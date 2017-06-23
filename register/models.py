@@ -55,25 +55,33 @@ def calculate_reimbursement(country):
     return DEFAULT_REIMBURSEMENT
 
 
-class Application(models.Model):
-    id = models.TextField(primary_key=True)
-    submission_date = models.DateTimeField()
-    invitation_date = models.DateTimeField(blank=True, null=True)
-    last_reminder = models.DateTimeField(blank=True, null=True)
-    sendgrid_id = models.TextField(default="")
-
-    # Personal data
-    name = models.TextField()
-    lastname = models.TextField()
-    email = models.EmailField()
-    country = models.TextField()
-    under_age = models.NullBooleanField()
-    gender = models.TextField(null=True)
+class Hacker(models.Model):
+    """
+    Extra fields for user. Year agnostic.
+    """
+    user = models.OneToOneField(admin_models.User, primary_key=True)
+    name = models.CharField(max_length=250)
+    lastname = models.CharField(max_length=250)
+    country = models.CharField(max_length=250)
+    gender = models.CharField(max_length=20, null=True)
 
     # University
     graduationYear = models.IntegerField()
-    university = models.TextField()
-    degree = models.TextField(default='Computer Science')
+    university = models.CharField(max_length=300)
+    degree = models.CharField(max_length=300, default='Computer Science')
+
+
+class Application(models.Model):
+    id = models.CharField(max_length=300, primary_key=True)
+    submission_date = models.DateTimeField()
+    status_update_date = models.DateTimeField(blank=True, null=True)
+    last_reminder = models.DateTimeField(blank=True, null=True)
+    sendgrid_id = models.CharField(max_length=300, default="")
+    # We are pointing to hacker because we need to have that information. If you don't, you can't apply.
+    hacker = models.ForeignKey(Hacker, null=False)
+
+    # Personal data
+    under_age = models.NullBooleanField()
 
     # URLs
     github = models.URLField()
@@ -84,46 +92,47 @@ class Application(models.Model):
 
     # About you
     first_timer = models.NullBooleanField()
-    description = models.TextField()
-    projects = models.TextField()
+    description = models.CharField(max_length=300)
+    projects = models.CharField(max_length=300)
 
     # Info for swag
-    diet = models.TextField()
+    diet = models.CharField(max_length=300)
     tshirt_size = models.CharField(max_length=3, default='M')
 
     # Reimbursement
     scholarship = models.NullBooleanField()
     reimbursement_money = models.IntegerField(blank=True, null=True)
+    travel_origin = models.CharField(max_length=300)
 
-    lennyface = models.TextField(default='-.-')
+    lennyface = models.CharField(max_length=300, default='-.-')
 
     # Team
     team = models.NullBooleanField()
-    teammates = models.TextField(default='None')
+    teammates = models.CharField(max_length=300, default='None')
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
     status = models.CharField(choices=STATUS, default=APP_STARTED, max_length=2)
 
-    invited_by = models.TextField(null=True)
+    invited_by = models.CharField(max_length=300, null=True)
 
     # TODO: TEAM EXTERNAL
 
     def __repr__(self):
-        return self.name + ' ' + self.lastname
+        return self.hacker.name + ' ' + self.hacker.lastname
 
     def invite(self, request):
-        if not request.user.has_perm('register.invite_application'):
+        if not request.user.has_perm('register.invite'):
             raise ValidationError('User doesn\'t have permission to invite user')
         # We can re-invite someone invited
-        if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED]:
+        if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED, APP_REJECTED]:
             raise ValidationError('Application needs to be completed to invite. Current status: %s' % self.status)
         if self.status == APP_INVITED:
             self._send_invite(request, mail_title="[HackUPC] Missing answer")
         else:
             self._send_invite(request)
         self.status = APP_INVITED
-        self.invitation_date = timezone.now()
+        self.last_invite = timezone.now()
         self.last_reminder = None
         self.save()
 
@@ -131,11 +140,21 @@ class Application(models.Model):
         if self.status != APP_INVITED:
             raise ValidationError('Reminder can\'t be sent to non-pending applications')
         self._send_last_reminder()
-        self.last_reminder = timezone.now()
+        self.status_update_date = timezone.now()
         self.save()
 
     def expire(self):
+        self.status_update_date = timezone.now()
         self.status = APP_EXPIRED
+        self.save()
+
+    def reject(self,request):
+        if not request.user.has_perm('register.invite'):
+            raise ValidationError('User doesn\'t have permission to invite user')
+        if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED, APP_REJECTED]:
+            raise ValidationError('Application needs to be completed to invite. Current status: %s' % self.status)
+        self.status = APP_REJECTED
+        self.status_update_date = timezone.now()
         self.save()
 
     def is_confirmed(self):
@@ -147,7 +166,7 @@ class Application(models.Model):
         if not self.scholarship:
             raise ValidationError('Application didn\'t ask for reimbursement')
         if not self.reimbursement_money:
-            self.reimbursement_money = calculate_reimbursement(self.country)
+            self.reimbursement_money = calculate_reimbursement(self.hacker.country)
 
         self._send_reimbursement(request)
         self.save()
@@ -190,9 +209,9 @@ class Application(models.Model):
 
     def _send_invite(self, request, mail_title="[HackUPC] You are invited!"):
         sendgrid_send(
-            [self.email],
+            [self.hacker.user.email],
             mail_title,
-            {'%name%': self.name,
+            {'%name%': self.hacker.name,
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '513b4761-9c40-4f54-9e76-225c2835b529'
@@ -200,9 +219,9 @@ class Application(models.Model):
 
     def _send_last_reminder(self):
         sendgrid_send(
-            [self.email],
+            [self.hacker.user.email],
             "[HackUPC] Invite expires in 24h",
-            {'%name%': self.name,
+            {'%name%': self.hacker.name,
              '%token%': self.id,
              },
             '4295b92e-b71d-4b6d-89ec-a4c5fe75a5f6'
@@ -211,9 +230,9 @@ class Application(models.Model):
 
     def _send_confirmation_ack(self, cancellation_url):
         sendgrid_send(
-            [self.email],
+            [self.hacker.user.email],
             "[HackUPC] You confirmed your attendance!",
-            {'%name%': self.name,
+            {'%name%': self.hacker.name,
              '%token%': self.id,
              '%cancellation_url%': cancellation_url},
             'c4d4d758-974f-437b-af9a-d8532f96d670'
@@ -221,12 +240,12 @@ class Application(models.Model):
 
     def _send_reimbursement(self, request):
         sendgrid_send(
-            [self.email],
+            [self.hacker.user.email],
             "[HackUPC] Reimbursement granted",
-            {'%name%': self.name,
+            {'%name%': self.hacker.name,
              '%token%': self.id,
              '%money%': self.reimbursement_money,
-             '%country%': self.country,
+             '%country%': self.travel_origin,
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '06d613dd-cf70-427b-ae19-6cfe7931c193',
