@@ -162,14 +162,27 @@ class ProfileHacker(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProfileHacker, self).get_context_data(**kwargs)
-        phases = [
-            create_phase('hacker_info', "Basic information", lambda x: x.hacker, self.request.user),
-            create_phase('fill_application', "Apply", lambda x: x.hacker.application, self.request.user),
-            create_phase('pending', "Wait to be confirmed", lambda x: not x.hacker.application.is_pending(),
-                         self.request.user),
-            create_phase('attend', "Attend", lambda x: x.hacker.application.checkin, self.request.user),
-            create_phase('thanks', "Thanks", lambda x: False, self.request.user)
-        ]
+
+        phases = self.get_phases()
         current = [p for p in phases if not p['finished']][0]
         context.update({'phases': phases, 'current': current})
         return context
+
+    def get_phases(self):
+        user = self.request.user
+        phases = [
+            create_phase('hacker_info', "Basic information", lambda x: x.hacker, user),
+            create_phase('fill_application', "Apply", lambda x: x.hacker.application, user),
+            # create_phase('thanks', "", lambda x: False, self.request.user)
+        ]
+        # Try/Except caused by Hacker not existing any hacker
+        try:
+            current_app = user.hacker.application_set.pop()
+
+            phases += [
+                create_phase('pending', "Application processing", lambda x: not current_app.is_pending(),
+                             self.request.user),
+            ]
+        except:
+            pass
+        return phases
