@@ -4,6 +4,8 @@ from logging import error
 import sendgrid
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.template import Context
+from django.template.loader import get_template
 from requests import HTTPError
 
 
@@ -22,6 +24,19 @@ def sendgrid_send(recipients, subject, substitutions, template_id, from_email='H
     # Replace substitutions in sendgrid template
     mail.substitutions = substitutions
     mail.send()
+
+
+def email_from_template(recipient, subject, substitutions, template_path,
+                        from_email='HackUPC Team <contact@hackupc.com>'):
+    plaintext = get_template(template_path + '.txt')
+    htmly = get_template(template_path + '.html')
+
+    d = Context(substitutions)
+    text_content = plaintext.render(d)
+    html_content = htmly.render(d)
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [recipient])
+    msg.attach_alternative(html_content, "text/html")
+    return msg
 
 
 class MailListManager:

@@ -27,6 +27,10 @@ div.panel {
     margin-top: 70px;
 }
 
+.margin-top-adjusted {
+    margin-top: 50px;
+}
+
 .white-text {
     color:white;
 }

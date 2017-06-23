@@ -186,3 +186,10 @@ class ProfileHacker(TemplateView):
         except:
             pass
         return phases
+
+
+class ApplyHacker(TemplateView):
+    template_name = 'apply.html'
+
+
+
