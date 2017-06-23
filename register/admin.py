@@ -1,5 +1,6 @@
 from django.contrib import admin
 # Register your models here.
+from django.contrib.auth.decorators import login_required
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
@@ -184,3 +185,4 @@ create_modeladmin(InvitationAdmin, name='invitation', model=models.Application)
 admin.site.site_header = 'HackUPC Admin'
 admin.site.site_title = 'HackUPC Admin'
 admin.site.index_title = 'Home'
+admin.site.login = login_required(admin.site.login)
