@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 from django import http
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -10,10 +10,8 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
+
 from register import models
-
-
-
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -25,13 +23,15 @@ def add_vote(application, user, tech_rat, pers_rat):
     v.save()
     return v
 
+
 class RankingView(PermissionRequiredMixin, TemplateView):
     permission_required = 'register.vote'
     template_name = 'ranking.html'
 
     def get_context_data(self, **kwargs):
         context = super(RankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote')).order_by('-vote_count').values('vote_count', 'username')
+        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote')).order_by(
+            '-vote_count').values('vote_count', 'username')
         return context
 
 
@@ -52,8 +52,8 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
             .first()
 
     def post(self, request, *args, **kwargs):
-        tech_vote = request.POST.get('tech_rat',None)
-        pers_vote = request.POST.get('pers_rat',None)
+        tech_vote = request.POST.get('tech_rat', None)
+        pers_vote = request.POST.get('pers_rat', None)
         application = models.Application.objects.get(id=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
@@ -121,9 +121,9 @@ class CancelApplication(TemplateView):
         elif application.status == models.APP_EXPIRED:
             context.update({
                 'error':
-                """
-                Unfortunately your invite has expired.
-                """
+                    """
+                    Unfortunately your invite has expired.
+                    """
             })
         elif not application.can_be_cancelled():
             context.update({
@@ -145,3 +145,31 @@ class CancelApplication(TemplateView):
             pass
 
         return http.HttpResponseRedirect(reverse('cancel_app', args=(application.id,)))
+
+
+def create_phase(template_name, title, finished_func, user):
+    is_finished = False
+    try:
+        is_finished = bool(finished_func(user))
+    except:
+        pass
+
+    return {'template': 'phases/' + template_name + '.html', 'finished': is_finished, 'title': title}
+
+
+class ProfileHacker(TemplateView):
+    template_name = 'profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileHacker, self).get_context_data(**kwargs)
+        phases = [
+            create_phase('hacker_info', "Basic information", lambda x: x.hacker, self.request.user),
+            create_phase('fill_application', "Apply", lambda x: x.hacker.application, self.request.user),
+            create_phase('pending', "Wait to be confirmed", lambda x: not x.hacker.application.is_pending(),
+                         self.request.user),
+            create_phase('attend', "Attend", lambda x: x.hacker.application.checkin, self.request.user),
+            create_phase('thanks', "Thanks", lambda x: False, self.request.user)
+        ]
+        current = [p for p in phases if not p['finished']][0]
+        context.update({'phases': phases, 'current': current})
+        return context
