@@ -4,8 +4,9 @@ from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
 from django.utils.timesince import timesince
+
+from app.utils import export_as_csv_action, create_modeladmin
 from register import models
-from register.utils import export_as_csv_action, create_modeladmin
 from register.forms import ApplicationsTypeform
 
 EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
