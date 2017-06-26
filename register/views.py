@@ -165,7 +165,10 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         context = super(ProfileHacker, self).get_context_data(**kwargs)
 
         phases = self.get_phases()
-        current = [p for p in phases if not p['finished']][0]
+        try:
+            current = [p for p in phases if not p['finished']][0]
+        except IndexError:
+            current = [p for p in phases if p['finished']][-1]
         try:
             hacker_form = forms.HackerForm(instance=self.request.user.hacker)
         except:
@@ -178,17 +181,16 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         user = self.request.user
         phases = [
             create_phase('hacker_info', "Basic information", lambda x: x.hacker, user),
-            create_phase('fill_application', "Apply", lambda x: x.hacker.application, user),
-            # create_phase('thanks', "", lambda x: False, self.request.user)
+            create_phase('fill_application', "Apply", lambda x: x.hacker.application_set.exists(), user),
         ]
         # Try/Except caused by Hacker not existing any hacker
         try:
-            current_app = user.hacker.application_set.pop()
+            current_app = user.hacker.application_set.first()
 
-            phases += [
+            phases.append(
                 create_phase('pending', "Application processing", lambda x: not current_app.is_pending(),
-                             self.request.user),
-            ]
+                             self.request.user)
+            )
         except:
             pass
         return phases

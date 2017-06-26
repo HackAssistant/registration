@@ -28,6 +28,7 @@ ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1']
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
+    'typeform_form':os.environ.get('TP_FORM','KaZTUa')
 }
 
 # Application definition

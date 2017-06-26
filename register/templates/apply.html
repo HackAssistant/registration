@@ -5,7 +5,7 @@
 {% block body %}
     <div class="">
         {% if user.hacker %}
-            {% if user.hacker.application_set.empty %}
+            {% if user.hacker.application_set.exists %}
                 <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
 
             {% else %}
