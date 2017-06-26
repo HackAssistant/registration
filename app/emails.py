@@ -3,9 +3,9 @@ from logging import error
 
 import sendgrid
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.template import Context
-from django.template.loader import get_template
+from django.core.mail import EmailMultiAlternatives, EmailMessage
+from django.template import TemplateDoesNotExist
+from django.template.loader import render_to_string
 from requests import HTTPError
 
 
@@ -26,16 +26,39 @@ def sendgrid_send(recipients, subject, substitutions, template_id, from_email='H
     mail.send()
 
 
-def email_from_template(recipient, subject, substitutions, template_path,
-                        from_email='HackUPC Team <contact@hackupc.com>'):
-    plaintext = get_template(template_path + '.txt')
-    htmly = get_template(template_path + '.html')
+def render_mail(template_prefix, recipient_email, context, from_email='HackUPC Team <contact@hackupc.com>'):
+    """
+    Renders an e-mail to `email`.  `template_prefix` identifies the
+    e-mail that is to be sent, e.g. "account/email/email_confirmation"
+    """
+    subject = render_to_string('{0}_subject.txt'.format(template_prefix),
+                               context)
+    # remove superfluous line breaks
+    subject = " ".join(subject.splitlines()).strip()
 
-    d = Context(substitutions)
-    text_content = plaintext.render(d)
-    html_content = htmly.render(d)
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [recipient])
-    msg.attach_alternative(html_content, "text/html")
+    bodies = {}
+    for ext in ['html', 'txt']:
+        try:
+            template_name = '{0}_message.{1}'.format(template_prefix, ext)
+            bodies[ext] = render_to_string(template_name,
+                                           context).strip()
+        except TemplateDoesNotExist:
+            if ext == 'txt' and not bodies:
+                # We need at least one body
+                raise
+    if 'txt' in bodies:
+        msg = EmailMultiAlternatives(subject,
+                                     bodies['txt'],
+                                     from_email,
+                                     [recipient_email])
+        if 'html' in bodies:
+            msg.attach_alternative(bodies['html'], 'text/html')
+    else:
+        msg = EmailMessage(subject,
+                           bodies['html'],
+                           from_email,
+                           [recipient_email])
+        msg.content_subtype = 'html'  # Main content is now text/html
     return msg
 
 
