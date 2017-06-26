@@ -5,17 +5,33 @@
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
-    Congratulations {{ name }}, you have been officially accepted to {{ curent_site.name }}️!
+    Congratulations {{ name }}, you have been officially accepted to {{ curent_site.name }}️!<br>
     Respond to this invitation by clicking on the "Confirm" link below.
-    <b>Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another hacker on the waitlist.</b>
+    <b>Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another
+        hacker on the waitlist.</b>
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_button.html' with text='Confirm' url=confirm_url %}
     {% include 'include/email_line_start.html' %}
-    If you cannot make it, please let us know by clicking "Cancel". We want as many people as possible to experience the hackathon!
+    If you cannot make it, please let us know by clicking "Cancel". We want as many people as possible to experience the
+    hackathon!<br><br>
+    <a href="{{ cancel_url }}" style="text-align: center">Cancel</a>
     {% include 'include/email_line_end.html' %}
-{#    {% include 'include/email_button.html' with text='Cancel' url=cancel_url %}#}
-{#    {% include 'include/email_line.html' with text="You're receiving this e-mail because a user has given yours as an e-mail address to connect their account in "|add:current_site.name %}#}
-
+    {% if reimbursement %}
+        {% include 'include/email_line_start.html' %}
+        Reimbursement will be sent in a separate email.
+        {% include 'include/email_line_end.html' %}
+    {% endif %}
+    {% include 'include/email_line_start.html' %}
+    <b>When to Arrive</b> Registration opens at 3:00 pm and closes at 6:00 pm on Friday March 3rd, the opening ceremony
+    will be at 7:00 pm.<br>
+    Have any other question? Email us at {{ email|urlize }}
+{#    TODO: Check if email and fb or twitter are defined before #}
+    or message us on
+    <a href="{{ fb }}" target="_blank">Facebook</a>
+    and
+    <a href="{{ twitter }}" target="_blank">Twitter</a>.
+    {% include 'include/email_line_end.html' %}
+    {% include 'include/email_line.html' with text="See you soon in Barcelona!" %}
     {% include 'include/email_line.html' with text="Best," %}
     {% include 'include/email_line.html' with text="" %}
     {% include 'include/email_line.html' with text=current_site.name|add:" Team" %}

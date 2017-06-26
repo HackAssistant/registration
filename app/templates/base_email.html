@@ -1,5 +1,7 @@
 {% load static %}
 {% load account %}
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 {# Based on https://github.com/leemunroe/responsive-html-email-template #}
 <!DOCTYPE html>
 <html>
@@ -103,7 +105,7 @@
             <div class="content"
                  style="box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px;">
                 <img class="max-width" width="1240" height=""
-                     src="{% static 'logo.png' %}"
+                     src="{{ static_values.logo_url }}"
                      alt="" border="0"
                      style="display: block; color: #000; margin:0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-width: 1240px !important; width: 80% !important; height: auto !important; "/>
                 <!-- START CENTERED WHITE CONTAINER -->
@@ -154,24 +156,24 @@
                                     <table style="padding-top: 20px" cellpadding="0" cellspacing="0" border="0"
                                            align="center">
                                         <tr>
-                                            {% if fb %}
+                                            {% if static_values.fb %}
                                                 <td style="padding: 0px 5px;">
                                                     <a role="social-icon-link"
-                                                       href="http://www.facebook.com/{{ fb }}"
+                                                       href="http://www.facebook.com/{{ static_values.fb }}"
                                                        target="_blank" border="0" alt="Facebook" title="Facebook"
                                                        style="background-color: #3B579D; border-radius: 0px; -webkit-border-radius:0px; -moz-border-radius:0px; -ms-border-radius:0px; -o-border-radius:0px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
                                                         <img role="social-icon" alt="Facebook" title="Facebook"
                                                              border="0"
                                                              height="30" width="30"
                                                              style="height: 30px; width: 30px; border:none; color: white; font-family: Helvetica, arial, sans-serif;"
-                                                             src="{% static 'facebook_white.png' %}"
+                                                             src="https://marketing-image-production.s3.amazonaws.com/social/white/facebook.png"
                                                         />
                                                     </a>
                                                 </td>
                                             {% endif %}
-                                            {% if twitter %}
+                                            {% if static_values.twitter %}
                                                 <td style="padding: 0px 5px;"><a role="social-icon-link"
-                                                                                 href="http://www.twitter.com/{{ twitter }}"
+                                                                                 href="http://www.twitter.com/{{ static_values.twitter }}"
                                                                                  target="_blank" border="0"
                                                                                  alt="Twitter"
                                                                                  title="Twitter"
@@ -179,7 +181,7 @@
                                                     <img role="social-icon" alt="Twitter" title="Twitter" border="0"
                                                          height="30" width="30"
                                                          style="height: 30px; width: 30px; border:none; color: white; font-family: Helvetica, arial, sans-serif;"
-                                                         src="{% static 'twitter_white.png' %}"
+                                                         src="https://marketing-image-production.s3.amazonaws.com/social/white/twitter.png"
                                                     />
                                                 </a>
                                                 </td>

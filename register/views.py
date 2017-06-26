@@ -10,10 +10,10 @@ from django.db import IntegrityError
 from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
-from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 
+from app.utils import reverse
 from register import models, forms
 
 
@@ -90,7 +90,7 @@ class ConfirmApplication(TemplateView, View):
         except:
             raise Http404
         already_confirmed = application.is_confirmed()
-        cancellation_url = application.cancelation_url(request)
+        cancellation_url = str(reverse('cancel_app', request=request))
         try:
             application.confirm(cancellation_url)
             context.update({
@@ -115,8 +115,8 @@ class CancelApplication(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
         try:
-            application = models.Application.objects.get(id=context['token'])
-        except models.Application.DoesNotExist:
+            application = self.request.user.hacker.application_set.first()
+        except:
             raise http.Http404
 
         context.update({
@@ -151,13 +151,13 @@ class CancelApplication(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        application = models.Application.objects.get(id=kwargs['token'])
+        application = self.request.user.hacker.application_set.first()
         try:
             application.cancel()
         except ValidationError:
             pass
 
-        return http.HttpResponseRedirect(reverse('cancel_app', args=(application.id,)))
+        return http.HttpResponseRedirect(reverse('cancel_app'))
 
 
 def create_phase(template_name, title, finished_func, user):

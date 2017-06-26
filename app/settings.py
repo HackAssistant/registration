@@ -24,7 +24,7 @@ SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1', '940e4793.ngrok.io']
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
@@ -197,8 +197,12 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
 
-MAIL_SOCIALMEDIA = {
+# Loaded on email templates (except auth ones)
+STATIC_KEYS_TEMPLATES = {
     'fb': 'hackupc',
     'twitter': 'hackupc',
+    'email': 'contact@hackupc.com',
+    # Static url to your logo
+    'logo_url': 'https://raw.githubusercontent.com/hackupc/frontend/master/src/images/hackupc-header-blue.png',
 }
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'

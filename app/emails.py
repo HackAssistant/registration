@@ -33,11 +33,9 @@ def render_mail(template_prefix, recipient_email, substitutions, from_email=sett
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
 
-    twitter = settings.MAIL_SOCIALMEDIA.get('twitter', None)
-    fb = settings.MAIL_SOCIALMEDIA.get('fb', None)
     current_site = Site.objects.get_current()
-    substitutions.update({'fb': fb, 'twitter': twitter, 'current_site': current_site
-                          })
+    substitutions.update({'current_site': current_site})
+    substitutions.update(settings.STATIC_KEYS_EMAILS)
 
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
                                context=Context(substitutions))
