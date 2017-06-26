@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 import csv
 import os
-
 import uuid as uuid
+
 from django.conf import settings
 from django.contrib.auth import models as admin_models
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -145,7 +145,6 @@ class Application(models.Model):
     lennyface = models.CharField(max_length=300, default='-.-')
     resume = models.URLField(blank=True, null=True)
 
-
     # Team
     team = models.NullBooleanField()
     teammates = models.CharField(max_length=300, default='None')
@@ -165,7 +164,7 @@ class Application(models.Model):
         if not request.user.has_perm('register.invite'):
             raise ValidationError('User doesn\'t have permission to invite user')
         # We can re-invite someone invited
-        if self.status  in [APP_CONFIRMED, APP_ATTENDED]:
+        if self.status in [APP_CONFIRMED, APP_ATTENDED]:
             raise ValidationError('Application has already answered invite. Current status: %s' % self.status)
         if self.status == APP_INVITED:
             self._send_invite(request, mail_title="[HackUPC] Missing answer")
@@ -174,12 +173,14 @@ class Application(models.Model):
         self.status = APP_INVITED
         self.last_invite = timezone.now()
         self.last_reminder = None
+        self.status_update_date = timezone.now()
         self.save()
 
-    def send_last_reminder(self):
+    def last_reminder(self):
         if self.status != APP_INVITED:
             raise ValidationError('Reminder can\'t be sent to non-pending applications')
         self._send_last_reminder()
+        self.status = APP_LAST_REMIDER
         self.status_update_date = timezone.now()
         self.save()
 
@@ -199,6 +200,12 @@ class Application(models.Model):
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
+
+    def is_pending(self):
+        return self.status == APP_PENDING
+
+    def can_be_cancelled(self):
+        return self.status == APP_CONFIRMED or self.status == APP_INVITED
 
     def send_reimbursement(self, request):
         if self.status != APP_INVITED and self.status != APP_CONFIRMED:
@@ -221,18 +228,17 @@ class Application(models.Model):
             m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
+            self.status_update_date = timezone.now()
             self.save()
         else:
             raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
-
-    def can_be_cancelled(self):
-        return self.status == APP_CONFIRMED or self.status == APP_INVITED
 
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
         if self.status != APP_CANCELLED:
             self.status = APP_CANCELLED
+            self.status_update_date = timezone.now()
             self.save()
             m = MailListManager()
             m.remove_applicant_from_list(self, m.W17_GENERAL_LIST_ID)
@@ -245,6 +251,7 @@ class Application(models.Model):
 
     def check_in(self):
         self.status = APP_ATTENDED
+        self.status_update_date = timezone.now()
         self.save()
 
     def _send_invite(self, request, mail_title="[HackUPC] You are invited!"):
@@ -285,7 +292,7 @@ class Application(models.Model):
             {'%name%': self.hacker.name,
              '%token%': self.id,
              '%money%': self.reimbursement_money,
-             '%country%': self.travel_origin,
+             '%country%': self.origin_country,
              '%confirmation_url%': self.confirmation_url(request),
              '%cancellation_url%': self.cancelation_url(request)},
             '06d613dd-cf70-427b-ae19-6cfe7931c193',

@@ -16,7 +16,7 @@ class Command(BaseCommand):
         self.stdout.write('Checking reminders...%s found' % reminders.count())
         self.stdout.write('Sending reminders...')
 
-        count = len([app.send_last_reminder() for app in reminders])
+        count = len([app.last_reminder() for app in reminders])
         self.stdout.write(self.style.SUCCESS('Sending reminders...Successfully sent %s reminders' % count))
 
         onedayago = datetime.today() - timedelta(days=1)
