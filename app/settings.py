@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'register',
     'checkin',
-    'table'
+    'table',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -144,8 +144,12 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
 
-EMAIL_BACKEND = "sgbackend.SendGridBackend"
-SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
+if os.environ.get('EMAIL_DEBUG', None) and DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = 'tmp/email-messages/'
+else:
+    EMAIL_BACKEND = "sgbackend.SendGridBackend"
+    SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
 
 # JET
 JET_THEMES = [

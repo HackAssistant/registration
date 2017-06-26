@@ -11,3 +11,4 @@ client_secret.json
 insert_missing.sh
 check_invites.sh
 app/prod_settings.py
+tmp/

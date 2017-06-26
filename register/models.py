@@ -226,8 +226,9 @@ class Application(models.Model):
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
         elif self.status == APP_INVITED:
-            m = MailListManager()
-            m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
+            if getattr(settings, 'SENDGRID_API_KEY', None):
+                m = MailListManager()
+                m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
             self.status = APP_CONFIRMED
             self.status_update_date = timezone.now()
             self.save()
