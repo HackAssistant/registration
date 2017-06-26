@@ -206,3 +206,5 @@ STATIC_KEYS_TEMPLATES = {
     'logo_url': 'https://raw.githubusercontent.com/hackupc/frontend/master/src/images/hackupc-header-blue.png',
 }
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
+EVENT_NAME = 'HackUPC'
+EVENT_DOMAIN = 'my.hackupc.com'
