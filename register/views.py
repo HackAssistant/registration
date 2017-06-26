@@ -1,7 +1,6 @@
 # Create your views here.
 from __future__ import print_function
 
-import logging
 from datetime import timedelta
 
 from django import http
@@ -92,25 +91,28 @@ class ConfirmApplication(TemplateView, View):
             application = request.user.hacker.application_set.first()
         except:
             raise Http404
-        msg = emails.create_confirmation_email(application, self.request)
-        msg.send()
+        msg = None
+        if application.status == models.APP_INVITED:
+            msg = emails.create_confirmation_email(application, self.request)
         already_confirmed = application.is_confirmed()
         cancellation_url = str(reverse('cancel_app', request=request))
         try:
-            application.confirm(cancellation_url)
+            application.confirm()
+
             context.update({
                 'application': application,
                 'hacker': application.hacker,
                 'cancel': cancellation_url,
                 'reconfirming': already_confirmed
             })
+
         except ValidationError as e:
             context.update({
                 'application': application,
                 'hacker': application.hacker,
                 'error': e.message,
             })
-
+        if msg: msg.send()
         return context
 
 
@@ -194,8 +196,8 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form})
         try:
             last_updated = self.request.user.hacker.application_set.first().status_update_date
-            deadline= last_updated + timedelta(days=5)
-            context.update({'invite_deadline':deadline})
+            deadline = last_updated + timedelta(days=5)
+            context.update({'invite_deadline': deadline})
         except:
             pass
         return context
@@ -211,16 +213,21 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             current_app = user.hacker.application_set.first()
 
             phases.append(
-                create_phase('pending', "Reviewed", lambda x: not current_app.is_pending(),
+                create_phase('pending', "Wait for review", lambda x: not current_app.is_pending(),
                              self.request.user)
             )
             if not current_app.is_pending() and current_app.status in [models.APP_CONFIRMED, models.APP_CANCELLED,
                                                                        models.APP_ATTENDED,
                                                                        models.APP_LAST_REMIDER, models.APP_INVITED]:
                 phases.append(
-                    create_phase('invited', "Invited", lambda x: not current_app.answered_invite(),
+                    create_phase('invited', "Answer invite", lambda x: current_app.answered_invite(),
                                  self.request.user)
                 )
+                if current_app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
+                    phases.append(
+                        create_phase('attend', "Attend", lambda x: current_app.is_confirmed(),
+                                     self.request.user)
+                    )
         except:
             pass
 
