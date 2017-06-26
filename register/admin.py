@@ -31,7 +31,7 @@ class HackerAdmin(admin.ModelAdmin):
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'votes', 'status')
-    list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'hacker__country', 'under_age')
+    list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'origin_country', 'under_age')
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('submission_date',)

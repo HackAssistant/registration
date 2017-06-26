@@ -92,7 +92,6 @@ class Hacker(models.Model):
     user = models.OneToOneField(admin_models.User, primary_key=True)
     name = models.CharField(max_length=250)
     lastname = models.CharField(max_length=250)
-    country = models.CharField(max_length=250)
     gender = models.CharField(max_length=20, blank=True, null=True, choices=GENDERS)
 
     # University
@@ -140,7 +139,8 @@ class Application(models.Model):
     # Reimbursement
     scholarship = models.NullBooleanField()
     reimbursement_money = models.IntegerField(blank=True, null=True)
-    travel_origin = models.CharField(max_length=300)
+    origin_city = models.CharField(max_length=300)
+    origin_country = models.CharField(max_length=300)
 
     lennyface = models.CharField(max_length=300, default='-.-')
 
@@ -298,6 +298,7 @@ class Application(models.Model):
             ("reject", "Can reject applications"),
             ("ranking", "Can view voting ranking"),
         )
+        unique_together = ("hacker", "edition")
 
 
 VOTES = (

@@ -5,9 +5,8 @@
 {% block body %}
     <div class="">
         {% if user.hacker %}
-            {% if user.hacker.application_set %}
-                <h4 class="text-center margin-top" style="color: white;">You need to add your personal information before
-                    applying</h4>
+            {% if user.hacker.application_set.empty %}
+                <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
 
             {% else %}
                 <style>iframe {
@@ -19,7 +18,7 @@
                     border: 0;
                 }</style>
                 <iframe class="margin-top-adjusted" width="100%" height="100%" frameborder="0"
-                        src="https://hackersatupc.typeform.com/to/KaZTUa?hacker_id={{ user.id }}"></iframe>
+                        src="https://hackersatupc.typeform.com/to/KaZTUa?hacker_id={{ user.id }}&name={{ user.hacker.name }}"></iframe>
             {% endif %}
         {% else %}
             <h4 class="text-center margin-top" style="color: white;">You need to add your personal information before applying</h4>
