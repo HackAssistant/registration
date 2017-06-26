@@ -11,7 +11,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Welcome{% if user.hacker_id %}back {{ user.hacker.name }}{% endif %}</h3>
+                    <h3 class="panel-title">Welcome{% if user.hacker %} back {{ user.hacker.name }}{% endif %}</h3>
                 </div>
                 <div class="panel-body">
                     {{ error }}
@@ -32,9 +32,6 @@
                         - {{ phase.title }} ({{ phase.finished }})<br>
                     {% endfor %}
                 </div>
-                {#                <div class="panel-footer">#}
-                {#                    Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>#}
-                {#                </div>#}
             </div>
         </div>
         <div class="col-md-8">

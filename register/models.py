@@ -93,7 +93,7 @@ class Hacker(models.Model):
     name = models.CharField(max_length=250)
     lastname = models.CharField(max_length=250)
     country = models.CharField(max_length=250)
-    gender = models.CharField(max_length=20, null=True, choices=GENDERS)
+    gender = models.CharField(max_length=20, blank=True, null=True, choices=GENDERS)
 
     # University
     graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2020)])
@@ -101,11 +101,11 @@ class Hacker(models.Model):
     degree = models.CharField(max_length=300)
 
     # URLs
-    github = models.URLField(null=True)
-    devpost = models.URLField(null=True)
-    linkedin = models.URLField(null=True)
-    site = models.URLField(null=True)
-    resume = models.FileField(null=True)
+    github = models.URLField(blank=True, null=True)
+    devpost = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    site = models.URLField(blank=True, null=True)
+    resume = models.FileField(blank=True, null=True)
 
     # Info for swag and food
     diet = models.CharField(max_length=300, choices=DIETS)
@@ -152,7 +152,7 @@ class Application(models.Model):
     authorized_mlh = models.NullBooleanField()
     status = models.CharField(choices=STATUS, default=APP_STARTED, max_length=2)
 
-    invited_by = models.CharField(max_length=300, null=True)
+    invited_by = models.CharField(max_length=300, blank=True, null=True)
 
     # TODO: TEAM EXTERNAL
 

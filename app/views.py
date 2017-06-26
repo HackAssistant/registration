@@ -9,4 +9,4 @@ def root_view(request):
         return HttpResponseRedirect(reverse('vote'))
     elif request.user.has_perm('register.checkin'):
         return HttpResponseRedirect(reverse('check_in_list'))
-    return HttpResponseRedirect(reverse('register.profile'))
+    return HttpResponseRedirect(reverse('profile'))

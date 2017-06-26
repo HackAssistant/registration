@@ -2,12 +2,13 @@
 from __future__ import print_function
 
 from django import http
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 
@@ -157,7 +158,7 @@ def create_phase(template_name, title, finished_func, user):
     return {'template': 'phases/' + template_name + '.html', 'finished': is_finished, 'title': title}
 
 
-class ProfileHacker(TemplateView):
+class ProfileHacker(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
     def get_context_data(self, **kwargs):
@@ -191,6 +192,20 @@ class ProfileHacker(TemplateView):
         except:
             pass
         return phases
+
+    def post(self, request, *args, **kwargs):
+        form = forms.HackerForm(request.POST)
+        if form.is_valid():
+            # handle_uploaded_file(request.FILES['resume'])
+            hacker = form.save(commit=False)
+            hacker.user = request.user
+            hacker.save()
+
+            return HttpResponseRedirect(reverse('profile'))
+        else:
+            c = self.get_context_data()
+            c.update({'hacker_form': form})
+            return render(request, self.template_name, c)
 
 
 class ApplyHacker(TemplateView):
