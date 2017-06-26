@@ -1,0 +1,6 @@
+{% load bootstrap3 %}
+<form class="signup form-horizontal" id="signup_form" method="post" action="">
+    {% csrf_token %}
+    {% bootstrap_form hacker_form layout="horizontal" %}
+    {% buttons submit='Submit' layout='horizontal' %}{% endbuttons %}
+</form>

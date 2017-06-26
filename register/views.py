@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from register import models
+from register import models, forms
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -165,7 +165,12 @@ class ProfileHacker(TemplateView):
 
         phases = self.get_phases()
         current = [p for p in phases if not p['finished']][0]
-        context.update({'phases': phases, 'current': current})
+        try:
+            hacker_form = forms.HackerForm(instance=self.request.user.hacker)
+        except:
+            hacker_form = forms.HackerForm()
+
+        context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form})
         return context
 
     def get_phases(self):
@@ -190,6 +195,3 @@ class ProfileHacker(TemplateView):
 
 class ApplyHacker(TemplateView):
     template_name = 'apply.html'
-
-
-
