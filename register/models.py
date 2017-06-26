@@ -23,12 +23,13 @@ PERSONAL_WEIGHT = 0.8
 DEFAULT_REIMBURSEMENT = 100
 
 APP_STARTED = 'S'
-APP_COMPLETED = 'P'
+APP_COMPLETED = 'CX'
 APP_REJECTED = 'R'
 APP_INVITED = 'I'
+APP_LAST_REMIDER = 'LR'
 APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
-APP_ATTENDED = 'T'
+APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 
 STATUS = [
@@ -36,11 +37,40 @@ STATUS = [
     (APP_COMPLETED, 'Completed'),
     (APP_REJECTED, 'Rejected'),
     (APP_INVITED, 'Invited'),
+    (APP_LAST_REMIDER, 'Last reminder'),
     (APP_CONFIRMED, 'Confirmed'),
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
 ]
+
+MALE = 'M'
+FEMALE = 'F'
+NON_BINARY = 'NB'
+
+GENDERS = [
+    (MALE, 'Male'),
+    (FEMALE, 'Female'),
+    (NON_BINARY, 'Non-binary'),
+]
+
+FALL_2017 = 'F17'
+
+EDITIONS = [
+    (FALL_2017, 'Fall 2017')
+]
+
+D_NONE = 'None'
+D_VEGETERIAN = 'Vegeterian'
+D_GLUTEN_FREE = 'Gluten-free'
+
+DIETS = [
+    (D_NONE, 'None'),
+    (D_VEGETERIAN, 'Vegeterian'),
+    (D_GLUTEN_FREE, 'Gluten free')
+]
+
+TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
 
 
 # Create your models here.
@@ -57,47 +87,55 @@ def calculate_reimbursement(country):
 
 class Hacker(models.Model):
     """
-    Extra fields for user. Year agnostic.
+    Year agnostic hacker fields
     """
     user = models.OneToOneField(admin_models.User, primary_key=True)
     name = models.CharField(max_length=250)
     lastname = models.CharField(max_length=250)
     country = models.CharField(max_length=250)
-    gender = models.CharField(max_length=20, null=True)
+    gender = models.CharField(max_length=20, null=True, choices=GENDERS)
 
     # University
-    graduationYear = models.IntegerField()
+    graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2020)])
     university = models.CharField(max_length=300)
-    degree = models.CharField(max_length=300, default='Computer Science')
+    degree = models.CharField(max_length=300)
+
+    # URLs
+    github = models.URLField(null=True)
+    devpost = models.URLField(null=True)
+    linkedin = models.URLField(null=True)
+    site = models.URLField(null=True)
+    resume = models.FileField(null=True)
+
+    # Info for swag and food
+    diet = models.CharField(max_length=300, choices=DIETS)
+    tshirt_size = models.CharField(max_length=3, default='M', choices=TSHIRT_SIZES)
 
 
 class Application(models.Model):
-    id = models.CharField(max_length=300, primary_key=True)
-    submission_date = models.DateTimeField()
-    status_update_date = models.DateTimeField(blank=True, null=True)
-    last_reminder = models.DateTimeField(blank=True, null=True)
-    sendgrid_id = models.CharField(max_length=300, default="")
     # We are pointing to hacker because we need to have that information. If you don't, you can't apply.
     hacker = models.ForeignKey(Hacker, null=False)
 
-    # Personal data
-    under_age = models.NullBooleanField()
+    edition = models.CharField(max_length=7, choices=EDITIONS, default=FALL_2017)
 
-    # URLs
-    github = models.URLField()
-    devpost = models.URLField()
-    linkedin = models.URLField()
-    site = models.URLField()
-    resume = models.URLField()
+    # Meta fields
+    id = models.CharField(max_length=300, primary_key=True)
+    # When was the application completed
+    submission_date = models.DateTimeField()
+    # When was the last status update
+    status_update_date = models.DateTimeField(blank=True, null=True)
+    # Internal SendGrid ID
+    sendgrid_id = models.CharField(max_length=300, default="")
+
+    # Personal data (asking here because we don't want to ask birthday)
+    under_age = models.NullBooleanField()
 
     # About you
     first_timer = models.NullBooleanField()
-    description = models.CharField(max_length=300)
-    projects = models.CharField(max_length=300)
-
-    # Info for swag
-    diet = models.CharField(max_length=300)
-    tshirt_size = models.CharField(max_length=3, default='M')
+    # Why do you want to come to X?
+    description = models.CharField(max_length=500)
+    # Explain a little bit what projects have you done lately
+    projects = models.CharField(max_length=500)
 
     # Reimbursement
     scholarship = models.NullBooleanField()
@@ -148,7 +186,7 @@ class Application(models.Model):
         self.status = APP_EXPIRED
         self.save()
 
-    def reject(self,request):
+    def reject(self, request):
         if not request.user.has_perm('register.invite'):
             raise ValidationError('User doesn\'t have permission to invite user')
         if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED, APP_REJECTED]:
