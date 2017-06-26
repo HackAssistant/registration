@@ -7,26 +7,14 @@
     {% include 'include/email_line_start.html' %}
     Thank you {{ name }} for confirming your attendance to {{ current_site.name }} {{ edition_name }}! We are really
     excited to host this event and have you with us.
-    <br>In order to make registration go smoother, please show us this QR code during the process so we can easily find
+    <br><br>In order to make registration go smoother, please show us this QR code during the process so we can easily
+    find
     you:
-    <br><br>
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_image.html' with url=qr_url %}
     {% include 'include/email_line_start.html' %}
     If you can no longer attend, please cancel your invite here.<br><br>
     <a href="{{ cancel_url }}" style="text-align: center">Cancel</a>
     {% include 'include/email_line_end.html' %}
-    <b>When to Arrive</b> Registration opens at 3:00 pm and closes at 6:00 pm on Friday March 3rd, the opening ceremony
-    will be at 7:00 pm.<br>
-    Have any other question? Email us at {{ email|urlize }}
-    {#    TODO: Check if email and fb or twitter are defined before #}
-    or message us on
-    <a href="{{ fb }}" target="_blank">Facebook</a>
-    and
-    <a href="{{ twitter }}" target="_blank">Twitter</a>.
-    {% include 'include/email_line_end.html' %}
-    {% include 'include/email_line.html' with text="See you soon in Barcelona!" %}
-    {% include 'include/email_line.html' with text="Best," %}
-    {% include 'include/email_line.html' with text="" %}
-    {% include 'include/email_line.html' with text=current_site.name|add:" Team" %}
+    {% include 'register/mails/include/closing.html' %}
 {% endblock %}

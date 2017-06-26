@@ -36,7 +36,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite',
+    actions = ['reject_application', 'invite', 'ticket',
                export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
 
     def name(self, obj):
@@ -56,10 +56,38 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
-        if not request.user.has_perm('register.invite') and 'invite' in actions:
-            del actions['invite']
+        if not request.user.has_perm('register.invite'):
+            if 'invite' in actions: del actions['invite']
+            if 'ticket' in actions: del actions['ticket']
 
         return actions
+
+    def ticket(self, request, queryset):
+        if not request.user.has_perm('register.invite'):
+            self.message_user(request, "You don't have permission to invite users")
+        sent = 0
+        errors = 0
+        msgs = []
+        for app in queryset:
+            try:
+                app.confirm()
+                msgs.append(emails.create_confirmation_email(app, request))
+                sent += 1
+            except ValidationError:
+                errors += 1
+
+        connection = mail.get_connection()
+        connection.send_messages(msgs)
+        if sent > 0 and errors > 0:
+            self.message_user(request, (
+                "%s applications confirmed, %s invites cancelled. Did you check that they were accepted before?" % (
+                    sent, errors)),
+                              level=messages.INFO)
+        elif sent > 0:
+            self.message_user(request, '%s applications confirmed' % sent)
+        else:
+            self.message_user(request, 'Tickets couldn\'t be sent! Did you check that they were accepted before?',
+                              level=messages.ERROR)
 
     def invite(self, request, queryset):
         if not request.user.has_perm('register.invite'):

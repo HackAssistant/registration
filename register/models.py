@@ -218,7 +218,7 @@ class Application(models.Model):
         self._send_reimbursement(request)
         self.save()
 
-    def confirm(self, cancellation_url):
+    def confirm(self):
         if self.status == APP_CANCELLED:
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
