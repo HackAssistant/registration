@@ -47,7 +47,7 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
         """
         return models.Application.objects \
             .exclude(vote__user_id=self.request.user.id) \
-            .filter(status='P') \
+            .filter(status=models.APP_STARTED) \
             .annotate(count=Count('vote__calculated_vote')) \
             .order_by('count', 'submission_date') \
             .first()
@@ -68,7 +68,12 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(VoteApplicationView, self).get_context_data(**kwargs)
-        context['app'] = self.get_next_application()
+        application = self.get_next_application()
+        context['app'] = application
+        try:
+            context['hacker'] = application.hacker
+        except:
+            pass
         return context
 
 

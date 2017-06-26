@@ -18,25 +18,26 @@
                     <div class="panel-body">
                         <h4 class="text-center">Personal</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='Name' value=app.name|add:' '|add:app.lastname %}
+                            {% include 'include/field.html' with desc='Name' value=hacker.name|add:' '|add:hacker.lastname %}
                             {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
-                            {% include 'include/field.html' with desc='Country' value=app.country %}
+                            {% include 'include/field.html' with desc='Country' value=app.origin_country %}
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
 
 
                             {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
+                            {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30 %}
                         </dl>
                         <h4 class="text-center">Academic</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='University' value=app.university %}
-                            {% include 'include/field.html' with desc='Graduation' value=app.graduation %}
-                            {% include 'include/field.html' with desc='Degree' value=app.degree %}
+                            {% include 'include/field.html' with desc='University' value=hacker.university %}
+                            {% include 'include/field.html' with desc='Graduation' value=hacker.graduation_year %}
+                            {% include 'include/field.html' with desc='Degree' value=hacker.degree %}
                         </dl>
                         <h4 class="text-center">Background</h4>
                         <dl class="dl-horizontal">
                             {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
-                            {% include 'include/field.html' with desc='Description' value=app.description %}
-                            {% include 'include/field.html' with desc='Projects' value=app.projects %}
+                            {% include 'include/field.html' with desc='Looking forward?' value=app.description %}
+                            {% include 'include/field.html' with desc='Projects?' value=app.projects %}
                             {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                             {% include 'include/field.html' with desc='Excited about' value=app.excited %}
                         </dl>
