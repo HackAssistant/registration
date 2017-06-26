@@ -23,4 +23,4 @@ class HackerForm(forms.ModelForm):
             'graduation_year': 'What year have you graduated on or when will you graduate',
             'degree': 'What\'s your major?',
         }
-        exclude = ['user']
+        exclude = ['user', 'uuid']

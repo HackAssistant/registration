@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import csv
 import os
 
+import uuid as uuid
 from django.conf import settings
 from django.contrib.auth import models as admin_models
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -89,10 +90,12 @@ class Hacker(models.Model):
     """
     Year agnostic hacker fields
     """
-    user = models.OneToOneField(admin_models.User, primary_key=True)
+    user = models.OneToOneField(admin_models.User)
     name = models.CharField(max_length=250)
     lastname = models.CharField(max_length=250)
     gender = models.CharField(max_length=20, blank=True, null=True, choices=GENDERS)
+
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
 
     # University
     graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2020)])
