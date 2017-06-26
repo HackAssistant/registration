@@ -53,10 +53,10 @@ GENDERS = [
     (NON_BINARY, 'Non-binary'),
 ]
 
-FALL_2017 = 'F17'
+CURRENT_EDITION = 'F17'
 
 EDITIONS = [
-    (FALL_2017, 'Fall 2017')
+    (CURRENT_EDITION, settings.CURRENT_EDITION)
 ]
 
 D_NONE = 'None'
@@ -115,7 +115,7 @@ class Application(models.Model):
     # We are pointing to hacker because we need to have that information. If you don't, you can't apply.
     hacker = models.ForeignKey(Hacker, null=False)
 
-    edition = models.CharField(max_length=7, choices=EDITIONS, default=FALL_2017)
+    edition = models.CharField(max_length=7, choices=EDITIONS, default=CURRENT_EDITION)
 
     # Meta fields
     id = models.CharField(max_length=300, primary_key=True)
@@ -226,7 +226,6 @@ class Application(models.Model):
         elif self.status == APP_INVITED:
             m = MailListManager()
             m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
-            self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
             self.status_update_date = timezone.now()
             self.save()

@@ -14,7 +14,7 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from app.utils import reverse
-from register import models, forms
+from register import models, forms, emails
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -89,6 +89,8 @@ class ConfirmApplication(TemplateView, View):
             application = request.user.hacker.application_set.first()
         except:
             raise Http404
+        msg = emails.create_confirmation_email(application, self.request)
+        msg.send()
         already_confirmed = application.is_confirmed()
         cancellation_url = str(reverse('cancel_app', request=request))
         try:

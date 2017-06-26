@@ -34,8 +34,8 @@ def render_mail(template_prefix, recipient_email, substitutions, from_email=sett
     """
 
     current_site = Site.objects.get_current()
-    substitutions.update({'current_site': current_site})
-    substitutions.update(settings.STATIC_KEYS_EMAILS)
+    substitutions.update({'current_site': current_site, 'edition_name': settings.CURRENT_EDITION})
+    substitutions.update(settings.STATIC_KEYS_TEMPLATES)
 
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
                                context=Context(substitutions))
