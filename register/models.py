@@ -104,7 +104,6 @@ class Hacker(models.Model):
     devpost = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
     site = models.URLField(blank=True, null=True)
-    resume = models.FileField(blank=True, null=True)
 
     # Info for swag and food
     diet = models.CharField(max_length=300, choices=DIETS)
@@ -143,6 +142,8 @@ class Application(models.Model):
     origin_country = models.CharField(max_length=300)
 
     lennyface = models.CharField(max_length=300, default='-.-')
+    resume = models.URLField(blank=True, null=True)
+
 
     # Team
     team = models.NullBooleanField()
