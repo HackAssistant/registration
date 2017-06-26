@@ -28,7 +28,7 @@ ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1']
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
-    'typeform_form':os.environ.get('TP_FORM','KaZTUa')
+    'typeform_form': os.environ.get('TP_FORM', 'KaZTUa')
 }
 
 # Application definition
@@ -140,6 +140,10 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR + '/staticfiles'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, os.path.join('app', "static")),
+]
+
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
 SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
 
@@ -190,3 +194,10 @@ LOGIN_REDIRECT_URL = 'root'
 
 ACCOUNT_USER_DISPLAY = lambda x: x.email
 ACCOUNT_USERNAME_REQUIRED = False
+
+DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
+
+MAIL_SOCIALMEDIA = {
+    'fb': 'hackupc',
+    'twitter': 'hackupc',
+}

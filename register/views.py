@@ -48,7 +48,7 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
         """
         return models.Application.objects \
             .exclude(vote__user_id=self.request.user.id) \
-            .filter(status=models.APP_STARTED) \
+            .filter(status=models.APP_PENDING) \
             .annotate(count=Count('vote__calculated_vote')) \
             .order_by('count', 'submission_date') \
             .first()

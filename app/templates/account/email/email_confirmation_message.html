@@ -1,0 +1,12 @@
+{% extends 'base_email.html' %}
+{% load account %}
+{% user_display user as user_display %}
+{% block content %}
+    {% include 'include/email_line_start.html' %}
+    Hi there {{ user_display }},
+    {% include 'include/email_line_end.html' %}
+    {% include 'include/email_line.html' with text="You're receiving this e-mail because a user has given yours as an e-mail address to connect their account in "|add:current_site.name %}
+    {% include 'include/email_button.html' with text='activate' url=activate_url %}
+
+    {% include 'include/email_line.html' with text="Thank you!" %}
+{% endblock %}

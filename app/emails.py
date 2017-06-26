@@ -3,8 +3,9 @@ from logging import error
 
 import sendgrid
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives, EmailMessage
-from django.template import TemplateDoesNotExist
+from django.template import TemplateDoesNotExist, Context
 from django.template.loader import render_to_string
 from requests import HTTPError
 
@@ -26,22 +27,30 @@ def sendgrid_send(recipients, subject, substitutions, template_id, from_email='H
     mail.send()
 
 
-def render_mail(template_prefix, recipient_email, context, from_email='HackUPC Team <contact@hackupc.com>'):
+def render_mail(template_prefix, recipient_email, substitutions, from_email=settings.DEFAULT_FROM_EMAIL):
     """
     Renders an e-mail to `email`.  `template_prefix` identifies the
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
+
+    twitter = settings.MAIL_SOCIALMEDIA.get('twitter', None)
+    fb = settings.MAIL_SOCIALMEDIA.get('fb', None)
+    substitutions.update({'fb': fb, 'twitter': twitter, 'current_site': Site.objects.get_current()
+                          })
+
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
-                               context)
+                               context=Context(substitutions))
     # remove superfluous line breaks
     subject = " ".join(subject.splitlines()).strip()
+
+    substitutions.update({'subject': subject})
 
     bodies = {}
     for ext in ['html', 'txt']:
         try:
             template_name = '{0}_message.{1}'.format(template_prefix, ext)
             bodies[ext] = render_to_string(template_name,
-                                           context).strip()
+                                           Context(substitutions)).strip()
         except TemplateDoesNotExist:
             if ext == 'txt' and not bodies:
                 # We need at least one body
@@ -60,6 +69,11 @@ def render_mail(template_prefix, recipient_email, context, from_email='HackUPC T
                            [recipient_email])
         msg.content_subtype = 'html'  # Main content is now text/html
     return msg
+
+
+def send_email(template_prefix, recipient_email, substitutions, from_email=settings.DEFAULT_FROM_EMAIL):
+    msg = render_mail(template_prefix, recipient_email, substitutions, from_email)
+    msg.send()
 
 
 class MailListManager:
