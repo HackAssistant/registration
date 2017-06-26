@@ -23,8 +23,7 @@ PERSONAL_WEIGHT = 0.8
 # Reimbursement tiers
 DEFAULT_REIMBURSEMENT = 100
 
-APP_STARTED = 'S'
-APP_COMPLETED = 'CX'
+APP_PENDING = 'P'
 APP_REJECTED = 'R'
 APP_INVITED = 'I'
 APP_LAST_REMIDER = 'LR'
@@ -34,8 +33,7 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 
 STATUS = [
-    (APP_STARTED, 'Started'),
-    (APP_COMPLETED, 'Completed'),
+    (APP_PENDING, 'Pending'),
     (APP_REJECTED, 'Rejected'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
@@ -154,7 +152,7 @@ class Application(models.Model):
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
-    status = models.CharField(choices=STATUS, default=APP_STARTED, max_length=2)
+    status = models.CharField(choices=STATUS, default=APP_PENDING, max_length=2)
 
     invited_by = models.CharField(max_length=300, blank=True, null=True)
 
@@ -167,8 +165,8 @@ class Application(models.Model):
         if not request.user.has_perm('register.invite'):
             raise ValidationError('User doesn\'t have permission to invite user')
         # We can re-invite someone invited
-        if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED, APP_REJECTED]:
-            raise ValidationError('Application needs to be completed to invite. Current status: %s' % self.status)
+        if self.status  in [APP_CONFIRMED, APP_ATTENDED]:
+            raise ValidationError('Application has already answered invite. Current status: %s' % self.status)
         if self.status == APP_INVITED:
             self._send_invite(request, mail_title="[HackUPC] Missing answer")
         else:
@@ -193,8 +191,8 @@ class Application(models.Model):
     def reject(self, request):
         if not request.user.has_perm('register.invite'):
             raise ValidationError('User doesn\'t have permission to invite user')
-        if self.status not in [APP_COMPLETED, APP_EXPIRED, APP_INVITED, APP_REJECTED]:
-            raise ValidationError('Application needs to be completed to invite. Current status: %s' % self.status)
+        if self.status == APP_ATTENDED:
+            raise ValidationError('Application has already attended. Current status: %s' % self.status)
         self.status = APP_REJECTED
         self.status_update_date = timezone.now()
         self.save()
@@ -208,7 +206,7 @@ class Application(models.Model):
         if not self.scholarship:
             raise ValidationError('Application didn\'t ask for reimbursement')
         if not self.reimbursement_money:
-            self.reimbursement_money = calculate_reimbursement(self.hacker.country)
+            self.reimbursement_money = calculate_reimbursement(self.origin_country)
 
         self._send_reimbursement(request)
         self.save()

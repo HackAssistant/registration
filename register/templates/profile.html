@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load bootstrap3 %}
 {% block title %}Profile - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -9,12 +10,14 @@
 
     <div class="confirm-content">
         <div class="col-md-12">
+            {% bootstrap_messages %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Welcome{% if user.hacker %} back {{ user.hacker.name }}{% endif %}</h3>
                 </div>
                 <div class="panel-body">
-                    {{ error }}
+
+
                 </div>
                 <div class="panel-footer">
                     Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>

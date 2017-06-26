@@ -2,6 +2,7 @@
 from __future__ import print_function
 
 from django import http
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -203,10 +204,10 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         form = forms.HackerForm(request.POST)
         if form.is_valid():
-            # handle_uploaded_file(request.FILES['resume'])
             hacker = form.save(commit=False)
             hacker.user = request.user
             hacker.save()
+            messages.success(request, 'Profile details saved!')
 
             return HttpResponseRedirect(reverse('profile'))
         else:
