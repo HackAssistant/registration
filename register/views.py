@@ -1,6 +1,9 @@
 # Create your views here.
 from __future__ import print_function
 
+import logging
+from datetime import timedelta
+
 from django import http
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -189,6 +192,12 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             hacker_form = forms.HackerForm()
 
         context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form})
+        try:
+            last_updated = self.request.user.hacker.application_set.first().status_update_date
+            deadline= last_updated + timedelta(days=5)
+            context.update({'invite_deadline':deadline})
+        except:
+            pass
         return context
 
     def get_phases(self):
@@ -202,11 +211,19 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             current_app = user.hacker.application_set.first()
 
             phases.append(
-                create_phase('pending', "Application processing", lambda x: not current_app.is_pending(),
+                create_phase('pending', "Reviewed", lambda x: not current_app.is_pending(),
                              self.request.user)
             )
+            if not current_app.is_pending() and current_app.status in [models.APP_CONFIRMED, models.APP_CANCELLED,
+                                                                       models.APP_ATTENDED,
+                                                                       models.APP_LAST_REMIDER, models.APP_INVITED]:
+                phases.append(
+                    create_phase('invited', "Invited", lambda x: not current_app.answered_invite(),
+                                 self.request.user)
+                )
         except:
             pass
+
         return phases
 
     def post(self, request, *args, **kwargs):

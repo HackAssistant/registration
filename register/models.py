@@ -181,7 +181,6 @@ class Application(models.Model):
             raise ValidationError('Reminder can\'t be sent to non-pending applications')
         self._send_last_reminder()
         self.status = APP_LAST_REMIDER
-        self.status_update_date = timezone.now()
         self.save()
 
     def expire(self):
@@ -200,6 +199,9 @@ class Application(models.Model):
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
+
+    def answered_invite(self):
+        return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
 
     def is_pending(self):
         return self.status == APP_PENDING
