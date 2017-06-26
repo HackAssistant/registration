@@ -8,9 +8,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.urls import reverse
+from django.views import View
 from django.views.generic import TemplateView
 
 from register import models, forms
@@ -78,25 +79,30 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
         return context
 
 
-class ConfirmApplication(TemplateView):
+class ConfirmApplication(TemplateView, View):
     template_name = 'confirm.html'
 
     def get_context_data(self, **kwargs):
         context = super(ConfirmApplication, self).get_context_data(**kwargs)
-        application = models.Application.objects.get(id=context['token'])
         request = self.request
+        try:
+            application = request.user.hacker.application_set.first()
+        except:
+            raise Http404
         already_confirmed = application.is_confirmed()
         cancellation_url = application.cancelation_url(request)
         try:
             application.confirm(cancellation_url)
             context.update({
                 'application': application,
+                'hacker': application.hacker,
                 'cancel': cancellation_url,
                 'reconfirming': already_confirmed
             })
         except ValidationError as e:
             context.update({
                 'application': application,
+                'hacker': application.hacker,
                 'error': e.message,
             })
 

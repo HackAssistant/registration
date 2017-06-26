@@ -1,6 +1,7 @@
 {% extends 'base_email.html' %}
 {% load account %}
 {% user_display user as user_display %}
+{% block preheader %}Email confirmation from {{ current_site.name }}{% endblock %}
 {% block content %}
     {% include 'include/email_line_start.html' %}
     Hi there {{ user_display }},
@@ -8,5 +9,7 @@
     {% include 'include/email_line.html' with text="You're receiving this e-mail because a user has given yours as an e-mail address to connect their account in "|add:current_site.name %}
     {% include 'include/email_button.html' with text='activate' url=activate_url %}
 
-    {% include 'include/email_line.html' with text="Thank you!" %}
+    {% include 'include/email_line.html' with text="Best," %}
+    {% include 'include/email_line.html' with text="" %}
+    {% include 'include/email_line.html' with text=current_site.name|add:" Team" %}
 {% endblock %}

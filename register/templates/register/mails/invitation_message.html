@@ -1,0 +1,22 @@
+{% extends 'base_email.html' %}
+{% load account %}
+{% user_display user as user_display %}
+{% block preheader %}Acceptance email for {{ current_site.name }}{% endblock %}
+
+{% block content %}
+    {% include 'include/email_line_start.html' %}
+    Congratulations {{ name }}, you have been officially accepted to {{ curent_site.name }}️!
+    Respond to this invitation by clicking on the "Confirm" link below.
+    <b>Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another hacker on the waitlist.</b>
+    {% include 'include/email_line_end.html' %}
+    {% include 'include/email_button.html' with text='Confirm' url=confirm_url %}
+    {% include 'include/email_line_start.html' %}
+    If you cannot make it, please let us know by clicking "Cancel". We want as many people as possible to experience the hackathon!
+    {% include 'include/email_line_end.html' %}
+{#    {% include 'include/email_button.html' with text='Cancel' url=cancel_url %}#}
+{#    {% include 'include/email_line.html' with text="You're receiving this e-mail because a user has given yours as an e-mail address to connect their account in "|add:current_site.name %}#}
+
+    {% include 'include/email_line.html' with text="Best," %}
+    {% include 'include/email_line.html' with text="" %}
+    {% include 'include/email_line.html' with text=current_site.name|add:" Team" %}
+{% endblock %}

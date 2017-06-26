@@ -35,14 +35,18 @@ def render_mail(template_prefix, recipient_email, substitutions, from_email=sett
 
     twitter = settings.MAIL_SOCIALMEDIA.get('twitter', None)
     fb = settings.MAIL_SOCIALMEDIA.get('fb', None)
-    substitutions.update({'fb': fb, 'twitter': twitter, 'current_site': Site.objects.get_current()
+    current_site = Site.objects.get_current()
+    substitutions.update({'fb': fb, 'twitter': twitter, 'current_site': current_site
                           })
 
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
                                context=Context(substitutions))
     # remove superfluous line breaks
     subject = " ".join(subject.splitlines()).strip()
-
+    prefix = settings.EMAIL_SUBJECT_PREFIX
+    if prefix is None:
+        prefix = "[{name}] ".format(name=current_site.name())
+    subject = prefix + ' ' + subject
     substitutions.update({'subject': subject})
 
     bodies = {}
@@ -87,9 +91,9 @@ class MailListManager:
         recipient = [
             {
                 "application_id": application.id,
-                "email": application.email,
-                "first_name": application.name,
-                "last_name": application.lastname,
+                "email": application.hacker.user.email,
+                "first_name": application.hacker.name,
+                "last_name": application.hacker.lastname,
             }
         ]
         response = self.sg.client.contactdb.recipients.post(request_body=recipient)

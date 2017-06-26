@@ -1,12 +1,13 @@
 from django.contrib import admin
 # Register your models here.
 from django.contrib.auth.decorators import login_required
+from django.core import mail
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
 
 from app.utils import export_as_csv_action
-from register import models
+from register import models, emails
 
 EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
 
@@ -20,7 +21,7 @@ class ApplicationInline(admin.StackedInline):
 
 class HackerAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'name', 'lastname')
-    inlines = [ApplicationInline,]
+    inlines = [ApplicationInline, ]
     # list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'hacker__country', 'under_age')
     list_per_page = 200
     # search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
@@ -61,20 +62,26 @@ class ApplicationAdmin(admin.ModelAdmin):
         return actions
 
     def invite(self, request, queryset):
+        if not request.user.has_perm('register.invite'):
+            self.message_user(request, "You don't have permission to invite users")
         invited = 0
         errors = 0
+        msgs = []
         for app in queryset:
             try:
-                app.invite(request)
+                app.invite(request.user)
+                msgs.append(emails.create_invite_email(app, request))
                 invited += 1
             except ValidationError:
                 errors += 1
 
+        connection = mail.get_connection()
+        connection.send_messages(msgs)
         if invited > 0 and errors > 0:
             self.message_user(request, (
                 "%s applications invited, %s invites cancelled. Did you check that they were accepted before?" % (
                     invited, errors)),
-                              level=messages.WARNING)
+                              level=messages.INFO)
         elif invited > 0:
             self.message_user(request, '%s applications invited' % invited)
         else:

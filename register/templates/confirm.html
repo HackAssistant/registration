@@ -14,7 +14,7 @@
             {% if error %}
                 <div class="panel panel-danger">
                     <div class="panel-heading">
-                        <h3 class="panel-title">We are sorry, {{ application.name }}</h3>
+                        <h3 class="panel-title">We are sorry, {{ hacker.name }}</h3>
                     </div>
                     <div class="panel-body">
                         {{ error }}
@@ -28,15 +28,15 @@
 
                 <div class="panel panel-success">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Thanks for confirming, {{ application.name }}!</h3>
+                        <h3 class="panel-title">Thanks for confirming, {{ hacker.name }}!</h3>
                     </div>
                     <div class="panel-body">
 
                         {% if reconfirming %}
-                            You already confirmed your spot before, {{ application.name }}. But we love your enthusiasm
+                            You already confirmed your spot before, {{ hacker.name }}. But we love your enthusiasm
                             :)
                         {% else %}
-                            {{ application.name }}, you just confirmed your spot at HackUPC Spring 2017!
+                            {{ hacker.name }}, you just confirmed your spot at HackUPC Spring 2017!
                         {% endif %}
                         We can't wait to have you here.
                         <br><br>

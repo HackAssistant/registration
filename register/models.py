@@ -147,30 +147,30 @@ class Application(models.Model):
 
     # Team
     team = models.NullBooleanField()
-    teammates = models.CharField(max_length=300, default='None')
+    teammates = models.CharField(max_length=300, blank=True, null=True)
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
     status = models.CharField(choices=STATUS, default=APP_PENDING, max_length=2)
 
-    invited_by = models.CharField(max_length=300, blank=True, null=True)
+    invited_by = models.ForeignKey(admin_models.User, null=True, blank=True)
 
     # TODO: TEAM EXTERNAL
 
     def __repr__(self):
         return self.hacker.name + ' ' + self.hacker.lastname
 
-    def invite(self, request):
-        if not request.user.has_perm('register.invite'):
-            raise ValidationError('User doesn\'t have permission to invite user')
+    def invite(self, user):
+
         # We can re-invite someone invited
         if self.status in [APP_CONFIRMED, APP_ATTENDED]:
             raise ValidationError('Application has already answered invite. Current status: %s' % self.status)
-        if self.status == APP_INVITED:
-            self._send_invite(request, mail_title="[HackUPC] Missing answer")
-        else:
-            self._send_invite(request)
+        # if self.status == APP_INVITED:
+        #     self._send_invite(request, mail_title="[HackUPC] Missing answer")
+        # else:
+        #     self._send_invite(request)
         self.status = APP_INVITED
+        self.invited_by = user
         self.last_invite = timezone.now()
         self.last_reminder = None
         self.status_update_date = timezone.now()
@@ -223,13 +223,15 @@ class Application(models.Model):
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
-        if self.status == APP_INVITED:
+        elif self.status == APP_INVITED:
             m = MailListManager()
             m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
             self._send_confirmation_ack(cancellation_url)
             self.status = APP_CONFIRMED
             self.status_update_date = timezone.now()
             self.save()
+        elif self.status == APP_CONFIRMED:
+            return None
         else:
             raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
 

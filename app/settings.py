@@ -201,3 +201,4 @@ MAIL_SOCIALMEDIA = {
     'fb': 'hackupc',
     'twitter': 'hackupc',
 }
+EMAIL_SUBJECT_PREFIX = '[HackUPC]'
