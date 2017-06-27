@@ -19,6 +19,7 @@ def add_default_site(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ('register', '0004_add_nulls'),
+        ('sites', '0002_alter_domain_unique'),
     ]
 
     operations = [
