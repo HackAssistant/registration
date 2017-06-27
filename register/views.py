@@ -229,7 +229,7 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
                 )
                 if current_app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
                     phases.append(
-                        create_phase('attend', "Attend", lambda x: current_app.is_confirmed(),
+                        create_phase('attend', "Attend", lambda x: not current_app.is_confirmed(),
                                      self.request.user)
                     )
         except:
