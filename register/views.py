@@ -195,8 +195,12 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
 
         context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form})
         try:
-            last_updated = self.request.user.hacker.application_set.first().status_update_date
-            deadline = last_updated + timedelta(days=5)
+            application = self.request.user.hacker.application_set.first()
+            last_updated = application.status_update_date
+            if application.status == models.APP_INVITED:
+                deadline = last_updated + timedelta(days=5)
+            else:
+                deadline = last_updated + timedelta(days=1)
             context.update({'invite_deadline': deadline})
         except:
             pass

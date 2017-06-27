@@ -1,1 +1,1 @@
-Ticket to HackUPC
+Ticket to {{ current_site.name }}

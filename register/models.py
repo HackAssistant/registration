@@ -179,7 +179,7 @@ class Application(models.Model):
     def last_reminder(self):
         if self.status != APP_INVITED:
             raise ValidationError('Reminder can\'t be sent to non-pending applications')
-        self._send_last_reminder()
+        self.status_update_date = timezone.now()
         self.status = APP_LAST_REMIDER
         self.save()
 
@@ -226,12 +226,12 @@ class Application(models.Model):
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
         elif self.status == APP_INVITED:
-            if getattr(settings, 'SENDGRID_API_KEY', None):
-                m = MailListManager()
-                m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
             self.status = APP_CONFIRMED
             self.status_update_date = timezone.now()
             self.save()
+            if settings.MAIL_LISTS_ENABLED:
+                m = MailListManager()
+                m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
         elif self.status == APP_CONFIRMED:
             return None
         else:
@@ -244,8 +244,9 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.status_update_date = timezone.now()
             self.save()
-            m = MailListManager()
-            m.remove_applicant_from_list(self, m.W17_GENERAL_LIST_ID)
+            if settings.MAIL_LISTS_ENABLED:
+                m = MailListManager()
+                m.remove_applicant_from_list(self, m.W17_GENERAL_LIST_ID)
 
     def confirmation_url(self, request=None):
         return reverse('confirm_app', kwargs={'token': self.id}, request=request)
@@ -257,37 +258,6 @@ class Application(models.Model):
         self.status = APP_ATTENDED
         self.status_update_date = timezone.now()
         self.save()
-
-    def _send_invite(self, request, mail_title="[HackUPC] You are invited!"):
-        sendgrid_send(
-            [self.hacker.user.email],
-            mail_title,
-            {'%name%': self.hacker.name,
-             '%confirmation_url%': self.confirmation_url(request),
-             '%cancellation_url%': self.cancelation_url(request)},
-            '513b4761-9c40-4f54-9e76-225c2835b529'
-        )
-
-    def _send_last_reminder(self):
-        sendgrid_send(
-            [self.hacker.user.email],
-            "[HackUPC] Invite expires in 24h",
-            {'%name%': self.hacker.name,
-             '%token%': self.id,
-             },
-            '4295b92e-b71d-4b6d-89ec-a4c5fe75a5f6'
-
-        )
-
-    def _send_confirmation_ack(self, cancellation_url):
-        sendgrid_send(
-            [self.hacker.user.email],
-            "[HackUPC] You confirmed your attendance!",
-            {'%name%': self.hacker.name,
-             '%token%': self.id,
-             '%cancellation_url%': cancellation_url},
-            'c4d4d758-974f-437b-af9a-d8532f96d670'
-        )
 
     def _send_reimbursement(self, request):
         sendgrid_send(

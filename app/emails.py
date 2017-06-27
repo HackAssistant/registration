@@ -33,7 +33,7 @@ def render_mail(template_prefix, recipient_email, substitutions, from_email=sett
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
 
-    current_site = Site.objects.get_current()
+    current_site = Site.objects.get(id=settings.SITE_ID)
     substitutions.update({'current_site': current_site, 'edition_name': settings.CURRENT_EDITION})
     substitutions.update(settings.STATIC_KEYS_TEMPLATES)
 

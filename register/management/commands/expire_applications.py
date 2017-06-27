@@ -1,8 +1,10 @@
 from datetime import timedelta
 
+from django.core import mail
 from django.core.management.base import BaseCommand
 from django.utils.datetime_safe import datetime
-from register import models
+
+from register import models, emails
 
 
 class Command(BaseCommand):
@@ -11,17 +13,21 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         fourdaysago = datetime.today() - timedelta(days=4)
         self.stdout.write('Checking reminders...')
-        reminders = models.Application.objects.filter(invitation_date__lte=fourdaysago, status=models.APP_INVITED,
-                                                      last_reminder=None)
+        reminders = models.Application.objects.filter(status_update_date__lte=fourdaysago, status=models.APP_INVITED)
         self.stdout.write('Checking reminders...%s found' % reminders.count())
         self.stdout.write('Sending reminders...')
+        msgs = []
+        for app in reminders:
+            app.last_reminder()
+            msgs.append(emails.create_lastreminder_email(app))
 
-        count = len([app.last_reminder() for app in reminders])
-        self.stdout.write(self.style.SUCCESS('Sending reminders...Successfully sent %s reminders' % count))
+        connection = mail.get_connection()
+        connection.send_messages(msgs)
+        self.stdout.write(self.style.SUCCESS('Sending reminders...Successfully sent %s reminders' % len(msgs)))
 
         onedayago = datetime.today() - timedelta(days=1)
         self.stdout.write('Checking expired...')
-        expired = models.Application.objects.filter(last_reminder__lte=onedayago, status=models.APP_INVITED)
+        expired = models.Application.objects.filter(status_update_date__lte=onedayago, status=models.APP_LAST_REMIDER)
         self.stdout.write('Checking expired...%s found' % expired.count())
         self.stdout.write('Setting expired...')
         count = len([app.expire() for app in expired])

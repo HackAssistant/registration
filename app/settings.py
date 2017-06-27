@@ -24,7 +24,7 @@ SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1', '940e4793.ngrok.io']
+ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1', ]
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
@@ -151,6 +151,10 @@ else:
     EMAIL_BACKEND = "sgbackend.SendGridBackend"
     SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
 
+MAIL_LISTS_ENABLED = True
+if DEBUG:
+    MAIL_LISTS_ENABLED = False
+
 # JET
 JET_THEMES = [
     {
@@ -211,5 +215,8 @@ STATIC_KEYS_TEMPLATES = {
 }
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'
-EVENT_DOMAIN = 'my.hackupc.com'
+if DEBUG:
+    EVENT_DOMAIN = 'localhost:8000'
+else:
+    EVENT_DOMAIN = 'my.hackupc.com'
 CURRENT_EDITION = 'Fall 2017'

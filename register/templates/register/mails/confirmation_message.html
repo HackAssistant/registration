@@ -13,8 +13,8 @@
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_image.html' with url=qr_url %}
     {% include 'include/email_line_start.html' %}
-    If you can no longer attend, please cancel your invite here.<br><br>
-    <a href="{{ cancel_url }}" style="text-align: center">Cancel</a>
+    {% include 'register/mails/include/cancel.html' %}
     {% include 'include/email_line_end.html' %}
+    {% include 'register/mails/include/whentoarrive.html' %}
     {% include 'register/mails/include/closing.html' %}
 {% endblock %}
