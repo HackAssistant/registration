@@ -225,7 +225,7 @@ class Application(models.Model):
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
-        elif self.status == APP_INVITED:
+        elif self.status in [APP_INVITED, APP_LAST_REMIDER]:
             self.status = APP_CONFIRMED
             self.status_update_date = timezone.now()
             self.save()
