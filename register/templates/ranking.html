@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% load static %}
+{% load utils %}
 {% load bootstrap3 %}
 {% block title %}Reviewers Ranking - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 {% block body %}
+    {% settings_value "EVENT_NAME" as event_name %}
     <div class="row margin-top">
         {% bootstrap_messages %}
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
-                <div class="panel-heading">HackUPC Reviewer Leaderboard</div>
+                <div class="panel-heading">{{ event_name }} Reviewer Leaderboard</div>
                 <div class="panel-body">
                     <p>So you think you have reviewed tons, huh?</p>
                     <p>Drop your self esteem and look at the ranking.</p>

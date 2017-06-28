@@ -24,7 +24,7 @@ SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'hackupc.com', 'my.hackupc.com', '127.0.0.1', ]
+ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', ]
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
@@ -211,12 +211,16 @@ STATIC_KEYS_TEMPLATES = {
     'fb': 'hackupc',
     'twitter': 'hackupc',
     'email': 'contact@hackupc.com',
+    'description': 'Join us for BarcelonaTech\'s hackathon. 500 hackers. 36h. March 3rd-5th.',
     # Static url to your logo
     'logo_url': 'https://raw.githubusercontent.com/hackupc/frontend/master/src/images/hackupc-header-blue.png',
     # MailChimp subscribe URL (optional)
     'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
     # Live page url
-    'live_url':'https://hackupc.com/live'
+    'live_url': 'https://hackupc.com/live',
+    # Issues url, shows up on 500 error
+    'issues_url': 'https://github.com/hackupc/backend/issues/new'
+
 }
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'
@@ -224,4 +228,5 @@ if DEBUG:
     EVENT_DOMAIN = 'localhost:8000'
 else:
     EVENT_DOMAIN = 'my.hackupc.com'
+ALLOWED_HOSTS.append(EVENT_DOMAIN)
 CURRENT_EDITION = 'Fall 2017'

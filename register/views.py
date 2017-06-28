@@ -134,7 +134,7 @@ class CancelApplication(TemplateView):
                 'error':
                     """
                     Thank you for responding.
-                     We're sorry you won't be able to make it to HackUPC. Hope to see you next edition!
+                     We're sorry you won't be able to make it. Hope to see you next edition!
                     """
             })
         elif application.status == models.APP_EXPIRED:

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load utils %}
 {% load static %}
 {% block title %}Cancel application - {% endblock %}
 
@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block body %}
+    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
     <div class="confirm-content">
         <div class="col-md-8 col-md-offset-2">
@@ -27,7 +28,7 @@
                         <a href="{% url 'profile' %}" class="btn btn-default btn-block"> Back to your profile</a>
                     </div>
                     <div class="panel-footer">
-                        Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>
+                        Please contact us if you think this is an error: {{ static_values.email|urlize }}
                     </div>
                 </div>
 
