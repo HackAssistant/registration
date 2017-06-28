@@ -226,7 +226,7 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
                          self.request.user),
         ]
 
-        # Try/Except caused by Hacker not existing any hacker
+        # Try/Except caused by Hacker not existing
         try:
             current_app = self.get_current_app(user)
 

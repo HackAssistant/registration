@@ -209,8 +209,17 @@ class Application(models.Model):
     def is_pending(self):
         return self.status == APP_PENDING
 
+    def is_invited(self):
+        return self.status == APP_INVITED
+
+    def is_expired(self):
+        return self.status == APP_EXPIRED
+
+    def is_last_reminder(self):
+        return self.status == APP_LAST_REMIDER
+
     def can_be_cancelled(self):
-        return self.status == APP_CONFIRMED or self.status == APP_INVITED
+        return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
 
     def send_reimbursement(self, request):
         if self.status != APP_INVITED and self.status != APP_CONFIRMED:
