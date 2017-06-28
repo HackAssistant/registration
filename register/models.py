@@ -124,7 +124,7 @@ class Application(models.Model):
     # When was the last status update
     status_update_date = models.DateTimeField(blank=True, null=True)
     # Internal SendGrid ID
-    sendgrid_id = models.CharField(max_length=300, default="")
+    sendgrid_id = models.CharField(max_length=300, blank=True, null=True)
 
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.NullBooleanField()
@@ -199,6 +199,9 @@ class Application(models.Model):
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
+
+    def is_cancelled(self):
+        return self.status == APP_CANCELLED
 
     def answered_invite(self):
         return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]

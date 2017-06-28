@@ -215,6 +215,8 @@ STATIC_KEYS_TEMPLATES = {
     'logo_url': 'https://raw.githubusercontent.com/hackupc/frontend/master/src/images/hackupc-header-blue.png',
     # MailChimp subscribe URL (optional)
     'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
+    # Live page url
+    'live_url':'https://hackupc.com/live'
 }
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'

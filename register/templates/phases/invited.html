@@ -3,7 +3,7 @@
     {% if application.can_be_cancelled %}
         If you can no longer attend please cancel your invite here.
         <a href="{% url 'cancel_app' %}" class="btn btn-block btn-danger">Cancel</a>
-    {% else %}
+    {% elif application.is_cancelled %}
         We are sorry that you can't come to HackUPC. We are looking forward to welcome you next edition.
         {% include 'include/subscribe_form.html' %}
     {% endif %}
