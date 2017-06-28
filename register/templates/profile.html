@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% load bootstrap3 %}
 {% block title %}Profile - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 {% endblock %}
-
+{% load utils %}
 {% block body %}
+    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
     <div class="confirm-content">
         <div class="col-md-12">
@@ -19,13 +21,10 @@
 
 
                 </div>
-                <div class="panel-footer">
-                    Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>
-                </div>
+
             </div>
         </div>
         <div class="col-md-4">
-            {{ self.title }}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">To do list</h3>
@@ -34,6 +33,9 @@
                     {% for phase in phases %}
                         - <a href="?phase={{ phase.key }}">{{ phase.title }} ({{ phase.finished }})</a><br>
                     {% endfor %}
+                </div>
+                <div class="panel-footer">
+                    Errors? Help? Reach us {{ static_values.email|urlize }}
                 </div>
             </div>
         </div>
