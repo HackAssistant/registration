@@ -26,11 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', ]
 
-REGISTER_APP = {
-    'typeform_key': os.environ.get('TP_KEY'),
-    'typeform_form': os.environ.get('TP_FORM', 'KaZTUa')
-}
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -222,6 +217,12 @@ STATIC_KEYS_TEMPLATES = {
     'issues_url': 'https://github.com/hackupc/backend/issues/new'
 
 }
+
+REGISTER_APP = {
+    'typeform_key': os.environ.get('TP_KEY'),
+    'typeform_form': os.environ.get('TP_FORM', 'KaZTUa')
+}
+
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'
 if DEBUG:
