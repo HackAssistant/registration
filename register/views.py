@@ -121,7 +121,7 @@ class CancelApplication(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
-        application = models.Application.get_current_application(user)
+        application = models.Application.get_current_application(self.request.user)
         if not application:
             raise http.Http404
 
@@ -148,8 +148,8 @@ class CancelApplication(TemplateView):
             context.update({
                 'error':
                     """
-                    You found a glitch! You are trying to cancel a non invited application.
-                    Is this the question to 42?
+                    You found a glitch! You can't cancel this invitation.
+                    Is this the question for 42?
                     """,
                 'application': None
             })
