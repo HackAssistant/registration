@@ -32,7 +32,7 @@
                 </div>
                 <div class="panel-body">
                     {% for phase in phases %}
-                        - {{ phase.title }} ({{ phase.finished }})<br>
+                        - <a href="?phase={{ phase.key }}">{{ phase.title }} ({{ phase.finished }})</a><br>
                     {% endfor %}
                 </div>
             </div>

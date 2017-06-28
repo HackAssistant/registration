@@ -200,6 +200,7 @@ SOCIALACCOUNT_ENABLED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 LOGIN_REDIRECT_URL = 'root'
 
+ACCOUNT_ADAPTER = 'app.utils.AccountAdapter'
 ACCOUNT_USER_DISPLAY = lambda x: x.email
 ACCOUNT_USERNAME_REQUIRED = False
 
@@ -212,6 +213,8 @@ STATIC_KEYS_TEMPLATES = {
     'email': 'contact@hackupc.com',
     # Static url to your logo
     'logo_url': 'https://raw.githubusercontent.com/hackupc/frontend/master/src/images/hackupc-header-blue.png',
+    # MailChimp subscribe URL (optional)
+    'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
 }
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'

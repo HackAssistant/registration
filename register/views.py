@@ -167,14 +167,14 @@ class CancelApplication(TemplateView):
         return http.HttpResponseRedirect(reverse('cancel_app'))
 
 
-def create_phase(template_name, title, finished_func, user):
+def create_phase(phase_key, title, finished_func, user):
     is_finished = False
     try:
         is_finished = bool(finished_func(user))
     except:
         pass
 
-    return {'template': 'phases/' + template_name + '.html', 'finished': is_finished, 'title': title}
+    return {'template': 'phases/' + phase_key + '.html', 'finished': is_finished, 'title': title, 'key': phase_key}
 
 
 class ProfileHacker(LoginRequiredMixin, TemplateView):
@@ -188,6 +188,11 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             current = [p for p in phases if not p['finished']][0]
         except IndexError:
             current = [p for p in phases if p['finished']][-1]
+
+        current_key = self.request.GET.get('phase', None)
+        if current_key:
+            current = [p for p in phases if p['key'] == current_key][0] or current
+
         try:
             hacker_form = forms.HackerForm(instance=self.request.user.hacker)
         except:
@@ -201,7 +206,7 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
                 deadline = last_updated + timedelta(days=5)
             else:
                 deadline = last_updated + timedelta(days=1)
-            context.update({'invite_deadline': deadline})
+            context.update({'invite_deadline': deadline, 'application': application})
         except:
             pass
         return context
@@ -209,27 +214,23 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
-            create_phase('hacker_info', "Basic information", lambda x: x.hacker, user),
-            create_phase('fill_application', "Apply", lambda x: x.hacker.application_set.exists(), user),
+            create_phase('hacker_info', "Hacker profile", lambda x: x.hacker, user),
+            create_phase('fill_application', "Application", lambda x: x.hacker.application_set.exists(), user),
         ]
         # Try/Except caused by Hacker not existing any hacker
         try:
             current_app = user.hacker.application_set.first()
 
-            phases.append(
-                create_phase('pending', "Wait for review", lambda x: not current_app.is_pending(),
-                             self.request.user)
-            )
             if not current_app.is_pending() and current_app.status in [models.APP_CONFIRMED, models.APP_CANCELLED,
                                                                        models.APP_ATTENDED,
                                                                        models.APP_LAST_REMIDER, models.APP_INVITED]:
                 phases.append(
-                    create_phase('invited', "Answer invite", lambda x: current_app.answered_invite(),
+                    create_phase('invited', "Invite", lambda x: current_app.answered_invite(),
                                  self.request.user)
                 )
                 if current_app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
                     phases.append(
-                        create_phase('attend', "Attend", lambda x: not current_app.is_confirmed(),
+                        create_phase('attend', "Ticket", lambda x: not current_app.is_confirmed(),
                                      self.request.user)
                     )
         except:
