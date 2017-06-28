@@ -215,6 +215,10 @@ class Application(models.Model):
     def is_expired(self):
         return self.status == APP_EXPIRED
 
+    def is_rejected(self):
+        return self.status == APP_REJECTED
+
+
     def is_last_reminder(self):
         return self.status == APP_LAST_REMIDER
 
