@@ -55,7 +55,7 @@
                             <li><a href="{% url 'vote' %}">Vote</a></li>
                             <li><a href="{% url 'ranking' %}">Ranking</a></li>
                         {% endif %}
-                        {% if perms.register.checkin %}
+                        {% if perms.checkin.checkin %}
                             <li><a href="{% url 'check_in_list' %}">Check-in</a></li>
                         {% endif %}
                         <li class="dropdown">

@@ -4,6 +4,7 @@ from django.contrib.auth import models as admin_models
 from django.db import models
 # Create your models here.
 from django.utils.datetime_safe import datetime
+
 from register.models import APP_CONFIRMED
 
 
@@ -21,3 +22,8 @@ class CheckIn(models.Model):
         self.application.status = APP_CONFIRMED
         self.application.save()
         super(CheckIn, self).delete(using, keep_parents)
+
+    class Meta:
+        permissions = (
+            ("checkin", "Can checkin applications"),
+        )

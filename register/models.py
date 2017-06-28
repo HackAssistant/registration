@@ -292,7 +292,6 @@ class Application(models.Model):
         permissions = (
             ("invite", "Can invite applications"),
             ("vote", "Can review applications"),
-            ("checkin", "Can check-in applications"),
             ("reject", "Can reject applications"),
             ("ranking", "Can view voting ranking"),
         )
