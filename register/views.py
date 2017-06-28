@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from django import http
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -16,7 +17,7 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from app.utils import reverse
-from register import models, forms, emails
+from register import models, forms, emails, typeform
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -189,27 +190,29 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         except IndexError:
             current = [p for p in phases if p['finished']][-1]
 
-        showing_key = self.request.GET.get('phase', None)
-        if showing_key:
+        active_key = self.request.GET.get('phase', None)
+        active = current
+        if active_key:
             try:
-                showing = [p for p in phases if p['key'] == showing_key][0]
+                active = [p for p in phases if p['key'] == active_key][0]
             except:
-                showing = current
+                pass
 
         try:
             hacker_form = forms.HackerForm(instance=self.request.user.hacker)
         except:
             hacker_form = forms.HackerForm()
 
-        context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form, 'showing': showing})
+        context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form, 'active': active})
         try:
-            application = self.request.user.hacker.application_set.first()
+            application = self.get_current_app(self.request.user)
+            context.update({'application': application})
             last_updated = application.status_update_date
             if application.status == models.APP_INVITED:
                 deadline = last_updated + timedelta(days=5)
             else:
                 deadline = last_updated + timedelta(days=1)
-            context.update({'invite_deadline': deadline, 'application': application})
+            context.update({'invite_deadline': deadline})
         except:
             pass
         return context
@@ -219,27 +222,26 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         phases = [
             create_phase('hacker_info', "Hacker profile", lambda x: x.hacker, user),
             create_phase('fill_application', "Application", lambda x: x.hacker.application_set.exists(), user),
+            create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
+                         self.request.user),
         ]
+
         # Try/Except caused by Hacker not existing any hacker
         try:
-            current_app = user.hacker.application_set.first()
+            current_app = self.get_current_app(user)
 
-            if not current_app.is_pending() and current_app.status in [models.APP_CONFIRMED, models.APP_CANCELLED,
-                                                                       models.APP_ATTENDED,
-                                                                       models.APP_LAST_REMIDER, models.APP_INVITED]:
+            if current_app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
                 phases.append(
-                    create_phase('invited', "Invite", lambda x: current_app.answered_invite(),
+                    create_phase('attend', "Ticket", lambda x: not current_app.is_confirmed(),
                                  self.request.user)
                 )
-                if current_app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
-                    phases.append(
-                        create_phase('attend', "Ticket", lambda x: not current_app.is_confirmed(),
-                                     self.request.user)
-                    )
         except:
             pass
 
         return phases
+
+    def get_current_app(self, user):
+        return user.hacker.application_set.first()
 
     def post(self, request, *args, **kwargs):
         form = forms.HackerForm(request.POST)
@@ -256,5 +258,18 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             return render(request, self.template_name, c)
 
 
-class ApplyHacker(TemplateView):
+class ApplyHacker(LoginRequiredMixin, TemplateView):
     template_name = 'apply.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ApplyHacker, self).get_context_data(**kwargs)
+        c.update({'fetch_forms_url': reverse('fetch_application', request=self.request)})
+        return c
+
+
+@login_required
+def fetch_application(request):
+    redirect_url = request.GET.get('redirect',reverse('profile'))
+    typeform.ApplicationsTypeform().insert_forms()
+    messages.success(request, 'Successfully saved application! We\'ll get back to you soon')
+    return HttpResponseRedirect(redirect_url)

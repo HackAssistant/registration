@@ -1,27 +1,28 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block title %}Apply - {% endblock %}
-
+{% block head_title %}Apply{% endblock %}
 {% block body %}
-    <div class="">
-        {% if user.hacker %}
-            {% if user.hacker.application_set.exists %}
-                <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
+    {% if user.hacker %}
+        {% if user.hacker.application_set.exists %}
+            <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
 
-            {% else %}
-                <style>iframe {
-                    position: absolute;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    top: 0;
-                    border: 0;
-                }</style>
-                <iframe class="margin-top-adjusted" width="100%" height="100%" frameborder="0"
-                        src="https://hackersatupc.typeform.com/to/KaZTUa?hacker_id={{ user.hacker.uuid }}&name={{ user.hacker.name }}&redirect_url={% url 'profile' %}"></iframe>
-            {% endif %}
         {% else %}
-            <h4 class="text-center margin-top" style="color: white;">You need to add your personal information before applying</h4>
+            <style>iframe {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: 0;
+                border: 0;
+            }</style>
+            <iframe id="typeform" width="100%" height="100%" frameborder="0"
+                    src="https://hackersatupc.typeform.com/to/KaZTUa?hacker_id={{ user.hacker.uuid }}&name={{ user.hacker.name }}&redirect_url={{ fetch_forms_url }}"></iframe>
+            <script>
+                document.getElementById("typeform").contentWindow.focus()
+            </script>
         {% endif %}
-    </div>
+    {% else %}
+        <h4 class="text-center margin-top" style="color: white;">You need to add your personal information before
+            applying</h4>
+    {% endif %}
 {% endblock %}
+{% block navbar %}{% endblock %}

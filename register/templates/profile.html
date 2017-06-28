@@ -4,7 +4,7 @@
 {% load bootstrap3 %}
 {% block title %}Profile - {% endblock %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
 {% load utils %}
 {% block body %}
@@ -15,44 +15,40 @@
             {% bootstrap_messages %}
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Welcome{% if user.hacker %} back {{ user.hacker.name }}{% endif %}</h3>
+                    <h3 class="panel-title">Welcome{% if user.hacker %} back {{ user.hacker.name }} {{ user.hacker.lastname }}{% endif %}</h3>
                 </div>
-                <div class="panel-body">
-
-
-                </div>
-
             </div>
         </div>
         <div class="col-md-4">
-            <div class="panel panel-default">
+            <div class="panel panel-default border-less">
                 <div class="panel-heading">
                     <h3 class="panel-title">To do list</h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body no-padding">
                     <div class="list-group">
                         {% for phase in phases %}
-                            <a href="{% if phase.finished or phase.key == current.key %}?phase={{ phase.key }}{% else %}#{% endif %}"
-                               class="list-group-item {% if phase.key == showing.key %}active{% elif not phase.finished and not phase.key == current.key %}disabled{% endif %}">
+                            <a class="list-group-item {% if phase.finished %}finished{% elif phase.key != current.key %}disabled{% endif %} {% if phase.key == active.key %}active{% endif %}"
+                               href="{% if phase.finished or phase.key == current.key %}?phase={{ phase.key }}{% else %}#{% endif %}">
                                 {{ phase.title }}
                             </a>
                         {% endfor %}
                     </div>
-                    <div class="panel-footer">
-                        Errors? Help? Reach us {{ static_values.email|urlize }}
-                    </div>
+
+                </div>
+                <div class="panel-footer">
+                    Errors? Help? Reach us {{ static_values.email|urlize }}
                 </div>
             </div>
         </div>
         <div class="col-md-8">
 
-            <div class="panel panel-success">
+            <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title">{{ showing.title }}</h3>
+                    <h3 class="panel-title">{{ active.title }}</h3>
                 </div>
                 <div class="panel-body">
 
-                    {% include showing.template %}
+                    {% include active.template %}
                 </div>
             </div>
 

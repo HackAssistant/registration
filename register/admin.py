@@ -86,7 +86,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         elif sent > 0:
             self.message_user(request, '%s applications confirmed' % sent)
         else:
-            self.message_user(request, 'Tickets couldn\'t be sent! Did you check that they were accepted before?',
+            self.message_user(request, 'Tickets couldn\'t be sent! Did you check that they were invited?',
                               level=messages.ERROR)
 
     def invite(self, request, queryset):

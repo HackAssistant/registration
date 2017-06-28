@@ -1,3 +1,9 @@
-<p>You will only need to fill this once, we will keep this information between editions</p>
+<p>You will only need to fill this once, we will keep this information between editions
+{% if user.hacker %}
+You can edit it as well.
+{% endif %}
+
+</p>
+
 
 {% include 'include/hacker_form.html' %}

@@ -7,10 +7,12 @@
         We are sorry that you can't come to HackUPC. We are looking forward to welcome you next edition.
         {% include 'include/subscribe_form.html' %}
     {% endif %}
-{% else %}
+{% elif application.is_invited %}
     <p>Congrats! You have been invited to come to HackUPC! Please respond this invite.
         {% if invite_deadline %}It will expire in {{ invite_deadline|timeuntil }}{% endif %}
     </p>
     <a href="{% url 'confirm_app' %}" class="btn btn-block btn-success">Confirm</a>
     <a href="{% url 'cancel_app' %}" class="btn btn-block btn-danger">Cancel</a>
+{% else %}
+    <p>We have received your application. We'll get back to you very soon.</p>
 {% endif %}
