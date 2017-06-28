@@ -88,14 +88,13 @@ class ConfirmApplication(TemplateView, View):
     def get_context_data(self, **kwargs):
         context = super(ConfirmApplication, self).get_context_data(**kwargs)
         request = self.request
-        try:
-            application = request.user.hacker.application_set.first()
-        except:
+        application = models.Application.get_current_application(request.user)
+        if not application:
             raise Http404
         msg = None
         if application.status == models.APP_INVITED:
             msg = emails.create_confirmation_email(application, self.request)
-        already_confirmed = application.is_confirmed()
+        already_confirmed = application.is_confirmed() or application.is_attended()
         cancellation_url = str(reverse('cancel_app', request=request))
         try:
             application.confirm()
@@ -122,9 +121,8 @@ class CancelApplication(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
-        try:
-            application = self.request.user.hacker.application_set.first()
-        except:
+        application = models.Application.get_current_application(user)
+        if not application:
             raise http.Http404
 
         context.update({
@@ -159,7 +157,9 @@ class CancelApplication(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        application = self.request.user.hacker.application_set.first()
+        application = models.Application.get_current_application(request.user)
+        if not application:
+            raise Http404
         try:
             application.cancel()
         except ValidationError:
@@ -246,7 +246,7 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         return phases
 
     def get_current_app(self, user):
-        return user.hacker.application_set.first()
+        return models.Application.get_current_application(user)
 
     def post(self, request, *args, **kwargs):
         form = forms.HackerForm(request.POST)
@@ -274,7 +274,7 @@ class ApplyHacker(LoginRequiredMixin, TemplateView):
 
 @login_required
 def fetch_application(request):
-    redirect_url = request.GET.get('redirect',reverse('profile'))
+    redirect_url = request.GET.get('redirect', reverse('profile'))
     typeform.ApplicationsTypeform().insert_forms()
     messages.success(request, 'Successfully saved application! We\'ll get back to you soon')
     return HttpResponseRedirect(redirect_url)

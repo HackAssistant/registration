@@ -165,10 +165,6 @@ class Application(models.Model):
         # We can re-invite someone invited
         if self.status in [APP_CONFIRMED, APP_ATTENDED]:
             raise ValidationError('Application has already answered invite. Current status: %s' % self.status)
-        # if self.status == APP_INVITED:
-        #     self._send_invite(request, mail_title="[HackUPC] Missing answer")
-        # else:
-        #     self._send_invite(request)
         self.status = APP_INVITED
         self.invited_by = user
         self.last_invite = timezone.now()
@@ -218,6 +214,8 @@ class Application(models.Model):
     def is_rejected(self):
         return self.status == APP_REJECTED
 
+    def is_attended(self):
+        return self.status == APP_ATTENDED
 
     def is_last_reminder(self):
         return self.status == APP_LAST_REMIDER
@@ -248,7 +246,7 @@ class Application(models.Model):
             if settings.MAIL_LISTS_ENABLED:
                 m = MailListManager()
                 m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
-        elif self.status == APP_CONFIRMED:
+        elif self.status in [APP_CONFIRMED, APP_ATTENDED] :
             return None
         else:
             raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
@@ -264,16 +262,17 @@ class Application(models.Model):
                 m = MailListManager()
                 m.remove_applicant_from_list(self, m.W17_GENERAL_LIST_ID)
 
-    def confirmation_url(self, request=None):
-        return reverse('confirm_app', kwargs={'token': self.id}, request=request)
-
-    def cancelation_url(self, request=None):
-        return reverse('cancel_app', kwargs={'token': self.id}, request=request)
-
     def check_in(self):
         self.status = APP_ATTENDED
         self.status_update_date = timezone.now()
         self.save()
+
+    @staticmethod
+    def get_current_application(user):
+        try:
+            return user.hacker.application_set.filter(edition=CURRENT_EDITION).first()
+        except:
+            return None
 
     def _send_reimbursement(self, request):
         sendgrid_send(
@@ -283,8 +282,8 @@ class Application(models.Model):
              '%token%': self.id,
              '%money%': self.reimbursement_money,
              '%country%': self.origin_country,
-             '%confirmation_url%': self.confirmation_url(request),
-             '%cancellation_url%': self.cancelation_url(request)},
+             '%confirmation_url%': reverse('confirm_app', request=request),
+             '%cancellation_url%': reverse('cancel_app', request=request)},
             '06d613dd-cf70-427b-ae19-6cfe7931c193',
             from_email='HackUPC Reimbursements Team <reimbursements@hackupc.com>'
         )
