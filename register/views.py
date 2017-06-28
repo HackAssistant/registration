@@ -189,16 +189,19 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         except IndexError:
             current = [p for p in phases if p['finished']][-1]
 
-        current_key = self.request.GET.get('phase', None)
-        if current_key:
-            current = [p for p in phases if p['key'] == current_key][0] or current
+        showing_key = self.request.GET.get('phase', None)
+        if showing_key:
+            try:
+                showing = [p for p in phases if p['key'] == showing_key][0]
+            except:
+                showing = current
 
         try:
             hacker_form = forms.HackerForm(instance=self.request.user.hacker)
         except:
             hacker_form = forms.HackerForm()
 
-        context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form})
+        context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form, 'showing': showing})
         try:
             application = self.request.user.hacker.application_set.first()
             last_updated = application.status_update_date
