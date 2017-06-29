@@ -201,6 +201,7 @@ ACCOUNT_USER_DISPLAY = lambda x: x.email
 ACCOUNT_USERNAME_REQUIRED = False
 
 DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
+REIMBURSEMENT_EMAIL = 'HackUPC Reimbursements Team <reimbursement@hackupc.com>'
 
 # Loaded on email templates (except auth ones)
 STATIC_KEYS_TEMPLATES = {
@@ -223,11 +224,14 @@ STATIC_KEYS_TEMPLATES = {
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
-    'typeform_form': os.environ.get('TP_FORM', 'KaZTUa')
+    'typeform_form': os.environ.get('TP_APP_FORM', 'KaZTUa'),
+    'typeform_user': os.environ.get('TP_USER', 'hackersatupc')
 }
 
 REIMBURSEMENT_APP = {
-    'typeform_form': os.environ.get('TP_FORM', 'ZrEOYT')
+    'typeform_form': os.environ.get('TP_REIMB_FORM', 'ZrEOYT'),
+    'typeform_user': os.environ.get('TP_USER', 'hackersatupc')
+
 }
 
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'

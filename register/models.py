@@ -227,17 +227,6 @@ class Application(models.Model):
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
 
-    def send_reimbursement(self, request):
-        if self.status != APP_INVITED and self.status != APP_CONFIRMED:
-            raise ValidationError('Application can\'t be reimbursed as it hasn\'t been invited yet')
-        if not self.scholarship:
-            raise ValidationError('Application didn\'t ask for reimbursement')
-        if not self.reimbursement_money:
-            self.reimbursement_money = calculate_reimbursement(self.origin_country)
-
-        self._send_reimbursement(request)
-        self.save()
-
     def confirm(self):
         if self.status == APP_CANCELLED:
             raise ValidationError('This invite has been cancelled.')
@@ -277,20 +266,6 @@ class Application(models.Model):
             return user.hacker.application_set.filter(edition=CURRENT_EDITION).first()
         except:
             return None
-
-    def _send_reimbursement(self, request):
-        sendgrid_send(
-            [self.hacker.user.email],
-            "[HackUPC] Reimbursement granted",
-            {'%name%': self.hacker.name,
-             '%token%': self.id,
-             '%money%': self.reimbursement_money,
-             '%country%': self.origin_country,
-             '%confirmation_url%': reverse('confirm_app', request=request),
-             '%cancellation_url%': reverse('cancel_app', request=request)},
-            '06d613dd-cf70-427b-ae19-6cfe7931c193',
-            from_email='HackUPC Reimbursements Team <reimbursements@hackupc.com>'
-        )
 
     class Meta:
         permissions = (

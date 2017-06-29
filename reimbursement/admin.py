@@ -1,6 +1,9 @@
-from django.contrib import admin
+import logging
+
+from django.contrib import admin, messages
 # Register your models here.
 from django.core import mail
+from django.core.exceptions import ValidationError
 from django.utils.timesince import timesince
 
 from reimbursement import models, emails
@@ -8,7 +11,8 @@ from reimbursement import models, emails
 
 class ReimbursementAdmin(admin.ModelAdmin):
     list_display = (
-        'application', 'name', 'assigned_money', 'origin', 'status', 'status_last_updated', 'application_status')
+        'application', 'name', 'assigned_money', 'origin', 'status', 'status_last_updated', 'application_status',
+        'requested_reimb')
     list_filter = ('status', 'reimbursed_by', 'origin_country', 'reimbursed_by', 'application__status')
     list_per_page = 200
 
@@ -21,6 +25,11 @@ class ReimbursementAdmin(admin.ModelAdmin):
 
     name.admin_order_field = 'application__hacker__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
+
+    def requested_reimb(self, obj):
+        return obj.application.scholarship
+
+    requested_reimb.admin_order_field = 'application__scholarship'  # Allows column order sorting
 
     def application_status(self, obj):
         return obj.application.get_status_display()
@@ -45,15 +54,29 @@ class ReimbursementAdmin(admin.ModelAdmin):
             return
         msgs = []
         sent = 0
+        errors = 0
         for reimb in queryset:
-            reimb.send(request.user)
+            try:
+                reimb.send(request.user)
+                msgs.append(emails.create_reimbursement_email(reimb, request))
+                sent += 1
+            except ValidationError as e:
+                errors += 1
+                logging.error(e.message)
 
-            msgs.append(emails.create_reimbursement_email(reimb, request))
-            sent += 1
-
-        connection = mail.get_connection()
-        connection.send_messages(msgs)
-        self.message_user(request, '%s reimbursements sent' % sent)
+        if msgs:
+            connection = mail.get_connection()
+            connection.send_messages(msgs)
+        if sent > 0 and errors > 0:
+            self.message_user(request, (
+                "%s reimbursements sent, %s reimbursements not sent. Did you check that they were invited before?" % (
+                    sent, errors)),
+                              level=messages.WARNING)
+        elif sent > 0:
+            self.message_user(request, '%s reimbursement sent' % sent, level=messages.SUCCESS)
+        else:
+            self.message_user(request, 'Reimbursement couldn\'t be sent! Did you check that app was invited before?',
+                              level=messages.ERROR)
 
 
 admin.site.register(models.Reimbursement, admin_class=ReimbursementAdmin)
