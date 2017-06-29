@@ -214,7 +214,9 @@ STATIC_KEYS_TEMPLATES = {
     # Live page url
     'live_url': 'https://hackupc.com/live',
     # Issues url, shows up on 500 error
-    'issues_url': 'https://github.com/hackupc/backend/issues/new'
+    'issues_url': 'https://github.com/hackupc/backend/issues/new',
+    # Regex to match possible organizers emails
+    'r_organizer_email': '^.*@hackupc\.com$'
 
 }
 

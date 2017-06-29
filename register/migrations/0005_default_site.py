@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_default_site),
+        # migrations.RunPython(add_default_site),
     ]
