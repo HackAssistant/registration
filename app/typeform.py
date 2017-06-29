@@ -1,4 +1,5 @@
 import json
+import logging
 from logging import error
 
 import requests
@@ -48,7 +49,8 @@ class ApplicationFormFetcher(object):
             try:
                 ret += [app.save(force_insert=True)]
             except Exception as e:
-                pass
+                logging.error(e.message)
+                logging.error('Application failed to insert %s' % app.hacker_id)
 
         return ret
 

@@ -157,8 +157,10 @@ class Application(models.Model):
 
     # TODO: TEAM EXTERNAL
 
-    def __repr__(self):
-        return self.hacker.name + ' ' + self.hacker.lastname
+    def save(self, **kwargs):
+        # Some times foreign keys are not enforced in SQLite, so we ensure it here
+        Hacker.objects.get(uuid=self.hacker_id)
+        super(Application, self).save(**kwargs)
 
     def invite(self, user):
 
@@ -246,7 +248,7 @@ class Application(models.Model):
             if settings.MAIL_LISTS_ENABLED:
                 m = MailListManager()
                 m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
-        elif self.status in [APP_CONFIRMED, APP_ATTENDED] :
+        elif self.status in [APP_CONFIRMED, APP_ATTENDED]:
             return None
         else:
             raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
