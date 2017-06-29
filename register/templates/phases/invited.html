@@ -17,6 +17,7 @@
     </p>
     <a href="{% url 'confirm_app' %}" class="btn btn-block btn-success">Confirm</a>
     <a href="{% url 'cancel_app' %}" class="btn btn-block btn-danger">Cancel</a>
+    {% include 'include/reimbursement.html' %}
 {% elif application.is_expired %}
     We are sorry, your invite expired. If you think this is an error or you still want to come, please message us at
     {{ static_values.email|urlize }}. We will decide case-per-case what is the result.
@@ -27,7 +28,7 @@
         Check out all the awesome upcoming hackathons happening this season on the <a href="https://mlh.io/events"
                                                                                       target="_blank">MLH website!</a>
     </p>
-{#    Message inspired by HackTheNorth rejection email... Tries to be positive :D #}
+    {#    Message inspired by HackTheNorth rejection email... Tries to be positive :D #}
 {% else %}
     <p>We have received your application. We'll get back to you very soon.</p>
 {% endif %}

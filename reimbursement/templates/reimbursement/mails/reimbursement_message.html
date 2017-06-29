@@ -3,8 +3,8 @@
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
-    Congrats {{ hacker.name }}, you have been granted travel reimbursement for this edition of HackUPC. We will
-    reimburse you {{ reimb.assigned_money }} as you are coming from {{ reimb.origin_city }} ({{ reimb.origin_country }}).
+    Congrats {{ hacker.name }}, you have been granted travel reimbursement for this edition of {{ current_site.name }}. We will
+    reimburse you <b>{{ reimb.assigned_money }}{{ reimb.currency_sign }}</b> as you are coming from {{ reimb.origin_city }} ({{ reimb.origin_country }}).
     <b>You have 5 days to fill the following form and submit your tickets.</b>
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_button.html' with text='Submit form' url=form_url %}

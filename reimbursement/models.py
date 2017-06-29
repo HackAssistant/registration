@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 
 from django.conf import settings
@@ -21,6 +22,7 @@ RE_STATUS = [
 class Reimbursement(models.Model):
     application = models.OneToOneField(Application, primary_key=True)
     assigned_money = models.FloatField(null=True, blank=True)
+    currency_sign = models.CharField(max_length=3, default="€")
     origin_city = models.CharField(max_length=300)
     origin_country = models.CharField(max_length=300)
     status = models.CharField(max_length=2, choices=RE_STATUS, default=RE_NOT_SENT)
@@ -47,6 +49,10 @@ class Reimbursement(models.Model):
         self.status_update_date = timezone.now()
         self.reimbursed_by = user
         self.save()
+
+    def get_form_url(self):
+        return 'https://%s.typeform.com/to/%s' % (
+            settings.REIMBURSEMENT_APP.get('typeform_user'), settings.REIMBURSEMENT_APP.get('typeform_form'))
 
     class Meta:
         permissions = (

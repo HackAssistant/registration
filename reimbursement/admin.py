@@ -11,7 +11,7 @@ from reimbursement import models, emails
 
 class ReimbursementAdmin(admin.ModelAdmin):
     list_display = (
-        'application', 'name', 'assigned_money', 'origin', 'status', 'status_last_updated', 'application_status',
+        'application', 'name', 'money', 'origin', 'status', 'status_last_updated', 'application_status',
         'requested_reimb')
     list_filter = ('status', 'reimbursed_by', 'origin_country', 'reimbursed_by', 'application__status')
     list_per_page = 200
@@ -19,6 +19,11 @@ class ReimbursementAdmin(admin.ModelAdmin):
     # search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('creation_date',)
     actions = ['send', ]
+
+    def money(self, obj):
+        return str(obj.assigned_money) + obj.currency_sign
+
+    money.admin_order_field = 'assigned_money'
 
     def name(self, obj):
         return obj.application.hacker.name + ' ' + obj.application.hacker.lastname + ' (' + obj.application.hacker.user.email + ')'

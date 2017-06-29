@@ -21,6 +21,7 @@ from app import slack
 from app.slack import SlackInvitationException
 from app.utils import reverse
 from register import models, forms, emails, typeform
+from reimbursement import models as r_models
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -226,6 +227,13 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             context.update({'invite_deadline': deadline})
         except:
             pass
+
+        try:
+            reimbursement = self.get_current_app(self.request.user).reimbursement
+            context.update({'reimbursement': reimbursement})
+        except:
+            pass
+
         return context
 
     def get_phases(self):

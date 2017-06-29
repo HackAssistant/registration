@@ -10,8 +10,7 @@ def create_reimbursement_email(reimb, request):
         'hacker': hacker,
         'reimb': reimb,
         'confirm_url': str(reverse('confirm_app', request=request)),
-        'form_url': 'https://%s.typeform.com/%s' % (
-        settings.REIMBURSEMENT_APP.get('typeform_user'), settings.REIMBURSEMENT_APP.get('typeform_form')),
+        'form_url': reimb.get_form_url(),
         'cancel_url': str(reverse('cancel_app', request=request))
     }
     if settings.REIMBURSEMENT_EMAIL:
