@@ -22,7 +22,7 @@
                     <thead>
                     <tr>
                         <th>Position</th>
-                        <th>Name</th>
+                        <th>Email</th>
                         <th>Reviews</th>
                     </tr>
                     </thead>
@@ -30,7 +30,7 @@
                     {% for user in ranking %}
                         <tr>
                             <td>{{ forloop.counter | ordinal }}</td>
-                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
                             <td>{{ user.vote_count }}</td>
                         </tr>
                     {% empty %}

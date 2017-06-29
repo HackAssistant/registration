@@ -40,7 +40,7 @@ class RankingView(PermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(RankingView, self).get_context_data(**kwargs)
         context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote')) \
-            .order_by('-vote_count').exclude(vote_count=0).values('vote_count', 'username')
+            .order_by('-vote_count').exclude(vote_count=0).values('vote_count', 'email')
         return context
 
 
