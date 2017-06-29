@@ -138,7 +138,6 @@ class Application(models.Model):
 
     # Reimbursement
     scholarship = models.NullBooleanField()
-    reimbursement_money = models.IntegerField(blank=True, null=True)
     origin_city = models.CharField(max_length=300)
     origin_country = models.CharField(max_length=300)
 
@@ -168,7 +167,7 @@ class Application(models.Model):
         if self.status in [APP_CONFIRMED, APP_ATTENDED]:
             raise ValidationError('Application has already answered invite. Current status: %s' % self.status)
         self.status = APP_INVITED
-        self.invited_by = user
+        if not self.invited_by: self.invited_by = user
         self.last_invite = timezone.now()
         self.last_reminder = None
         self.status_update_date = timezone.now()

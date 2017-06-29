@@ -53,7 +53,6 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
         Django model to the rescue. This is transformed to an SQL sentence that does exactly what we need
         :return: pending aplication that has not been voted by the current user and that has less votes and its older
         """
-        None
         return models.Application.objects \
             .exclude(vote__user_id=self.request.user.id) \
             .exclude(hacker__isnull=True) \
