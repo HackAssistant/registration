@@ -25,5 +25,5 @@ class CheckIn(models.Model):
 
     class Meta:
         permissions = (
-            ("checkin", "Can checkin applications"),
+            ("check_in", "Can checkin applications"),
         )

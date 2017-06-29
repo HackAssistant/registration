@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='checkin',
-            options={'permissions': (('checkin', 'Can checkin applications'),)},
+            options={'permissions': (('check_in', 'Can checkin applications'),)},
         ),
     ]

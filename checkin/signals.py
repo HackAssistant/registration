@@ -12,6 +12,6 @@ def organizer_account(request, user, *args, **kwargs):
     if not pattern:
         return None
     if re.match(pattern, user.email):
-        checkin_perm = Permission.objects.get(codename='checkin')
+        checkin_perm = Permission.objects.get(codename='check_in')
         user.user_permissions.add(checkin_perm)
         user.save()
