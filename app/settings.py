@@ -19,10 +19,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&'
+SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not os.environ.get('PROD_MODE', None)
 
 ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', ]
 
@@ -99,6 +99,18 @@ DATABASES = {
     }
 }
 
+if os.environ.get('PG_USER', None):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('PG_NAME'),
+            'USER': os.environ.get('PG_USER'),
+            'PASSWORD': os.environ.get('PG_PWD'),
+            'HOST': os.environ.get('PG_HOST'),
+            'PORT': '5432',
+        }
+    }
+
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
@@ -140,7 +152,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
 
-if os.environ.get('EMAIL_DEBUG', None) and DEBUG:
+# Load filebased email backend if no Sendgrid credentials and debug mode
+if not os.environ.get('SG_KEY', None) and DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = 'tmp/email-messages/'
 else:
@@ -251,4 +264,9 @@ SLACK = {
     'token': os.environ.get('SL_TOKEN', None)
 }
 
+# Default reimbursement amount, optional, will have empty value if no amount
 DEFAULT_REIMBURSEMENT = 100
+
+# Error reporting email. Will send an email in any 500 error from server email
+SERVER_EMAIL = 'server@hackupc.com'
+ADMINS = [('Devs', 'devs@hackupc.com'), ]

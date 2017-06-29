@@ -143,7 +143,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         for app in queryset:
             reimb = r_models.Reimbursement.objects.get_or_create(application=app, origin_city=app.origin_city,
                                                                  origin_country=app.origin_country)
-            if not reimb[1]: reimb[0].check_prices()
+            if reimb[1]: reimb[0].check_prices()
             reimb[0].save()
 
         return HttpResponseRedirect(reverse('admin:reimbursement_reimbursement_changelist'))

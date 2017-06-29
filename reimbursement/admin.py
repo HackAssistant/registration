@@ -74,13 +74,14 @@ class ReimbursementAdmin(admin.ModelAdmin):
             connection.send_messages(msgs)
         if sent > 0 and errors > 0:
             self.message_user(request, (
-                "%s reimbursements sent, %s reimbursements not sent. Did you check that they were invited before?" % (
+                "%s reimbursements sent, %s reimbursements not sent. Did you check that they were invited before and with money assigned?" % (
                     sent, errors)),
                               level=messages.WARNING)
         elif sent > 0:
             self.message_user(request, '%s reimbursement sent' % sent, level=messages.SUCCESS)
         else:
-            self.message_user(request, 'Reimbursement couldn\'t be sent! Did you check that app was invited before?',
+            self.message_user(request,
+                              'Reimbursement couldn\'t be sent! Did you check that app was invited before and with money assigned?',
                               level=messages.ERROR)
 
 
