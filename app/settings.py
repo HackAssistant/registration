@@ -233,3 +233,11 @@ else:
     EVENT_DOMAIN = 'my.hackupc.com'
 ALLOWED_HOSTS.append(EVENT_DOMAIN)
 CURRENT_EDITION = 'Fall 2017'
+
+# Optional, if not set will skip invite.
+# Highly recommended to create a separate user account to extract the token from
+SLACK = {
+    'team': os.environ.get('SL_TEAM', 'hackupctest'),
+    # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
+    'token': os.environ.get('SL_TOKEN', None)
+}

@@ -1,6 +1,7 @@
 # Create your views here.
 from __future__ import print_function
 
+import logging
 from datetime import timedelta
 
 from django import http
@@ -16,6 +17,8 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
+from app import slack
+from app.slack import SlackInvitationException
 from app.utils import reverse
 from register import models, forms, emails, typeform
 
@@ -36,7 +39,7 @@ class RankingView(PermissionRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote'))\
+        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote')) \
             .order_by('-vote_count').exclude(vote_count=0).values('vote_count', 'username')
         return context
 
@@ -112,7 +115,14 @@ class ConfirmApplication(TemplateView, View):
                 'hacker': application.hacker,
                 'error': e.message,
             })
-        if msg: msg.send()
+        if msg:
+            msg.send()
+            try:
+                slack.send_slack_invite(request.user.email)
+            # Ignore if we can't send, it's only optional
+            except SlackInvitationException as e:
+                logging.error(e.message)
+
         return context
 
 
