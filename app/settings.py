@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'register',
     'checkin',
+    'reimbursement',
     'table',
 ]
 
@@ -225,6 +226,10 @@ REGISTER_APP = {
     'typeform_form': os.environ.get('TP_FORM', 'KaZTUa')
 }
 
+REIMBURSEMENT_APP = {
+    'typeform_form': os.environ.get('TP_FORM', 'ZrEOYT')
+}
+
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'
 if DEBUG:
@@ -241,3 +246,5 @@ SLACK = {
     # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
     'token': os.environ.get('SL_TOKEN', None)
 }
+
+DEFAULT_REIMBURSEMENT = 100

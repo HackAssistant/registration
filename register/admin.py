@@ -5,24 +5,20 @@ from django.core import mail
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
+from django.http import HttpResponseRedirect
 from django.utils.timesince import timesince
 
-from app.utils import export_as_csv_action
+from app.utils import reverse
 from register import models, emails
+from reimbursement import models as r_models
 
 EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
 
 admin.site.disable_action('delete_selected')
 
 
-class ApplicationInline(admin.StackedInline):
-    model = models.Application
-    fields = ('status',)
-
-
 class HackerAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'name', 'lastname')
-    inlines = [ApplicationInline, ]
     # list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'hacker__country', 'under_age')
     list_per_page = 200
     # search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
@@ -37,7 +33,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite', 'ticket', ]
+    actions = ['reject_application', 'invite', 'ticket', 'create_reimbursement']
 
     def name(self, obj):
         return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + obj.hacker.user.email + ')'
@@ -66,6 +62,9 @@ class ApplicationAdmin(admin.ModelAdmin):
         if not request.user.has_perm('register.invite'):
             if 'invite' in actions: del actions['invite']
             if 'ticket' in actions: del actions['ticket']
+
+        if not request.user.has_perm('reimbursement.reimburse'):
+            if 'create_reimbursement' in actions: del actions['create_reimbursement']
 
         return actions
 
@@ -99,6 +98,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     def invite(self, request, queryset):
         if not request.user.has_perm('register.invite'):
             self.message_user(request, "You don't have permission to invite users")
+            return
         invited = 0
         errors = 0
         msgs = []
@@ -135,6 +135,18 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, '%s applications rejected' % count)
 
     reject_application.short_description = 'Reject'
+
+    def create_reimbursement(self, request, queryset):
+        if not request.user.has_perm('reimbursement.reimburse'):
+            self.message_user(request, "You don't have permission to create reimbursements")
+            return
+        for app in queryset:
+            reimb = r_models.Reimbursement.objects.get_or_create(application=app, origin_city=app.origin_city,
+                                                                 origin_country=app.origin_country)
+            if not reimb[1]: reimb[0].check_prices()
+            reimb[0].save()
+
+        return HttpResponseRedirect(reverse('admin:reimbursement_reimbursement_changelist'))
 
 
 # class InvitationAdmin(ApplicationAdmin):
