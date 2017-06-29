@@ -31,13 +31,13 @@ def add_vote(application, user, tech_rat, pers_rat):
 
 
 class RankingView(PermissionRequiredMixin, TemplateView):
-    permission_required = 'register.vote'
+    permission_required = 'register.ranking'
     template_name = 'ranking.html'
 
     def get_context_data(self, **kwargs):
         context = super(RankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote')).order_by(
-            '-vote_count').values('vote_count', 'username')
+        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote'))\
+            .order_by('-vote_count').exclude(vote_count=0).values('vote_count', 'username')
         return context
 
 

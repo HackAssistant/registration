@@ -33,6 +33,10 @@
                             <td>{{ user.username }}</td>
                             <td>{{ user.vote_count }}</td>
                         </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No organizers voted yet... Why? :'(</td>
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>
