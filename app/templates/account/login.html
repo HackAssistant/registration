@@ -1,6 +1,7 @@
 {% extends "account/base.html" %}
 
 {% load i18n %}
+{% load bootstrap3 %}
 {% load account socialaccount %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
@@ -33,26 +34,9 @@
             <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
     {% endif %}
 
-    <form class="login" method="POST" action="/accounts/login/">
+    <form class="login form-horizontal" method="POST" action="/accounts/login/">
         {% csrf_token %}
-        <div class="form-group row">
-            <label for="id_login" class="col-sm-2 col-form-label">Email</label>
-            <div class="col-sm-10">
-                <input class="form-control" autofocus="autofocus" id="id_login" name="login"
-                       placeholder="E-mail address" type="email" required/>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="id_password" class="col-sm-2 col-form-label">Password</label>
-            <div class="col-sm-10">
-                <input class="form-control" id="id_password" name="password" placeholder="Password" type="password"
-                       required/>
-                <a class="button secondaryAction"
-                   href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a><br>
-            </div>
-
-
-        </div>
+        {% bootstrap_form form layout="horizontal" %}
         {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
         {% endif %}
