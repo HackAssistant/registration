@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-import csv
-import os
 import uuid as uuid
 
 from django.conf import settings
@@ -13,15 +11,11 @@ from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
 
-from app.emails import sendgrid_send, MailListManager
-from app.utils import reverse
+from app.emails import MailListManager
 
 # Votes weight
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
-
-# Reimbursement tiers
-DEFAULT_REIMBURSEMENT = 100
 
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
@@ -70,18 +64,6 @@ DIETS = [
 ]
 
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
-
-
-# Create your models here.
-
-def calculate_reimbursement(country):
-    with open(os.path.join(settings.BASE_DIR, 'reimbursements.csv')) as reimbursements:
-        reader = csv.reader(reimbursements, delimiter=',')
-        for row in reader:
-            if country in row[0]:
-                return int(row[1])
-
-    return DEFAULT_REIMBURSEMENT
 
 
 class Hacker(models.Model):
