@@ -5,6 +5,7 @@ from django.core import mail
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
+from django.utils.timesince import timesince
 
 from app.utils import export_as_csv_action
 from register import models, emails
@@ -31,24 +32,30 @@ class HackerAdmin(admin.ModelAdmin):
 
 
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'votes', 'status')
+    list_display = ('id', 'name', 'votes', 'scholarship', 'status', 'status_last_updated',)
     list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'origin_country', 'under_age')
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite', 'ticket',
-               export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
+    actions = ['reject_application', 'invite', 'ticket', ]
 
     def name(self, obj):
-        return obj.hacker.name + ' ' + obj.hacker.lastname
+        return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + obj.hacker.user.email + ')'
 
     name.admin_order_field = 'hacker__name'  # Allows column order sorting
-    name.short_description = 'Hacker name'  # Renames column head
+    name.short_description = 'Hacker info'  # Renames column head
 
     def votes(self, app):
         return app.vote_avg
 
     votes.admin_order_field = 'vote_avg'
+
+    def status_last_updated(self, app):
+        if not app.status_update_date:
+            return None
+        return timesince(app.status_update_date)
+
+    status_last_updated.admin_order_field = 'status_update_date'
 
     def get_queryset(self, request):
         qs = super(ApplicationAdmin, self).get_queryset(request)
