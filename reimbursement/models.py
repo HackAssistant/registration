@@ -45,6 +45,9 @@ class Reimbursement(models.Model):
     def send(self, user):
         if self.application.status not in [r_models.APP_INVITED, r_models.APP_CONFIRMED, r_models.APP_LAST_REMIDER]:
             raise ValidationError('Application can\'t be reimbursed as it hasn\'t been invited yet')
+        if not self.assigned_money:
+            raise ValidationError('Reimbursement can\'t be sent because there\'s no assigned money')
+
         self.status = RE_SENT
         self.status_update_date = timezone.now()
         self.reimbursed_by = user
