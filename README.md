@@ -9,6 +9,7 @@ Backend for hackathon application management.
 ## Features
 
 - Email sign up and basic data management interface for hackers
+- User management interface with different permissions
 - Review application interface
 - Sends invites and controls confirmation and cancellation application flow
 - Check-in interface with QR scanner
@@ -151,21 +152,33 @@ server {
 ```
 
 
-## Management Commands
+## Management
+
+
+### Commands
 
 This can be added to crontab for periodic automatic execution.
 
-### Fetch last forms
+#### Fetch last forms
 
 Fetches all aplications and inserts those who don't exist in the DB
 
 - Activate virtualenv (optional)
 - Run: `TP_KEY=REPLACE_WITH_TYPEFORM_API_KEY python manange.py insert_applications`
 
-### Check invited applications for expirations
+#### Check invited applications for expirations
 
 Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
 
 - Activate virtualenv (optional)
 - Run: `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`
 
+
+### Permissions
+
+- **checkin.checkin**: Allows user to check-in hackers with QR and list view
+- **register.invite**: Allows user to invite hackers. Needs to be staff first and needs to be able to edit applications.
+- **register.vote**: Allows user to vote and review applications
+- **register.ranking**: Allows user to see ranking of reviewiers.
+- **register.reject**: Allows user to reject users. Needs to be staff first and needs to be able to edit applications.
+- **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements. 
