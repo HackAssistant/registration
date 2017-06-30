@@ -21,6 +21,7 @@
                         {% include 'include/field.html' with desc='Email' value=hacker.email %}
                         {% include 'include/field.html' with desc='Shirt Size' value=hacker.tshirt_size %}
                         {% include 'include/field.html' with desc='Diet' value=hacker.diet %}
+                        {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                     </dl>
                 </div>
                 <div class="panel-footer">
