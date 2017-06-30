@@ -106,7 +106,7 @@ if os.environ.get('PG_NAME', None):
             'NAME': os.environ.get('PG_NAME'),
             'USER': os.environ.get('PG_USER'),
             'PASSWORD': os.environ.get('PG_PWD'),
-            'HOST': os.environ.get('PG_HOST'),
+            'HOST': os.environ.get('PG_HOST', 'localhost'),
             'PORT': '5432',
         }
     }
