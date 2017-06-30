@@ -1,13 +1,11 @@
 {% extends 'base_email.html' %}
-{% load account %}
-{% user_display user as user_display %}
 {% block preheader %}Email confirmation from {{ current_site.name }}{% endblock %}
 {% block content %}
     {% include 'include/email_line_start.html' %}
-    Hi there {{ user_display }},
+    Hi there,
     {% include 'include/email_line_end.html' %}
-    {% include 'include/email_line.html' with text="Once you confirm your email address you'll be able to use it to log in to your account at "|add:current_site.name %}
-    {% include 'include/email_button.html' with text='activate' url=activate_url %}
+    {% include 'include/email_line.html' with text="Confirm your email address to log in to your account at "|add:current_site.name %}
+    {% include 'include/email_button.html' with text='Confirm' url=activate_url %}
 
     {% include 'include/email_line.html' with text="Best," %}
     {% include 'include/email_line.html' with text="" %}

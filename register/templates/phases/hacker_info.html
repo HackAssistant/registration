@@ -7,3 +7,6 @@ You can edit it as well.
 
 
 {% include 'include/hacker_form.html' %}
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+If you have any special need you want us to know about please send us an email to {{ static_values.email|urlize }}
