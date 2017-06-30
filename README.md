@@ -72,6 +72,7 @@ See this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-
 Needs: Systemd.
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
+- Edit variables to match your environment
 - Run `restart.sh`. This will update the database, dependecies and static files.
 - Edit this file `/etc/systemd/system/gunicorn.service`
 - Add this content
@@ -157,21 +158,22 @@ server {
 
 ### Commands
 
-This can be added to crontab for periodic automatic execution.
 
-#### Fetch last forms
+- `TP_KEY=REPLACE_WITH_TYPEFORM_API_KEY python manange.py insert_applications`: Fetches all aplications and inserts those who don't exist in the DB
+- `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`: Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
 
-Fetches all aplications and inserts those who don't exist in the DB
+#### Production
 
-- Activate virtualenv (optional)
-- Run: `TP_KEY=REPLACE_WITH_TYPEFORM_API_KEY python manange.py insert_applications`
+Create your own management.sh script and add to crontab.
 
-#### Check invited applications for expirations
+- Create management.sh from template: `cp management.sh.template management.sh`
+- `chmod +x management.sh`
+- Edit variables to match your environment
+- Add to crontab: `crontab -e`
+```
+*/2 * * * * /home/user/project_folder/management.sh > /home/user/project_folder/management.log 2> /home/user/project_folder/management_err.log
+```
 
-Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
-
-- Activate virtualenv (optional)
-- Run: `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`
 
 
 ### Permissions
