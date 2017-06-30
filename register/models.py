@@ -59,7 +59,7 @@ D_GLUTEN_FREE = 'Gluten-free'
 
 DIETS = [
     (D_NONE, 'None'),
-    (D_VEGETERIAN, 'Vegeterian'),
+    (D_VEGETERIAN, 'Vegeterian/Vegan'),
     (D_GLUTEN_FREE, 'Gluten free')
 ]
 
