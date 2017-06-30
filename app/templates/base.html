@@ -53,6 +53,8 @@
                         {% endif %}
                         {% if perms.register.vote %}
                             <li><a href="{% url 'vote' %}">Vote</a></li>
+                        {% endif %}
+                        {% if perms.register.ranking %}
                             <li><a href="{% url 'ranking' %}">Ranking</a></li>
                         {% endif %}
                         {% if perms.checkin.checkin %}
