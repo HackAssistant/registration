@@ -2,7 +2,7 @@
 {% load utils %}
 {% block head_title %}Apply{% endblock %}
 {% block body %}
-    {% settings_value 'REGISTER_APP' app_data %}
+    {% settings_value 'REGISTER_APP' as app_data %}
     {% if user.hacker %}
         {% if user.hacker.application_set.exists %}
             <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
