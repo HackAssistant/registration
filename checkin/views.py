@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -45,8 +46,12 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
         app = get_object_or_404(models.Application, pk=appid)
+        if app.status == models.APP_ATTENDED:
+            messages.success(self.request, 'Hacker checked-in! Good job! Nothing else to see here, you can move on :D')
+
         context.update({
             'app': app,
+            'hacker': app.hacker,
             'checkedin': app.status == models.APP_ATTENDED
         })
         return context
