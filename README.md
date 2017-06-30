@@ -18,11 +18,12 @@ Backend for hackathon application management.
 - (Optional) SendGrid contact list synchronization with confirmed users
 - (Optional) Slack invites on confirm and on demand in admin interface
 
-## Configuration (enviroment variables)
+## Available enviroment variables
 
 - **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
-You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/)
+You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
 - **TP_KEY**: Typeform API key. Mandatory for retrieving the information from applications in Typeform. See how to obtain it [here](https://www.typeform.com/help/data-api/)
+- **PROD_MODE**: Enables production mode.
 
 ## Setup
 
@@ -45,8 +46,8 @@ TODO: Include guide to create and prepare your Typeform
 
 ### Local environment
 
-Run server to 0.0.0.0
-`python manage.py runserver 0.0.0.0:8000`
+- Add `TP_KEY` in environment (if you want to retrieve forms)
+- `python manage.py runserver 0.0.0.0:8000`
 
 ### Production environment
 

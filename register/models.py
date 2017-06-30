@@ -220,7 +220,7 @@ class Application(models.Model):
             self.save()
             if settings.MAIL_LISTS_ENABLED:
                 m = MailListManager()
-                m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
+                m.add_applicant_to_list(self, settings.SG_GENERAL_LIST_ID)
         elif self.status in [APP_CONFIRMED, APP_ATTENDED]:
             return None
         else:
@@ -235,7 +235,7 @@ class Application(models.Model):
             self.save()
             if settings.MAIL_LISTS_ENABLED:
                 m = MailListManager()
-                m.remove_applicant_from_list(self, m.W17_GENERAL_LIST_ID)
+                m.remove_applicant_from_list(self, settings.SG_GENERAL_LIST_ID)
 
     def check_in(self):
         self.status = APP_ATTENDED

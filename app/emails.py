@@ -79,9 +79,6 @@ def send_email(template_prefix, recipient_email, substitutions, from_email=setti
 
 
 class MailListManager:
-    W17_GENERAL_LIST_ID = "876178"
-    W17_TRAVEL_REIMB_LIST_ID = "986640"
-
     def __init__(self):
         self.sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 

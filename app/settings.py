@@ -99,7 +99,7 @@ DATABASES = {
     }
 }
 
-if os.environ.get('PG_NAME', None):
+if os.environ.get('PG_PWD', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -161,7 +161,9 @@ else:
     SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
 
 MAIL_LISTS_ENABLED = True
-if DEBUG:
+SG_GENERAL_LIST_ID = os.environ.get('SG_GENERAL_LIST_ID',"876178")
+
+if not os.environ.get('SG_KEY', None):
     MAIL_LISTS_ENABLED = False
 
 # JET
@@ -276,3 +278,5 @@ if not DEBUG and os.environ.get('EMAIL_HOST_PASSWORD', None):
     EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
+
+
