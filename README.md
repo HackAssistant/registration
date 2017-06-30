@@ -8,22 +8,16 @@ Backend for hackathon application management.
 
 ## Features
 
-- Sign up and basic data management interface for hackers
+- Email sign up and basic data management interface for hackers
 - Review application interface
 - Sends invites and controls confirmation and cancellation application flow
 - Check-in interface with QR scanner
 - Admin dashboard with stats
 - Flexible email backend (SendGrid is the default supported backend)
-- Reimbursement money admin interface
+- Reimbursement management interface
 - (Optional) SendGrid contact list synchronization with confirmed users
 - (Optional) Slack invites on confirm and on demand in admin interface
 
-## Available enviroment variables
-
-- **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
-You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
-- **TP_KEY**: Typeform API key. Mandatory for retrieving the information from applications in Typeform. See how to obtain it [here](https://www.typeform.com/help/data-api/)
-- **PROD_MODE**: Enables production mode.
 
 ## Setup
 
@@ -36,6 +30,26 @@ Needs: Python 3.X, virtualenv
 - `pip install -r requirements.txt`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
+
+## Available enviroment variables
+
+- **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
+You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
+- **TP_KEY**: Typeform API key. Mandatory for retrieving the information from applications in Typeform. See how to obtain it [here](https://www.typeform.com/help/data-api/)
+- **PROD_MODE**(optional): Disables debug mode. Avoids using filesystem mail backend.
+- **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
+- **PG_PWD**(optional): Postgres password. Also enables Postgres as the default database with the default values specified below.
+- **PG_NAME**(optional): Postgres database name. Default: backend
+- **PG_USER**(optional): Postgres user. Default: backenduser
+- **PG_HOST**(optional): Postgres host. Default: localhost
+- **SG_GENERAL_LIST_ID**(optional): Sendgrid confirmed users list id. Enables adding users to list on confirmed and removing them on cancel.
+- **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
+- **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
+- **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
+- **EMAIL_HOST_PASSWORD**(optional): STMP host password for admin emails. Enables admin emails.
+- **EMAIL_HOST**(optional): STMP host name. Defaults: smtp.sendgrid.net
+- **EMAIL_HOST_USER**(optional): STMP host username. Defaults: hupc_mail
+
 
 ### Typeform setup
 

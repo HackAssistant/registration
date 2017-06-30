@@ -152,18 +152,17 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
 
+SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
 # Load filebased email backend if no Sendgrid credentials and debug mode
-if not os.environ.get('SG_KEY', None) and DEBUG:
+if not SENDGRID_API_KEY and DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = 'tmp/email-messages/'
 else:
     EMAIL_BACKEND = "sgbackend.SendGridBackend"
-    SENDGRID_API_KEY = os.environ.get('SG_KEY', '.')
 
 MAIL_LISTS_ENABLED = True
-SG_GENERAL_LIST_ID = os.environ.get('SG_GENERAL_LIST_ID',"876178")
-
-if not os.environ.get('SG_KEY', None):
+SG_GENERAL_LIST_ID = os.environ.get('SG_GENERAL_LIST_ID', None)
+if not SG_GENERAL_LIST_ID:
     MAIL_LISTS_ENABLED = False
 
 # JET
@@ -251,10 +250,8 @@ REIMBURSEMENT_APP = {
 
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'
-if DEBUG:
-    EVENT_DOMAIN = 'localhost:8000'
-else:
-    EVENT_DOMAIN = os.environ.get('DOMAIN', 'my.hackupc.com')
+
+EVENT_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
 ALLOWED_HOSTS.append(EVENT_DOMAIN)
 CURRENT_EDITION = 'Fall 2017'
 
@@ -269,7 +266,7 @@ SLACK = {
 # Default reimbursement amount, optional, will have empty value if no amount
 DEFAULT_REIMBURSEMENT = 100
 
-if not DEBUG and os.environ.get('EMAIL_HOST_PASSWORD', None):
+if os.environ.get('EMAIL_HOST_PASSWORD', None):
     # Error reporting email. Will send an email in any 500 error from server email
     SERVER_EMAIL = 'server@hackupc.com'
     ADMINS = [('Devs', 'devs@hackupc.com'), ]
@@ -278,5 +275,3 @@ if not DEBUG and os.environ.get('EMAIL_HOST_PASSWORD', None):
     EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-
-

@@ -2,6 +2,8 @@
 export PROD_MODE="True"
 # You can create it by running os.urandom(24) in Python
 export SECRET="SECRET"
+# Sendgrid general list id
+export SG_GENERAL_LIST_ID="876178"
 # Set up your postgres password
 export PG_PWD="password"
 # If using Sendgrid set api key here
