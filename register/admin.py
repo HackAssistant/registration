@@ -33,7 +33,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite', 'ticket', 'create_reimbursement', 'invite_slack']
+    actions = ['reject_application', 'invite', 'ticket', 'create_reimbursement', 'invite_slack', 'reject']
 
     def name(self, obj):
         return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + obj.hacker.user.email + ')'
@@ -62,6 +62,9 @@ class ApplicationAdmin(admin.ModelAdmin):
         if not request.user.has_perm('register.invite'):
             if 'invite' in actions: del actions['invite']
             if 'ticket' in actions: del actions['ticket']
+
+        if not request.user.has_perm('register.reject'):
+            if 'reject' in actions: del actions['reject']
 
         if not request.user.has_perm('reimbursement.reimburse'):
             if 'create_reimbursement' in actions: del actions['create_reimbursement']
@@ -124,6 +127,29 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, '%s applications invited' % invited)
         else:
             self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were accepted before?',
+                              level=messages.ERROR)
+
+    def reject(self, request, queryset):
+        if not request.user.has_perm('register.reject'):
+            self.message_user(request, "You don't have permission to reject users")
+            return
+        rejected = 0
+        errors = 0
+        for app in queryset:
+            try:
+                app.reject(request)
+                rejected += 1
+            except ValidationError:
+                errors += 1
+        if rejected > 0 and errors > 0:
+            self.message_user(request, (
+                "%s applications rejected, %s errors. Did you check that they haven't already attended?" % (
+                    rejected, errors)),
+                              level=messages.INFO)
+        elif rejected > 0:
+            self.message_user(request, '%s applications rejected' % rejected)
+        else:
+            self.message_user(request, 'Are you kidding me? They already attended!',
                               level=messages.ERROR)
 
     def invite_slack(self, request, queryset):

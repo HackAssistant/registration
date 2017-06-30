@@ -171,8 +171,8 @@ class Application(models.Model):
         self.save()
 
     def reject(self, request):
-        if not request.user.has_perm('register.invite'):
-            raise ValidationError('User doesn\'t have permission to invite user')
+        if not request.user.has_perm('register.reject'):
+            raise ValidationError('User doesn\'t have permission to reject users')
         if self.status == APP_ATTENDED:
             raise ValidationError('Application has already attended. Current status: %s' % self.status)
         self.status = APP_REJECTED
