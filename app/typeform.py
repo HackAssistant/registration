@@ -49,7 +49,7 @@ class ApplicationFormFetcher(object):
             try:
                 ret += [app.save(force_insert=True)]
             except Exception as e:
-                logging.error(e.message)
+                logging.error(e)
                 logging.error('Application failed to insert %s' % app.hacker_id)
 
         return ret
