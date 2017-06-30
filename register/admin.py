@@ -1,3 +1,6 @@
+import logging
+
+from django.conf import settings
 from django.contrib import admin
 # Register your models here.
 from django.contrib.auth.decorators import login_required
@@ -8,6 +11,8 @@ from django.db.models import Avg
 from django.http import HttpResponseRedirect
 from django.utils.timesince import timesince
 
+from app import slack
+from app.slack import SlackInvitationException
 from app.utils import reverse
 from register import models, emails
 from reimbursement import models as r_models
@@ -19,12 +24,7 @@ admin.site.disable_action('delete_selected')
 
 class HackerAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'name', 'lastname')
-    # list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'hacker__country', 'under_age')
     list_per_page = 200
-    # search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
-    # ordering = ('submission_date',)
-    # actions = ['reject_application', 'invite',
-    #            export_as_csv_action(fields=EXPORT_CSV_FIELDS)]
 
 
 class ApplicationAdmin(admin.ModelAdmin):
@@ -33,7 +33,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite', 'ticket', 'create_reimbursement']
+    actions = ['reject_application', 'invite', 'ticket', 'create_reimbursement', 'invite_slack']
 
     def name(self, obj):
         return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + obj.hacker.user.email + ')'
@@ -65,6 +65,9 @@ class ApplicationAdmin(admin.ModelAdmin):
 
         if not request.user.has_perm('reimbursement.reimburse'):
             if 'create_reimbursement' in actions: del actions['create_reimbursement']
+
+        if not settings.SLACK.get('team', None) or not settings.SLACK.get('token', None):
+            if 'invite_slack' in actions: del actions['invite_slack']
 
         return actions
 
@@ -109,9 +112,9 @@ class ApplicationAdmin(admin.ModelAdmin):
                 invited += 1
             except ValidationError:
                 errors += 1
-
-        connection = mail.get_connection()
-        connection.send_messages(msgs)
+        if msgs:
+            connection = mail.get_connection()
+            connection.send_messages(msgs)
         if invited > 0 and errors > 0:
             self.message_user(request, (
                 "%s applications invited, %s invites cancelled. Did you check that they were accepted before?" % (
@@ -121,6 +124,30 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, '%s applications invited' % invited)
         else:
             self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were accepted before?',
+                              level=messages.ERROR)
+
+    def invite_slack(self, request, queryset):
+        invited = 0
+        errors = 0
+        for app in queryset:
+            if app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
+                try:
+                    slack.send_slack_invite(app.hacker.user.email)
+                    invited += 1
+                except SlackInvitationException as e:
+                    logging.error(e.message)
+                    errors += 1
+            else:
+                errors += 1
+        if invited > 0 and errors > 0:
+            self.message_user(request, (
+                "%s applications invited to slack, %s skipped. Have they confirmed already?" % (
+                    invited, errors)),
+                              level=messages.INFO)
+        elif invited > 0:
+            self.message_user(request, '%s applications invited to slack' % invited)
+        else:
+            self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were confirmed before?',
                               level=messages.ERROR)
 
     def reject_application(self, request, queryset):

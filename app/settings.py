@@ -267,6 +267,12 @@ SLACK = {
 # Default reimbursement amount, optional, will have empty value if no amount
 DEFAULT_REIMBURSEMENT = 100
 
-# Error reporting email. Will send an email in any 500 error from server email
-SERVER_EMAIL = 'server@hackupc.com'
-ADMINS = [('Devs', 'devs@hackupc.com'), ]
+if not DEBUG and os.environ.get('EMAIL_HOST_PASSWORD', None):
+    # Error reporting email. Will send an email in any 500 error from server email
+    SERVER_EMAIL = 'server@hackupc.com'
+    ADMINS = [('Devs', 'devs@hackupc.com'), ]
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hupc_mail')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
