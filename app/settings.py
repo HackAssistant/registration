@@ -237,13 +237,13 @@ STATIC_KEYS_TEMPLATES = {
 
 REGISTER_APP = {
     'typeform_key': os.environ.get('TP_KEY'),
-    'typeform_form': os.environ.get('TP_APP_FORM', 'KaZTUa'),
-    'typeform_user': os.environ.get('TP_USER', 'hackersatupc')
+    'typeform_form': 'KaZTUa',
+    'typeform_user': 'hackersatupc',
 }
 
 REIMBURSEMENT_APP = {
-    'typeform_form': os.environ.get('TP_REIMB_FORM', 'ZrEOYT'),
-    'typeform_user': os.environ.get('TP_USER', 'hackersatupc')
+    'typeform_form': 'ZrEOYT',
+    'typeform_user': 'hackersatupc',
 
 }
 
@@ -252,7 +252,7 @@ EVENT_NAME = 'HackUPC'
 if DEBUG:
     EVENT_DOMAIN = 'localhost:8000'
 else:
-    EVENT_DOMAIN = 'my.hackupc.com'
+    EVENT_DOMAIN = os.environ.get('DOMAIN', 'my.hackupc.com')
 ALLOWED_HOSTS.append(EVENT_DOMAIN)
 CURRENT_EDITION = 'Fall 2017'
 
