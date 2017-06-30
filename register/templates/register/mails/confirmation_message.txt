@@ -5,7 +5,7 @@ If you can no longer attend, please cancel your invite by using the following ur
 
 {{ cancel_url }}
 
-See you soon in Barcelona!
+See you soon!
 
 Best,
 
