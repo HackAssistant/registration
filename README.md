@@ -4,6 +4,9 @@
 </p>
 <br>
 
+
+[![Code Climate](https://codeclimate.com/github/hackupc/backend/badges/gpa.svg)](https://codeclimate.com/github/hackupc/backend)
+
 Backend for hackathon application management.
 
 ## Features
@@ -18,6 +21,7 @@ Backend for hackathon application management.
 - Reimbursement management interface
 - (Optional) SendGrid contact list synchronization with confirmed users
 - (Optional) Slack invites on confirm and on demand in admin interface
+
 
 
 ## Setup
@@ -155,9 +159,7 @@ server {
 
 ## Management
 
-
 ### Commands
-
 
 - `TP_KEY=REPLACE_WITH_TYPEFORM_API_KEY python manange.py insert_applications`: Fetches all aplications and inserts those who don't exist in the DB
 - `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`: Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
@@ -174,8 +176,6 @@ Create your own management.sh script and add to crontab.
 */2 * * * * /home/user/project_folder/management.sh > /home/user/project_folder/management.log 2> /home/user/project_folder/management_err.log
 ```
 
-
-
 ### Permissions
 
 - **checkin.checkin**: Allows user to check-in hackers with QR and list view
@@ -184,3 +184,8 @@ Create your own management.sh script and add to crontab.
 - **register.ranking**: Allows user to see ranking of reviewiers.
 - **register.reject**: Allows user to reject users. Needs to be staff first and needs to be able to edit applications.
 - **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements. 
+
+# License
+
+MIT © Hackers@UPC
+
