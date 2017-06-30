@@ -173,7 +173,7 @@ Create your own management.sh script and add to crontab.
 - Edit variables to match your environment
 - Add to crontab: `crontab -e`
 ```
-*/2 * * * * /home/user/project_folder/management.sh > /home/user/project_folder/management.log 2> /home/user/project_folder/management_err.log
+*/5 * * * * cd /home/user/project_folder/ && ./management.sh > /home/user/project_folder/management.log 2> /home/user/project_folder/management_err.log
 ```
 
 ### Permissions
@@ -185,7 +185,30 @@ Create your own management.sh script and add to crontab.
 - **register.reject**: Allows user to reject users. Needs to be staff first and needs to be able to edit applications.
 - **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements. 
 
+### Add new edition
+
+- Open `register/models.py`
+- Add edition in `EDITIONS` array
+- Change default in model `Applications`
+- Run `python manage.py makemigrations`
+- Run `python manage.py migrate`
+
+
+## Personalization
+
+You can personalize this backend in style and strings for your hackathon.
+ 
+### Style
+
+
+
+###
+
+
 # License
 
 MIT © Hackers@UPC
+
+
+
 
