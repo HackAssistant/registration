@@ -200,10 +200,19 @@ You can personalize this backend in style and strings for your hackathon.
  
 ### Style
 
+For colors and presentation of views you can edit [app/static/css/main.css](app/static/css/main.css).
 
+To edit the navbar content/disposition you can modify [app/templates/base.html](app/templates/base.html)
 
-###
+The email base template is in [app/templates/base_email.html](app/templates/base_email.html)
 
+### Content
+
+- Emails:
+    - Account (verification email, passord reset reset): [app/templates/account/email/](app/templates/account/email/)
+    - Register (application invite, event ticket): [register/templates/register/mails/](register/templates/register/mails/)
+    - Reimbursement (reimbursement email): [reimbursement/templates/reimbursement/mails/](reimbursement/templates/reimbursement/mails/)
+- General information (documented in the file itself): [app/settings.py](app/settings.py)
 
 # License
 
