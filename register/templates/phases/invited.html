@@ -1,0 +1,34 @@
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+{% settings_value "EVENT_NAME" as event_name %}
+
+{% if application.answered_invite %}
+    Thanks for answering the invite
+    {% if application.can_be_cancelled %}
+        If you can no longer attend please cancel your invite here.
+        <a href="{% url 'cancel_app' %}" class="btn btn-block btn-danger">Cancel</a>
+    {% elif application.is_cancelled %}
+        We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
+        {% include 'include/subscribe_form.html' %}
+    {% endif %}
+{% elif application.is_invited or application.is_last_reminder %}
+    <p>Congrats! You have been invited to come to {{ event_name }}! Please respond this invite.
+        {% if invite_deadline %}It will expire in {{ invite_deadline|timeuntil }}{% endif %}
+    </p>
+    <a href="{% url 'confirm_app' %}" class="btn btn-block btn-success">Confirm</a>
+    <a href="{% url 'cancel_app' %}" class="btn btn-block btn-danger">Cancel</a>
+    {% include 'include/reimbursement.html' %}
+{% elif application.is_expired %}
+    We are sorry, your invite expired. If you think this is an error or you still want to come, please message us at
+    {{ static_values.email|urlize }}. We will decide case-per-case what is the result.
+{% elif application.is_rejected %}
+    <p>Thank you for applying to {{ event_name }}; we are regrettably unable to offer you a spot at our event this year.
+        At this time the event is at full capacity.</p>
+    <p>Remember, hackathons are about passion and building things, it doesn't matter where!
+        Check out all the awesome upcoming hackathons happening this season on the <a href="https://mlh.io/events"
+                                                                                      target="_blank">MLH website!</a>
+    </p>
+    {#    Message inspired by HackTheNorth rejection email... Tries to be positive :D #}
+{% else %}
+    <p>We have received your application. We'll get back to you very soon. You can still edit you hacker information.</p>
+{% endif %}

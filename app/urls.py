@@ -16,7 +16,6 @@ Including another URLconf
 from app import views
 from django.conf.urls import url, include
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.views.generic import RedirectView
 from jet.dashboard.dashboard_modules import google_analytics_views
@@ -26,14 +25,12 @@ urlpatterns = [
     # Auth views. Look at this in order to see who to use
     # https://docs.djangoproject.com/en/1.10/topics/auth/default/
 
-    url(r'^accounts/login/$', auth_views.login, {'template_name': 'admin/login.html'}, name='login'),
-    url(r'^accounts/logout/$', auth_views.logout, name='logout'),
-    url(r'^accounts/password/$', auth_views.password_change, name='password_change'),
-    url(r'^accounts/password/done/$', auth_views.password_change_done, name='password_change_done'),
+    url(r'^accounts/', include('allauth.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^', include('register.urls')),
     url(r'^$', views.root_view, name='root'),
+    url(r'^email-test$', views.view_email, name='email-test'),
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
-    url(r'^checkin/', include('checkin.urls'))
+    url(r'^checkin/', include('checkin.urls')),
 ]

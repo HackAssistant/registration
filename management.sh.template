@@ -1,0 +1,12 @@
+#!/bin/bash
+export PROD_MODE="True"
+# Set up your postgres password
+export PG_PWD="password"
+# If using Sendgrid set api key here
+export SG_KEY="API_KEY"
+# Typeform API key
+export TP_KEY="TYPEFORM_KEY"
+# SMTP password
+export EMAIL_HOST_PASSWORD="password"
+./env/bin/python manage.py insert_applications
+./env/bin/python manage.py expire_applications

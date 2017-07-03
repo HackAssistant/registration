@@ -1,0 +1,208 @@
+{% load static %}
+{% load account %}
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+{% settings_value "CURRENT_EDITION" as edition_name %}
+{# Based on https://github.com/leemunroe/responsive-html-email-template #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{{ subject }}</title>
+    <style type="text/css">
+        @media only screen and (max-width: 620px) {
+            table[class=body] h1 {
+                font-size: 28px !important;
+                margin-bottom: 10px !important;
+            }
+
+            table[class=body] p,
+            table[class=body] ul,
+            table[class=body] ol,
+            table[class=body] td,
+            table[class=body] span,
+            table[class=body] a {
+                font-size: 16px !important;
+            }
+
+            table[class=body] .wrapper,
+            table[class=body] .article {
+                padding: 10px !important;
+            }
+
+            table[class=body] .content {
+                padding: 0 !important;
+            }
+
+            table[class=body] .container {
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            table[class=body] .main {
+                border-left-width: 0 !important;
+                border-radius: 0 !important;
+                border-right-width: 0 !important;
+            }
+
+            table[class=body] .btn table {
+                width: 100% !important;
+            }
+
+            table[class=body] .btn a {
+                width: 100% !important;
+            }
+
+            table[class=body] .img-responsive {
+                height: auto !important;
+                max-width: 100% !important;
+                width: auto !important;
+            }
+        }
+
+        @media all {
+            .ExternalClass {
+                width: 100%;
+            }
+
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div {
+                line-height: 100%;
+            }
+
+            .apple-link a {
+                color: inherit !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-decoration: none !important;
+            }
+
+            .btn-primary table td:hover {
+                background-color: #34495e !important;
+            }
+
+            .btn-primary a:hover {
+                background-color: #34495e !important;
+                border-color: #34495e !important;
+            }
+        }
+    </style>
+</head>
+<body class=""
+      style="background-color:#f6f6f6;font-family:sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;margin:0;padding:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
+<table border="0" cellpadding="0" cellspacing="0" class="body"
+       style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background-color:#f6f6f6;width:100%;">
+    <tr>
+        <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">&nbsp;</td>
+        <td class="container"
+            style="font-family:sans-serif;font-size:14px;vertical-align:top;display:block;max-width:580px;padding:10px;width:580px;Margin:0 auto !important;">
+            <div class="content"
+                 style="box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px;">
+                <img class="max-width" width="1240" height=""
+                     src="{{ static_values.logo_url }}"
+                     alt="" border="0"
+                     style="display: block; color: #000; margin:0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-width: 1240px !important; width: 80% !important; height: auto !important; "/>
+                <!-- START CENTERED WHITE CONTAINER -->
+                <span class="preheader"
+                      style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">{% block preheader %}
+                    This is preheader text. Some clients will show this text as a preview.{% endblock %}</span>
+                {% block main %}
+                    <table class="main"
+                           style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;">
+                        <!-- START MAIN CONTENT AREA -->
+                        <tr>
+                            <td class="wrapper"
+                                style="font-family:sans-serif;font-size:14px;vertical-align:top;box-sizing:border-box;padding:20px;">
+
+                                <table border="0" cellpadding="0" cellspacing="0"
+                                       style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%;">
+                                    <tr>
+                                        <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">
+                                            {% block content %}
+                                                {% include 'include/email_line_start.html' %}
+                                                Hi there
+                                                {% if user.is_authenticated %}
+                                                    {{ user.username }}{% endif %},
+                                                {% include 'include/email_line_end.html' %}
+                                                {% include 'include/email_line.html' with text='This is just a sample text. Replace it with what you need. Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.' %}
+                                                {% include 'include/email_button.html' with url='https://my.hackupc.com' text='Call to action!' %}
+                                                {% include 'include/email_line.html' with text='This is a really simple email template. Its sole purpose is to get the recipient to click the button with no distractions.' %}
+                                                {% include 'include/email_line.html' with text=' Good luck! Hope it works.' %}
+                                            {% endblock %}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- END MAIN CONTENT AREA -->
+                    </table>
+                {% endblock %}
+                {% block footer %}
+                    <!-- START FOOTER -->
+                    <div class="footer" style="clear:both;padding-top:10px;text-align:center;width:100%;">
+                        <table border="0" cellpadding="0" cellspacing="0"
+                               style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%;">
+                            <tr>
+                                <td class="content-block"
+                                    style="font-family:sans-serif;font-size:14px;vertical-align:top;color:#999999;font-size:12px;text-align:center;">
+                                    {% block footer_content %}
+
+                                        {% include 'include/email_footer_line.html' with text='You are receiving this because you applied to '|add:current_site.name|add:' '|add:edition_name %}
+                                        {% include 'include/email_footer_line.html' with text='. If you think this is a mistake, please send us an email at '|add:static_values.email|urlize %}
+                                    {% endblock %}
+                                    <table style="padding-top: 20px" cellpadding="0" cellspacing="0" border="0"
+                                           align="center">
+                                        <tr>
+                                            {% if static_values.fb %}
+                                                <td style="padding: 0px 5px;">
+                                                    <a role="social-icon-link"
+                                                       href="http://www.facebook.com/{{ static_values.fb }}"
+                                                       target="_blank" border="0" alt="Facebook" title="Facebook"
+                                                       style="background-color: #3B579D; border-radius: 0px; -webkit-border-radius:0px; -moz-border-radius:0px; -ms-border-radius:0px; -o-border-radius:0px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                        <img role="social-icon" alt="Facebook" title="Facebook"
+                                                             border="0"
+                                                             height="30" width="30"
+                                                             style="height: 30px; width: 30px; border:none; color: white; font-family: Helvetica, arial, sans-serif;"
+                                                             src="https://marketing-image-production.s3.amazonaws.com/social/white/facebook.png"
+                                                        />
+                                                    </a>
+                                                </td>
+                                            {% endif %}
+                                            {% if static_values.twitter %}
+                                                <td style="padding: 0px 5px;"><a role="social-icon-link"
+                                                                                 href="http://www.twitter.com/{{ static_values.twitter }}"
+                                                                                 target="_blank" border="0"
+                                                                                 alt="Twitter"
+                                                                                 title="Twitter"
+                                                                                 style="background-color: #7AC4F7; border-radius: 0px; -webkit-border-radius:0px; -moz-border-radius:0px; -ms-border-radius:0px; -o-border-radius:0px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                    <img role="social-icon" alt="Twitter" title="Twitter" border="0"
+                                                         height="30" width="30"
+                                                         style="height: 30px; width: 30px; border:none; color: white; font-family: Helvetica, arial, sans-serif;"
+                                                         src="https://marketing-image-production.s3.amazonaws.com/social/white/twitter.png"
+                                                    />
+                                                </a>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                {% endblock %}
+                <!-- END FOOTER -->
+                <!-- END CENTERED WHITE CONTAINER -->
+            </div>
+        </td>
+        <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">&nbsp;</td>
+    </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<h1 class="text-center">{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<form class="signup form-horizontal" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  {% bootstrap_form form layout="horizontal" %}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button class="btn btn-primary" type="submit">{% trans "Sign Up" %} &raquo;</button>
+</form>
+
+{% endblock %}

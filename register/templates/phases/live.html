@@ -1,0 +1,12 @@
+{% load utils %}
+{% settings_value "EVENT_NAME" as event_name %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
+<div>
+    <p>Glad you could make it! Hope you enjoy your time at {{ event_name }}. Let us know if you need any help!</p>
+    {% if static_values.live_url %}
+        <p>Follow our live page for more information during the event</p>
+        <a href="{{ static_values.live_url }}" target="_blank" class="btn btn-block btn-success">Go to live page</a>
+
+    {% endif %}
+</div>

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load utils %}
 {% load static %}
 {% block title %}Cancel application - {% endblock %}
 
@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block body %}
+    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
     <div class="confirm-content">
         <div class="col-md-8 col-md-offset-2">
@@ -16,7 +17,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             {% if application %}
-                                We are sorry {{ application.name }}
+                                We are sorry {{ application.hacker.name }}
                             {% else %}
                                 ¯\_(ツ)_/¯
                             {% endif %}
@@ -24,9 +25,10 @@
                     </div>
                     <div class="panel-body">
                         {{ error }}
+                        <a href="{% url 'profile' %}" class="btn btn-default btn-block"> Back to your profile</a>
                     </div>
                     <div class="panel-footer">
-                        Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>
+                        Please contact us if you think this is an error: {{ static_values.email|urlize }}
                     </div>
                 </div>
 
@@ -46,6 +48,7 @@
                             <input type="hidden" value="cancel_anyway" name="action">
                             <button class="btn btn-danger btn-lg btn-block">Cancel anyways</button>
                         </form>
+                        <a href="{% url 'profile' %}" class="btn btn-default btn-block"> Back to profile</a>
                     </div>
                 </div>
             {% endif %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load utils %}
+{% block head_title %}Apply{% endblock %}
+{% block body %}
+    {% settings_value 'REGISTER_APP' as app_data %}
+    {% if user.hacker %}
+        {% if user.hacker.application_set.exists %}
+            <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
+
+        {% else %}
+            <style>iframe {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: 0;
+                border: 0;
+            }</style>
+            <iframe id="typeform" width="100%" height="100%" frameborder="0"
+                    src="https://{{ app_data.typeform_user }}.typeform.com/to/{{ app_data.typeform_form }}?hacker_id={{ user.hacker.uuid }}&name={{ user.hacker.name }}&redirect_url={{ fetch_forms_url }}"></iframe>
+            <script>
+                document.getElementById("typeform").contentWindow.focus()
+            </script>
+        {% endif %}
+    {% else %}
+        <h4 class="text-center margin-top" style="color: white;">You need to add your personal information before
+            applying</h4>
+    {% endif %}
+{% endblock %}
+{% block navbar %}{% endblock %}

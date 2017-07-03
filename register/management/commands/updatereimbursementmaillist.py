@@ -1,11 +1,11 @@
 import json
-from urllib.error import HTTPError
 
 import sendgrid
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from urllib.error import HTTPError
 
-from register.emails import MailListManager
+from app.emails import MailListManager
 from register.models import Application
 
 

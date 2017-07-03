@@ -1,5 +1,4 @@
 #!/bin/sh
-cd /home/deploy/backend/
 echo "checking updates..."
 ./env/bin/pip install -r requirements.txt
 echo "checking updates...done"

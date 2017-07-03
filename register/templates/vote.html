@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load bootstrap3 %}
 {% load static %}
 {% block title %}Vote applications - {% endblock %}
 {% block head %}
@@ -8,6 +9,7 @@
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
+        {% bootstrap_messages %}
         <div class="col-md-6 col-md-offset-3">
             {% if app %}
                 <div class="panel panel-default">
@@ -18,42 +20,43 @@
                     <div class="panel-body">
                         <h4 class="text-center">Personal</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='Name' value=app.name|add:' '|add:app.lastname %}
+                            {% include 'include/field.html' with desc='Name' value=hacker.name|add:' '|add:hacker.lastname %}
                             {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
-                            {% include 'include/field.html' with desc='Country' value=app.country %}
+                            {% include 'include/field.html' with desc='Country' value=app.origin_country %}
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
 
 
                             {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
+                            {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30 %}
                         </dl>
                         <h4 class="text-center">Academic</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='University' value=app.university %}
-                            {% include 'include/field.html' with desc='Graduation' value=app.graduation %}
-                            {% include 'include/field.html' with desc='Degree' value=app.degree %}
+                            {% include 'include/field.html' with desc='University' value=hacker.university %}
+                            {% include 'include/field.html' with desc='Graduation' value=hacker.graduation_year %}
+                            {% include 'include/field.html' with desc='Degree' value=hacker.degree %}
                         </dl>
                         <h4 class="text-center">Background</h4>
                         <dl class="dl-horizontal">
                             {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
-                            {% include 'include/field.html' with desc='Description' value=app.description %}
-                            {% include 'include/field.html' with desc='Projects' value=app.projects %}
+                            {% include 'include/field.html' with desc='Looking forward?' value=app.description %}
+                            {% include 'include/field.html' with desc='Projects?' value=app.projects %}
                             {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                             {% include 'include/field.html' with desc='Excited about' value=app.excited %}
                         </dl>
                         <h4 class="text-center">Social</h4>
 
                         <p class="text-center">
-                            {% if app.github and not app.github == 'http://' %}
-                                <a target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
+                            {% if app.hacker.github and not app.hacker.github == 'http://' %}
+                                <a target="_blank" href="{{ app.hacker.github }}" class="icon fa fa-github"></a>
                             {% endif %}
-                            {% if app.linkedin and not app.linkedin == 'http://' %}
-                                <a target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
+                            {% if app.hacker.linkedin and not app.hacker.linkedin == 'http://' %}
+                                <a target="_blank" href="{{ app.hacker.linkedin }}" class="icon fa fa-linkedin"></a>
                             {% endif %}
-                            {% if app.site and not app.site == 'http://' %}
-                                <a target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
+                            {% if app.hacker.site and not app.hacker.site == 'http://' %}
+                                <a target="_blank" href="{{ app.hacker.site }}" class="icon fa fa-globe"></a>
                             {% endif %}
-                            {% if app.devpost and not app.devpost == 'http://' %}
-                                <a target="_blank" href="{{ app.devpost }}" class="icon">
+                            {% if app.hacker.devpost and not app.hacker.devpost == 'http://' %}
+                                <a target="_blank" href="{{ app.hacker.devpost }}" class="icon">
                                     <img class="icon" src="{% static 'img/devpost.svg' %}"/>
                                 </a>
                             {% endif %}
@@ -81,7 +84,8 @@
                     </div>
                 </div>
             {% else %}
-                <h4 class="text-center" style="color: white;">No applications left to be voted.<br> Good job! Enjoy the sun outside!</h4>
+                <h4 class="text-center" style="color: white;">No applications left to be voted.<br> Good job! Enjoy the
+                    sun outside!</h4>
             {% endif %}
         </div>
     </div>

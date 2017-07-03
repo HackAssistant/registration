@@ -1,0 +1,32 @@
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
+{% if static_values.subscribe_url %}
+    Subscribe here to be the first to know when are we open applications for next edition.
+    <form action="{{ static_values.subscribe_url }}"
+          method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank"
+          class="form-horizontal">
+        <div class="mc-field-group">
+            {% if user.email %}
+                <input id="mce-EMAIL" name="EMAIL" type="hidden" class="form-control email-input"
+                       value="{{ user.email }}" required>
+            {% else %}
+                <input id="mce-EMAIL" name="EMAIL" type="email" class="form-control email-input"
+                       placeholder="Insert email here..." required>
+            {% endif %}
+            <div id="mce-responses" class="clear">
+                <div class="response invisible" id="mce-error-response"></div>
+                <div class="response invisible" id="mce-success-response"></div>
+            </div>
+            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+            <div class="dont-touch" aria-hidden="true">
+                <input type="text" style="display: none;" name="b_d49fc444ec7d45ce418dc02d2_3aeef9df9d" tabindex="-1"
+                       value="">
+            </div>
+            <button name="subscribe" class="form-control btn btn-block btn-success" id="mc-embedded-subscribe"
+                    type="submit">
+                Subscribe!
+            </button>
+        </div>
+    </form>
+{% endif %}

@@ -1,0 +1,12 @@
+<p>You will only need to fill this once, we will keep this information between editions
+{% if user.hacker %}
+You can edit it as well.
+{% endif %}
+
+</p>
+
+
+{% include 'include/hacker_form.html' %}
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+If you have any special need you want us to know about please send us an email to {{ static_values.email|urlize }}

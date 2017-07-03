@@ -1,0 +1,13 @@
+{% extends 'base_email.html' %}
+{% block preheader %}Email confirmation from {{ current_site.name }}{% endblock %}
+{% block content %}
+    {% include 'include/email_line_start.html' %}
+    Hi there,
+    {% include 'include/email_line_end.html' %}
+    {% include 'include/email_line.html' with text="Confirm your email address to log in to your account at "|add:current_site.name %}
+    {% include 'include/email_button.html' with text='Confirm' url=activate_url %}
+
+    {% include 'include/email_line.html' with text="Best," %}
+    {% include 'include/email_line.html' with text="" %}
+    {% include 'include/email_line.html' with text=current_site.name|add:" Team" %}
+{% endblock %}

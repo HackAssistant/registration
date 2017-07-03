@@ -1,0 +1,7 @@
+{% include 'include/email_line_start.html' %}
+If you cannot make it, please let us know by clicking "Cancel". We want as many people as possible to experience the
+hackathon!
+{% include 'include/email_line_end.html' %}
+{% include 'include/email_line_start.html' with extra_style='text-align:center;' %}
+<a href="{{ cancel_url }}">Cancel</a>
+{% include 'include/email_line_end.html' %}

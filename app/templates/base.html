@@ -1,4 +1,8 @@
 {% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+{% settings_value "EVENT_NAME" as event_name %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,61 +14,93 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <meta name="theme-color" content="#03A9B5">
-    <meta name="author" content="Hackers@UPC">
-    <meta property="og:title" content="My HackUPC"/>
+    <meta name="author" content="{{ event_name }}">
+    <meta property="og:title" content="My {{ event_name }}"/>
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}"/>
-    <meta property="og:site_name" content="My HackUPC"/>
-    <meta name="description" content="Join us for BarcelonaTech's hackathon. 500 hackers. 36h. March 3rd-5th.">
-    <meta property="og:description" content="Join us for BarcelonaTech's hackathon. 500 hackers. 36h. March 3rd-5th."/>
+    <meta property="og:site_name" content="My {{ event_name }}"/>
+    <meta name="description" content="{{ static_values.description }}">
+    <meta property="og:description" content="{{ static_values.description }}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Ek+Mukta" rel="stylesheet">
     {% block head %}
     {% endblock %}
 
-    <title>{% block title %}{% endblock %}My HackUPC</title>
+    <title>{% block title %}{% block head_title %}{% endblock %} - {% endblock %}My {{ event_name }}</title>
 </head>
 
 
 <body>
-<nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">My HackUPC</a>
-        </div>
-        {% if request.user.is_authenticated %}
+{% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">My {{ event_name }}</a>
+            </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-                <p class="navbar-text">Welcome back <b>{{ request.user.username }}</b></p>
 
                 <ul class="nav navbar-nav navbar-right">
-                    {% if request.user.is_staff %}
-                        <li><a href="{% url 'admin:index' %}">Admin</a></li>
-                    {% endif %}
-                    {% if perms.register.vote %}
-                        <li><a href="{% url 'vote' %}">Vote</a></li>
-                        <li><a href="{% url 'ranking' %}">Ranking</a></li>
-                    {% endif %}
-                    {% if perms.register.checkin %}
-                        <li><a href="{% url 'check_in_list' %}">Check-in</a></li>
-                    {% endif %}
-                    <li><a href="{% url 'password_change' %}">Change password</a></li>
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_staff %}
+                            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                        {% endif %}
+                        {% if perms.register.vote %}
+                            <li><a href="{% url 'vote' %}">Vote</a></li>
+                        {% endif %}
+                        {% if perms.register.ranking %}
+                            <li><a href="{% url 'ranking' %}">Ranking</a></li>
+                        {% endif %}
+                        {% if perms.checkin.checkin %}
+                            <li><a href="{% url 'check_in_list' %}">Check-in</a></li>
+                        {% endif %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false"> {{ request.user.username }}<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'account_change_password' %}">Change password</a></li>
+                                <li><a href="{% url 'account_email' %}">Edit emails</a></li>
+                                <li><a href="{% url 'profile' %}">Profile</a></li>
+                                <li><a href="{% url 'account_logout' %}">Logout</a></li>
+                            </ul>
+                        </li>
 
+
+
+                    {% else %}
+                        <li><a href="{% url 'account_login' %}">Sign In</a></li>
+                        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+                    {% endif %}
                 </ul>
             </div>
-        {% endif %}
-    </div>
-</nav>
+        </div>
+    </nav>
+{% endblock %}
 <div class="content container">
 
     {% block body %}
+        <div class="margin-top">
+            {% bootstrap_messages %}
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        {% block content %}
+                        {% endblock %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block extra_body %}
+        {% endblock %}
+
     {% endblock %}
 </div>
 </body>

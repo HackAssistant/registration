@@ -1,14 +1,16 @@
-from checkin.models import CheckIn
-from checkin.tables import ApplicationsTable
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
+
+from checkin.models import CheckIn
+from checkin.tables import ApplicationsTable
 from register import models
 
 
 class CheckInList(PermissionRequiredMixin, TemplateView):
-    permission_required = 'register.checkin'
+    permission_required = 'checkin.checkin'
     template_name = 'checkin/list.html'
 
     def get_context_data(self, **kwargs):
@@ -32,20 +34,24 @@ class CheckInAllList(CheckInList):
 
 
 class QRView(PermissionRequiredMixin, TemplateView):
-    permission_required = 'register.checkin'
+    permission_required = 'checkin.checkin'
     template_name = 'checkin/qr.html'
 
 
 class CheckInHackerView(PermissionRequiredMixin, TemplateView):
     template_name = 'checkin/hacker.html'
-    permission_required = 'register.checkin'
+    permission_required = 'checkin.checkin'
 
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
         app = get_object_or_404(models.Application, pk=appid)
+        if app.status == models.APP_ATTENDED:
+            messages.success(self.request, 'Hacker checked-in! Good job! Nothing else to see here, you can move on :D')
+
         context.update({
             'app': app,
+            'hacker': app.hacker,
             'checkedin': app.status == models.APP_ATTENDED
         })
         return context
@@ -54,7 +60,7 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
         appid = request.POST.get('app_id')
         app = models.Application.objects.get(id=appid)
         app.check_in()
-        ci =CheckIn()
+        ci = CheckIn()
         ci.user = request.user
         ci.application = app
         ci.save()

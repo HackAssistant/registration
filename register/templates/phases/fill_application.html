@@ -1,0 +1,9 @@
+{% if not application and user.hacker %}
+    <p> You will be redirected to a new page to fill an application.
+    </p>
+    <a href="{% url 'apply' %}" target="_blank" class="btn btn-block btn-success">Apply here</a>
+{% elif not user.hacker %}
+    You can't apply yet. Fill your hacker profile before
+{% else %}
+    <p>Your application has been received and it's being reviewed. You can still edit you hacker information.</p>
+{% endif %}

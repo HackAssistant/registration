@@ -1,247 +1,262 @@
 from __future__ import unicode_literals
 
-import csv
+import uuid as uuid
 
-import os
 from django.conf import settings
 from django.contrib.auth import models as admin_models
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
-from register.emails import sendgrid_send, MailListManager
-from register.utils import reverse
+
+from app.emails import MailListManager
 
 # Votes weight
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
-# Reimbursement tiers
-DEFAULT_REIMBURSEMENT = 100
-
-APP_ACCEPTED = 'A'
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
 APP_INVITED = 'I'
+APP_LAST_REMIDER = 'LR'
 APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
-APP_ATTENDED = 'T'
+APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 
 STATUS = [
-    (APP_ACCEPTED, 'Accepted'),
     (APP_PENDING, 'Pending'),
     (APP_REJECTED, 'Rejected'),
     (APP_INVITED, 'Invited'),
+    (APP_LAST_REMIDER, 'Last reminder'),
     (APP_CONFIRMED, 'Confirmed'),
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
 ]
 
+MALE = 'M'
+FEMALE = 'F'
+NON_BINARY = 'NB'
 
-# Create your models here.
+GENDERS = [
+    (MALE, 'Male'),
+    (FEMALE, 'Female'),
+    (NON_BINARY, 'Non-binary'),
+]
 
-def calculate_reimbursement(country):
-    with open(os.path.join(settings.BASE_DIR, 'reimbursements.csv')) as reimbursements:
-        reader = csv.reader(reimbursements, delimiter=',')
-        for row in reader:
-            if country in row[0]:
-                return int(row[1])
+CURRENT_EDITION = 'F17'
 
-    return DEFAULT_REIMBURSEMENT
+EDITIONS = [
+    (CURRENT_EDITION, settings.CURRENT_EDITION)
+]
+
+D_NONE = 'None'
+D_VEGETERIAN = 'Vegeterian'
+D_GLUTEN_FREE = 'Gluten-free'
+
+DIETS = [
+    (D_NONE, 'None'),
+    (D_VEGETERIAN, 'Vegeterian/Vegan'),
+    (D_GLUTEN_FREE, 'Gluten free')
+]
+
+TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
+
+
+class Hacker(models.Model):
+    """
+    Year agnostic hacker fields
+    """
+    user = models.OneToOneField(admin_models.User)
+    name = models.CharField(max_length=250)
+    lastname = models.CharField(max_length=250)
+    gender = models.CharField(max_length=20, blank=True, null=True, choices=GENDERS)
+
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
+
+    # University
+    graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2020)])
+    university = models.CharField(max_length=300)
+    degree = models.CharField(max_length=300)
+
+    # URLs
+    github = models.URLField(blank=True, null=True)
+    devpost = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    site = models.URLField(blank=True, null=True)
+
+    # Info for swag and food
+    diet = models.CharField(max_length=300, choices=DIETS)
+    tshirt_size = models.CharField(max_length=3, default='M', choices=TSHIRT_SIZES)
 
 
 class Application(models.Model):
-    id = models.TextField(primary_key=True)
-    submission_date = models.DateTimeField()
-    invitation_date = models.DateTimeField(blank=True, null=True)
-    last_reminder = models.DateTimeField(blank=True, null=True)
-    sendgrid_id = models.TextField(default="")
-    reimbursement_money = models.IntegerField(blank=True, null=True)
+    # We are pointing to hacker because we need to have that information. If you don't, you can't apply.
+    hacker = models.ForeignKey(Hacker, null=False)
 
-    # Personal data
-    name = models.TextField()
-    lastname = models.TextField()
-    email = models.EmailField()
-    graduation = models.DateField()
-    university = models.TextField()
-    degree = models.TextField(default='Computer Science')
+    edition = models.CharField(max_length=7, choices=EDITIONS, default=CURRENT_EDITION)
+
+    # Meta fields
+    id = models.CharField(max_length=300, primary_key=True)
+    # When was the application completed
+    submission_date = models.DateTimeField()
+    # When was the last status update
+    status_update_date = models.DateTimeField(blank=True, null=True)
+    # Internal SendGrid ID
+    sendgrid_id = models.CharField(max_length=300, blank=True, null=True)
+
+    # Personal data (asking here because we don't want to ask birthday)
     under_age = models.NullBooleanField()
 
-    # URLs
-    github = models.URLField()
-    devpost = models.URLField()
-    linkedin = models.URLField()
-    site = models.URLField()
-
-    # Self improvement
+    # About you
     first_timer = models.NullBooleanField()
-    description = models.TextField()
-    projects = models.TextField()
-    diet = models.TextField()
-    tshirt_size = models.CharField(max_length=3, default='M')
-    country = models.TextField()
+    # Why do you want to come to X?
+    description = models.CharField(max_length=500)
+    # Explain a little bit what projects have you done lately
+    projects = models.CharField(max_length=500)
+
+    # Reimbursement
     scholarship = models.NullBooleanField()
-    lennyface = models.TextField(default='-.-')
+    origin_city = models.CharField(max_length=300)
+    origin_country = models.CharField(max_length=300)
+
+    lennyface = models.CharField(max_length=300, default='-.-')
+    resume = models.URLField(blank=True, null=True)
 
     # Team
     team = models.NullBooleanField()
-    teammates = models.TextField(default='None')
+    teammates = models.CharField(max_length=300, blank=True, null=True)
 
     # Needs to be set to true -> else rejected
     authorized_mlh = models.NullBooleanField()
     status = models.CharField(choices=STATUS, default=APP_PENDING, max_length=2)
 
+    invited_by = models.ForeignKey(admin_models.User, null=True, blank=True)
+
     # TODO: TEAM EXTERNAL
 
     def __str__(self):
-        return self.name + ' ' + self.lastname
+        return self.id
 
-    def invite(self, request):
-        if not request.user.has_perm('register.invite_application'):
-            raise ValidationError('User doesn\'t have permission to invite user')
-        if self.status not in [APP_ACCEPTED, APP_EXPIRED]:
-            raise ValidationError('Application needs to be accepted to send. Current status: %s' % self.status)
-        self._send_invite(request)
+    def save(self, **kwargs):
+        # Some times foreign keys are not enforced in SQLite, so we ensure it here
+        Hacker.objects.get(uuid=self.hacker_id)
+        super(Application, self).save(**kwargs)
+
+    def invite(self, user):
+
+        # We can re-invite someone invited
+        if self.status in [APP_CONFIRMED, APP_ATTENDED]:
+            raise ValidationError('Application has already answered invite. Current status: %s' % self.status)
         self.status = APP_INVITED
-        self.invitation_date = timezone.now()
+        if not self.invited_by: self.invited_by = user
+        self.last_invite = timezone.now()
         self.last_reminder = None
+        self.status_update_date = timezone.now()
         self.save()
 
-    def send_reminder(self, request):
-        if not request.user.has_perm('register.invite_application'):
-            raise ValidationError('User doesn\'t have permission to invite thus can\'t send reminds neither')
+    def last_reminder(self):
         if self.status != APP_INVITED:
             raise ValidationError('Reminder can\'t be sent to non-pending applications')
-        self._send_reminder(request)
-
-    def send_last_reminder(self):
-        if self.status != APP_INVITED:
-            raise ValidationError('Reminder can\'t be sent to non-pending applications')
-        self._send_last_reminder()
-        self.last_reminder = timezone.now()
+        self.status_update_date = timezone.now()
+        self.status = APP_LAST_REMIDER
         self.save()
 
     def expire(self):
+        self.status_update_date = timezone.now()
         self.status = APP_EXPIRED
+        self.save()
+
+    def reject(self, request):
+        if not request.user.has_perm('register.reject'):
+            raise ValidationError('User doesn\'t have permission to reject users')
+        if self.status == APP_ATTENDED:
+            raise ValidationError('Application has already attended. Current status: %s' % self.status)
+        self.status = APP_REJECTED
+        self.status_update_date = timezone.now()
         self.save()
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
-    def send_reimbursement(self, request):
-        if self.status != APP_INVITED and self.status != APP_CONFIRMED:
-            raise ValidationError('Application can\'t be reimbursed as it hasn\'t been invited yet')
-        if not self.scholarship:
-            raise ValidationError('Application didn\'t ask for reimbursement')
-        if not self.reimbursement_money:
-            self.reimbursement_money = calculate_reimbursement(self.country)
+    def is_cancelled(self):
+        return self.status == APP_CANCELLED
 
-        self._send_reimbursement(request)
-        self.save()
+    def answered_invite(self):
+        return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
 
-    def confirm(self, cancellation_url):
-        if self.status in [APP_ACCEPTED, APP_PENDING, APP_REJECTED]:
-            raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
-        elif self.status == APP_CANCELLED:
+    def is_pending(self):
+        return self.status == APP_PENDING
+
+    def is_invited(self):
+        return self.status == APP_INVITED
+
+    def is_expired(self):
+        return self.status == APP_EXPIRED
+
+    def is_rejected(self):
+        return self.status == APP_REJECTED
+
+    def is_attended(self):
+        return self.status == APP_ATTENDED
+
+    def is_last_reminder(self):
+        return self.status == APP_LAST_REMIDER
+
+    def can_be_cancelled(self):
+        return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
+
+    def confirm(self):
+        if self.status == APP_CANCELLED:
             raise ValidationError('This invite has been cancelled.')
         elif self.status == APP_EXPIRED:
             raise ValidationError('Unfortunately your invite has expired.')
-        if self.status == APP_INVITED:
-            m = MailListManager()
-            m.add_applicant_to_list(self, m.W17_GENERAL_LIST_ID)
-            self._send_confirmation_ack(cancellation_url)
+        elif self.status in [APP_INVITED, APP_LAST_REMIDER]:
             self.status = APP_CONFIRMED
+            self.status_update_date = timezone.now()
             self.save()
-
-    def can_be_cancelled(self):
-        return self.status == APP_CONFIRMED or self.status == APP_INVITED
+            if settings.MAIL_LISTS_ENABLED:
+                m = MailListManager()
+                m.add_applicant_to_list(self, settings.SG_GENERAL_LIST_ID)
+        elif self.status in [APP_CONFIRMED, APP_ATTENDED]:
+            return None
+        else:
+            raise ValidationError('Unfortunately his application hasn\'t been invited [yet]')
 
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current status: %s' % self.status)
         if self.status != APP_CANCELLED:
             self.status = APP_CANCELLED
+            self.status_update_date = timezone.now()
             self.save()
-            m = MailListManager()
-            m.remove_applicant_from_list(self, m.W17_GENERAL_LIST_ID)
-
-    def confirmation_url(self, request=None):
-        return reverse('confirm_app', kwargs={'token': self.id}, request=request)
-
-    def cancelation_url(self, request=None):
-        return reverse('cancel_app', kwargs={'token': self.id}, request=request)
+            if settings.MAIL_LISTS_ENABLED:
+                m = MailListManager()
+                m.remove_applicant_from_list(self, settings.SG_GENERAL_LIST_ID)
 
     def check_in(self):
         self.status = APP_ATTENDED
+        self.status_update_date = timezone.now()
         self.save()
 
-    def _send_invite(self, request):
-        sendgrid_send(
-            [self.email],
-            "[HackUPC] You are invited!",
-            {'%name%': self.name,
-             '%confirmation_url%': self.confirmation_url(request),
-             '%cancellation_url%': self.cancelation_url(request)},
-            '513b4761-9c40-4f54-9e76-225c2835b529'
-        )
-
-    def _send_reminder(self, request):
-        sendgrid_send(
-            [self.email],
-            "[HackUPC] Missing answer",
-            {'%name%': self.name,
-             '%confirmation_url%': self.confirmation_url(request),
-             '%cancellation_url%': self.cancelation_url(request)},
-            '3150c49d-0b5d-4e75-bf78-0bef3a79bbdc'
-
-        )
-
-    def _send_last_reminder(self):
-        sendgrid_send(
-            [self.email],
-            "[HackUPC] Invite expires in 24h",
-            {'%name%': self.name,
-             '%token%': self.id,
-             },
-            '4295b92e-b71d-4b6d-89ec-a4c5fe75a5f6'
-
-        )
-
-    def _send_confirmation_ack(self, cancellation_url):
-        sendgrid_send(
-            [self.email],
-            "[HackUPC] You confirmed your attendance!",
-            {'%name%': self.name,
-             '%token%': self.id,
-             '%cancellation_url%': cancellation_url},
-            'c4d4d758-974f-437b-af9a-d8532f96d670'
-        )
-
-    def _send_reimbursement(self, request):
-        sendgrid_send(
-            [self.email],
-            "[HackUPC] Reimbursement granted",
-            {'%name%': self.name,
-             '%token%': self.id,
-             '%money%': self.reimbursement_money,
-             '%country%': self.country,
-             '%confirmation_url%': self.confirmation_url(request),
-             '%cancellation_url%': self.cancelation_url(request)},
-            '06d613dd-cf70-427b-ae19-6cfe7931c193',
-            from_email='HackUPC Reimbursements Team <reimbursements@hackupc.com>'
-        )
+    @staticmethod
+    def get_current_application(user):
+        try:
+            return user.hacker.application_set.filter(edition=CURRENT_EDITION).first()
+        except:
+            return None
 
     class Meta:
         permissions = (
-            ("accept_application", "Can accept applications"),
-            ("invite_application", "Can invite applications"),
-            ("vote", "Can invite applications"),
-            ("checkin", "Can mark as attended applications"),
-            ("reject_application", "Can reject applications"),
-            ("force_status", "Can force status application"),
+            ("invite", "Can invite applications"),
+            ("vote", "Can review applications"),
+            ("reject", "Can reject applications"),
+            ("ranking", "Can view voting ranking"),
         )
+        unique_together = ("hacker", "edition")
 
 
 VOTES = (

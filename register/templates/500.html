@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
-
+{% load utils %}
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -10,8 +10,16 @@
 {% block title %}500 Oops {% endblock %}
 
 {% block body %}
+    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
     <h1 class="text-center margin-top white-text">500 Oops</h1>
-    <h2  class="text-center white-text">Server Error </h2>
-    <p  class="text-center white-text">It seems like you found an error. Please reach us out at <a class="white-text" href="mailto:contact@hackupc.com">contact@hackupc.com</a> if the problem persists.</p>
-    <p  class="text-center white-text">Or you can open an issue in our <a class="white-text" target="_blank" href="https://github.com/hackupc/mercuryhack/issues/new">GitHub repository</a>.</p>
+    <h2 class="text-center white-text">Server Error </h2>
+    <p class="text-center white-text">It seems like you found an error. Please reach us out
+        at {{ static_values.email|urlize }} if the problem persists.</p>
+    {% if static_values.repo_url %}
+        <p class="text-center white-text">
+            Or you can open an issue
+            <a class="white-text" target="_blank" href="{{ static_values.issues_url }}">here</a>.
+        </p>
+    {% endif %}
 {% endblock %}

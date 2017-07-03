@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load utils %}
 {% block title %}Confirm application - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 {% endblock %}
 
 {% block body %}
+    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+    {% settings_value "EVENT_NAME" as event_name %}
 
     <div class="confirm-content">
         <div class="col-md-8 col-md-offset-2">
@@ -14,13 +17,15 @@
             {% if error %}
                 <div class="panel panel-danger">
                     <div class="panel-heading">
-                        <h3 class="panel-title">We are sorry, {{ application.name }}</h3>
+                        <h3 class="panel-title">We are sorry, {{ hacker.name }}</h3>
                     </div>
                     <div class="panel-body">
                         {{ error }}
+                        <a href="{% url 'profile' %}" class="btn btn-default btn-block"> Back to your profile</a>
+
                     </div>
                     <div class="panel-footer">
-                        Please contact us if you think this is an error: <a href="mailto:contact@hackupc.com">contact@hackupc.com</a>
+                        Please contact us if you think this is an error: {{ static_values.email|urlize }}
                     </div>
                 </div>
 
@@ -28,20 +33,22 @@
 
                 <div class="panel panel-success">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Thanks for confirming, {{ application.name }}!</h3>
+                        <h3 class="panel-title">Thanks for confirming, {{ hacker.name }}!</h3>
                     </div>
                     <div class="panel-body">
 
                         {% if reconfirming %}
-                            You already confirmed your spot before, {{ application.name }}. But we love your enthusiasm
+                            You already confirmed your spot before, {{ hacker.name }}. But we love your enthusiasm
                             :)
                         {% else %}
-                            {{ application.name }}, you just confirmed your spot at HackUPC Spring 2017!
+                            {{ hacker.name }}, you just confirmed your spot at {{ event_name }}!
                         {% endif %}
                         We can't wait to have you here.
+
                         <br><br>
                         If you can't make it anymore, please cancel your participation <a
-                            href="{% url 'cancel_app' application.id %}">here</a>.
+                            href="{% url 'cancel_app' %}">here</a>.
+                        <a href="{% url 'profile' %}" class="btn btn-default btn-block"> Back to your profile</a>
                     </div>
                 </div>
 
