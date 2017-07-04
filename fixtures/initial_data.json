@@ -1,0 +1,215 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$30000$XEgHajLZ9cVi$bDqN21vtYCs/pu3PrFDBK5Kk7y4OIWS9Fol+FV+lTZ4=",
+      "last_login": "2017-07-04T08:13:35.182",
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "email": "devs@hackupc.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2017-06-29T01:08:38",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$30000$L4QsPQiIsuea$5U6swpzq0lMuXITWuLNB117ogR6oAY48a+EFgAm/478=",
+      "last_login": "2017-07-04T07:53:48",
+      "is_superuser": false,
+      "username": "jon",
+      "first_name": "",
+      "last_name": "",
+      "email": "jon@hackupc.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2017-06-29T01:53:31",
+      "groups": [],
+      "user_permissions": [
+        55,
+        53,
+        67
+      ]
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$30000$aAAPSeaUZ4EB$W16ENSbjxBRhiEnDIwk3zBx8YXwvDlbT+YuqZ0EqM1U=",
+      "last_login": "2017-06-29T22:54:18",
+      "is_superuser": false,
+      "username": "pepe",
+      "first_name": "",
+      "last_name": "",
+      "email": "pepe@hackupc.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2017-06-29T01:54:45",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "email": "devs@hackupc.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "email": "jon@hackupc.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 4,
+    "fields": {
+      "user": 4,
+      "email": "pepe@hackupc.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "register.hacker",
+    "pk": "2ceb6d17-dadd-4f47-b3e7-f29d69eb1d7b",
+    "fields": {
+      "user": 3,
+      "name": "Jon",
+      "lastname": "Snow",
+      "gender": "M",
+      "graduation_year": 2017,
+      "university": "THE NORTH",
+      "degree": "Nightwatc",
+      "github": "",
+      "devpost": "",
+      "linkedin": "",
+      "site": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "diet": "None",
+      "tshirt_size": "L"
+    }
+  },
+  {
+    "model": "register.hacker",
+    "pk": "380f8d87-403e-41b3-9b7e-c01ae31446ab",
+    "fields": {
+      "user": 4,
+      "name": "Pepe",
+      "lastname": "Biene",
+      "gender": "M",
+      "graduation_year": 2017,
+      "university": "Universitat Politecnica de Catalunya",
+      "degree": "Computer Science",
+      "github": "",
+      "devpost": "",
+      "linkedin": "",
+      "site": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "diet": "None",
+      "tshirt_size": "M"
+    }
+  },
+  {
+    "model": "register.application",
+    "pk": "078e119f0783a995ec1ad3c714bf44af",
+    "fields": {
+      "hacker": "2ceb6d17-dadd-4f47-b3e7-f29d69eb1d7b",
+      "edition": "F17",
+      "submission_date": "2017-06-29T01:57:56",
+      "status_update_date": "2017-06-30T03:09:30",
+      "sendgrid_id": "",
+      "under_age": false,
+      "first_timer": true,
+      "description": "ALL OF IT",
+      "projects": "I WRITE CODE",
+      "scholarship": false,
+      "origin_city": "Boulder",
+      "origin_country": "United States of America",
+      "lennyface": "-.-",
+      "resume": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "team": false,
+      "teammates": "",
+      "authorized_mlh": true,
+      "status": "P",
+      "invited_by": null
+    }
+  },
+  {
+    "model": "register.application",
+    "pk": "d164d862ab70296e5e8ef1c269df233a",
+    "fields": {
+      "hacker": "380f8d87-403e-41b3-9b7e-c01ae31446ab",
+      "edition": "F17",
+      "submission_date": "2017-06-29T23:39:59",
+      "status_update_date": "2017-06-30T19:30:36",
+      "sendgrid_id": "",
+      "under_age": false,
+      "first_timer": true,
+      "description": "THE FOOD BASICALLY",
+      "projects": "A LOT OF PROJECTS",
+      "scholarship": true,
+      "origin_city": "Barcelona",
+      "origin_country": "Spain",
+      "lennyface": "_._",
+      "resume": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "team": false,
+      "teammates": "",
+      "authorized_mlh": true,
+      "status": "A",
+      "invited_by": null
+    }
+  },
+  {
+    "model": "checkin.checkin",
+    "pk": 2,
+    "fields": {
+      "application": "d164d862ab70296e5e8ef1c269df233a",
+      "user": 2,
+      "update_time": "2017-06-30T19:30:36.999"
+    }
+  },
+  {
+    "model": "reimbursement.reimbursement",
+    "pk": "078e119f0783a995ec1ad3c714bf44af",
+    "fields": {
+      "assigned_money": 100.2,
+      "currency_sign": "\u20ac",
+      "origin_city": "Boulder",
+      "origin_country": "United States of America",
+      "status": "S",
+      "reimbursed_by": 2,
+      "creation_date": "2017-06-29T21:54:48",
+      "status_update_date": "2017-06-29T22:39:48.179"
+    }
+  },
+  {
+    "model": "reimbursement.reimbursement",
+    "pk": "d164d862ab70296e5e8ef1c269df233a",
+    "fields": {
+      "assigned_money": 102.0,
+      "currency_sign": "\u20ac",
+      "origin_city": "Barcelona",
+      "origin_country": "Spain",
+      "status": "S",
+      "reimbursed_by": 2,
+      "creation_date": "2017-06-29T23:44:59",
+      "status_update_date": "2017-06-29T23:47:23.022"
+    }
+  }
+]
