@@ -156,6 +156,11 @@ server {
 }
 ```
 
+### Set up dummy data
+
+We provide with dummy data created to agilize the development process. Load our data by running:
+`./manage.py loaddata fixtures/initial_data.json`
+
 
 ## Management
 
