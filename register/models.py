@@ -327,3 +327,9 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('application', 'user')
+
+
+class ApplicationComment(models.Model):
+    application = models.ForeignKey(Application, null=False)
+    user = models.ForeignKey(admin_models.User)
+    comment_text = models.CharField(max_length=500)

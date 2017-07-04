@@ -83,6 +83,20 @@
 
                     </div>
                 </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="text-center">Comments</h4>
+                    </div>
+                    <div class="panel-body">
+                    {% for comment in comments %}
+                        <div class="panel panel-info">
+                            <div class="panel-heading">{{ comment.user.email }}</div>
+                            <div class="panel-body">{{comment.comment_text}}</div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
             {% else %}
                 <h4 class="text-center" style="color: white;">No applications left to be voted.<br> Good job! Enjoy the
                     sun outside!</h4>

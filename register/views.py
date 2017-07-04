@@ -80,6 +80,7 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
         context = super(VoteApplicationView, self).get_context_data(**kwargs)
         application = self.get_next_application()
         context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(application=application)
         try:
             context['hacker'] = application.hacker
         except:
