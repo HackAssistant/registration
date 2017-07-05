@@ -331,5 +331,5 @@ class Vote(models.Model):
 
 class ApplicationComment(models.Model):
     application = models.ForeignKey(Application, null=False)
-    user = models.ForeignKey(admin_models.User)
-    comment_text = models.CharField(max_length=500)
+    author = models.ForeignKey(admin_models.User)
+    text = models.CharField(max_length=500)

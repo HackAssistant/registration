@@ -6,6 +6,7 @@
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vote.css' %}">
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
@@ -91,10 +92,18 @@
                     <div class="panel-body">
                     {% for comment in comments %}
                         <div class="panel panel-info">
-                            <div class="panel-heading">{{ comment.user.email }}</div>
-                            <div class="panel-body">{{comment.comment_text}}</div>
+                            <div class="panel-heading">{{ comment.author.email }}</div>
+                            <div class="panel-body">{{comment.text}}</div>
                         </div>
                     {% endfor %}
+                    </div>
+                    <div class="panel-footer">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                            <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3" required></textarea>
+                            <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment</button>
+                        </form>
                     </div>
                 </div>
             {% else %}
