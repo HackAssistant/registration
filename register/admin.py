@@ -28,15 +28,20 @@ class HackerAdmin(admin.ModelAdmin):
 
 
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'votes', 'scholarship', 'status', 'status_last_updated',)
-    list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'origin_country', 'under_age')
+    list_display = ('id', 'name', 'votes', 'scholarship', 'status',
+                    'status_last_updated',)
+    list_filter = ('status', 'first_timer', 'scholarship',
+                   'hacker__university', 'origin_country', 'under_age')
     list_per_page = 200
-    search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
+    search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email',
+                     'description', 'id')
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite', 'ticket', 'create_reimbursement', 'invite_slack', 'reject']
+    actions = ['reject_application', 'invite', 'ticket',
+               'create_reimbursement', 'invite_slack', 'reject']
 
     def name(self, obj):
-        return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + obj.hacker.user.email + ')'
+        return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + \
+               obj.hacker.user.email + ')'
 
     name.admin_order_field = 'hacker__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
@@ -60,23 +65,30 @@ class ApplicationAdmin(admin.ModelAdmin):
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
         if not request.user.has_perm('register.invite'):
-            if 'invite' in actions: del actions['invite']
-            if 'ticket' in actions: del actions['ticket']
+            if 'invite' in actions:
+                del actions['invite']
+            if 'ticket' in actions:
+                del actions['ticket']
 
         if not request.user.has_perm('register.reject'):
-            if 'reject' in actions: del actions['reject']
+            if 'reject' in actions:
+                del actions['reject']
 
         if not request.user.has_perm('reimbursement.reimburse'):
-            if 'create_reimbursement' in actions: del actions['create_reimbursement']
+            if 'create_reimbursement' in actions:
+                del actions['create_reimbursement']
 
-        if not settings.SLACK.get('team', None) or not settings.SLACK.get('token', None):
-            if 'invite_slack' in actions: del actions['invite_slack']
+        if not settings.SLACK.get('team', None) or not settings.SLACK.get(
+                'token', None):
+            if 'invite_slack' in actions:
+                del actions['invite_slack']
 
         return actions
 
     def ticket(self, request, queryset):
         if not request.user.has_perm('register.invite'):
-            self.message_user(request, "You don't have permission to invite users")
+            self.message_user(request, "You don't have permission to invite "
+                                       "users")
         sent = 0
         errors = 0
         msgs = []
@@ -92,18 +104,21 @@ class ApplicationAdmin(admin.ModelAdmin):
         connection.send_messages(msgs)
         if sent > 0 and errors > 0:
             self.message_user(request, (
-                "%s applications confirmed, %s invites cancelled. Did you check that they were accepted before?" % (
+                "%s applications confirmed, %s invites cancelled. Did you "
+                "check that they were accepted before?" % (
                     sent, errors)),
                               level=messages.INFO)
         elif sent > 0:
             self.message_user(request, '%s applications confirmed' % sent)
         else:
-            self.message_user(request, 'Tickets couldn\'t be sent! Did you check that they were invited?',
+            self.message_user(request, 'Tickets couldn\'t be sent! Did you '
+                                       'check that they were invited?',
                               level=messages.ERROR)
 
     def invite(self, request, queryset):
         if not request.user.has_perm('register.invite'):
-            self.message_user(request, "You don't have permission to invite users")
+            self.message_user(request, "You don't have permission to invite "
+                                       "users")
             return
         invited = 0
         errors = 0
@@ -120,18 +135,21 @@ class ApplicationAdmin(admin.ModelAdmin):
             connection.send_messages(msgs)
         if invited > 0 and errors > 0:
             self.message_user(request, (
-                "%s applications invited, %s invites cancelled. Did you check that they were accepted before?" % (
+                "%s applications invited, %s invites cancelled. Did you check "
+                "that they were accepted before?" % (
                     invited, errors)),
                               level=messages.INFO)
         elif invited > 0:
             self.message_user(request, '%s applications invited' % invited)
         else:
-            self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were accepted before?',
+            self.message_user(request, 'Invites couldn\'t be sent! Did you '
+                                       'check that they were accepted before?',
                               level=messages.ERROR)
 
     def reject(self, request, queryset):
         if not request.user.has_perm('register.reject'):
-            self.message_user(request, "You don't have permission to reject users")
+            self.message_user(request, "You don't have permission to reject "
+                                       "users")
             return
         rejected = 0
         errors = 0
@@ -143,13 +161,15 @@ class ApplicationAdmin(admin.ModelAdmin):
                 errors += 1
         if rejected > 0 and errors > 0:
             self.message_user(request, (
-                "%s applications rejected, %s errors. Did you check that they haven't already attended?" % (
+                "%s applications rejected, %s errors. Did you check that they "
+                "haven't already attended?" % (
                     rejected, errors)),
                               level=messages.INFO)
         elif rejected > 0:
             self.message_user(request, '%s applications rejected' % rejected)
         else:
-            self.message_user(request, 'Are you kidding me? They already attended!',
+            self.message_user(request, 'Are you kidding me? They already '
+                                       'attended!',
                               level=messages.ERROR)
 
     def invite_slack(self, request, queryset):
@@ -167,23 +187,26 @@ class ApplicationAdmin(admin.ModelAdmin):
                 errors += 1
         if invited > 0 and errors > 0:
             self.message_user(request, (
-                "%s applications invited to slack, %s skipped. Have they confirmed already?" % (
-                    invited, errors)),
-                              level=messages.INFO)
+                "%s applications invited to slack, %s skipped. Have they "
+                "confirmed already?" % (invited, errors)), level=messages.INFO)
         elif invited > 0:
-            self.message_user(request, '%s applications invited to slack' % invited)
+            self.message_user(request, '%s applications invited to slack' %
+                              invited)
         else:
-            self.message_user(request, 'Invites couldn\'t be sent! Did you check that they were confirmed before?',
+            self.message_user(request, 'Invites couldn\'t be sent! Did you '
+                              'check that they were confirmed before?',
                               level=messages.ERROR)
 
     def reject_application(self, request, queryset):
         # TODO: Move logic to model
         if queryset.exclude(status='P'):
-            self.message_user(request, 'Applications couldn\'t be updated, check that they are pending before',
+            self.message_user(request, 'Applications couldn\'t be updated, '
+                              'check that they are pending before',
                               messages.ERROR)
         else:
             # Same as above
-            models.Application.objects.filter(id__in=queryset.values_list('id', flat=True)).update(status='R')
+            models.Application.objects.filter(id__in=queryset.values_list(
+                'id', flat=True)).update(status='R')
             count = queryset.count()
             self.message_user(request, '%s applications rejected' % count)
 
@@ -191,20 +214,25 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def create_reimbursement(self, request, queryset):
         if not request.user.has_perm('reimbursement.reimburse'):
-            self.message_user(request, "You don't have permission to create reimbursements")
+            self.message_user(request, "You don't have permission to create "
+                                       "reimbursements")
             return
         for app in queryset:
-            reimb = r_models.Reimbursement.objects.get_or_create(application=app, origin_city=app.origin_city,
-                                                                 origin_country=app.origin_country)
-            if reimb[1]: reimb[0].check_prices()
+            reimb = r_models.Reimbursement.objects.get_or_create(
+                application=app, origin_city=app.origin_city,
+                origin_country=app.origin_country)
+            if reimb[1]:
+                reimb[0].check_prices()
             reimb[0].save()
 
-        return HttpResponseRedirect(reverse('admin:reimbursement_reimbursement_changelist'))
+        return HttpResponseRedirect(
+            reverse('admin:reimbursement_reimbursement_changelist'))
 
 
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
 admin.site.register(models.Hacker, admin_class=HackerAdmin)
-# create_modeladmin(InvitationAdmin, name='invitation', model=models.Application)
+# create_modeladmin(InvitationAdmin, name='invitation',
+# model=models.Application)
 admin.site.site_header = 'HackUPC Admin'
 admin.site.site_title = 'HackUPC Admin'
 admin.site.index_title = 'Home'

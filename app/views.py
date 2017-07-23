@@ -16,5 +16,6 @@ def root_view(request):
 
 @login_required
 def view_email(request):
-    msg = render_mail('test_email/test', ['test@hackupc.com'], {'subject': 'TEST', 'fb': 'hackupc'})
+    msg = render_mail('test_email/test', ['test@hackupc.com'],
+                      {'subject': 'TEST', 'fb': 'hackupc'})
     return HttpResponse(msg.body)

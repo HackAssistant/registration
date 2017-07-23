@@ -6,7 +6,8 @@ from django.http import HttpResponse
 from django.urls import reverse as django_reverse
 
 
-def reverse(viewname, args=None, kwargs=None, request=None, format=None, **extra):
+def reverse(viewname, args=None, kwargs=None, request=None, format=None,
+            **extra):
     """
     Same as `django.urls.reverse`, but optionally takes a request
     and returns a fully qualified URL, using the request to get the base URL.
@@ -39,14 +40,15 @@ def export_as_csv_action(description="Export selected objects as CSV file",
             field_names = fields
 
         response = HttpResponse()
-        response['Content-Disposition'] = 'attachment; filename=%s.csv' % str(opts).replace('.', '_')
+        response['Content-Disposition'] = \
+            'attachment; filename=%s.csv' % str(opts).replace('.', '_')
 
         writer = csv.writer(response)
         if header:
             writer.writerow(field_names)
         for obj in queryset:
-            row = [getattr(obj, field)() if callable(getattr(obj, field)) else getattr(obj, field) for field in
-                   field_names]
+            row = [getattr(obj, field)() if callable(getattr(obj, field))
+                   else getattr(obj, field) for field in field_names]
             writer.writerow(row)
         return response
 
@@ -57,7 +59,8 @@ def export_as_csv_action(description="Export selected objects as CSV file",
 def create_modeladmin(modeladmin, model, name=None):
     """
     Allows to register a model in multiple views
-    http://stackoverflow.com/questions/2223375/multiple-modeladmins-views-for-same-model-in-django-admin
+    http://stackoverflow.com/questions/2223375/multiple-modeladmins-views-
+    for-same-model-in-django-admin
     """
 
     class Meta:

@@ -24,12 +24,15 @@ class BestReviewers(DashboardModule):
         self.limit = settings.get('limit', self.limit)
 
     def init_with_context(self, context):
-        self.children = User.objects.annotate(vote_count=Count('vote__calculated_vote')) \
-                            .exclude(vote_count=0).order_by('-vote_count')[:self.limit]
+        self.children = User.objects.annotate(
+            vote_count=Count('vote__calculated_vote')) \
+                            .exclude(vote_count=0) \
+                            .order_by('-vote_count')[:self.limit]
 
 
 class AppsStatsForm(forms.Form):
-    status = forms.ChoiceField(label='Status', choices=STATUS+[('__all__','All')])
+    status = forms.ChoiceField(label='Status',
+                               choices=STATUS+[('__all__', 'All')])
 
 
 class AppsStats(DashboardModule):
@@ -52,7 +55,9 @@ class AppsStats(DashboardModule):
         if self.status != '__all__':
             qs = qs.filter(status=self.status)
 
-        self.tshirts = qs.values('tshirt_size').annotate(count=Count('tshirt_size'))
+        self.tshirts = qs.values('tshirt_size') \
+            .annotate(count=Count('tshirt_size'))
         self.diets = qs.values('diet').annotate(count=Count('diet'))
         self.amount = qs.aggregate(total=Sum('reimbursement_money'))
-        self.count_status = Application.objects.all().values('status').annotate(count=Count('status'))
+        self.count_status = Application.objects.all().values('status') \
+            .annotate(count=Count('status'))

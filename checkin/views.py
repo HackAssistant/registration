@@ -47,7 +47,9 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
         appid = kwargs['id']
         app = get_object_or_404(models.Application, pk=appid)
         if app.status == models.APP_ATTENDED:
-            messages.success(self.request, 'Hacker checked-in! Good job! Nothing else to see here, you can move on :D')
+            messages.success(self.request, 'Hacker checked-in! Good job! '
+                                           'Nothing else to see here, '
+                                           'you can move on :D')
 
         context.update({
             'app': app,

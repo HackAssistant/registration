@@ -27,7 +27,8 @@ urlpatterns = [
 
     url(r'^accounts/', include('allauth.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    url(r'^jet/dashboard/', include(
+        'jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^', include('register.urls')),
     url(r'^$', views.root_view, name='root'),
     url(r'^email-test$', views.view_email, name='email-test'),

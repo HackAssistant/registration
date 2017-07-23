@@ -11,12 +11,15 @@ from reimbursement import models, emails
 
 class ReimbursementAdmin(admin.ModelAdmin):
     list_display = (
-        'application', 'name', 'money', 'origin', 'status', 'status_last_updated', 'application_status',
+        'application', 'name', 'money', 'origin', 'status',
+        'status_last_updated', 'application_status',
         'requested_reimb')
-    list_filter = ('status', 'reimbursed_by', 'origin_country', 'reimbursed_by', 'application__status')
+    list_filter = ('status', 'reimbursed_by', 'origin_country',
+                   'reimbursed_by', 'application__status')
     list_per_page = 200
 
-    # search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email', 'description', 'id')
+    # search_fields = ('hacker__name', 'hacker__lastname',
+    # 'hacker__user__email', 'description', 'id')
     ordering = ('creation_date',)
     actions = ['send', ]
 
@@ -26,20 +29,25 @@ class ReimbursementAdmin(admin.ModelAdmin):
     money.admin_order_field = 'assigned_money'
 
     def name(self, obj):
-        return obj.application.hacker.name + ' ' + obj.application.hacker.lastname + ' (' + obj.application.hacker.user.email + ')'
+        return obj.application.hacker.name + ' ' + \
+               obj.application.hacker.lastname + ' (' + \
+               obj.application.hacker.user.email + ')'
 
-    name.admin_order_field = 'application__hacker__name'  # Allows column order sorting
+    name.admin_order_field = \
+        'application__hacker__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
 
     def requested_reimb(self, obj):
         return obj.application.scholarship
 
-    requested_reimb.admin_order_field = 'application__scholarship'  # Allows column order sorting
+    requested_reimb.admin_order_field = \
+        'application__scholarship'  # Allows column order sorting
 
     def application_status(self, obj):
         return obj.application.get_status_display()
 
-    application_status.admin_order_field = 'application__status'  # Allows column order sorting
+    application_status.admin_order_field = \
+        'application__status'  # Allows column order sorting
 
     def origin(self, obj):
         return obj.origin_city + ' (' + obj.origin_country + ')'
@@ -55,7 +63,8 @@ class ReimbursementAdmin(admin.ModelAdmin):
 
     def send(self, request, queryset):
         if not request.user.has_perm('reimbursement.reimburse'):
-            self.message_user(request, "You don't have permission to send reimbursements")
+            self.message_user(request, "You don't have permission to send "
+                                       "reimbursements")
             return
         msgs = []
         sent = 0
@@ -74,14 +83,17 @@ class ReimbursementAdmin(admin.ModelAdmin):
             connection.send_messages(msgs)
         if sent > 0 and errors > 0:
             self.message_user(request, (
-                "%s reimbursements sent, %s reimbursements not sent. Did you check that they were invited before and with money assigned?" % (
-                    sent, errors)),
-                              level=messages.WARNING)
+                "%s reimbursements sent, %s reimbursements not sent. Did you "
+                "check that they were invited before and with money assigned?"
+                % (sent, errors)), level=messages.WARNING)
         elif sent > 0:
-            self.message_user(request, '%s reimbursement sent' % sent, level=messages.SUCCESS)
+            self.message_user(request, '%s reimbursement sent' % sent,
+                              level=messages.SUCCESS)
         else:
             self.message_user(request,
-                              'Reimbursement couldn\'t be sent! Did you check that app was invited before and with money assigned?',
+                              'Reimbursement couldn\'t be sent! Did you check '
+                              'that app was invited before and with money '
+                              'assigned?',
                               level=messages.ERROR)
 
 

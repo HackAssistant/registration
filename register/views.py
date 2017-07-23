@@ -7,7 +7,8 @@ from datetime import timedelta
 from django import http
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, \
+    LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -40,8 +41,10 @@ class RankingView(PermissionRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(vote_count=Count('vote__calculated_vote')) \
-            .order_by('-vote_count').exclude(vote_count=0).values('vote_count', 'email')
+        context['ranking'] = User.objects.annotate(
+            vote_count=Count('vote__calculated_vote')) \
+            .order_by('-vote_count').exclude(vote_count=0).values('vote_count',
+                                                                  'email')
         return context
 
 
@@ -51,8 +54,10 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
 
     def get_next_application(self):
         """
-        Django model to the rescue. This is transformed to an SQL sentence that does exactly what we need
-        :return: pending aplication that has not been voted by the current user and that has less votes and its older
+        Django model to the rescue. This is transformed to an SQL sentence
+        that does exactly what we need
+        :return: pending aplication that has not been voted by the current
+        user and that has less votes and its older
         """
         return models.Application.objects \
             .exclude(vote__user_id=self.request.user.id) \
@@ -65,13 +70,15 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
-        application = models.Application.objects.get(id=request.POST.get('app_id'))
+        application = models.Application.objects.get(
+            id=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)
             else:
                 add_vote(application, request.user, tech_vote, pers_vote)
-        # If application has already been voted -> Skip and bring next application
+        # If application has already been voted -> Skip and bring next
+        # application
         except IntegrityError:
             pass
         return HttpResponseRedirect(reverse('vote'))
@@ -99,7 +106,8 @@ class ConfirmApplication(TemplateView, View):
         msg = None
         if application.status == models.APP_INVITED:
             msg = emails.create_confirmation_email(application, self.request)
-        already_confirmed = application.is_confirmed() or application.is_attended()
+        already_confirmed = application.is_confirmed() or \
+            application.is_attended()
         cancellation_url = str(reverse('cancel_app', request=request))
         try:
             application.confirm()
@@ -133,7 +141,8 @@ class CancelApplication(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
-        application = models.Application.get_current_application(self.request.user)
+        application = models.Application.get_current_application(
+            self.request.user)
         if not application:
             raise http.Http404
 
@@ -145,8 +154,8 @@ class CancelApplication(TemplateView):
             context.update({
                 'error':
                     """
-                    Thank you for responding.
-                     We're sorry you won't be able to make it. Hope to see you next edition!
+                    Thank you for responding. We're sorry you won't be able to
+                    make it. Hope to see you next edition!
                     """
             })
         elif application.status == models.APP_EXPIRED:
@@ -187,7 +196,8 @@ def create_phase(phase_key, title, finished_func, user):
     except:
         pass
 
-    return {'template': 'phases/' + phase_key + '.html', 'finished': is_finished, 'title': title, 'key': phase_key}
+    return {'template': 'phases/' + phase_key + '.html',
+            'finished': is_finished, 'title': title, 'key': phase_key}
 
 
 class ProfileHacker(LoginRequiredMixin, TemplateView):
@@ -215,7 +225,8 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         except:
             hacker_form = forms.HackerForm()
 
-        context.update({'phases': phases, 'current': current, 'hacker_form': hacker_form, 'active': active})
+        context.update({'phases': phases, 'current': current,
+                        'hacker_form': hacker_form, 'active': active})
         try:
             application = self.get_current_app(self.request.user)
             context.update({'application': application})
@@ -229,7 +240,8 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             pass
 
         try:
-            reimbursement = self.get_current_app(self.request.user).reimbursement
+            reimbursement = self.get_current_app(self.request.user) \
+                .reimbursement
             context.update({'reimbursement': reimbursement})
         except:
             pass
@@ -239,17 +251,21 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
-            create_phase('hacker_info', "Hacker profile", lambda x: x.hacker, user),
-            create_phase('fill_application', "Application", lambda x: x.hacker.application_set.exists(), user),
-            create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
-                         self.request.user),
+            create_phase('hacker_info', "Hacker profile",
+                         lambda x: x.hacker, user),
+            create_phase('fill_application', "Application",
+                         lambda x: x.hacker.application_set.exists(), user),
+            create_phase('invited', "Invite",
+                         lambda x: self.get_current_app(user)
+                         .answered_invite(), self.request.user),
         ]
 
         # Try/Except caused by Hacker not existing
         try:
             current_app = self.get_current_app(user)
 
-            if current_app.status in [models.APP_CONFIRMED, models.APP_ATTENDED]:
+            if current_app.status in [models.APP_CONFIRMED,
+                                      models.APP_ATTENDED]:
                 phases.append(
                     create_phase('attend', "Ticket", lambda x: True,
                                  self.request.user)
@@ -290,7 +306,8 @@ class ApplyHacker(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         c = super(ApplyHacker, self).get_context_data(**kwargs)
-        c.update({'fetch_forms_url': reverse('fetch_application', request=self.request)})
+        c.update({'fetch_forms_url': reverse('fetch_application',
+                                             request=self.request)})
         return c
 
 
@@ -298,5 +315,6 @@ class ApplyHacker(LoginRequiredMixin, TemplateView):
 def fetch_application(request):
     redirect_url = request.GET.get('redirect', reverse('profile'))
     typeform.ApplicationsTypeform().insert_forms()
-    messages.success(request, 'Successfully saved application! We\'ll get back to you soon')
+    messages.success(request, 'Successfully saved application! '
+                              'We\'ll get back to you soon')
     return HttpResponseRedirect(redirect_url)

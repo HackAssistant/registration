@@ -27,7 +27,8 @@ class ApplicationFormFetcher(object):
     def update_forms(self):
         """
         Outside method. Loads all data, loads to models and saves them
-        :return: List n None, where n is the number of objects saved to the database
+        :return: List n None, where n is the number of objects saved to the
+        database
         """
         forms = self._fetch()
         if not forms:
@@ -37,8 +38,10 @@ class ApplicationFormFetcher(object):
 
     def insert_forms(self):
         """
-        Outside method. Loads all data, loads to models and saves them. If existing, only updates given fields
-        :return: List n None, where n is the number of objects saved to the database
+        Outside method. Loads all data, loads to models and saves them.
+        If existing, only updates given fields
+        :return: List n None, where n is the number of objects saved to the
+        database
         """
         forms = self._fetch()
         if not forms:
@@ -50,7 +53,8 @@ class ApplicationFormFetcher(object):
                 ret += [app.save(force_insert=True)]
             except Exception as e:
                 logging.error(e)
-                logging.error('Application failed to insert %s' % app.hacker_id)
+                logging.error(
+                    'Application failed to insert %s' % app.hacker_id)
 
         return ret
 
@@ -78,10 +82,13 @@ class TypeformFetcher(ApplicationFormFetcher):
         return self.base_url + self.form_id
 
     def _fetch(self):
-        resp = requests.get(self.url, params={'key': typeform_key, 'limit': '8000', 'completed': 'true',
+        resp = requests.get(self.url, params={'key': typeform_key,
+                                              'limit': '8000',
+                                              'completed': 'true',
                                               'offset': self.get_offset()})
         if resp.status_code != 200:
-            error('The API responded with {}, status code:' + str(resp.status_code))
+            error('The API responded with {}, status code:' +
+                  str(resp.status_code))
             return []
         return json.loads(resp.text)['responses']
 
