@@ -22,5 +22,6 @@ class HackerForm(forms.ModelForm):
             'gender': 'This is for demographic purposes. You can skip this question if you want',
             'graduation_year': 'What year have you graduated on or when will you graduate',
             'degree': 'What\'s your major?',
+            'diet': 'If you select Others, please drop us an email to let us know the details'
         }
         exclude = ['user', 'uuid']
