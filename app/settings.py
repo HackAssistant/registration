@@ -222,7 +222,7 @@ STATIC_KEYS_TEMPLATES = {
     'fb': 'hackupc',
     'twitter': 'hackupc',
     'email': 'contact@hackupc.com',
-    'description': 'Join us for BarcelonaTech\'s hackathon. 500 hackers. 36h. March 3rd-5th.',
+    'description': 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.',
     # Static url to your logo
     'logo_url': 'https://betamy.hackupc.com/static/logo.png',
     # MailChimp subscribe URL (optional)
