@@ -13,7 +13,7 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <meta name="theme-color" content="#03A9B5">
+    <meta name="theme-color" content="#E91753">
     <meta name="author" content="{{ event_name }}">
     <meta property="og:title" content="My {{ event_name }}"/>
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}"/>
@@ -41,24 +41,27 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">My {{ event_name }}</a>
+                <a class="navbar-brand white-text" href="/">My {{ event_name }}</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
 
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right ">
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_staff %}
-                            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                            <li class="white-text"><a href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
                         {% if perms.register.vote %}
-                            <li><a href="{% url 'vote' %}">Vote</a></li>
+                            <li class="white-text"><a href="{% url 'vote' %}">Vote</a></li>
                         {% endif %}
                         {% if perms.register.ranking %}
-                            <li><a href="{% url 'ranking' %}">Ranking</a></li>
+                            <li class="white-text"><a href="{% url 'ranking' %}">Ranking</a></li>
                         {% endif %}
                         {% if perms.checkin.checkin %}
-                            <li><a href="{% url 'check_in_list' %}">Check-in</a></li>
+                            <li class="white-text"><a href="{% url 'check_in_list' %}">Check-in</a></li>
+                        {% endif %}
+                        {% if not perms.register.vote %}
+                            <li class="white-text"><a href="{% url 'profile' %}">Dashboard</a></li>
                         {% endif %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
