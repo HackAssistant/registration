@@ -66,7 +66,7 @@ TODO: Include guide to create and prepare your Typeform
 ### Local environment
 
 - Add `TP_KEY` in environment (if you want to retrieve forms)
-- `python manage.py runserver 0.0.0.0:8000`
+- `python manage.py runserver`
 
 ### Production environment
 
