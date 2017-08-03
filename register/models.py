@@ -55,12 +55,18 @@ EDITIONS = [
 
 D_NONE = 'None'
 D_VEGETERIAN = 'Vegeterian'
+D_VEGAN = 'Vegan'
+D_NO_PORK = 'No pork'
 D_GLUTEN_FREE = 'Gluten-free'
+D_OTHER = 'Others'
 
 DIETS = [
-    (D_NONE, 'None'),
-    (D_VEGETERIAN, 'Vegeterian/Vegan'),
-    (D_GLUTEN_FREE, 'Gluten free')
+    (D_NONE, 'No requirements'),
+    (D_VEGETERIAN, 'Vegeterian'),
+    (D_VEGAN, 'Vegan'),
+    (D_NO_PORK, 'No pork'),
+    (D_GLUTEN_FREE, 'Gluten-free'),
+    (D_OTHER, 'Others')
 ]
 
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
