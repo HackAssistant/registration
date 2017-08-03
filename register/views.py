@@ -305,6 +305,24 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
         c.update({'hacker_form': hacker_form})
         return c
 
+    def post(self, request, *args, **kwargs):
+        try:
+            form = forms.HackerForm(request.POST, instance=request.user.hacker)
+        except:
+            form = forms.HackerForm(request.POST)
+        if form.is_valid():
+            hacker = form.save(commit=False)
+            hacker.user = request.user
+            hacker.save()
+            messages.success(request, 'Profile details saved!')
+
+            return HttpResponseRedirect(reverse('root'))
+        else:
+            c = self.get_context_data()
+            c.update({'hacker_form': form})
+            return render(request, self.template_name, c)
+
+
 @login_required
 def fetch_application(request):
     redirect_url = request.GET.get('redirect', reverse('profile'))
