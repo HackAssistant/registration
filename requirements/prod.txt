@@ -1,0 +1,2 @@
+-r common.txt
+psycopg2==2.7.1

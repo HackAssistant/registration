@@ -32,7 +32,7 @@ Needs: Python 3.X, virtualenv
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
-- `pip install -r requirements.txt`
+- `pip install -r requirements.txt`. For production run: `pip install -r requirements/prod.txt`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
 
