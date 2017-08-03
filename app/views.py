@@ -11,7 +11,12 @@ def root_view(request):
         return HttpResponseRedirect(reverse('vote'))
     elif request.user.has_perm('register.checkin'):
         return HttpResponseRedirect(reverse('check_in_list'))
-    return HttpResponseRedirect(reverse('profile'))
+    try:
+        hacker = request.user.hacker
+        return HttpResponseRedirect(reverse('dashboard'))
+    except:
+        return HttpResponseRedirect(reverse('profile'))
+
 
 
 @login_required
