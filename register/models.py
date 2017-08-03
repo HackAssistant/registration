@@ -84,7 +84,7 @@ class Hacker(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
 
     # University
-    graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2020)])
+    graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2024)])
     university = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
 
