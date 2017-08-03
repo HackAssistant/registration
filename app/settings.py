@@ -24,7 +24,7 @@ SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not os.environ.get('PROD_MODE', None)
 
-ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', ]
+ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 
