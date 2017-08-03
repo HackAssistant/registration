@@ -12,6 +12,8 @@ class HackerForm(forms.ModelForm):
         attrs={'class': 'form-control', 'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
+    university = forms.CharField(required=True, widget=forms.TextInput(
+        attrs={'class': 'typeahead-schools','autocomplete':'off'}))
 
     class Meta:
         model = models.Hacker
