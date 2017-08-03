@@ -61,7 +61,7 @@
                             <li class="white-text"><a href="{% url 'check_in_list' %}">Check-in</a></li>
                         {% endif %}
                         {% if not perms.register.vote %}
-                            <li class="white-text"><a href="{% url 'profile' %}">Dashboard</a></li>
+                            <li class="white-text"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -70,7 +70,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'account_change_password' %}">Change password</a></li>
                                 <li><a href="{% url 'account_email' %}">Edit emails</a></li>
-                                <li><a href="{% url 'profile' %}">Profile</a></li>
+                                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
                                 <li><a href="{% url 'account_logout' %}">Logout</a></li>
                             </ul>
                         </li>
