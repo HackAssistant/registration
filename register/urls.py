@@ -7,7 +7,8 @@ urlpatterns = [
     url(r'application/cancel$', views.CancelApplication.as_view(), name='cancel_app'),
     url(r'vote/$', views.VoteApplicationView.as_view(), name='vote'),
     url(r'ranking/$', views.RankingView.as_view(), name='ranking'),
-    url(r'dashboard/$', views.ProfileHacker.as_view(), name='dashboard'),
+    url(r'dashboard/$', views.HackerDashboard.as_view(), name='dashboard'),
+    url(r'profile/$', views.ProfileHacker.as_view(), name='profile'),
     url(r'application/$', views.ApplyHacker.as_view(), name='apply'),
     url(r'application/fetch$', views.fetch_application, name='fetch_application')
 ]

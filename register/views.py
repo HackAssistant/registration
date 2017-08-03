@@ -4,6 +4,9 @@ from __future__ import print_function
 import logging
 from datetime import timedelta
 
+from app import slack
+from app.slack import SlackInvitationException
+from app.utils import reverse
 from django import http
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -16,12 +19,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
-
-from app import slack
-from app.slack import SlackInvitationException
-from app.utils import reverse
 from register import models, forms, emails, typeform
-from reimbursement import models as r_models
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -190,11 +188,11 @@ def create_phase(phase_key, title, finished_func, user):
     return {'template': 'phases/' + phase_key + '.html', 'finished': is_finished, 'title': title, 'key': phase_key}
 
 
-class ProfileHacker(LoginRequiredMixin, TemplateView):
-    template_name = 'profile.html'
+class HackerDashboard(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ProfileHacker, self).get_context_data(**kwargs)
+        context = super(HackerDashboard, self).get_context_data(**kwargs)
 
         phases = self.get_phases()
         try:
@@ -293,6 +291,19 @@ class ApplyHacker(LoginRequiredMixin, TemplateView):
         c.update({'fetch_forms_url': reverse('fetch_application', request=self.request)})
         return c
 
+
+class ProfileHacker(LoginRequiredMixin, TemplateView):
+    template_name = 'profile.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProfileHacker, self).get_context_data(**kwargs)
+        try:
+            hacker_form = forms.HackerForm(instance=self.request.user.hacker)
+        except:
+            hacker_form = forms.HackerForm()
+
+        c.update({'hacker_form': hacker_form})
+        return c
 
 @login_required
 def fetch_application(request):
