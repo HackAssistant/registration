@@ -1,19 +1,14 @@
 {% extends "base.html" %}
-{% load humanize %}
 {% load bootstrap3 %}
 {% load static %}
-{% block title %}Vote applications - {% endblock %}
-{% block head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
-{% endblock %}
+{% block title %}Profile - {% endblock %}
 {% block body %}
     <div class="row margin-top">
         {% bootstrap_messages %}
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="text-center">Hacker profile</h4>
+                    <h4 class="text-center">Profile</h4>
                 </div>
                 <div class="panel-body">
                     <p>Please fill your hacker information here before proceeding to your application.</p>

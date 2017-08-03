@@ -237,7 +237,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
-            create_phase('hacker_info', "Hacker profile", lambda x: x.hacker, user),
+            create_phase('hacker_info', "Profile", lambda x: x.hacker, user),
             create_phase('fill_application', "Application", lambda x: x.hacker.application_set.exists(), user),
             create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
                          self.request.user),
