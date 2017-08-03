@@ -67,12 +67,14 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-haspopup="true"
-                               aria-expanded="false"> {{ request.user.username }}<span class="caret"></span></a>
+                               aria-expanded="false"> {{ request.user.email }}<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'account_change_password' %}">Change password</a></li>
                                 <li><a href="{% url 'account_email' %}">Edit emails</a></li>
-                                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                                <li><a href="{% url 'profile' %}">Profile</a></li>
+                                {% if perms.register.vote %}
+                                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'account_logout' %}">Logout</a></li>
                             </ul>
                         </li>
