@@ -9,6 +9,7 @@
 
 <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
+<p>Your password must have >= 8 characters and contain at least a number</p>
 <form class="signup form-horizontal" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}
   {% bootstrap_form form layout="horizontal" %}
