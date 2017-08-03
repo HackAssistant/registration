@@ -76,7 +76,7 @@
                         {% if perms.register.ranking %}
                             <li class="white-text"><a href="{% url 'ranking' %}">Ranking</a></li>
                         {% endif %}
-                        {% if perms.checkin.checkin %}
+                        {% if perms.checkin.check_in %}
                             <li class="white-text"><a href="{% url 'check_in_list' %}">Check-in</a></li>
                         {% endif %}
                         {% if not perms.register.vote %}

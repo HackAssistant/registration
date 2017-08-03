@@ -10,7 +10,7 @@ from register import models
 
 
 class CheckInList(PermissionRequiredMixin, TemplateView):
-    permission_required = 'checkin.checkin'
+    permission_required = 'checkin.check_in'
     template_name = 'checkin/list.html'
 
     def get_context_data(self, **kwargs):
@@ -34,13 +34,13 @@ class CheckInAllList(CheckInList):
 
 
 class QRView(PermissionRequiredMixin, TemplateView):
-    permission_required = 'checkin.checkin'
+    permission_required = 'checkin.check_in'
     template_name = 'checkin/qr.html'
 
 
 class CheckInHackerView(PermissionRequiredMixin, TemplateView):
     template_name = 'checkin/hacker.html'
-    permission_required = 'checkin.checkin'
+    permission_required = 'checkin.check_in'
 
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
