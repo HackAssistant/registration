@@ -209,6 +209,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_ENABLED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 LOGIN_REDIRECT_URL = 'root'
+LOGIN_URL = 'account_signup'
 
 ACCOUNT_ADAPTER = 'app.utils.AccountAdapter'
 ACCOUNT_USER_DISPLAY = lambda x: x.email
