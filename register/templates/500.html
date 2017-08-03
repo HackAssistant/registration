@@ -12,14 +12,14 @@
 {% block body %}
     {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
-    <h1 class="text-center margin-top white-text">500 Oops</h1>
-    <h2 class="text-center white-text">Server Error </h2>
-    <p class="text-center white-text">It seems like you found an error. Please reach us out
+    <h1 class="text-center margin-top">500 Oops</h1>
+    <h2 class="text-center">Server Error </h2>
+    <p class="text-center">It seems like you found an error. Please reach us out
         at {{ static_values.email|urlize }} if the problem persists.</p>
     {% if static_values.repo_url %}
-        <p class="text-center white-text">
+        <p class="text-center">
             Or you can open an issue
-            <a class="white-text" target="_blank" href="{{ static_values.issues_url }}">here</a>.
+            <a target="_blank" href="{{ static_values.issues_url }}">here</a>.
         </p>
     {% endif %}
 {% endblock %}
