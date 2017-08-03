@@ -2,6 +2,7 @@
 {% load bootstrap3 %}
 {% load utils %}
 {% settings_value "EVENT_NAME" as event_name %}
+{% settings_value "EVENT_DOMAIN" as domain %}
 {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 <!DOCTYPE html>
 <html lang="en">
@@ -15,11 +16,29 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <meta name="theme-color" content="#E91753">
     <meta name="author" content="{{ event_name }}">
-    <meta property="og:title" content="My {{ event_name }}"/>
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}"/>
-    <meta property="og:site_name" content="My {{ event_name }}"/>
     <meta name="description" content="{{ static_values.description }}">
+
+
+    <!--FACEBOOK DESCRIPTION -->
+    <meta property="og:title" content="My {{ event_name }}"/>
+    <meta property="og:site_name" content="My {{ event_name }}"/>
     <meta property="og:description" content="{{ static_values.description }}"/>
+    <meta property="og:image" content="https://{{ domain }}{% static 'header_rrss.png' %}">
+	<meta property="og:image:secure_url" content="https://{{ domain }}{% static 'header_rrss.png' %}">
+	<meta property="og:url" content="https://{{ domain }}/">
+
+    <!--TWITTER DESCRIPTION -->
+	<meta name="twitter:card" content="summary_large_image">
+    {% if static_values.twitter  %}
+        <meta name="twitter:site" content="@{{ static_values.twitter }}">
+        <meta name="twitter:creator" content="@{{ static_values.twitter }}">
+    {% endif %}
+	<meta name="twitter:title" content="My {{ event_name }}">
+	<meta name="twitter:description" content="{{ static_values.description }}">
+	<meta name="twitter:image" content="https://{{ domain }}{% static 'header_rrss.png' %}">
+
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Ek+Mukta" rel="stylesheet">
     {% block head %}

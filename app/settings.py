@@ -224,7 +224,7 @@ STATIC_KEYS_TEMPLATES = {
     'email': 'contact@hackupc.com',
     'description': 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.',
     # Static url to your logo
-    'logo_url': 'https://betamy.hackupc.com/static/logo.png',
+    'logo_url': 'https://my.hackupc.com/static/logo.png',
     # MailChimp subscribe URL (optional)
     'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
     # Live page url
