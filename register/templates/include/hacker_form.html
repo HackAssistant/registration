@@ -9,7 +9,7 @@
 
 <script>
 
-    $(function () {
+    $(document).ready(function () {
                 $.ajax({
                     type: "GET",
                     url: "{% static 'schools.json' %}",
@@ -19,11 +19,20 @@
                 }).fail(function (jqXHR, textStatus, errorThrown) {
                     console.error("AJAX call failed: " + textStatus + ", " + errorThrown);
                 });
-                var other_diet = $('id_other_diet');
-                var parent = other_diet.parent('div').parent('div')
-                other_diet.on('change', function() {
-                    alert(other_diet.val());
-                })
+                var other_diet = $('#id_other_diet');
+                var diet = $('#id_diet');
+                var parent = other_diet.parent('div').parent('div');
+                diet.on('change',function() {
+                    if (this.value=='Others'){
+                        parent.fadeIn();
+                    } else {
+                        parent.fadeOut();
+                        other_diet.val('');
+                    }
+                });
+                if (diet.val() !== 'Others'){
+                    parent.hide();
+                }
 
             }
     )
