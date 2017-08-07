@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Avg
 from django.http import HttpResponseRedirect
 from django.utils.timesince import timesince
-
 from app import slack
 from app.slack import SlackInvitationException
 from app.utils import reverse
@@ -40,8 +39,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                'create_reimbursement', 'invite_slack', 'reject']
 
     def name(self, obj):
-        return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + \
-               obj.hacker.user.email + ')'
+        return obj.hacker.name + ' ' + obj.hacker.lastname + ' (' + obj.hacker.user.email + ')'
 
     name.admin_order_field = 'hacker__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
@@ -78,8 +76,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             if 'create_reimbursement' in actions:
                 del actions['create_reimbursement']
 
-        if not settings.SLACK.get('team', None) or not settings.SLACK.get(
-                'token', None):
+        if not settings.SLACK.get('team', None) or not settings.SLACK.get('token', None):
             if 'invite_slack' in actions:
                 del actions['invite_slack']
 
@@ -106,14 +103,12 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, (
                 "%s applications confirmed, %s invites cancelled. Did you "
                 "check that they were accepted before?" % (
-                    sent, errors)),
-                              level=messages.INFO)
+                    sent, errors)), level=messages.INFO)
         elif sent > 0:
             self.message_user(request, '%s applications confirmed' % sent)
         else:
             self.message_user(request, 'Tickets couldn\'t be sent! Did you '
-                                       'check that they were invited?',
-                              level=messages.ERROR)
+                                       'check that they were invited?', level=messages.ERROR)
 
     def invite(self, request, queryset):
         if not request.user.has_perm('register.invite'):
@@ -137,8 +132,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, (
                 "%s applications invited, %s invites cancelled. Did you check "
                 "that they were accepted before?" % (
-                    invited, errors)),
-                              level=messages.INFO)
+                    invited, errors)), level=messages.INFO)
         elif invited > 0:
             self.message_user(request, '%s applications invited' % invited)
         else:
@@ -163,8 +157,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             self.message_user(request, (
                 "%s applications rejected, %s errors. Did you check that they "
                 "haven't already attended?" % (
-                    rejected, errors)),
-                              level=messages.INFO)
+                    rejected, errors)), level=messages.INFO)
         elif rejected > 0:
             self.message_user(request, '%s applications rejected' % rejected)
         else:
@@ -194,14 +187,14 @@ class ApplicationAdmin(admin.ModelAdmin):
                               invited)
         else:
             self.message_user(request, 'Invites couldn\'t be sent! Did you '
-                              'check that they were confirmed before?',
+                                       'check that they were confirmed before?',
                               level=messages.ERROR)
 
     def reject_application(self, request, queryset):
         # TODO: Move logic to model
         if queryset.exclude(status='P'):
             self.message_user(request, 'Applications couldn\'t be updated, '
-                              'check that they are pending before',
+                                       'check that they are pending before',
                               messages.ERROR)
         else:
             # Same as above

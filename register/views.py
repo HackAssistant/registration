@@ -4,6 +4,9 @@ from __future__ import print_function
 import logging
 from datetime import timedelta
 
+from app import slack
+from app.slack import SlackInvitationException
+from app.utils import reverse
 from django import http
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -17,12 +20,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
-
-from app import slack
-from app.slack import SlackInvitationException
-from app.utils import reverse
 from register import models, forms, emails, typeform
-from reimbursement import models as r_models
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -106,8 +104,7 @@ class ConfirmApplication(TemplateView, View):
         msg = None
         if application.status == models.APP_INVITED:
             msg = emails.create_confirmation_email(application, self.request)
-        already_confirmed = application.is_confirmed() or \
-            application.is_attended()
+        already_confirmed = application.is_confirmed() or application.is_attended()
         cancellation_url = str(reverse('cancel_app', request=request))
         try:
             application.confirm()

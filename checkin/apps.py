@@ -9,3 +9,4 @@ class CheckinConfig(AppConfig):
     def ready(self):
         super(CheckinConfig, self).ready()
         from checkin.signals import organizer_account
+        organizer_account

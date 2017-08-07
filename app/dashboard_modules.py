@@ -25,14 +25,12 @@ class BestReviewers(DashboardModule):
 
     def init_with_context(self, context):
         self.children = User.objects.annotate(
-            vote_count=Count('vote__calculated_vote')) \
-                            .exclude(vote_count=0) \
-                            .order_by('-vote_count')[:self.limit]
+            vote_count=Count('vote__calculated_vote')).exclude(vote_count=0).order_by('-vote_count')[:self.limit]
 
 
 class AppsStatsForm(forms.Form):
     status = forms.ChoiceField(label='Status',
-                               choices=STATUS+[('__all__', 'All')])
+                               choices=STATUS + [('__all__', 'All')])
 
 
 class AppsStats(DashboardModule):

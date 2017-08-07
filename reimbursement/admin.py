@@ -5,7 +5,6 @@ from django.contrib import admin, messages
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.utils.timesince import timesince
-
 from reimbursement import models, emails
 
 
@@ -29,9 +28,8 @@ class ReimbursementAdmin(admin.ModelAdmin):
     money.admin_order_field = 'assigned_money'
 
     def name(self, obj):
-        return obj.application.hacker.name + ' ' + \
-               obj.application.hacker.lastname + ' (' + \
-               obj.application.hacker.user.email + ')'
+        hacker = obj.application.hacker
+        return hacker.name + ' ' + hacker.lastname + ' (' + hacker.user.email + ')'
 
     name.admin_order_field = \
         'application__hacker__name'  # Allows column order sorting

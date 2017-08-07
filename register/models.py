@@ -1,18 +1,14 @@
-
 from __future__ import unicode_literals
 
 import uuid as uuid
 
+from app.emails import MailListManager
 from django.conf import settings
 from django.contrib.auth import models as admin_models
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
-
-from app.emails import MailListManager
 
 # Votes weight
 TECH_WEIGHT = 0.2
@@ -222,8 +218,7 @@ class Application(models.Model):
         return self.status == APP_LAST_REMIDER
 
     def can_be_cancelled(self):
-        return self.status == APP_CONFIRMED or self.status == APP_INVITED or \
-               self.status == APP_LAST_REMIDER
+        return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
 
     def confirm(self):
         if self.status == APP_CANCELLED:
@@ -347,10 +342,9 @@ class Vote(models.Model):
         #
         # See this: http://www.dataminingblog.com/standardization-vs-
         # normalization/
-        Vote.objects.filter(user=self.user).update(
-            calculated_vote=PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd +
-            TECH_WEIGHT * (F('tech') - t_avg) / t_sd
-        )
+        personal = PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd
+        tech = TECH_WEIGHT * (F('tech') - t_avg) / t_sd
+        Vote.objects.filter(user=self.user).update(calculated_vote=personal + tech)
 
     class Meta:
         unique_together = ('application', 'user')
