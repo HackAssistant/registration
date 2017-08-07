@@ -28,7 +28,7 @@
 
 
                             {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
-                            {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30|url_blank|safe %}
+                            {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30|url_blank %}
                         </dl>
                         <h4 class="text-center">Academic</h4>
                         <dl class="dl-horizontal">
