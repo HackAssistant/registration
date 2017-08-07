@@ -139,7 +139,7 @@ class Application(models.Model):
     # TODO: TEAM EXTERNAL
 
     def __str__(self):
-        return self.id
+        return self.hacker.user.email
 
     def save(self, **kwargs):
         # Some times foreign keys are not enforced in SQLite, so we ensure it here
