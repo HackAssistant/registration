@@ -333,3 +333,4 @@ class ApplicationComment(models.Model):
     application = models.ForeignKey(Application, null=False)
     author = models.ForeignKey(admin_models.User)
     text = models.CharField(max_length=500)
+    created_at = models.DateTimeField(default=timezone.now)

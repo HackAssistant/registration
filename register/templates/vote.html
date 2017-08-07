@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
     <link rel="stylesheet" href="{% static 'css/vote.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
         {% bootstrap_messages %}
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-8">
             {% if app %}
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -85,31 +86,38 @@
                     </div>
                 </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="text-center">Comments</h4>
-                    </div>
-                    <div class="panel-body">
-                    {% for comment in comments %}
-                        <div class="panel panel-info">
-                            <div class="panel-heading">{{ comment.author.email }}</div>
-                            <div class="panel-body">{{comment.text}}</div>
-                        </div>
-                    {% endfor %}
-                    </div>
-                    <div class="panel-footer">
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                            <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3" required></textarea>
-                            <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment</button>
-                        </form>
-                    </div>
-                </div>
             {% else %}
                 <h4 class="text-center" style="color: white;">No applications left to be voted.<br> Good job! Enjoy the
                     sun outside!</h4>
             {% endif %}
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default border-less">
+                <div class="panel-heading">
+                    <h4 class="text-center">Comments</h4>
+                </div>
+                <div class="panel-body no-padding">
+                    <ul class="list-group">
+                    {% for comment in comments %}
+                         <li class="list-group-item">
+                            <h4 class="list-group-item-text">{{ comment.text }}</h4>
+                            <p class="list-group-item-heading">by {{ comment.author.username }}
+                            <small class="pull-right">{{ comment.created_at|timesince }} ago</small></p>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+                <div class="panel-footer">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                        <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
+                                  required></textarea>
+                        <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     <script src="{% static 'lib/barrating.min.js' %}"></script>
