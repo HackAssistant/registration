@@ -100,8 +100,8 @@
                     <ul class="list-group">
                     {% for comment in comments %}
                          <li class="list-group-item">
-                            <h4 class="list-group-item-text">{{ comment.text }}</h4>
-                            <p class="list-group-item-heading">by {{ comment.author.username }}
+                            <h4>{{ comment.text }}</h4>
+                            <p style="color:gray;">by {{ comment.author.username }}
                             <small class="pull-right">{{ comment.created_at|timesince }} ago</small></p>
                         </li>
                     {% endfor %}
