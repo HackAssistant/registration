@@ -52,12 +52,18 @@ EDITIONS = [
 
 D_NONE = 'None'
 D_VEGETERIAN = 'Vegeterian'
+D_VEGAN = 'Vegan'
+D_NO_PORK = 'No pork'
 D_GLUTEN_FREE = 'Gluten-free'
+D_OTHER = 'Others'
 
 DIETS = [
-    (D_NONE, 'None'),
-    (D_VEGETERIAN, 'Vegeterian/Vegan'),
-    (D_GLUTEN_FREE, 'Gluten free')
+    (D_NONE, 'No requirements'),
+    (D_VEGETERIAN, 'Vegeterian'),
+    (D_VEGAN, 'Vegan'),
+    (D_NO_PORK, 'No pork'),
+    (D_GLUTEN_FREE, 'Gluten-free'),
+    (D_OTHER, 'Others')
 ]
 
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
@@ -77,8 +83,7 @@ class Hacker(models.Model):
                             primary_key=True)
 
     # University
-    graduation_year = models.IntegerField(
-        choices=[(year, str(year)) for year in range(2016, 2020)])
+    graduation_year = models.IntegerField(choices=[(year, str(year)) for year in range(2016, 2024)])
     university = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
 

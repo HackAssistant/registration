@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load bootstrap3 %}
+{% block title %}Dashboard - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+{% load utils %}
+{% block body %}
+    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
+    <div class="confirm-content">
+        <div class="col-md-12">
+            {% bootstrap_messages %}
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default border-less">
+             <div class="panel-heading">
+                    <h3 class="panel-title">{% if user.hacker %}{{ user.hacker.name }}'s{% endif %} Hacker Dashboard</h3>
+                </div>
+                <div class="panel-body no-padding">
+                    <div class="list-group">
+                        {% for phase in phases %}
+                            <a class="list-group-item {% if phase.finished %}finished{% elif phase.key != current.key %}disabled{% endif %} {% if phase.key == active.key %}active{% endif %}"
+                               href="{% if phase.finished or phase.key == current.key %}?phase={{ phase.key }}{% else %}#{% endif %}">
+                                {{ phase.title }}
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                </div>
+                <div class="panel-footer">
+                    Errors? Help? Reach us {{ static_values.email|urlize }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ active.title }}</h3>
+                </div>
+                <div class="panel-body">
+
+                    {% include active.template %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

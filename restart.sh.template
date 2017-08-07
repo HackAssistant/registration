@@ -1,4 +1,12 @@
 #!/bin/sh
+export PROD_MODE="True"
+# Set up your postgres password
+export PG_PWD="password"
+# Domain where running
+export DOMAIN="my.hackupc.com"
+# SMTP password
+export EMAIL_HOST_PASSWORD="password"
+
 echo "checking updates..."
 ./env/bin/pip install -r requirements.txt
 echo "checking updates...done"

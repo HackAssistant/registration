@@ -24,7 +24,7 @@ SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not os.environ.get('PROD_MODE', None)
 
-ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', ]
+ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 
@@ -209,6 +209,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_ENABLED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 LOGIN_REDIRECT_URL = 'root'
+LOGIN_URL = 'account_signup'
 
 ACCOUNT_ADAPTER = 'app.utils.AccountAdapter'
 
@@ -227,9 +228,9 @@ STATIC_KEYS_TEMPLATES = {
     'fb': 'hackupc',
     'twitter': 'hackupc',
     'email': 'contact@hackupc.com',
-    'description': 'Join us for BarcelonaTech\'s hackathon. 500 hackers. 36h. March 3rd-5th.',
+    'description': 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.',
     # Static url to your logo
-    'logo_url': 'https://raw.githubusercontent.com/hackupc/frontend/master/src/images/hackupc-header-blue.png',
+    'logo_url': 'https://my.hackupc.com/static/logo.png',
     # MailChimp subscribe URL (optional)
     'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
     # Live page url

@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <img alt="HackUPC Fall 2016" src="https://github.com/hackupc/frontend/raw/master/src/images/hackupc-header-blue.png" width="620"/>
+  <img alt="HackUPC Fall 2017" src="https://github.com/hackupc/frontend/raw/master/src/images/hackupc-header.png" width="620"/>
 </p>
 <br>
 
@@ -33,7 +33,7 @@ Needs: Python 3.X, virtualenv
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
-- `pip install -r requirements.txt`
+- `pip install -r requirements.txt`. For production run: `pip install -r requirements/prod.txt`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
 
@@ -67,7 +67,7 @@ TODO: Include guide to create and prepare your Typeform
 ### Local environment
 
 - Add `TP_KEY` in environment (if you want to retrieve forms)
-- `python manage.py runserver 0.0.0.0:8000`
+- `python manage.py runserver`
 
 ### Production environment
 
@@ -184,7 +184,7 @@ Create your own management.sh script and add to crontab.
 
 ### Permissions
 
-- **checkin.checkin**: Allows user to check-in hackers with QR and list view
+- **checkin.check_in**: Allows user to check-in hackers with QR and list view
 - **register.invite**: Allows user to invite hackers. Needs to be staff first and needs to be able to edit applications.
 - **register.vote**: Allows user to vote and review applications
 - **register.ranking**: Allows user to see ranking of reviewiers.

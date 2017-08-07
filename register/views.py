@@ -197,11 +197,11 @@ def create_phase(phase_key, title, finished_func, user):
             'finished': is_finished, 'title': title, 'key': phase_key}
 
 
-class ProfileHacker(LoginRequiredMixin, TemplateView):
-    template_name = 'profile.html'
+class HackerDashboard(LoginRequiredMixin, TemplateView):
+    template_name = 'dashboard.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ProfileHacker, self).get_context_data(**kwargs)
+        context = super(HackerDashboard, self).get_context_data(**kwargs)
 
         phases = self.get_phases()
         try:
@@ -248,13 +248,10 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
-            create_phase('hacker_info', "Hacker profile",
-                         lambda x: x.hacker, user),
-            create_phase('fill_application', "Application",
-                         lambda x: x.hacker.application_set.exists(), user),
-            create_phase('invited', "Invite",
-                         lambda x: self.get_current_app(user)
-                         .answered_invite(), self.request.user),
+            create_phase('hacker_info', "Profile", lambda x: x.hacker, user),
+            create_phase('fill_application', "Application", lambda x: x.hacker.application_set.exists(), user),
+            create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
+                         self.request.user),
         ]
 
         # Try/Except caused by Hacker not existing
@@ -306,6 +303,37 @@ class ApplyHacker(LoginRequiredMixin, TemplateView):
         c.update({'fetch_forms_url': reverse('fetch_application',
                                              request=self.request)})
         return c
+
+
+class ProfileHacker(LoginRequiredMixin, TemplateView):
+    template_name = 'profile.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(ProfileHacker, self).get_context_data(**kwargs)
+        try:
+            hacker_form = forms.HackerForm(instance=self.request.user.hacker)
+        except:
+            hacker_form = forms.HackerForm()
+
+        c.update({'hacker_form': hacker_form})
+        return c
+
+    def post(self, request, *args, **kwargs):
+        try:
+            form = forms.HackerForm(request.POST, instance=request.user.hacker)
+        except:
+            form = forms.HackerForm(request.POST)
+        if form.is_valid():
+            hacker = form.save(commit=False)
+            hacker.user = request.user
+            hacker.save()
+            messages.success(request, 'Profile details saved!')
+
+            return HttpResponseRedirect(reverse('root'))
+        else:
+            c = self.get_context_data()
+            c.update({'hacker_form': form})
+            return render(request, self.template_name, c)
 
 
 @login_required

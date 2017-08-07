@@ -1,5 +1,5 @@
 body {
-    background-color: #03a9b5;
+    background-color: #EFEAE4;
     font-family: "Ek Mukta", Arial, sans-serif;
 }
 
@@ -7,7 +7,16 @@ nav.navbar {
     -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
-    background-color: white;
+    background-color: #494949;
+    border-color: #494949;
+}
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+        background-color: #292929;
+}
+
+nav.navbar > a, nav.navbar > p, nav.navbar  > button {
+    color: white;
 }
 
 div.panel {
@@ -32,7 +41,11 @@ div.panel {
 }
 
 .white-text {
-    color:white;
+    color:white !important;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: white !important;
 }
 
 a.icon {
