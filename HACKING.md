@@ -1,15 +1,16 @@
 Coding style Guidelines
 =======================
 
-Follow [PEP-8](https://www.python.org/dev/peps/pep-0008/) coding guidelines.
+This project applies the same coding style than [Django Project](https://docs.djangoproject.com/en/1.11/internals/contributing/writing-code/coding-style/) which follows almost all [PEP-8](https://www.python.org/dev/peps/pep-0008/) coding guidelines.
 
+We allow up to 119 characters/line as this is the width of GitHub code review; anything longer requires horizontal scrolling which makes review more difficult. This check is included when you run flake8. Documentation, comments, and docstrings should be wrapped at 79 characters, even though PEP 8 suggests 72.
 
 Commit Message Guidelines
 =========================
 
 Commit Guidelines inspired by [Gnome Commit Guidelines](https://wiki.gnome.org/Git/CommitMessages).
 
-Those are only general-purpose recommended guidelines, depending on the context of each PR the following rules can vary. 
+Those are only general-purpose recommended guidelines, depending on the context of each PR the following rules can vary.
 
 Remember: the commit message is mainly for the other people, so they should be able to understand the changes made at any point in time.
 
