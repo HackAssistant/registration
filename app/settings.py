@@ -238,7 +238,8 @@ STATIC_KEYS_TEMPLATES = {
     # Issues url, shows up on 500 error
     'issues_url': 'https://github.com/hackupc/backend/issues/new',
     # Regex to match possible organizers emails
-    'r_organizer_email': '^.*@hackupc\.com$'
+    'r_organizer_email': '^.*@hackupc\.com$',
+    'google_analytics': 'UA-69542332-2'
 
 }
 
