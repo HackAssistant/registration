@@ -29,6 +29,10 @@ ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', '0.0.0.0']
 # Application definition
 
 INSTALLED_APPS = [
+    'register',
+    'checkin',
+    'reimbursement',
+    'table',
     'jet',
     'jet.dashboard',
     'django.contrib.admin',
@@ -43,10 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
-    'register',
-    'checkin',
-    'reimbursement',
-    'table',
 ]
 
 AUTHENTICATION_BACKENDS = (
