@@ -22,19 +22,25 @@ admin.site.disable_action('delete_selected')
 
 
 class HackerAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'name', 'lastname')
+    list_display = ('user_id', 'full_name')
+    list_filter = ('graduation_year', 'university')
+    search_fields = ('name', 'lastname', 'user__email',)
     list_per_page = 200
+
+    def full_name(self, obj):
+        return obj.name + ' ' + obj.lastname + ' (' + obj.user.email + ')'
 
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('application', 'author', 'text')
     list_per_page = 200
+    actions = ['delete_selected', ]
 
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'votes', 'scholarship', 'status',
                     'status_last_updated',)
-    list_filter = ('status', 'first_timer', 'scholarship',
+    list_filter = ('status', 'first_timer', 'scholarship', 'hacker__graduation_year',
                    'hacker__university', 'origin_country', 'under_age')
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email',
@@ -230,8 +236,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
 admin.site.register(models.ApplicationComment, admin_class=CommentAdmin)
 admin.site.register(models.Hacker, admin_class=HackerAdmin)
-# create_modeladmin(InvitationAdmin, name='invitation',
-# model=models.Application)
 admin.site.site_header = 'HackUPC Admin'
 admin.site.site_title = 'HackUPC Admin'
 admin.site.index_title = 'Home'
