@@ -16,7 +16,8 @@ def send_slack_invite(email, active=True):
     team = settings.SLACK.get('team', None)
 
     if not token or not team:
-        raise SlackInvitationException("Not configured slack, team = %s and token = %s" % (team, token))
+        raise SlackInvitationException(
+            "Not configured slack, team = %s and token = %s" % (team, token))
 
     r = requests.post(BASE_URL.format(team), data={
         'email': email,

@@ -18,7 +18,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.views.generic import RedirectView
-from jet.dashboard.dashboard_modules import google_analytics_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,7 +26,8 @@ urlpatterns = [
 
     url(r'^accounts/', include('allauth.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    url(r'^jet/dashboard/', include(
+        'jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^', include('register.urls')),
     url(r'^$', views.root_view, name='root'),
     url(r'^email-test$', views.view_email, name='email-test'),

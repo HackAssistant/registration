@@ -6,6 +6,7 @@
 
 
 [![Code Climate](https://codeclimate.com/github/hackupc/backend/badges/gpa.svg)](https://codeclimate.com/github/hackupc/backend)
+[![Build Status](https://travis-ci.org/hackupc/backend.svg?branch=master)](https://travis-ci.org/hackupc/backend)
 
 Backend for hackathon application management.
 

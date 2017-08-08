@@ -8,4 +8,6 @@ class RegisterConfig(AppConfig):
 
     def ready(self):
         super(RegisterConfig, self).ready()
-        from register.signals import organizer_account,default_site
+        from register.signals import organizer_account, default_site
+        organizer_account
+        default_site

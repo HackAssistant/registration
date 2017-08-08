@@ -10,7 +10,8 @@ from django.template.loader import render_to_string
 from requests import HTTPError
 
 
-def sendgrid_send(recipients, subject, substitutions, template_id, from_email='HackUPC Team <contact@hackupc.com>'):
+def sendgrid_send(recipients, subject, substitutions, template_id,
+                  from_email='HackUPC Team <contact@hackupc.com>'):
     mail = EmailMultiAlternatives(
         subject=subject,
         body='-',
@@ -27,14 +28,16 @@ def sendgrid_send(recipients, subject, substitutions, template_id, from_email='H
     mail.send()
 
 
-def render_mail(template_prefix, recipient_email, substitutions, from_email=settings.DEFAULT_FROM_EMAIL):
+def render_mail(template_prefix, recipient_email, substitutions,
+                from_email=settings.DEFAULT_FROM_EMAIL):
     """
     Renders an e-mail to `email`.  `template_prefix` identifies the
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
 
     current_site = Site.objects.get(id=settings.SITE_ID)
-    substitutions.update({'current_site': current_site, 'edition_name': settings.CURRENT_EDITION})
+    substitutions.update({'current_site': current_site,
+                          'edition_name': settings.CURRENT_EDITION})
     substitutions.update(settings.STATIC_KEYS_TEMPLATES)
 
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
@@ -73,8 +76,10 @@ def render_mail(template_prefix, recipient_email, substitutions, from_email=sett
     return msg
 
 
-def send_email(template_prefix, recipient_email, substitutions, from_email=settings.DEFAULT_FROM_EMAIL):
-    msg = render_mail(template_prefix, recipient_email, substitutions, from_email)
+def send_email(template_prefix, recipient_email, substitutions,
+               from_email=settings.DEFAULT_FROM_EMAIL):
+    msg = render_mail(template_prefix, recipient_email, substitutions,
+                      from_email)
     msg.send()
 
 
@@ -91,19 +96,24 @@ class MailListManager:
                 "last_name": application.hacker.lastname,
             }
         ]
-        response = self.sg.client.contactdb.recipients.post(request_body=recipient)
+        response = self.sg.client.contactdb.recipients.post(
+            request_body=recipient)
         body = json.loads(response.body.decode('utf-8'))
-        if response.status_code != 201 or len(body["persisted_recipients"]) != 1:
+        if response.status_code != 201 or \
+                len(body["persisted_recipients"]) != 1:
             error('Could not create a recipient for the applicant {} ({}). '
                   'SendGrid API responded with status code {}.'
-                  .format(application.id, application.name, response.status_code))
+                  .format(application.id, application.name,
+                          response.status_code))
         created_id = body["persisted_recipients"][0]
         return created_id
 
     def _add_recipient_to_list(self, recipient_id, list_id):
-        response = self.sg.client.contactdb.lists._(list_id).recipients._(recipient_id).post()
+        response = self.sg.client.contactdb.lists._(list_id).recipients \
+            ._(recipient_id).post()
         if response.status_code != 201:
-            error('Could not add recipient {} to list. SendGrid API responded with status code {}.'
+            error('Could not add recipient {} to list. SendGrid API responded '
+                  'with status code {}.'
                   .format(recipient_id, response.status_code))
 
     def add_applicant_to_list(self, application, list_id):
@@ -123,13 +133,16 @@ class MailListManager:
         params = {'recipient_id': recipient_id, 'list_id': list_id}
         lists = self.sg.client.contactdb.lists
         try:
-            response = lists._(list_id).recipients._(recipient_id).delete(query_params=params)
+            response = lists._(list_id).recipients._(recipient_id).delete(
+                query_params=params)
 
             if response.status_code != 204 and response.status_code != 201:
-                error('Could not remove recipient {} from the mail list. SendGrid API responded with status code {}.'
+                error('Could not remove recipient {} from the mail list. '
+                      'SendGrid API responded with status code {}.'
                       .format(recipient_id, response.status_code))
         except HTTPError:
-            error('Could not remove recipient {} from the mail list. Error when calling SendGrid API')
+            error('Could not remove recipient {} from the mail list. Error '
+                  'when calling SendGrid API')
 
     def remove_applicant_from_list(self, application, list_id):
 

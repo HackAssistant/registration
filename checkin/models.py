@@ -16,7 +16,8 @@ class CheckIn(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         self.update_time = datetime.now()
-        super(CheckIn, self).save(force_insert, force_update, using, update_fields)
+        super(CheckIn, self).save(force_insert, force_update, using,
+                                  update_fields)
 
     def delete(self, using=None, keep_parents=False):
         self.application.status = APP_CONFIRMED

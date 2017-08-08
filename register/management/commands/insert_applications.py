@@ -8,4 +8,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         fetched = typeform.ApplicationsTypeform().insert_forms()
-        self.stdout.write(self.style.SUCCESS('Successfully fetched %s forms' % len(fetched)))
+        self.stdout.write(self.style.SUCCESS(
+            'Successfully fetched %s forms' % len(fetched)))

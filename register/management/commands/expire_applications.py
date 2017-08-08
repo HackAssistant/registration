@@ -13,7 +13,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         fourdaysago = datetime.today() - timedelta(days=4)
         self.stdout.write('Checking reminders...')
-        reminders = models.Application.objects.filter(status_update_date__lte=fourdaysago, status=models.APP_INVITED)
+        reminders = models.Application.objects.filter(
+            status_update_date__lte=fourdaysago, status=models.APP_INVITED)
         self.stdout.write('Checking reminders...%s found' % reminders.count())
         self.stdout.write('Sending reminders...')
         msgs = []
@@ -23,12 +24,15 @@ class Command(BaseCommand):
 
         connection = mail.get_connection()
         connection.send_messages(msgs)
-        self.stdout.write(self.style.SUCCESS('Sending reminders...Successfully sent %s reminders' % len(msgs)))
+        self.stdout.write(self.style.SUCCESS(
+            'Sending reminders... Successfully sent %s reminders' % len(msgs)))
 
         onedayago = datetime.today() - timedelta(days=1)
         self.stdout.write('Checking expired...')
-        expired = models.Application.objects.filter(status_update_date__lte=onedayago, status=models.APP_LAST_REMIDER)
+        expired = models.Application.objects.filter(
+            status_update_date__lte=onedayago, status=models.APP_LAST_REMIDER)
         self.stdout.write('Checking expired...%s found' % expired.count())
         self.stdout.write('Setting expired...')
         count = len([app.expire() for app in expired])
-        self.stdout.write(self.style.SUCCESS('Setting expired...Successfully expired %s applications' % count))
+        self.stdout.write(self.style.SUCCESS(
+            'Setting expired... Successfully expired %s applications' % count))

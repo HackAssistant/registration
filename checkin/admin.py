@@ -11,4 +11,5 @@ class CheckinAdmin(admin.ModelAdmin):
     search_fields = list_display
     date_hierarchy = 'update_time'
 
+
 admin.site.register(models.CheckIn, admin_class=CheckinAdmin)

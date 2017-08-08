@@ -212,7 +212,12 @@ LOGIN_REDIRECT_URL = 'root'
 LOGIN_URL = 'account_signup'
 
 ACCOUNT_ADAPTER = 'app.utils.AccountAdapter'
-ACCOUNT_USER_DISPLAY = lambda x: x.email
+
+
+def ACCOUNT_USER_DISPLAY(x):
+    return x.email
+
+
 ACCOUNT_USERNAME_REQUIRED = False
 
 DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
