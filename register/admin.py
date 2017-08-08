@@ -27,6 +27,11 @@ class HackerAdmin(admin.ModelAdmin):
     list_per_page = 200
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('application', 'author', 'text')
+    list_per_page = 200
+
+
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'votes', 'scholarship', 'status', 'status_last_updated',)
     list_filter = ('status', 'first_timer', 'scholarship', 'hacker__university', 'origin_country', 'under_age')
@@ -203,6 +208,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
+admin.site.register(models.ApplicationComment, admin_class=CommentAdmin)
 admin.site.register(models.Hacker, admin_class=HackerAdmin)
 # create_modeladmin(InvitationAdmin, name='invitation', model=models.Application)
 admin.site.site_header = 'HackUPC Admin'

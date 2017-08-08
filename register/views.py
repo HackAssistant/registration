@@ -32,6 +32,15 @@ def add_vote(application, user, tech_rat, pers_rat):
     return v
 
 
+def add_comment(application, user, text):
+    comment = models.ApplicationComment()
+    comment.author = user
+    comment.application = application
+    comment.text = text
+    comment.save()
+    return comment
+
+
 class RankingView(PermissionRequiredMixin, TemplateView):
     permission_required = 'register.ranking'
     template_name = 'ranking.html'
@@ -63,10 +72,13 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
+        comment_text = request.POST.get('comment_text', None)
         application = models.Application.objects.get(id=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)
+            elif request.POST.get('add_comment'):
+                add_comment(application, request.user, comment_text)
             else:
                 add_vote(application, request.user, tech_vote, pers_vote)
         # If application has already been voted -> Skip and bring next application
@@ -78,6 +90,7 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
         context = super(VoteApplicationView, self).get_context_data(**kwargs)
         application = self.get_next_application()
         context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(application=application)
         try:
             context['hacker'] = application.hacker
         except:

@@ -146,7 +146,7 @@ class Application(models.Model):
     # TODO: TEAM EXTERNAL
 
     def __str__(self):
-        return self.id
+        return self.hacker.user.email
 
     def save(self, **kwargs):
         # Some times foreign keys are not enforced in SQLite, so we ensure it here
@@ -334,3 +334,10 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('application', 'user')
+
+
+class ApplicationComment(models.Model):
+    application = models.ForeignKey(Application, null=False)
+    author = models.ForeignKey(admin_models.User)
+    text = models.CharField(max_length=500)
+    created_at = models.DateTimeField(default=timezone.now)
