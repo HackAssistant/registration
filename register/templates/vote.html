@@ -92,34 +92,36 @@
                     sun outside!</h4>
             {% endif %}
         </div>
-        <div class="col-md-4">
-            <div class="panel panel-default border-less">
-                <div class="panel-heading">
-                    <h4 class="text-center">Comments</h4>
-                </div>
-                <div class="panel-body no-padding">
-                    <ul class="list-group">
-                    {% for comment in comments %}
-                         <li class="list-group-item">
-                            <h4>{{ comment.text }}</h4>
-                            <p style="color:gray;">by {{ comment.author.username }}
-                            <small class="pull-right">{{ comment.created_at|timesince }} ago</small></p>
-                        </li>
-                    {% endfor %}
+        {% if app %}
+          <div class="col-md-4">
+              <div class="panel panel-default border-less">
+                  <div class="panel-heading">
+                      <h4 class="text-center">Comments</h4>
+                  </div>
+                  <div class="panel-body no-padding">
+                      <ul class="list-group">
+                      {% for comment in comments %}
+                           <li class="list-group-item">
+                              <h4>{{ comment.text }}</h4>
+                              <p style="color:gray;">by {{ comment.author.username }}
+                              <small class="pull-right">{{ comment.created_at|timesince }} ago</small></p>
+                          </li>
+                      {% endfor %}
 
-                </ul>
-                <div class="panel-footer">
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                        <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
-                                  required></textarea>
-                        <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                  </ul>
+                  <div class="panel-footer">
+                      <form action="" method="post">
+                          {% csrf_token %}
+                          <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                          <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
+                                    required></textarea>
+                          <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
+                          </button>
+                      </form>
+                  </div>
+              </div>
+          </div>
+        {% endif %}
     </div>
     <script src="{% static 'lib/barrating.min.js' %}"></script>
     <script type="text/javascript">
