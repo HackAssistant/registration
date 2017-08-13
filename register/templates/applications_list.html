@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load table_tags %}
+{% load static %}
+{% block title %}Applications list - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        <div class="col-md-10 col-md-offset-1">
+            <div style="text-align: center;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="text-center">{% block panel_title %}Pending applications{% endblock %}</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            {% render_table applicationsReviewTable %}
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -22,6 +22,9 @@ from django.views import View
 from django.views.generic import TemplateView
 from register import models, forms, emails, typeform
 
+from django.shortcuts import get_object_or_404
+from register.tables import ApplicationsReviewTable
+
 
 def add_vote(application, user, tech_rat, pers_rat):
     v = models.Vote()
@@ -54,6 +57,52 @@ class RankingView(PermissionRequiredMixin, TemplateView):
                                                                   'email')
         return context
 
+
+class ApplicationsList(PermissionRequiredMixin, TemplateView):
+    permission_required = 'checkin.checkin'
+    template_name = 'applications_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationsList, self).get_context_data(**kwargs)
+        attended = self.get_applications()
+        table = ApplicationsReviewTable(attended)
+        context.update({
+            'applicationsReviewTable': table,
+        })
+        return context
+
+    def get_applications(self):
+        return models.Application.objects.filter(status=models.APP_PENDING)
+
+class ReviewApplicationView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'register.vote'
+    template_name = 'application_review.html'
+
+    def get_comments(self, application):
+        return models.ApplicationComment.objects.filter(application=application)
+        #return [{'author': "alvaro", 'text': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur nibh ac eros lacinia varius. Sed orci orci, commodo vitae feugiat ac, scelerisque sit amet nibh. Integer volutpat leo accumsan, dignissim ligula et, imperdiet est. Morbi id dignissim purus. Cras at urna vulputate, laoreet erat in, ullamcorper leo. Cras accumsan arcu ac purus fermentum iaculis a quis erat. Integer venenatis pretium aliquam. In gravida lectus felis, at molestie mi faucibus non.'}, {'author': "ablaro", 'text': 'comentario 2'}]
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewApplicationView, self).get_context_data(**kwargs)
+        applicationId = kwargs['id']
+        application = get_object_or_404(models.Application, pk=applicationId)
+        context['app'] = application
+
+        comments = self.get_comments(application)
+        context['comments'] = comments
+        try:
+            context['hacker'] = application.hacker
+        except:
+            pass
+        return context
+
+    def post(self, request, *args, **kwargs):
+        id = request.POST.get('app_id')
+        comment_text = request.POST.get('comment_text', None)
+        application = models.Application.objects.get(id=id)
+
+        add_comment(application, request.user, comment_text)
+        return HttpResponseRedirect('/application/review/'+id)
 
 class VoteApplicationView(PermissionRequiredMixin, TemplateView):
     permission_required = 'register.vote'
