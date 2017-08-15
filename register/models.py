@@ -8,7 +8,8 @@ from django.conf import settings
 from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Avg, F
+from django.db.models import Avg, F, DecimalField
+from django.db.models.functions import Cast
 from django.utils import timezone
 
 # Votes weight
@@ -151,7 +152,7 @@ class Application(models.Model):
 
     @classmethod
     def annotate_vote(cls, qs):
-        return qs.annotate(vote_avg=Round4(Avg('vote__calculated_vote')))
+        return qs.annotate(vote_avg=Round4(Cast(Avg('vote__calculated_vote'), DecimalField())))
 
     def __str__(self):
         return self.hacker.user.email
