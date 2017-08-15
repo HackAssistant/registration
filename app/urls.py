@@ -25,6 +25,7 @@ urlpatterns = [
     # https://docs.djangoproject.com/en/1.10/topics/auth/default/
 
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^table/', include('table.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include(
         'jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS

@@ -15,14 +15,14 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, \
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, Avg
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 from register import models, forms, emails, typeform
-from register.tables import ApplicationsReviewTable
+from register.tables import ApplicationsListTable
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -58,20 +58,17 @@ class RankingView(PermissionRequiredMixin, TemplateView):
 
 
 class ApplicationsListView(PermissionRequiredMixin, TemplateView):
-    permission_required = 'checkin.checkin'
+    permission_required = 'register.vote'
     template_name = 'applications_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationsListView, self).get_context_data(**kwargs)
-        attended = self.get_applications()
-        table = ApplicationsReviewTable(attended)
+        apps = models.Application.annotate_vote(models.Application.objects.all())
+        table = ApplicationsListTable(apps)
         context.update({
-            'applicationsReviewTable': table,
+            'app_list': table,
         })
         return context
-
-    def get_applications(self):
-        return models.Application.objects.all()
 
 
 class ApplicationDetailView(PermissionRequiredMixin, TemplateView):

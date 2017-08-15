@@ -69,7 +69,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(ApplicationAdmin, self).get_queryset(request)
-        return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
+        return models.Application.annotate_vote(qs)
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)

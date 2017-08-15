@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import uuid as uuid
 
 from app.emails import MailListManager
+from app.utils import Round4
 from django.conf import settings
 from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
@@ -147,6 +148,10 @@ class Application(models.Model):
     invited_by = models.ForeignKey(admin_models.User, null=True, blank=True)
 
     # TODO: TEAM EXTERNAL
+
+    @classmethod
+    def annotate_vote(cls, qs):
+        return qs.annotate(vote_avg=Round4(Avg('vote__calculated_vote')))
 
     def __str__(self):
         return self.hacker.user.email

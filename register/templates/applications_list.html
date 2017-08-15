@@ -13,14 +13,12 @@
             <div style="text-align: center;">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4 class="text-center">{% block panel_title %}Pending applications{% endblock %}</h4>
+                        <h4 class="text-center">Applications</h4>
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            {% render_table applicationsReviewTable %}
+                            {% render_table app_list %}
                         </div>
-                    </div>
-                    <div class="panel-footer">
                     </div>
                 </div>
             </div>

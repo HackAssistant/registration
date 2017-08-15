@@ -2,6 +2,7 @@ import csv
 
 from allauth.account.adapter import DefaultAccountAdapter
 from django.contrib import admin
+from django.db.models import Func
 from django.http import HttpResponse
 from django.urls import reverse as django_reverse
 
@@ -78,3 +79,8 @@ def create_modeladmin(modeladmin, model, name=None):
 class AccountAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request):
         return super(AccountAdapter, self).is_open_for_signup(request)
+
+
+class Round4(Func):
+    function = 'ROUND'
+    template = '%(function)s(%(expressions)s, 4)'
