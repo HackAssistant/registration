@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.core import mail
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
-from django.db.models import Avg
 from django.http import HttpResponseRedirect
 from django.utils.timesince import timesince
 from app import slack

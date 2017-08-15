@@ -14,7 +14,7 @@ class ApplicationsListTable(Table):
                              links=[Link(text=u'Detail', viewname='app_detail', kwargs={'id': A('id')}), ])
 
     class Meta:
-        sort = [(2, 'desc'),]
+        sort = [(2, 'desc'), ]
         model = Application
         search = True
         zero_records = 'No applications'
