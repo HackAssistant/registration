@@ -152,7 +152,7 @@ class Application(models.Model):
 
     @classmethod
     def annotate_vote(cls, qs):
-        return qs.annotate(vote_avg=Round4(Cast(Avg('vote__calculated_vote'), DecimalField())))
+        return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
 
     def __str__(self):
         return self.hacker.user.email
