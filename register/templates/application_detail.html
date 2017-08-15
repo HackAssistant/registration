@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load bootstrap3 %}
+{% load utils %}
+{% load static %}
+{% block title %}{% if vote %}Vote applications{% else %}{{ hacker.name }}'s application{% endif %} - {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vote.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+    {% bootstrap_messages %}
+    {% if app %}
+        <div class="col-md-8">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {# We set the title as lennyface, in out efforts to anonimize the data.. Okay, maybe no #}
+                    <h4 class="text-center">{{ app.lennyface }}
+                        <a target="_blank" style="color:black; text-decoration: none;" class="pull-right fa fa-link"
+                           href="{% url 'app_detail' app.id %}">
+                            {#                            <i class=" pull-right fa fa-link" aria-hidden="true"></i>#}
+                        </a>
+                    </h4>
+                </div>
+                <div class="panel-body">
+
+                    <h4 class="text-center">Personal</h4>
+                    <dl class="dl-horizontal">
+                        {% include 'include/field.html' with desc='Name' value=hacker.name|add:' '|add:hacker.lastname %}
+                        {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
+                        {% include 'include/field.html' with desc='Country' value=app.origin_country %}
+                        {% if not vote %}
+                            {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+                            {% include 'include/field.html' with desc='Email' value=hacker.user.email %}
+                            {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
+                        {% endif %}
+                        {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
+                        {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30|url_blank %}
+                    </dl>
+                    <h4 class="text-center">Academic</h4>
+                    <dl class="dl-horizontal">
+                        {% include 'include/field.html' with desc='University' value=hacker.university %}
+                        {% include 'include/field.html' with desc='Graduation' value=hacker.graduation_year %}
+                        {% include 'include/field.html' with desc='Degree' value=hacker.degree %}
+                    </dl>
+                    <h4 class="text-center">Background</h4>
+                    <dl class="dl-horizontal">
+                        {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
+                        {% include 'include/field.html' with desc='Looking forward?' value=app.description|safe|urlize|url_blank %}
+                        {% include 'include/field.html' with desc='Projects?' value=app.projects|safe|urlize|url_blank %}
+                        {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
+                        {% include 'include/field.html' with desc='Excited about' value=app.excited %}
+                    </dl>
+                    <h4 class="text-center">Social</h4>
+
+                    <p class="text-center">
+                        {% if app.hacker.github and not app.hacker.github == 'http://' %}
+                            <a target="_blank" href="{{ app.hacker.github }}" class="icon fa fa-github"></a>
+                        {% endif %}
+                        {% if app.hacker.linkedin and not app.hacker.linkedin == 'http://' %}
+                            <a target="_blank" href="{{ app.hacker.linkedin }}" class="icon fa fa-linkedin"></a>
+                        {% endif %}
+                        {% if app.hacker.site and not app.hacker.site == 'http://' %}
+                            <a target="_blank" href="{{ app.hacker.site }}" class="icon fa fa-globe"></a>
+                        {% endif %}
+                        {% if app.hacker.devpost and not app.hacker.devpost == 'http://' %}
+                            <a target="_blank" href="{{ app.hacker.devpost }}" class="icon">
+                                <img class="icon" src="{% static 'img/devpost.svg' %}"/>
+                            </a>
+                        {% endif %}
+                    </p>
+
+                </div>
+                <div class="panel-footer">
+                    {% if vote %}
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                            <h4 class="text-center">Score</h4>
+                            <dl class="dl-horizontal">
+                                <dt>Technical Skills</dt>
+                                <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                                <dt>Personal Skills</dt>
+                                <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+                            </dl>
+                            <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+                            <button name="skip" class="btn btn-default btn-block" value="skip">Skip
+                                application
+                            </button>
+                        </form>
+                    {% else %}
+                        <a class="btn btn-default btn-block" href="javascript:history.back()">Go back</a>
+
+
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+        <div class="panel panel-default border-less">
+            <div class="panel-heading">
+                <h4 class="text-center">Comments</h4>
+            </div>
+            <div class="panel-body no-padding">
+                <ul class="list-group">
+                    {% for comment in comments %}
+                        <li class="list-group-item">
+                            <h4>{{ comment.text }}</h4>
+
+                            <p style="color:gray;">by {{ comment.author.username }}
+                                <small class="pull-right">{{ comment.created_at|timesince }} ago</small>
+                            </p>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+                <div class="panel-footer">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                          <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
+                                    required></textarea>
+                        <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <h4 class="text-center" style="color: black;">No applications left to be voted.<br> Good job! Enjoy the
+            sun outside!</h4>
+    {% endif %}
+</div>
+    {% if vote %}
+        <script src="{% static 'lib/barrating.min.js' %}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('.barrating').barrating({
+                    theme: 'bars-square',
+                    showValues: true,
+                    showSelectedRating: false
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

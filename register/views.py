@@ -17,10 +17,12 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 from register import models, forms, emails, typeform
+from register.tables import ApplicationsListTable
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -55,11 +57,57 @@ class RankingView(PermissionRequiredMixin, TemplateView):
         return context
 
 
-class VoteApplicationView(PermissionRequiredMixin, TemplateView):
+class ApplicationsListView(PermissionRequiredMixin, TemplateView):
     permission_required = 'register.vote'
-    template_name = 'vote.html'
+    template_name = 'applications_list.html'
 
-    def get_next_application(self):
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationsListView, self).get_context_data(**kwargs)
+        apps = models.Application.annotate_vote(models.Application.objects.all())
+        table = ApplicationsListTable(apps)
+        context.update({
+            'app_list': table,
+        })
+        return context
+
+
+class ApplicationDetailView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'register.vote'
+    template_name = 'application_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationDetailView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        context['vote'] = self.can_vote()
+        context['comments'] = models.ApplicationComment.objects.filter(application=application)
+        try:
+            context['hacker'] = application.hacker
+        except:
+            pass
+        return context
+
+    def can_vote(self):
+        return False
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = get_object_or_404(models.Application, pk=application_id)
+        return application
+
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        comment_text = request.POST.get('comment_text', None)
+        application = models.Application.objects.get(id=id_)
+
+        add_comment(application, request.user, comment_text)
+        return HttpResponseRedirect(reverse('app_detail', kwargs={'id': id_}))
+
+
+class VoteApplicationView(ApplicationDetailView):
+    def get_application(self, kwargs):
         """
         Django model to the rescue. This is transformed to an SQL sentence
         that does exactly what we need
@@ -92,16 +140,8 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
             pass
         return HttpResponseRedirect(reverse('vote'))
 
-    def get_context_data(self, **kwargs):
-        context = super(VoteApplicationView, self).get_context_data(**kwargs)
-        application = self.get_next_application()
-        context['app'] = application
-        context['comments'] = models.ApplicationComment.objects.filter(application=application)
-        try:
-            context['hacker'] = application.hacker
-        except:
-            pass
-        return context
+    def can_vote(self):
+        return True
 
 
 class ConfirmApplication(TemplateView, View):

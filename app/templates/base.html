@@ -72,6 +72,7 @@
                         {% endif %}
                         {% if perms.register.vote %}
                             <li class="white-text"><a href="{% url 'vote' %}">Vote</a></li>
+                            <li><a href="{% url 'app_list'%}">Applications</a></li>
                         {% endif %}
                         {% if perms.register.ranking %}
                             <li class="white-text"><a href="{% url 'ranking' %}">Ranking</a></li>

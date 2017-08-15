@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.core import mail
 from django.core.checks import messages
 from django.core.exceptions import ValidationError
-from django.db.models import Avg
 from django.http import HttpResponseRedirect
 from django.utils.timesince import timesince
 from app import slack
@@ -69,7 +68,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(ApplicationAdmin, self).get_queryset(request)
-        return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
+        return models.Application.annotate_vote(qs)
 
     def get_actions(self, request):
         actions = super(ApplicationAdmin, self).get_actions(request)
