@@ -30,14 +30,14 @@
 
                     <h4 class="text-center">Personal</h4>
                     <dl class="dl-horizontal">
-                        {% if not vote %}
-                            {% include 'include/field.html' with desc='Status' value=app.get_status_display %}{% endif %}
                         {% include 'include/field.html' with desc='Name' value=hacker.name|add:' '|add:hacker.lastname %}
                         {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
                         {% include 'include/field.html' with desc='Country' value=app.origin_country %}
-                        {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
-
-
+                        {% if not vote %}
+                            {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+                            {% include 'include/field.html' with desc='Email' value=hacker.user.email %}
+                            {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
+                        {% endif %}
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                         {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30|url_blank %}
                     </dl>
