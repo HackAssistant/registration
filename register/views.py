@@ -17,12 +17,11 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 from register import models, forms, emails, typeform
-
-from django.shortcuts import get_object_or_404
 from register.tables import ApplicationsReviewTable
 
 
@@ -58,12 +57,12 @@ class RankingView(PermissionRequiredMixin, TemplateView):
         return context
 
 
-class ApplicationsList(PermissionRequiredMixin, TemplateView):
+class ApplicationsListView(PermissionRequiredMixin, TemplateView):
     permission_required = 'checkin.checkin'
     template_name = 'applications_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ApplicationsList, self).get_context_data(**kwargs)
+        context = super(ApplicationsListView, self).get_context_data(**kwargs)
         attended = self.get_applications()
         table = ApplicationsReviewTable(attended)
         context.update({
@@ -72,43 +71,46 @@ class ApplicationsList(PermissionRequiredMixin, TemplateView):
         return context
 
     def get_applications(self):
-        return models.Application.objects.filter(status=models.APP_PENDING)
+        return models.Application.objects.all()
 
-class ReviewApplicationView(PermissionRequiredMixin, TemplateView):
+
+class ApplicationDetailView(PermissionRequiredMixin, TemplateView):
     permission_required = 'register.vote'
-    template_name = 'application_review.html'
-
-    def get_comments(self, application):
-        return models.ApplicationComment.objects.filter(application=application)
-        #return [{'author': "alvaro", 'text': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur nibh ac eros lacinia varius. Sed orci orci, commodo vitae feugiat ac, scelerisque sit amet nibh. Integer volutpat leo accumsan, dignissim ligula et, imperdiet est. Morbi id dignissim purus. Cras at urna vulputate, laoreet erat in, ullamcorper leo. Cras accumsan arcu ac purus fermentum iaculis a quis erat. Integer venenatis pretium aliquam. In gravida lectus felis, at molestie mi faucibus non.'}, {'author': "ablaro", 'text': 'comentario 2'}]
+    template_name = 'application_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ReviewApplicationView, self).get_context_data(**kwargs)
-        applicationId = kwargs['id']
-        application = get_object_or_404(models.Application, pk=applicationId)
+        context = super(ApplicationDetailView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
         context['app'] = application
-
-        comments = self.get_comments(application)
-        context['comments'] = comments
+        context['vote'] = self.can_vote()
+        context['comments'] = models.ApplicationComment.objects.filter(application=application)
         try:
             context['hacker'] = application.hacker
         except:
             pass
         return context
 
+    def can_vote(self):
+        return False
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = get_object_or_404(models.Application, pk=application_id)
+        return application
+
     def post(self, request, *args, **kwargs):
-        id = request.POST.get('app_id')
+        id_ = request.POST.get('app_id')
         comment_text = request.POST.get('comment_text', None)
-        application = models.Application.objects.get(id=id)
+        application = models.Application.objects.get(id=id_)
 
         add_comment(application, request.user, comment_text)
-        return HttpResponseRedirect('/application/review/'+id)
+        return HttpResponseRedirect(reverse('app_detail', kwargs={'id': id_}))
 
-class VoteApplicationView(PermissionRequiredMixin, TemplateView):
-    permission_required = 'register.vote'
-    template_name = 'vote.html'
 
-    def get_next_application(self):
+class VoteApplicationView(ApplicationDetailView):
+    def get_application(self, kwargs):
         """
         Django model to the rescue. This is transformed to an SQL sentence
         that does exactly what we need
@@ -141,16 +143,8 @@ class VoteApplicationView(PermissionRequiredMixin, TemplateView):
             pass
         return HttpResponseRedirect(reverse('vote'))
 
-    def get_context_data(self, **kwargs):
-        context = super(VoteApplicationView, self).get_context_data(**kwargs)
-        application = self.get_next_application()
-        context['app'] = application
-        context['comments'] = models.ApplicationComment.objects.filter(application=application)
-        try:
-            context['hacker'] = application.hacker
-        except:
-            pass
-        return context
+    def can_vote(self):
+        return True
 
 
 class ConfirmApplication(TemplateView, View):

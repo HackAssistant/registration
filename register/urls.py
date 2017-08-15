@@ -11,8 +11,8 @@ urlpatterns = [
     url(r'ranking/$', views.RankingView.as_view(), name='ranking'),
     url(r'dashboard/$', views.HackerDashboard.as_view(), name='dashboard'),
     url(r'profile/$', views.ProfileHacker.as_view(), name='profile'),
-    url(r'application/$', views.ApplyHacker.as_view(), name='apply'),
-    url(r'application/fetch$', views.fetch_application, name='fetch_application'),
-    url(r'application/review/(?P<id>\w+)$', views.ReviewApplicationView.as_view(), name="review_app"),
-    url(r'applications/$', views.ApplicationsList.as_view(), name="applications_review")
+    url(r'applications/new$', views.ApplyHacker.as_view(), name='apply'),
+    url(r'applications/fetch$', views.fetch_application, name='fetch_application'),
+    url(r'applications/(?P<id>\w+)$', views.ApplicationDetailView.as_view(), name="app_detail"),
+    url(r'applications/$', views.ApplicationsListView.as_view(), name="app_list")
 ]
