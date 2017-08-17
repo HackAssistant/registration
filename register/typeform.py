@@ -36,3 +36,9 @@ class ApplicationsTypeform(TypeformFetcher):
 
     def get_offset(self):
         return models.Application.objects.count()
+
+
+class FullApplicationsTypeform(ApplicationsTypeform):
+
+    def get_offset(self):
+        return 0
