@@ -56,7 +56,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
             template_name = '{0}_message.{1}'.format(template_prefix, ext)
             bodies[ext] = render_to_string(template_name,
                                            Context(substitutions)).strip()
-        except TemplateDoesNotExist as e:
+        except TemplateDoesNotExist:
             if ext == 'txt' and not bodies:
                 # We need at least one body
                 raise
