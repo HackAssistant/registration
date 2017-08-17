@@ -9,7 +9,7 @@ from app.slack import SlackInvitationException
 from app.utils import reverse
 from django import http
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin, \
     LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -395,3 +395,10 @@ def fetch_application(request):
     messages.success(request, 'Successfully saved application! '
                               'We\'ll get back to you soon')
     return HttpResponseRedirect(redirect_url)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def retrieve_all_applications(request):
+    retrieved = typeform.FullApplicationsTypeform().insert_forms()
+    messages.success(request, 'Retrieved %s applications' % len(retrieved))
+    return HttpResponseRedirect(reverse('admin:index'))
