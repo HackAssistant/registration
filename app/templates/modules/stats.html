@@ -5,7 +5,7 @@
     <thead>
     <tr>
         {% for tshirt in module.tshirts %}
-            <th>{{ tshirt.tshirt_size }}</th>
+            <th>{{ tshirt.hacker__tshirt_size }}</th>
         {% endfor %}
     </tr>
     </thead>
@@ -22,7 +22,7 @@
     <thead>
     <tr>
         {% for diet in module.diets %}
-            <th>{{ diet.diet }}</th>
+            <th>{{ diet.hacker__diet }}</th>
         {% endfor %}
     </tr>
     </thead>
@@ -39,7 +39,7 @@
     <thead>
     <tr>
         {% for status in module.count_status %}
-            <th>{{ status.status }}</th>
+            <th>{{ status.get_status_display }}</th>
         {% endfor %}
     </tr>
     </thead>
@@ -52,4 +52,5 @@
     </tbody>
 </table>
 <h4>Reimbursement money</h4>
-<h2>{{ module.amount.total }} €</h2>
+<h2>Assigned: {{ module.amount__assigned.total }} €</h2>
+<h2>Sent: {{ module.amount__sent.total }} €</h2>
