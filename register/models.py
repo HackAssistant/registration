@@ -2,15 +2,14 @@ from __future__ import unicode_literals
 
 import uuid as uuid
 
-from app.emails import MailListManager
-from app.utils import Round4
 from django.conf import settings
 from django.contrib.auth import models as admin_models
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Avg, F, DecimalField
-from django.db.models.functions import Cast
+from django.db.models import Avg, F
 from django.utils import timezone
+
+from app.emails import MailListManager
 
 # Votes weight
 TECH_WEIGHT = 0.2

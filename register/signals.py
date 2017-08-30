@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.management.color import no_style
 from django.db import DEFAULT_DB_ALIAS, connections
-from django.db.models.signals import post_migrate, post_save, pre_save
+from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 
 
@@ -32,7 +32,7 @@ def default_site(app_config, verbosity=2, interactive=True,
         return
 
     Site(pk=getattr(settings, 'SITE_ID', 1), domain=getattr(
-         settings, 'EVENT_DOMAIN', "example.com"),
+        settings, 'EVENT_DOMAIN', "example.com"),
          name=getattr(settings, 'EVENT_NAME', "example.com")) \
         .save()
     # We set an explicit pk instead of relying on auto-incrementation,
@@ -48,7 +48,7 @@ def default_site(app_config, verbosity=2, interactive=True,
 
 
 @receiver(post_save, sender=EmailAddress)
-def organizer_account(sender, instance,created, *args, **kwargs):
+def organizer_account(sender, instance, created, *args, **kwargs):
     print("here we are")
     if created and instance.user.is_superuser:
         instance.verified = True
