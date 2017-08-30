@@ -170,6 +170,8 @@ We provide with dummy data created to agilize the development process. Load our 
 - `TP_KEY=REPLACE_WITH_TYPEFORM_API_KEY python manange.py insert_applications`: Fetches all aplications and inserts those who don't exist in the DB
 - `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`: Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
 
+- `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py applications_reminder`: Sends reminder to all hackers that have not completed the application process.
+
 #### Production
 
 Create your own management.sh script and add to crontab.
