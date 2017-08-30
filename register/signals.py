@@ -1,12 +1,13 @@
 import re
 
+from allauth.account.models import EmailAddress
 from allauth.account.signals import user_signed_up
 from django.apps import apps as global_apps
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.management.color import no_style
 from django.db import DEFAULT_DB_ALIAS, connections
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save, pre_save
 from django.dispatch import receiver
 
 
@@ -44,3 +45,12 @@ def default_site(app_config, verbosity=2, interactive=True,
         with connections[using].cursor() as cursor:
             for command in sequence_sql:
                 cursor.execute(command)
+
+
+@receiver(post_save, sender=EmailAddress)
+def organizer_account(sender, instance,created, *args, **kwargs):
+    print("here we are")
+    if created and instance.user.is_superuser:
+        instance.verified = True
+        instance.primary = True
+        instance.save()
