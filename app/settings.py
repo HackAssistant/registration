@@ -242,7 +242,7 @@ STATIC_KEYS_TEMPLATES = {
     'google_analytics': 'UA-69542332-2',
     'when_to_arrive': 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, '
     'the opening ceremony swill be at 7:00 pm.',
-    'whent_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
+    'when_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
                       'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
 
 }
