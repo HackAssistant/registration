@@ -31,8 +31,7 @@ def default_site(app_config, verbosity=2, interactive=True,
     except LookupError:
         return
 
-    Site(pk=getattr(settings, 'SITE_ID', 1), domain=getattr(
-        settings, 'EVENT_DOMAIN', "example.com"),
+    Site(pk=getattr(settings, 'SITE_ID', 1), domain=getattr(settings, 'EVENT_DOMAIN', "example.com"),
          name=getattr(settings, 'EVENT_NAME', "example.com")) \
         .save()
     # We set an explicit pk instead of relying on auto-incrementation,
@@ -48,7 +47,7 @@ def default_site(app_config, verbosity=2, interactive=True,
 
 
 @receiver(post_save, sender=EmailAddress)
-def organizer_account(sender, instance, created, *args, **kwargs):
+def verify_superuser(sender, instance, created, *args, **kwargs):
     print("here we are")
     if created and instance.user.is_superuser:
         instance.verified = True
