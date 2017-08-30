@@ -239,7 +239,9 @@ STATIC_KEYS_TEMPLATES = {
     'issues_url': 'https://github.com/hackupc/backend/issues/new',
     # Regex to match possible organizers emails
     'r_organizer_email': '^.*@hackupc\.com$',
-    'google_analytics': 'UA-69542332-2'
+    'google_analytics': 'UA-69542332-2',
+    'when_to_arrive': 'Registration opens at 3:00 pm and closes at 6:00 pm on Friday October 13th, '
+    'the opening ceremony swill be at 7:00 pm.'
 
 }
 

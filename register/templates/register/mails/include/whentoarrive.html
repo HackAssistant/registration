@@ -1,5 +1,5 @@
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 {% include 'include/email_line_start.html' %}
-
-<b>When to Arrive</b> Registration opens at 3:00 pm and closes at 6:00 pm on Friday March 3rd, the opening ceremony
-will be at 7:00 pm.
+<b>When to Arrive</b>{{ static_values.when_to_arrive }}
 {% include 'include/email_line_end.html' %}
