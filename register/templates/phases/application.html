@@ -18,6 +18,10 @@
 {% elif application.is_cancelled %}
     We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
     {% include 'include/subscribe_form.html' %}
+{% elif application.answered_invite %}
+    <p>Thanks for answering our invite! See you soon at HackUPC!</p>
+    {% include 'include/cancel.html' %}
+    {% include 'include/reimbursement.html' %}
 {% else %}
     When decisions are released, you'll be able to see your results on this page.
     You can still edit your <a href="{% url 'profile' %}">profile</a> information.</p>
