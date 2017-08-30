@@ -240,8 +240,10 @@ STATIC_KEYS_TEMPLATES = {
     # Regex to match possible organizers emails
     'r_organizer_email': '^.*@hackupc\.com$',
     'google_analytics': 'UA-69542332-2',
-    'when_to_arrive': 'Registration opens at 3:00 pm and closes at 6:00 pm on Friday October 13th, '
-    'the opening ceremony swill be at 7:00 pm.'
+    'when_to_arrive': 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, '
+    'the opening ceremony swill be at 7:00 pm.',
+    'whent_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
+                      'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
 
 }
 

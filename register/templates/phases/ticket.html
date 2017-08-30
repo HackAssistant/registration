@@ -1,4 +1,5 @@
-
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 <div>
     You are all good to go! See you soon in Barcelona!
     <h2>QR Code</h2>
@@ -9,8 +10,9 @@
     <h2>Important information</h2>
 
     <h3>When to arrive</h3>
-    Registration opens at 3:00 pm and closes at 6:00 pm on Friday March 3rd, the opening ceremony
-    will be at 7:00 pm.<br>
+    {{ static_values.when_to_arrive }}
+    <h3>When to leave</h3>
+    {{ static_values.when_to_leave }}<br>
     {% include 'include/reimbursement.html' %}
 </div>
 
