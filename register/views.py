@@ -144,7 +144,7 @@ class VoteApplicationView(ApplicationDetailView):
         return True
 
 
-class ConfirmApplication(TemplateView, View):
+class ConfirmApplication(LoginRequiredMixin, TemplateView):
     template_name = 'confirm.html'
 
     def get_context_data(self, **kwargs):
@@ -185,7 +185,7 @@ class ConfirmApplication(TemplateView, View):
         return context
 
 
-class CancelApplication(TemplateView):
+class CancelApplication(LoginRequiredMixin, TemplateView):
     template_name = 'cancel.html'
 
     def get_context_data(self, **kwargs):
