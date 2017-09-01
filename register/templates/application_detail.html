@@ -41,6 +41,20 @@
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                         {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30|url_blank %}
                     </dl>
+                    {% if reimb %}
+                        <h4 class="text-center">Reimbursement</h4>
+                        <dl class="dl-horizontal">
+                            {% include 'include/field.html' with desc='Amount' value=reimb.assigned_money|add:reimb.currency_sign %}
+                            {% if reimb.is_expired %}
+                                {% include 'include/field.html' with desc='Expired since' value=reimb.expiration_time|timesince %}
+                            {% else %}
+                                {% include 'include/field.html' with desc='Status reimbursement' value=reimb.get_status_display %}
+                                {% if reimb.needs_change or reimb.is_sent %}
+                                    {% include 'include/field.html' with desc='Time until expiration' value=reimb.expiration_time|timeuntil %}
+                                {% endif %}
+                            {% endif %}
+                        </dl>
+                    {% endif %}
                     <h4 class="text-center">Academic</h4>
                     <dl class="dl-horizontal">
                         {% include 'include/field.html' with desc='University' value=hacker.university %}
@@ -124,9 +138,11 @@
                     <form action="" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                          <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
-                                    required></textarea>
-                        <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
+                        <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
+                                  rows="3"
+                                  required></textarea>
+                        <button name="add_comment" class="btn btn-success btn-block" value="comment">Add
+                            comment
                         </button>
                     </form>
                 </div>
@@ -134,7 +150,8 @@
         </div>
 
     {% else %}
-        <h4 class="text-center" style="color: black;">No applications left to be voted.<br> Good job! Enjoy the
+        <h4 class="text-center" style="color: black;">No applications left to be voted.<br> Good job! Enjoy
+            the
             sun outside!</h4>
     {% endif %}
 </div>

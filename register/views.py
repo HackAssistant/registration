@@ -79,6 +79,7 @@ class ApplicationDetailView(PermissionRequiredMixin, TemplateView):
         context = super(ApplicationDetailView, self).get_context_data(**kwargs)
         application = self.get_application(kwargs)
         context['app'] = application
+        context['reimb'] = application.reimbursement
         context['vote'] = self.can_vote()
         context['comments'] = models.ApplicationComment.objects.filter(application=application)
         try:
