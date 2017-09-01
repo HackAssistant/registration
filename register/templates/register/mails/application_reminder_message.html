@@ -6,8 +6,8 @@
 {% block content %}
     {% include 'include/email_line_start.html' %}
     Hey {{ name }},<br><br>
-    We've seen that you completed your profile but haven't yet filled the application.
-    This is just a reminder for you need to complete the application in order for us to invite you. Fill your application here:
+    Seems like you've completed your HackUPC profile registration but haven't yet filled out the application to apply for our {{ edition_name }} edition.
+    This is just a little reminder for you to do so. Fill your application right here:
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_button.html' with text='Finish application' url=apply_url %}
     {% include 'register/mails/include/closing.html' %}
