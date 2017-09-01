@@ -5,6 +5,7 @@ from django.contrib import admin, messages
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.utils.timesince import timesince
+
 from reimbursement import models, emails
 
 
@@ -20,7 +21,7 @@ class ReimbursementAdmin(admin.ModelAdmin):
     # search_fields = ('hacker__name', 'hacker__lastname',
     # 'hacker__user__email', 'description', 'id')
     ordering = ('creation_date',)
-    actions = ['send', ]
+    actions = ['send', 'delete_selected']
 
     def money(self, obj):
         return str(obj.assigned_money) + obj.currency_sign
