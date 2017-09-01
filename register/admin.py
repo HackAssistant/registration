@@ -184,7 +184,7 @@ class ApplicationAdmin(admin.ModelAdmin):
                     slack.send_slack_invite(app.hacker.user.email)
                     invited += 1
                 except SlackInvitationException as e:
-                    logging.error(e.message)
+                    logging.error(e)
                     errors += 1
             else:
                 errors += 1
