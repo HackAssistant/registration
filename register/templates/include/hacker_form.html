@@ -5,6 +5,10 @@
     {% bootstrap_form hacker_form layout="horizontal" %}
     {% buttons submit='Save' layout='horizontal' %}{% endbuttons %}
 </form>
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+<p>If you have any special need you want us to know about please send us an email to {{ static_values.email|urlize }}</p>
+
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 
 <script>

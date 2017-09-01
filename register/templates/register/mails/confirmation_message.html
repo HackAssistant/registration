@@ -5,16 +5,15 @@
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
-    Thank you {{ name }} for confirming your attendance to {{ current_site.name }} {{ edition_name }}! We are really
-    excited to host this event and have you with us.
-    <br><br>In order to make registration go smoother, please show us this QR code during the process so we can easily
-    find
-    you:
+    Thank you {{ name }} for confirming your attendance to {{ current_site.name }} {{ edition_name }}!<br><br>
+    We are really excited to host this event and have you with us.
+    <br><br>
+    In order to make registration go smoother, please show us this QR code during the process so we can easily find you:
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_image.html' with url=qr_url %}
     {% include 'include/email_line_start.html' %}
     {% include 'register/mails/include/cancel.html' %}
     {% include 'include/email_line_end.html' %}
-    {% include 'register/mails/include/whentoarrive.html' %}
+    {% include 'register/mails/include/arrival_departure_info.html' %}
     {% include 'register/mails/include/closing.html' %}
 {% endblock %}

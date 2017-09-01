@@ -1,0 +1,19 @@
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
+{% if application.scholarship %}
+    <h3>Travel reimbursement</h3>
+    {% if reimbursement and reimbursement.is_sent %}
+        <p>You have been granted travel reimbursement for your trip from {{ reimbursement.origin_city }}
+            ({{ reimbursement.origin_country }}).</p>
+
+        <h4>Amount granted: {{ reimbursement.assigned_money }}{{ reimbursement.currency_sign }}</h4>
+        <p>Make sure to submit your ticket before it expires</p>
+        <a href="{{ reimbursement.get_form_url }}" target="_blank" class="btn btn-success btn-block">Submit your ticket</a>
+
+    {% elif reimbursement %}
+        <p>We are currently assessing your travel reimbursement scholarship. </p>
+    {% else %}
+        You haven't been assigned any travel reimbursement. We are sorry. Send us an email at {{ static_values.email|urlize }} if you think this is an error.
+    {% endif %}
+{% endif %}

@@ -46,6 +46,9 @@ class Reimbursement(models.Model):
 
         self.assigned_money = price
 
+    def is_sent(self):
+        return self.status == RE_SENT
+
     def send(self, user):
         if self.application.status not in [r_models.APP_INVITED,
                                            r_models.APP_CONFIRMED,

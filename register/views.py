@@ -9,7 +9,7 @@ from app.slack import SlackInvitationException
 from app.utils import reverse
 from django import http
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin, \
     LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -144,7 +144,7 @@ class VoteApplicationView(ApplicationDetailView):
         return True
 
 
-class ConfirmApplication(TemplateView, View):
+class ConfirmApplication(LoginRequiredMixin, TemplateView):
     template_name = 'confirm.html'
 
     def get_context_data(self, **kwargs):
@@ -180,12 +180,12 @@ class ConfirmApplication(TemplateView, View):
                 slack.send_slack_invite(request.user.email)
             # Ignore if we can't send, it's only optional
             except SlackInvitationException as e:
-                logging.error(e.message)
+                logging.error(e)
 
         return context
 
 
-class CancelApplication(TemplateView):
+class CancelApplication(LoginRequiredMixin, TemplateView):
     template_name = 'cancel.html'
 
     def get_context_data(self, **kwargs):
@@ -300,10 +300,10 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
-            create_phase('hacker_info', "Profile", lambda x: x.hacker, user),
-            create_phase('fill_application', "Application", lambda x: x.hacker.application_set.exists(), user),
-            create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
-                         self.request.user),
+            create_phase('profile', "Profile", lambda x: x.hacker, user),
+            create_phase('application', "Application", lambda x: x.hacker.application_set.exists(), user),
+            # create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
+            #              self.request.user),
         ]
 
         # Try/Except caused by Hacker not existing
@@ -313,7 +313,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
             if current_app.status in [models.APP_CONFIRMED,
                                       models.APP_ATTENDED]:
                 phases.append(
-                    create_phase('attend', "Ticket", lambda x: True,
+                    create_phase('ticket', "Ticket", lambda x: True,
                                  self.request.user)
                 )
             if current_app.status == models.APP_ATTENDED:
@@ -395,3 +395,10 @@ def fetch_application(request):
     messages.success(request, 'Successfully saved application! '
                               'We\'ll get back to you soon')
     return HttpResponseRedirect(redirect_url)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def retrieve_all_applications(request):
+    retrieved = typeform.FullApplicationsTypeform().insert_forms()
+    messages.success(request, 'Retrieved %s applications' % len(retrieved))
+    return HttpResponseRedirect(reverse('admin:index'))
