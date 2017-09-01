@@ -16,6 +16,9 @@ class ReimbursementAdmin(admin.ModelAdmin):
         'requested_reimb')
     list_filter = ('status', 'reimbursed_by', 'origin_country',
                    'reimbursed_by', 'application__status')
+
+    search_fields = ['application__hacker__name', 'application__hacker__lastname', 'application__hacker__user__email',
+                     'origin_city']
     list_per_page = 200
 
     # search_fields = ('hacker__name', 'hacker__lastname',
