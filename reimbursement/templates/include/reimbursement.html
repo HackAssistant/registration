@@ -5,8 +5,7 @@
     <h3>Travel reimbursement</h3>
     {% if not reimbursement %}
         Unfortunately, we don't have enough budget to cover your travel expenses. We would like to have enough money for
-        everyone but our budget is limited. Hope you can still make it! If you can't make it, please cancel your
-        application invite.
+        everyone but our budget is limited. Hope you can still make it! If you can't, please cancel your application invite.
     {% elif reimbursement.is_expired %}
         Unfortunately your travel reimbursement has expired. We sent your travel reimbursement
         {{ reimbursement.status_update_date|timesince }} ago but you haven't uploaded a valid ticket. Send us an email to
