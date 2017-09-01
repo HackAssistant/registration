@@ -31,7 +31,7 @@
         <p>Your travel reimbursements tickets have been accepted. Here is the amount that we will reimburse to you (and any friend your ticket included):</p>
         <h4>Amount to be reimbursed: {{ reimbursement.assigned_money }}{{ reimbursement.currency_sign }}</h4>
         <p>We will send this money to your Paypal account a month or two after the event.</p>
-        <h4>WARNING: You have to submit a project during the event in order to get reimbursed.</h4>
+        <h4>WARNING: You have to submit a project and demo it during the event in order to get reimbursed.</h4>
     {% elif reimbursement.needs_change %}
         <p>Your ticket submission had an error, please upload them again.</p>
         {% if reimbursement.change_reason %}
