@@ -1,6 +1,7 @@
-
 # coding=utf-8
 from __future__ import unicode_literals
+
+from datetime import timedelta, datetime
 
 from django.conf import settings
 from django.contrib.auth import models as admin_models
@@ -13,10 +14,16 @@ from register.models import Application
 
 RE_NOT_SENT = 'P'
 RE_SENT = 'S'
+RE_ACCEPTED = 'A'
+RE_FRIEND_ACCEPTED = 'FA'
+RE_NEEDS_CHANGE = 'NC'
 
 RE_STATUS = [
-    (RE_NOT_SENT, 'Not sent'),
+    (RE_NOT_SENT, 'Draft'),
     (RE_SENT, 'Sent'),
+    (RE_ACCEPTED, 'Accepted'),
+    (RE_FRIEND_ACCEPTED, 'Friend accepted'),
+    (RE_NEEDS_CHANGE, 'Needs change'),
 ]
 
 
@@ -31,6 +38,7 @@ class Reimbursement(models.Model):
     reimbursed_by = models.ForeignKey(admin_models.User, null=True, blank=True)
     creation_date = models.DateTimeField(default=timezone.now)
     status_update_date = models.DateTimeField(default=timezone.now)
+    change_reason = models.CharField(max_length=300, null=True, blank=True)
 
     def check_prices(self):
         price = settings.DEFAULT_REIMBURSEMENT
@@ -38,7 +46,7 @@ class Reimbursement(models.Model):
             price_t = Reimbursement.objects.filter(
                 assigned_money__isnull=False, origin_city=self.origin_city,
                 origin_country=self.origin_country) \
-                .order_by('-status_update_date')\
+                .order_by('-status_update_date') \
                 .values('assigned_money').first()
             price = price_t['assigned_money']
         except:
@@ -48,6 +56,21 @@ class Reimbursement(models.Model):
 
     def is_sent(self):
         return self.status == RE_SENT
+
+    def is_accepted(self):
+        return self.status == RE_ACCEPTED
+
+    def friend_accepted(self):
+        return self.status == RE_FRIEND_ACCEPTED
+
+    def needs_change(self):
+        return self.status == RE_NEEDS_CHANGE
+
+    def is_expired(self):
+        return self.expiration_time() <= datetime.today() and self.status in [RE_SENT, RE_NEEDS_CHANGE]
+
+    def expiration_time(self):
+        return self.status_update_date + timedelta(days=5)
 
     def send(self, user):
         if self.application.status not in [r_models.APP_INVITED,

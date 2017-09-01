@@ -4,9 +4,6 @@ from __future__ import print_function
 import logging
 from datetime import timedelta
 
-from app import slack
-from app.slack import SlackInvitationException
-from app.utils import reverse
 from django import http
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -19,8 +16,11 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
-from django.views import View
 from django.views.generic import TemplateView
+
+from app import slack
+from app.slack import SlackInvitationException
+from app.utils import reverse
 from register import models, forms, emails, typeform
 from register.tables import ApplicationsListTable
 
