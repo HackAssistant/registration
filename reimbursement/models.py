@@ -30,6 +30,7 @@ RE_STATUS = [
 class Reimbursement(models.Model):
     application = models.OneToOneField(Application, primary_key=True)
     assigned_money = models.FloatField(null=True, blank=True)
+    paypal_email = models.EmailField(null=True, blank=True)
     currency_sign = models.CharField(max_length=3, default="€")
     origin_city = models.CharField(max_length=300)
     origin_country = models.CharField(max_length=300)
