@@ -236,6 +236,9 @@ class Application(models.Model):
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
 
+    def can_confirm(self):
+        return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
     def confirm(self):
         if self.status == APP_CANCELLED:
             raise ValidationError('This invite has been cancelled.')
