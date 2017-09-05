@@ -1,4 +1,3 @@
-
 from django.conf import settings
 
 from app import emails
@@ -14,6 +13,16 @@ def create_invite_email(application, request):
     }
     return emails.render_mail('register/mails/invitation',
                               application.hacker.user.email, c)
+
+
+def create_applicationreminder(hacker):
+    c = {
+        'name': hacker.name,
+        'apply_url': 'http://%s%s' % (settings.EVENT_DOMAIN,
+                                      reverse('apply')),
+    }
+    return emails.render_mail('register/mails/application_reminder',
+                              hacker.user.email, c)
 
 
 def create_confirmation_email(application, request):

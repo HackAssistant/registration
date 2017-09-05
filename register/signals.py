@@ -1,12 +1,13 @@
 import re
 
+from allauth.account.models import EmailAddress
 from allauth.account.signals import user_signed_up
 from django.apps import apps as global_apps
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.management.color import no_style
 from django.db import DEFAULT_DB_ALIAS, connections
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
 
 
@@ -30,8 +31,7 @@ def default_site(app_config, verbosity=2, interactive=True,
     except LookupError:
         return
 
-    Site(pk=getattr(settings, 'SITE_ID', 1), domain=getattr(
-         settings, 'EVENT_DOMAIN', "example.com"),
+    Site(pk=getattr(settings, 'SITE_ID', 1), domain=getattr(settings, 'EVENT_DOMAIN', "example.com"),
          name=getattr(settings, 'EVENT_NAME', "example.com")) \
         .save()
     # We set an explicit pk instead of relying on auto-incrementation,
@@ -44,3 +44,12 @@ def default_site(app_config, verbosity=2, interactive=True,
         with connections[using].cursor() as cursor:
             for command in sequence_sql:
                 cursor.execute(command)
+
+
+@receiver(post_save, sender=EmailAddress)
+def verify_superuser(sender, instance, created, *args, **kwargs):
+    print("here we are")
+    if created and instance.user.is_superuser:
+        instance.verified = True
+        instance.primary = True
+        instance.save()

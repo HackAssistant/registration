@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
 from jet.dashboard.modules import DashboardModule
+
 from register.models import Application, STATUS
 from reimbursement.models import Reimbursement, RE_SENT, RE_ACCEPTED, RE_NEEDS_CHANGE, RE_FRIEND_ACCEPTED
 
@@ -59,7 +60,7 @@ class AppsStats(DashboardModule):
             .annotate(count=Count('hacker__tshirt_size'))
         self.diets = qs.values('hacker__diet').annotate(count=Count('hacker__diet'))
         self.amount__total = reimb.exclude(status=RE_FRIEND_ACCEPTED).aggregate(total=Sum('assigned_money'))
-        self.amount__sent = reimb.filter(status__in=[RE_SENT,RE_NEEDS_CHANGE]).aggregate(total=Sum('assigned_money'))
+        self.amount__sent = reimb.filter(status__in=[RE_SENT, RE_NEEDS_CHANGE]).aggregate(total=Sum('assigned_money'))
         self.amount__accepted = reimb.filter(status=RE_ACCEPTED).aggregate(total=Sum('assigned_money'))
         self.count_status = Application.objects.all().values('status') \
             .annotate(count=Count('status'))
