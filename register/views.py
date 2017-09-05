@@ -154,7 +154,7 @@ class ConfirmApplication(LoginRequiredMixin, TemplateView):
         if not application:
             raise Http404
         msg = None
-        if application.status == models.APP_INVITED:
+        if application.can_confirm():
             msg = emails.create_confirmation_email(application, self.request)
         already_confirmed = application.is_confirmed() or application.is_attended()
         cancellation_url = str(reverse('cancel_app', request=request))
