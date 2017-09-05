@@ -99,6 +99,12 @@ class Hacker(models.Model):
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default='M', choices=TSHIRT_SIZES)
 
+    reminders_sent = models.IntegerField(default=0)
+
+    def send_reminder(self):
+        self.reminders_sent += 1
+        self.save()
+
 
 class Application(models.Model):
     # We are pointing to hacker because we need to have that information.
