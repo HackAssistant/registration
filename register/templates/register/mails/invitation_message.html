@@ -15,7 +15,9 @@
     {% include 'include/email_line_end.html' %}
     {% if reimbursement %}
         {% include 'include/email_line_start.html' %}
-        If you have been granted reimbursement you will receive a separate email with all the information in the next few hours.
+{#        If you have been granted reimbursement you will receive a separate email with all the information in the next few hours.#}
+            Unfortunately, we don't have enough budget to cover your travel expenses. We would like to have enough money for
+            everyone but our budget is limited. Hope you can still make it! If you can't, please cancel your application invite.
         {% include 'include/email_line_end.html' %}
     {% endif %}
     {% include 'include/email_line_start.html' %}
