@@ -21,7 +21,7 @@ class ApplicationsTypeform(TypeformFetcher):
         application.origin_city = answers['textfield_vqO7']
         application.origin_country = answers['dropdown_tE7S']
         application.teammates = answers.get('textarea_pI5i', '')
-        application.scholarship = answers['yesno_hlsY']
+        application.scholarship = answers.get('yesno_hlsY', False)
         application.resume = answers['fileupload_54496801']
         application.authorized_mlh = answers['yesno_ITOL']
         application.hacker_id = hidden['hacker_id']
@@ -39,6 +39,5 @@ class ApplicationsTypeform(TypeformFetcher):
 
 
 class FullApplicationsTypeform(ApplicationsTypeform):
-
     def get_offset(self):
         return 0
