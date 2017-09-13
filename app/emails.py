@@ -127,7 +127,10 @@ class MailListManager:
         recipient_id = application.sendgrid_id
 
         # Add recipient to list
-        self._add_recipient_to_list(recipient_id, list_id)
+        try:
+            self._add_recipient_to_list(recipient_id, list_id)
+        except HTTPError:
+            pass
 
     def _remove_recipient_from_list(self, recipient_id, list_id):
         params = {'recipient_id': recipient_id, 'list_id': list_id}
