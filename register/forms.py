@@ -30,4 +30,4 @@ class HackerForm(forms.ModelForm):
             'degree': 'What\'s your major?',
             'diet': 'If you select Others, please write detail in the "Other diet" field that will appear'
         }
-        exclude = ['user', 'uuid']
+        exclude = ['user', 'uuid', 'reminders_sent']
