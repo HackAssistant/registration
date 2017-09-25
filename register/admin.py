@@ -9,6 +9,7 @@ from django.core.checks import messages
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.utils.timesince import timesince
+
 from app import slack
 from app.slack import SlackInvitationException
 from app.utils import reverse
@@ -22,7 +23,7 @@ admin.site.disable_action('delete_selected')
 
 class HackerAdmin(admin.ModelAdmin):
     list_display = ('user_id', 'full_name')
-    list_filter = ('graduation_year', 'university')
+    list_filter = ('graduation_year', 'university', 'diet')
     search_fields = ('name', 'lastname', 'user__email',)
     list_per_page = 200
 
@@ -38,7 +39,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'votes', 'scholarship', 'status',
-                    'status_last_updated',)
+                    'status_last_updated', 'diet')
     list_filter = ('status', 'first_timer', 'scholarship', 'hacker__graduation_year',
                    'hacker__university', 'origin_country', 'under_age', 'hacker__diet')
     list_per_page = 200
@@ -53,6 +54,15 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     name.admin_order_field = 'hacker__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
+
+    def diet(self, obj):
+        ret = obj.hacker.diet
+        if obj.hacker.other_diet:
+            ret += ' (' + obj.hacker.other_diet + ')'
+        return ret
+
+    diet.admin_order_field = 'hacker__diet'  # Allows column order sorting
+    diet.short_description = 'Hacker diet'  # Renames column head
 
     def votes(self, app):
         return app.vote_avg
