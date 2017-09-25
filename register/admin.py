@@ -40,7 +40,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'votes', 'scholarship', 'status',
                     'status_last_updated',)
     list_filter = ('status', 'first_timer', 'scholarship', 'hacker__graduation_year',
-                   'hacker__university', 'origin_country', 'under_age')
+                   'hacker__university', 'origin_country', 'under_age', 'hacker__diet')
     list_per_page = 200
     search_fields = ('hacker__name', 'hacker__lastname', 'hacker__user__email',
                      'description', 'id')
