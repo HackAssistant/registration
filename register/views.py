@@ -5,6 +5,7 @@ import logging
 from datetime import timedelta
 
 from django import http
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin, \
@@ -300,10 +301,12 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
-            create_phase('profile', "Profile", lambda x: x.hacker, user),
-            create_phase('application', "Application", lambda x: x.hacker.application_set.exists(), user),
-            # create_phase('invited', "Invite", lambda x: self.get_current_app(user).answered_invite(),
-            #              self.request.user),
+            create_phase('profile', "Profile",
+                         lambda x: not settings.STATIC_KEYS_TEMPLATES.get('applications_open', True) or x.hacker, user),
+            create_phase('application', "Application",
+                         lambda x: not settings.STATIC_KEYS_TEMPLATES.get(
+                             'applications_open', True) or x.hacker.application_set.exists(), user),
+
         ]
 
         # Try/Except caused by Hacker not existing

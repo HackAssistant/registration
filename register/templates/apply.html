@@ -3,9 +3,11 @@
 {% block head_title %}Apply{% endblock %}
 {% block body %}
     {% settings_value 'REGISTER_APP' as app_data %}
-    {% if user.hacker %}
+    {% if not applications_open %}
+        <h4 class="text-center margin-top" style="color: black;">Applications are closed. We are looking forward to welcome you next edition.</h4>
+    {% elif user.hacker %}
         {% if user.hacker.application_set.exists %}
-            <h4 class="text-center margin-top" style="color: white;">You already applied</h4>
+            <h4 class="text-center margin-top" style="color: black;">You already applied</h4>
 
         {% else %}
             <style>iframe {
@@ -23,7 +25,7 @@
             </script>
         {% endif %}
     {% else %}
-        <h4 class="text-center margin-top" style="color: white;">You need to add your personal information before
+        <h4 class="text-center margin-top" style="color: black;">You need to add your personal information before
             applying</h4>
     {% endif %}
 {% endblock %}

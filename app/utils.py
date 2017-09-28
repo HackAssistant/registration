@@ -1,6 +1,7 @@
 import csv
 
 from allauth.account.adapter import DefaultAccountAdapter
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Func
 from django.http import HttpResponse
@@ -78,7 +79,7 @@ def create_modeladmin(modeladmin, model, name=None):
 
 class AccountAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request):
-        return super(AccountAdapter, self).is_open_for_signup(request)
+        return settings.STATIC_KEYS_TEMPLATES.get('applications_open', True)
 
 
 class Round4(Func):

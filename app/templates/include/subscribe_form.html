@@ -2,7 +2,7 @@
 {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
 {% if static_values.subscribe_url %}
-    Subscribe here to be the first to know when are we open applications for next edition.
+    <p>Subscribe here to be the first to know when are we open applications for next edition.</p>
     <form action="{{ static_values.subscribe_url }}"
           method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank"
           class="form-horizontal">
