@@ -302,7 +302,8 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         user = self.request.user
         phases = [
             create_phase('profile', "Profile",
-                         lambda x: not settings.STATIC_KEYS_TEMPLATES.get('applications_open', True) or x.hacker, user),
+                         lambda x: not settings.STATIC_KEYS_TEMPLATES.get('applications_open', True) or x.hacker,
+                         user),
             create_phase('application', "Application",
                          lambda x: not settings.STATIC_KEYS_TEMPLATES.get(
                              'applications_open', True) or x.hacker.application_set.exists(), user),

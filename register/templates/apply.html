@@ -4,7 +4,7 @@
 {% block body %}
     {% settings_value 'REGISTER_APP' as app_data %}
     {% if not applications_open %}
-        <h4 class="text-center margin-top" style="color: black;">Applications are closed. We are looking forward to welcome you next edition.</h4>
+        <h4 class="text-center margin-top" style="color: black;">Applications are closed. We are looking forward to welcome you on the next edition.</h4>
     {% elif user.hacker %}
         {% if user.hacker.application_set.exists %}
             <h4 class="text-center margin-top" style="color: black;">You already applied</h4>

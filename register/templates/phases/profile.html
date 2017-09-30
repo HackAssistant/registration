@@ -2,8 +2,8 @@
 
 {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 {% if not user.hacker and not applications_open %}
-    <p>Applications have been closed. We are looking forward to welcome you next edition.</p>
-    {% include 'include/subscribe_form.html' %}
+    {% include 'include/applications_closed.html' %}
+
 {% else %}
 
     <p>You will only need to fill this once, we will keep this information between editions
