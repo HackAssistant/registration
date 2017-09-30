@@ -1,4 +1,11 @@
-{% if not application and user.hacker %}
+{% load utils %}
+
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
+{% if not application and not applications_open %}
+    {% include 'include/applications_closed.html' %}
+
+{% elif not application and user.hacker %}
     <p> You will be redirected to a new page to fill an application.
     </p>
     <a href="{% url 'apply' %}" target="_blank" class="btn btn-block btn-success">Apply here</a>
