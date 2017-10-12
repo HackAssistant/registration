@@ -8,7 +8,7 @@ from django.urls import reverse
 def root_view(request):
     if request.user.has_perm('register.vote'):
         return HttpResponseRedirect(reverse('vote'))
-    elif request.user.has_perm('register.checkin'):
+    elif request.user.has_perm('checkin.check_in'):
         return HttpResponseRedirect(reverse('check_in_list'))
     try:
         request.user.hacker
