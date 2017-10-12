@@ -12,6 +12,7 @@ class CheckIn(models.Model):
     application = models.ForeignKey('register.Application')
     user = models.ForeignKey(admin_models.User)
     update_time = models.DateTimeField()
+    signed_lopd = models.BooleanField(default=False)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

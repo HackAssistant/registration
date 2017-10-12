@@ -56,14 +56,20 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
             'hacker': app.hacker,
             'checkedin': app.status == models.APP_ATTENDED
         })
+        try:
+            context.update({'checkin': CheckIn.objects.filter(application=app).first()})
+        except:
+            pass
         return context
 
     def post(self, request, *args, **kwargs):
         appid = request.POST.get('app_id')
+        lopd_signed = request.POST.get('checkin') == 'checkin_lopd'
         app = models.Application.objects.get(id=appid)
         app.check_in()
         ci = CheckIn()
         ci.user = request.user
         ci.application = app
+        ci.signed_lopd = lopd_signed
         ci.save()
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
