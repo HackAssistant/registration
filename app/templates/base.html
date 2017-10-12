@@ -80,7 +80,7 @@
                         {% if perms.checkin.check_in %}
                             <li class="white-text"><a href="{% url 'check_in_list' %}">Check-in</a></li>
                         {% endif %}
-                        {% if not perms.register.vote %}
+                        {% if not perms.register.vote and not perms.checkin.check_in %}
                             <li class="white-text"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                             <li class="white-text"><a href="{% url 'profile' %}">Profile</a></li>
                         {% endif %}
@@ -91,7 +91,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'account_change_password' %}">Change password</a></li>
                                 <li><a href="{% url 'account_email' %}">Edit emails</a></li>
-                                {% if perms.register.vote %}
+                                {% if perms.register.vote or perms.checkin.check_in %}
                                     <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
                                     <li><a href="{% url 'profile' %}">Profile</a></li>
                                 {% endif %}
