@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import csv
 import sys
 
@@ -31,19 +33,19 @@ class Command(BaseCommand):
                     user = User.objects.filter(email=email).first()
 
                     if not user:
-                        print 'Creating user {0}.'.format(email)
+                        print('Creating user {0}.'.format(email))
                         user = User.objects.create_user(username=username, email=email)
                         user.set_password(password)
                     else:
-                        print 'Updating permissions for user {0}.'.format(email)
+                        print('Updating permissions for user {0}.'.format(email))
 
                     checkin_perm = Permission.objects.get(codename='check_in')
                     user.user_permissions.add(checkin_perm)
                     user.save()
                     assert authenticate(username=username, password=password)
 
-                    print 'User {0} successfully created.'.format(email)
+                    print('User {0} successfully created.'.format(email))
 
                 except:
-                    print 'There was a problem creating the user: {0}.  Error: {1}.' \
-                        .format(email, sys.exc_info()[1])
+                    print('There was a problem creating the user: {0}.  Error: {1}.'
+                          .format(email, sys.exc_info()[1]))
