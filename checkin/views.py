@@ -57,7 +57,7 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
             'checkedin': app.status == models.APP_ATTENDED
         })
         try:
-            context.update({'checkin':CheckIn.objects.filter(application=app).first()})
+            context.update({'checkin': CheckIn.objects.filter(application=app).first()})
         except:
             pass
         return context
