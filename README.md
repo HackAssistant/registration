@@ -222,6 +222,19 @@ The email base template is in [app/templates/base_email.html](app/templates/base
     - Reimbursement (reimbursement email): [reimbursement/templates/reimbursement/mails/](reimbursement/templates/reimbursement/mails/)
 - General information (documented in the file itself): [app/settings.py](app/settings.py)
 
+### GitHub Login
+
+To allow users to login using their existing GitHub account, follow the following steps (as also [described here](https://django-allauth.readthedocs.io/en/stable/installation.html#post-installation)):
+
+- Create a GitHub OAuth application [here](https://github.com/settings/applications), filling in your own details.
+The callback URL has to look like `http://hackupc.com/accounts/github/login/callback/`. During development you 
+can use `http://localhost:8000/accounts/github/login/callback/`. Memorize the Client ID and Client Secret that are generated.
+- As an admin, go to the Sites configuration page (/admin/sites/site/) and add a site for your domain,  
+if it wasn't done before.
+- Also in the admin panel, go to Social Applications and add one for GitHub, using the client id and secret key 
+that you (definitely) memorized moments ago.
+ 
+
 # License
 
 MIT © Hackers@UPC

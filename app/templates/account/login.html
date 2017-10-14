@@ -13,9 +13,8 @@
     {% get_providers as socialaccount_providers %}
 
     {% if socialaccount_providers %}
-        <p>{% blocktrans with site.name as site_name %}Please sign in with one
-            of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-            for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+        <p>{% blocktrans with site.name as site_name %}You can sign in with your
+            existing accounts for the following service(s): {% endblocktrans %}</p>
 
         <div class="socialaccount_ballot">
 
@@ -23,11 +22,12 @@
                 {% include "socialaccount/snippets/provider_list.html" with process="login" %}
             </ul>
 
-            <div class="login-or">{% trans 'or' %}</div>
-
         </div>
 
         {% include "socialaccount/snippets/login_extra.html" %}
+
+        <p>{% blocktrans with site.name as site_name %} Or <a href="{{ signup_url }}">sign up</a>
+            for a {{ site_name }} account and then sign in below. {%  endblocktrans %}</p>
 
     {% else %}
         <p>{% blocktrans %}If you have not created an account yet, then please

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.humanize',
@@ -206,7 +207,7 @@ SITE_ID = 1
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_EMAIL_REQUIRED = True
-SOCIALACCOUNT_ENABLED = False
+SOCIALACCOUNT_ENABLED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 LOGIN_REDIRECT_URL = 'root'
 LOGIN_URL = 'account_signup'
