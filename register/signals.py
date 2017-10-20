@@ -17,6 +17,9 @@ def organizer_account(request, user, *args, **kwargs):
     if not pattern:
         return None
     if re.match(pattern, user.email):
+        email = EmailAddress.objects.get(user=user)
+        email.verified = True
+        email.save()
         vote_perm = Permission.objects.get(codename='vote')
         rank_perm = Permission.objects.get(codename='ranking')
         user.user_permissions.add(vote_perm, rank_perm)
