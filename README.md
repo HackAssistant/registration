@@ -8,7 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/0806a9c40ea11ded0efd/maintainability)](https://codeclimate.com/github/HackCU/backend/maintainability)
 [![Build Status](https://travis-ci.org/HackCU/backend.svg?branch=master)](https://travis-ci.org/hackcu/backend)
 
-Backend for hackathon application management.
+Backend for hackathon application management. Forked and adapted from [HackUPC's Backend](https://github.com/hackupc/backend).
 
 ## Features
 
@@ -191,7 +191,7 @@ Create your own management.sh script and add to crontab.
 - **register.vote**: Allows user to vote and review applications
 - **register.ranking**: Allows user to see ranking of reviewiers.
 - **register.reject**: Allows user to reject users. Needs to be staff first and needs to be able to edit applications.
-- **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements. 
+- **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements.
 
 ### Add new edition
 
@@ -205,7 +205,7 @@ Create your own management.sh script and add to crontab.
 ## Personalization
 
 You can personalize this backend in style and strings for your hackathon.
- 
+
 ### Style
 
 For colors and presentation of views you can edit [app/static/css/main.css](app/static/css/main.css).
@@ -222,10 +222,13 @@ The email base template is in [app/templates/base_email.html](app/templates/base
     - Reimbursement (reimbursement email): [reimbursement/templates/reimbursement/mails/](reimbursement/templates/reimbursement/mails/)
 - General information (documented in the file itself): [app/settings.py](app/settings.py)
 
+# Want to Contribute?
+Read these [guidelines](.github/CONTRIBUTING.md) carefully.
+
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackcu.org and appropriate action will be taken against the offender after investigation.
+
 # License
 
 MIT © Hackers@UPC
 
-
-
-
+MIT © HackCU
