@@ -191,7 +191,7 @@ Create your own management.sh script and add to crontab.
 - **register.vote**: Allows user to vote and review applications
 - **register.ranking**: Allows user to see ranking of reviewiers.
 - **register.reject**: Allows user to reject users. Needs to be staff first and needs to be able to edit applications.
-- **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements. 
+- **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements.
 
 ### Add new edition
 
@@ -205,7 +205,7 @@ Create your own management.sh script and add to crontab.
 ## Personalization
 
 You can personalize this backend in style and strings for your hackathon.
- 
+
 ### Style
 
 For colors and presentation of views you can edit [app/static/css/main.css](app/static/css/main.css).
@@ -225,7 +225,4 @@ The email base template is in [app/templates/base_email.html](app/templates/base
 # License
 
 MIT © Hackers@UPC
-
-
-
-
+MIT © HackCU
