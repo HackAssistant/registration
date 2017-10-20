@@ -248,17 +248,6 @@ STATIC_KEYS_TEMPLATES = {
 
 }
 
-REGISTER_APP = {
-    'typeform_key': os.environ.get('TP_KEY'),
-    'typeform_form': 'KaZTUa',
-    'typeform_user': 'hackersatupc',
-}
-
-REIMBURSEMENT_APP = {
-    'typeform_form': 'ZrEOYT',
-    'typeform_user': 'hackersatupc',
-
-}
 
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'

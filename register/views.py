@@ -7,7 +7,6 @@ from datetime import timedelta
 from django import http
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import PermissionRequiredMixin, \
     LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -22,7 +21,7 @@ from django.views.generic import TemplateView
 from app import slack
 from app.slack import SlackInvitationException
 from app.utils import reverse
-from register import models, forms, emails, typeform
+from register import models, forms, emails
 from register.tables import ApplicationsListTable
 
 
@@ -390,19 +389,3 @@ class ProfileHacker(LoginRequiredMixin, TemplateView):
             c = self.get_context_data()
             c.update({'hacker_form': form})
             return render(request, self.template_name, c)
-
-
-@login_required
-def fetch_application(request):
-    redirect_url = request.GET.get('redirect', reverse('profile'))
-    typeform.ApplicationsTypeform().insert_forms()
-    messages.success(request, 'Successfully saved application! '
-                              'We\'ll get back to you soon')
-    return HttpResponseRedirect(redirect_url)
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def retrieve_all_applications(request):
-    retrieved = typeform.FullApplicationsTypeform().insert_forms()
-    messages.success(request, 'Retrieved %s applications' % len(retrieved))
-    return HttpResponseRedirect(reverse('admin:index'))
