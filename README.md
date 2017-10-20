@@ -222,6 +222,11 @@ The email base template is in [app/templates/base_email.html](app/templates/base
     - Reimbursement (reimbursement email): [reimbursement/templates/reimbursement/mails/](reimbursement/templates/reimbursement/mails/)
 - General information (documented in the file itself): [app/settings.py](app/settings.py)
 
+# Want to Contribute?
+Read these [guidelines](.github/CONTRIBUTING.md) carefully.
+
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to `devs@hackcu.org` and appropriate action will be taken against the offender after investigation.
+
 # License
 
 MIT © Hackers@UPC
