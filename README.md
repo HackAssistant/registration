@@ -8,7 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/0806a9c40ea11ded0efd/maintainability)](https://codeclimate.com/github/HackCU/backend/maintainability)
 [![Build Status](https://travis-ci.org/HackCU/backend.svg?branch=master)](https://travis-ci.org/hackcu/backend)
 
-Backend for hackathon application management.
+Backend for hackathon application management. Forked and adapted from [HackUPC's Backend](https://github.com/hackupc/backend).
 
 ## Features
 
