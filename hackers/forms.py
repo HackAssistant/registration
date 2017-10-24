@@ -17,8 +17,16 @@ class ApplicationForm(BetterModelForm):
                'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
-    university = forms.CharField(required=True, widget=forms.TextInput(
-        attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
+    university = forms.CharField(required=True,
+                                 label='What university are you studying in?',
+                                 help_text='Current or most recent school you attended.',
+                                 widget=forms.TextInput(
+                                     attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
+
+    degree = forms.CharField(required=True, label='What\'s your Major?',
+                             help_text='Current or most recent degree you\'ve received',
+                             widget=forms.TextInput(
+                                 attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
     first_timer = forms.TypedChoiceField(
         required=True,
@@ -44,6 +52,14 @@ class ApplicationForm(BetterModelForm):
         widget=forms.RadioSelect
     )
 
+    team = forms.TypedChoiceField(
+        required=True,
+        label='Are you applying as a team?',
+        coerce=lambda x: x == 'True',
+        choices=((False, 'Yes'), (True, 'No')),
+        widget=forms.RadioSelect
+    )
+
     class Meta:
         model = models.Application
 
@@ -53,6 +69,7 @@ class ApplicationForm(BetterModelForm):
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
             'degree': 'What\'s your major?',
+            'teammatess': 'Add each teammate in a new line.',
             'diet': 'If you select Others, please write detail in the "Other diet" field that will appear',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>'
@@ -66,18 +83,23 @@ class ApplicationForm(BetterModelForm):
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Hackathons?', {'fields': ('description', 'projects', 'first_timer',), }),
             ('Where are you joing us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
+            ('Team', {'fields': ('team', 'teammates',), }),
         )
 
         labels = {
             'gender': 'What gender do you associate with?',
+            'graduation_year': 'What year are you graduating?',
+            'tshirt_size': 'What\'s your t-shirt size?',
+            'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
-            'origin_city': 'What city are you coming from?',
-            'origin_country': 'What country are you coming from?',
+            'origin_city': 'City',
+            'origin_country': 'Country',
             'description': 'What are you most excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on? '
                         'You can talk about about past hackathons, personal projects, awards etc. (we love links) '
                         'Show us your passion! :D',
-            'resume': 'Upload your resume'
+            'resume': 'Upload your resume',
+            'teammates': 'What are your teammates\'s full names?'
 
         }
 
