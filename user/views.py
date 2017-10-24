@@ -10,7 +10,7 @@ def login(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
-        next_  = request.GET.get('next','/')
+        next_ = request.GET.get('next', '/')
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']

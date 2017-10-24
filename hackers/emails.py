@@ -21,7 +21,7 @@ def create_confirmation_email(application, request):
         'token': application.uuid_str,
         'qr_url': 'http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl=%s'
                   % application.uuid_str,
-        'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id':application.uuid_str})),
+        'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str})),
     }
     return emails.render_mail('mails/confirmation',
                               application.user.email, c)

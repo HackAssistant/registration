@@ -104,4 +104,4 @@ class ApplicationForm(BetterModelForm):
         }
 
         exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status',
-                   'authorized_privacy',]
+                   'authorized_privacy', ]

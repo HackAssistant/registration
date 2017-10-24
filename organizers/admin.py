@@ -9,4 +9,5 @@ class CommentAdmin(admin.ModelAdmin):
     list_per_page = 200
     actions = ['delete_selected', ]
 
+
 admin.site.register(models.ApplicationComment, admin_class=CommentAdmin)

@@ -9,7 +9,6 @@ from django.db.models import Avg
 from django.utils import timezone
 
 from app.emails import MailListManager
-from reimbursement.models import Reimbursement
 from user.models import User
 
 APP_PENDING = 'P'

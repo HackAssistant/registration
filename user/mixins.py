@@ -8,5 +8,5 @@ class IsOrganizerMixin(UserPassesTestMixin):
 
 class IsVolunteerMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.is_authenticated and (self.request.user.is_volunteer or self.request.user.is_organizer)
-
+        return \
+            self.request.user.is_authenticated and (self.request.user.is_volunteer or self.request.user.is_organizer)

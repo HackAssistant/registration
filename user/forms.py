@@ -69,5 +69,6 @@ class RegisterForm(LoginForm):
             raise forms.ValidationError("Passwords don't match")
         return password2
 
+
 class SolutionForm(forms.Form):
     solution = forms.CharField(label='Solution', max_length=130)

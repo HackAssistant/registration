@@ -8,6 +8,5 @@ class ReimbursementConfig(AppConfig):
 
     def ready(self):
         super(ReimbursementConfig, self).ready()
-        from signals import *
+        from signals import reimbursement_create
         reimbursement_create
-

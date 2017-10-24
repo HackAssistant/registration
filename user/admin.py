@@ -55,13 +55,10 @@ class UserAdmin(admin.ModelAdmin):
         return super(UserAdmin, self).get_form(request, obj, **defaults)
 
     def get_urls(self):
-        return [
-                   url(
-                       r'^(.+)/password/$',
-                       self.admin_site.admin_view(self.user_change_password),
-                       name='auth_user_password_change',
-                   ),
-               ] + super(UserAdmin, self).get_urls()
+        return [url(
+            r'^(.+)/password/$',
+            self.admin_site.admin_view(self.user_change_password),
+            name='auth_user_password_change', ), ] + super(UserAdmin, self).get_urls()
 
     def user_change_password(self, request, id):
         if not self.has_change_permission(request):
@@ -94,7 +91,7 @@ class UserAdmin(admin.ModelAdmin):
         context = {
             'title': 'Change password: %s' % user.get_username(),
             # 'form_url': form_url,
-            'form': form,
+            'form': adminForm,
             'add': True,
             'change': False,
             'has_delete_permission': False,

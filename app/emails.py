@@ -35,7 +35,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
     """
 
     substitutions.update({
-                          'edition_name': settings.CURRENT_EDITION})
+        'edition_name': settings.CURRENT_EDITION})
     substitutions.update(settings.STATIC_KEYS_TEMPLATES)
 
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
