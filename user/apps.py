@@ -8,5 +8,5 @@ class UserConfig(AppConfig):
 
     def ready(self):
         super(UserConfig, self).ready()
-        from signals import user_organizer
+        from .signals import user_organizer
         user_organizer
