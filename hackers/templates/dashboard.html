@@ -37,7 +37,7 @@
         </div>
         <div class="col-md-8">
 
-            <div class="panel panel-info">
+            <div class="panel {% if active.finished %}panel-success{% else %}panel-warning{% endif %}">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ active.title }}</h3>
                 </div>

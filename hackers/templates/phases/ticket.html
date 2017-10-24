@@ -1,18 +1,28 @@
 {% load utils %}
 {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
-<div>
-    You are all good to go! See you soon in Barcelona!
-    <h2>QR Code</h2>
-    Please show the following QR code to our staff when you arrive for check-in.
-    <img src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl={{ application.uuid_str }}"/>
-    {% include 'include/cancel.html' %}
 
-    <h2>Important information</h2>
+{% if application.answered_invite %}
+    <div>
+        You are all good to go! See you soon in Barcelona!
+        <h2>QR Code</h2>
+        Please show the following QR code to our staff when you arrive for check-in.
+        <img src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl={{ application.uuid_str }}"/>
+        {% include 'include/cancel.html' %}
 
-    <h3>When to arrive</h3>
-    {{ static_values.when_to_arrive }}
-    <h3>When to leave</h3>
-    {{ static_values.when_to_leave }}<br>
-    {% include 'include/reimbursement.html' %}
-</div>
+        <h2>Important information</h2>
+
+        <h3>When to arrive</h3>
+        {{ static_values.when_to_arrive }}
+        <h3>When to leave</h3>
+        {{ static_values.when_to_leave }}<br>
+        {% include 'include/reimbursement.html' %}
+    </div>
+{% elif application.is_cancelled %}
+    We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
+    {% include 'include/subscribe_form.html' %}
+{% else %}
+    <p> When decisions are released, you'll be able to see your results on this page.<br>
+        If you have any questions or concerns, you can still reach us at {{ static_values.email|urlize }}<br>
+        Edit your application <a href="?phase=application">here</a></p>
+{% endif %}
 

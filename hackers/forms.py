@@ -32,7 +32,7 @@ class ApplicationForm(BetterModelForm):
         required=True,
         label='Will %s be your first hackathon?' % settings.HACKATHON_NAME,
         coerce=lambda x: x == 'True',
-        choices=((False, 'Yes'), (True, 'No')),
+        choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect
     )
 
@@ -40,15 +40,15 @@ class ApplicationForm(BetterModelForm):
         required=True,
         label='Do you need travel reimbursement to attend?',
         coerce=lambda x: x == 'True',
-        choices=((False, 'Yes'), (True, 'No')),
+        choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect
     )
 
     under_age = forms.TypedChoiceField(
         required=True,
-        label='Will you be under 18 by %s?' % settings.HACKATHON_NAME,
+        label='How old will you be by %s?' % settings.HACKATHON_NAME,
         coerce=lambda x: x == 'True',
-        choices=((False, 'Yes'), (True, 'No')),
+        choices=((False, 'I\'ll be 18 or over by then'), (True, 'I\'ll be under age')),
         widget=forms.RadioSelect
     )
 
@@ -56,7 +56,7 @@ class ApplicationForm(BetterModelForm):
         required=True,
         label='Are you applying as a team?',
         coerce=lambda x: x == 'True',
-        choices=((False, 'Yes'), (True, 'No')),
+        choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect
     )
 
@@ -78,7 +78,7 @@ class ApplicationForm(BetterModelForm):
         fieldsets = (
             ('Personal Info',
              {'fields': ('gender', 'university', 'degree',
-                         'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age'),
+                         'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Hackathons?', {'fields': ('description', 'projects', 'first_timer',), }),
@@ -104,4 +104,4 @@ class ApplicationForm(BetterModelForm):
         }
 
         exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status',
-                   'authorized_privacy']
+                   'authorized_privacy',]
