@@ -56,8 +56,10 @@ DIETS = [
 ]
 
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
+DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(year, str(year)) for year in range(timezone.datetime.today().year - 1, timezone.datetime.today().year + 6)]
+YEARS = [(size, size) for size in ('2016 2017 2018 2019 2020 2021 2022'.split(' '))]
+DEFAULT_YEAR = '2017'
 
 
 class Application(models.Model):
@@ -105,7 +107,7 @@ class Application(models.Model):
     authorized_privacy = models.BooleanField(default=False)
 
     # University
-    graduation_year = models.IntegerField(choices=YEARS)
+    graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
 
@@ -116,9 +118,9 @@ class Application(models.Model):
     site = models.URLField(blank=True, null=True)
 
     # Info for swag and food
-    diet = models.CharField(max_length=300, choices=DIETS)
+    diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
-    tshirt_size = models.CharField(max_length=3, default='M', choices=TSHIRT_SIZES)
+    tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
     # Team
     team = models.BooleanField()

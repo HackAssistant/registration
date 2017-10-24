@@ -81,10 +81,16 @@ class ApplicationForm(BetterModelForm):
                          'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
-            ('Hackathons?', {'fields': ('description', 'projects', 'first_timer',), }),
+            ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Where are you joing us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
             ('Team', {'fields': ('team', 'teammates',), }),
         )
+
+        widgets = {
+            'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'tshirt_size': forms.RadioSelect(),
+            'graduation_year': forms.RadioSelect(),
+        }
 
         labels = {
             'gender': 'What gender do you associate with?',

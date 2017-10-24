@@ -12,7 +12,9 @@
                 {% endif %}
             </h3>
             {% for field in fieldset %}
-                {% bootstrap_field field %}
+                <div class="{{ field.class }}">
+                    {% bootstrap_field field %}
+                </div>
             {% endfor %}
         </fieldset>
     {% endfor %}
@@ -33,6 +35,7 @@
 
             make_field_typeahead('university', '{% static 'schools.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
+            make_field_typeahead('origin_country', '{% static 'countries.json' %}');
 
 
             var other_diet = $('#id_other_diet');
@@ -51,6 +54,15 @@
                 return has_team.prop("checked");
             });
 
+            var is_firsttime = $('input[name="first_timer"][value="True"]');
+            var experienced = $('input[name="first_timer"][value="False"]');
+            var projects = $('#id_projects');
+            conditional_field(projects, is_firsttime, function () {
+                return experienced.prop("checked");
+            });
+            conditional_field(projects, experienced, function () {
+                return experienced.prop("checked");
+            });
         }
     )
 

@@ -18,7 +18,7 @@ a.list-group-item {
     border: 0;
 }
 
-a.list-group-item.active, a.list-group-item.active:hover,  a.list-group-item.active:active {
+a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.active:active {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     border-right: 1px solid #ddd;
@@ -39,4 +39,19 @@ a.list-group-item.active, a.list-group-item.active:hover,  a.list-group-item.act
 
 .list-group-item.finished, .list-group-item.finished:hover {
     border-left-color: green !important;
+}
+
+#id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
+#id_scholarship > div{
+    display: inline-block;
+    padding-right: 20px;
+    margin-bottom: 0;
+    margin-top: 0;
+    font-weight: 400;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.radio {
+
 }
