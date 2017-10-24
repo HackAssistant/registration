@@ -25,67 +25,31 @@
     to {{ static_values.email|urlize }}</p>
 
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
+<script src="{% static 'js/form_modifiers.js' %}"></script>
 
 <script>
 
     $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "{% static 'schools.json' %}",
-                dataType: "json"
-            }).done(function (res) {
-                $(".typeahead-schools").typeahead({source: res});
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("AJAX call failed: " + textStatus + ", " + errorThrown);
-            });
 
-            $.ajax({
-                type: "GET",
-                url: "{% static 'degrees.json' %}",
-                dataType: "json"
-            }).done(function (res) {
-                $(".typeahead-degrees").typeahead({source: res});
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("AJAX call failed: " + textStatus + ", " + errorThrown);
-            });
+            make_field_typeahead('university', '{% static 'schools.json' %}');
+            make_field_typeahead('degree', '{% static 'degrees.json' %}');
+
+
             var other_diet = $('#id_other_diet');
             var diet = $('#id_diet');
-            var parent = other_diet.parent('div');
-            diet.on('change', function () {
-                if (this.value == 'Others') {
-                    parent.fadeIn();
-                } else {
-                    parent.fadeOut();
-                    other_diet.val('');
-                }
+            conditional_field(other_diet, diet, function () {
+                return diet.val() === 'Others';
             });
-            if (diet.val() !== 'Others') {
-                parent.hide();
-            }
 
             var has_team = $('input[name="team"][value="True"]');
             var no_team = $('input[name="team"][value="False"]');
             var teammates = $('#id_teammates');
-            var parent_tm = teammates.parent('div');
-            has_team.on('change', function () {
-                if (has_team.prop("checked")) {
-                    parent_tm.fadeIn();
-                } else {
-                    parent_tm.fadeOut();
-                    teammates.val('');
-                }
+            conditional_field(teammates, has_team, function () {
+                return has_team.prop("checked");
             });
-            no_team.on('change', function () {
-                if (has_team.prop("checked")) {
-                    parent_tm.fadeIn();
-                } else {
-                    parent_tm.fadeOut();
-                    teammates.val('');
-                }
+            conditional_field(teammates, no_team, function () {
+                return has_team.prop("checked");
             });
-            if (!has_team.prop("checked")) {
-                parent_tm.hide();
-            }
 
         }
     )
