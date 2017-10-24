@@ -63,6 +63,30 @@
                 parent.hide();
             }
 
+            var has_team = $('input[name="team"][value="True"]');
+            var no_team = $('input[name="team"][value="False"]');
+            var teammates = $('#id_teammates');
+            var parent_tm = teammates.parent('div');
+            has_team.on('change', function () {
+                if (has_team.prop("checked")) {
+                    parent_tm.fadeIn();
+                } else {
+                    parent_tm.fadeOut();
+                    teammates.val('');
+                }
+            });
+            no_team.on('change', function () {
+                if (has_team.prop("checked")) {
+                    parent_tm.fadeIn();
+                } else {
+                    parent_tm.fadeOut();
+                    teammates.val('');
+                }
+            });
+            if (!has_team.prop("checked")) {
+                parent_tm.hide();
+            }
+
         }
     )
 
