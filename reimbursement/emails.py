@@ -14,8 +14,8 @@ def create_reimbursement_email(reimb, request):
         'cancel_url': str(reverse('cancel_app', request=request))
     }
     if settings.REIMBURSEMENT_EMAIL:
-        return emails.render_mail('reimbursement/mails/reimbursement',
+        return emails.render_mail('mails/reimbursement',
                                   hacker.user.email, c,
                                   from_email=settings.REIMBURSEMENT_EMAIL)
-    return emails.render_mail('reimbursement/mails/reimbursement',
+    return emails.render_mail('mails/reimbursement',
                               hacker.user.email, c)
