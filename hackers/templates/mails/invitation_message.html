@@ -1,9 +1,9 @@
 {% extends 'base_email.html' %}
-{% block preheader %}Acceptance email for {{ edition_name }}{% endblock %}
+{% block preheader %}Acceptance email for {{ hackathon_name }}{% endblock %}
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
-    Congratulations {{ name }}, you have been officially invited to {{ edition_name }}!<br><br>
+    Congratulations {{ name }}, you have been officially invited to <b>{{ hackathon_name }}</b>!<br><br>
     Respond to this invitation by clicking on the "Confirm" link below.
     <b>Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another
         hacker on the waitlist.</b>

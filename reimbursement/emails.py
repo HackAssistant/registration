@@ -5,17 +5,13 @@ from app.utils import reverse
 
 
 def create_reimbursement_email(reimb, request):
-    hacker = reimb.application.hacker
+    app = reimb.application
     c = {
-        'hacker': hacker,
+        'app':app,
         'reimb': reimb,
         'confirm_url': str(reverse('confirm_app', request=request)),
         'form_url': reimb.get_form_url(),
         'cancel_url': str(reverse('cancel_app', request=request))
     }
-    if settings.REIMBURSEMENT_EMAIL:
-        return emails.render_mail('mails/reimbursement',
-                                  hacker.user.email, c,
-                                  from_email=settings.REIMBURSEMENT_EMAIL)
     return emails.render_mail('mails/reimbursement',
-                              hacker.user.email, c)
+                              app.user.email, c)

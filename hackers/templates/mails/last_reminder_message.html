@@ -1,13 +1,13 @@
 {% extends 'base_email.html' %}
-{% block preheader %} Last reminder email for {{ edition_name }}{% endblock %}
+{% block preheader %} Last reminder email for {{ hackathon_name }}{% endblock %}
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
     Hi  {{ name }},
     {% include 'include/email_line_end.html' %}
     {% include 'include/email_line_start.html' %}
-    We are still waiting for your answer! You have been officially accepted to {{ edition_name }}
-    {{ edition_name }} but you still haven't either confirmed or canceled your spot.
+    We are still waiting for your answer! You have been officially accepted to {{ hackathon_name }}
+    {{ hackathon_name }} but you still haven't either confirmed or canceled your spot.
     <b>You have 24h to answer, after that, your application will expire and we will give your spot to another
         hacker.</b>
     {% include 'include/email_line_end.html' %}

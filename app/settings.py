@@ -177,10 +177,8 @@ BOOTSTRAP3 = {
 # Hackathon specific configuration
 HACKATHON_NAME = 'HackUPC'
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
+HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
-
-DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
-REIMBURSEMENT_EMAIL = 'HackUPC Reimbursements Team <reimbursement@hackupc.com>'
 
 # Loaded on email templates (except auth ones)
 STATIC_KEYS_TEMPLATES = {
@@ -204,15 +202,7 @@ STATIC_KEYS_TEMPLATES = {
     'when_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
                      'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.',
     'applications_open': True,
-
 }
-
-EMAIL_SUBJECT_PREFIX = '[HackUPC]'
-EVENT_NAME = 'HackUPC'
-
-EVENT_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
-ALLOWED_HOSTS.append(EVENT_DOMAIN)
-CURRENT_EDITION = 'Fall 2017'
 
 # Optional, if not set will skip invite.
 # Highly recommended to create a separate user account to extract the token from
@@ -221,8 +211,6 @@ SLACK = {
     # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
     'token': os.environ.get('SL_TOKEN', None)
 }
-
-# Default reimbursement amount, optional, will have empty value if no amount
 
 if os.environ.get('EMAIL_HOST_PASSWORD', None):
     # Error reporting email. Will send an email in any 500 error from server email

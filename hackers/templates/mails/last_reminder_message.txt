@@ -1,6 +1,6 @@
 Hi  {{ name }},
 
-We are still waiting for your answer! You have been officially accepted to {{ edition_name }} but you still haven't either confirmed or canceled your spot.
+We are still waiting for your answer! You have been officially accepted to {{ hackathon_name }} but you still haven't either confirmed or canceled your spot.
 You have 24h to answer, after that, your application will expire and we will give your spot to another hacker.
 
 {{ confirm_url }}
@@ -18,4 +18,4 @@ See you soon!
 
 Best,
 
-{{ edition_name }} Team
+{{ hackathon_name }} Team

@@ -1,1 +1,1 @@
-Ticket to {{ edition_name }}
+Ticket to {{ hackathon_name }}
