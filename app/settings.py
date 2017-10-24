@@ -178,9 +178,13 @@ BOOTSTRAP3 = {
 HACKATHON_NAME = 'HackUPC'
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
 HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
+# Regex to automatically match organizers emails
+REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
+
+# Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
-# Loaded on email templates (except auth ones)
+# Loaded on email templates
 STATIC_KEYS_TEMPLATES = {
     'fb': 'hackupc',
     'twitter': 'hackupc',
