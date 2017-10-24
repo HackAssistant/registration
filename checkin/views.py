@@ -45,7 +45,6 @@ class CheckInHackerView(IsVolunteerMixin, TemplateView):
         app = get_object_or_404(models.Application, pk=appid)
         context.update({
             'app': app,
-            'hacker': app.hacker,
             'checkedin': app.status == models.APP_ATTENDED
         })
         try:

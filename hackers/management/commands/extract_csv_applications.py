@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from register import models
+from hackers import models
 
 EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
 

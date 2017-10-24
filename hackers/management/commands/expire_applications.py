@@ -4,7 +4,7 @@ from django.core import mail
 from django.core.management.base import BaseCommand
 from django.utils.datetime_safe import datetime
 
-from register import models, emails
+from hackers import models, emails
 
 
 class Command(BaseCommand):

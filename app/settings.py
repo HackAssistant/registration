@@ -156,11 +156,6 @@ if not SENDGRID_API_KEY and DEBUG:
 else:
     EMAIL_BACKEND = "sgbackend.SendGridBackend"
 
-MAIL_LISTS_ENABLED = True
-SG_GENERAL_LIST_ID = os.environ.get('SG_GENERAL_LIST_ID', None)
-if not SG_GENERAL_LIST_ID:
-    MAIL_LISTS_ENABLED = False
-
 # Jet configs
 JET_SIDE_MENU_COMPACT = True
 JET_INDEX_DASHBOARD = 'app.jet_dashboard.CustomIndexDashboard'
@@ -181,6 +176,8 @@ BOOTSTRAP3 = {
 
 # Hackathon specific configuration
 HACKATHON_NAME = 'HackUPC'
+HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
+ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
 DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
 REIMBURSEMENT_EMAIL = 'HackUPC Reimbursements Team <reimbursement@hackupc.com>'

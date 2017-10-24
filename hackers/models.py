@@ -2,13 +2,11 @@ from __future__ import unicode_literals
 
 import uuid as uuid
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
 
-from app.emails import MailListManager
 from user.models import User
 
 APP_PENDING = 'P'
@@ -184,9 +182,6 @@ class Application(models.Model):
             self.status = APP_CONFIRMED
             self.status_update_date = timezone.now()
             self.save()
-            if settings.MAIL_LISTS_ENABLED:
-                m = MailListManager()
-                m.add_applicant_to_list(self, settings.SG_GENERAL_LIST_ID)
         elif self.status in [APP_CONFIRMED, APP_ATTENDED]:
             return None
         else:
@@ -201,9 +196,6 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.status_update_date = timezone.now()
             self.save()
-            if settings.MAIL_LISTS_ENABLED:
-                m = MailListManager()
-                m.remove_applicant_from_list(self, settings.SG_GENERAL_LIST_ID)
 
     def check_in(self):
         self.status = APP_ATTENDED

@@ -13,14 +13,13 @@ Backend for hackathon application management. Forked and adapted from [HackUPC's
 ## Features
 
 - Email sign up and basic data management interface for hackers
-- User management interface with different permissions
-- Review application interface
+- Role management: Organizer, Volunteer and Director
+- Review and vote application interface
 - Sends invites and controls confirmation and cancellation application flow
 - Check-in interface with QR scanner
-- Admin dashboard with stats
+- Admin dashboard
 - Flexible email backend (SendGrid is the default supported backend)
 - Reimbursement management interface
-- (Optional) SendGrid contact list synchronization with confirmed users
 - (Optional) Slack invites on confirm and on demand in admin interface
 
 
@@ -41,14 +40,12 @@ Needs: Python 3.X, virtualenv
 
 - **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
 You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
-- **TP_KEY**: Typeform API key. Mandatory for retrieving the information from applications in Typeform. See how to obtain it [here](https://www.typeform.com/help/data-api/)
 - **PROD_MODE**(optional): Disables debug mode. Avoids using filesystem mail backend.
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
 - **PG_PWD**(optional): Postgres password. Also enables Postgres as the default database with the default values specified below.
 - **PG_NAME**(optional): Postgres database name. Default: backend
 - **PG_USER**(optional): Postgres user. Default: backenduser
 - **PG_HOST**(optional): Postgres host. Default: localhost
-- **SG_GENERAL_LIST_ID**(optional): Sendgrid confirmed users list id. Enables adding users to list on confirmed and removing them on cancel.
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
@@ -57,16 +54,11 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **EMAIL_HOST_USER**(optional): STMP host username. Defaults: hupc_mail
 
 
-### Typeform setup
-
-There's no way to create Typeform forms automatically (yet), so you will need to create a Typeform for the application part.
-TODO: Include guide to create and prepare your Typeform
-
 ## Run server
 
 ### Local environment
 
-- Add `TP_KEY` in environment (if you want to retrieve forms)
+- Add `SG_KEY` in environment (if you want to send emails)
 - `python manage.py runserver`
 
 ### Production environment
@@ -79,11 +71,11 @@ Needs: Systemd.
 - `chmod +x server.sh`
 - Edit variables to match your environment
 - Run `restart.sh`. This will update the database, dependecies and static files.
-- Edit this file `/etc/systemd/system/gunicorn.service`
+- Edit this file `/etc/systemd/system/backend.service`
 - Add this content
 ```
 [Unit]
-Description=gunicorn daemon
+Description=backend daemon
 After=network.target
 
 [Service]
@@ -99,7 +91,7 @@ WantedBy=multi-user.target
 
 - Replace `user` for your user (deploy in our server).
 - Replace `project_folder` by the name of the folder where the project is located
-- Create and enable service: `sudo systemctl start gunicorn && sudo systemctl enable gunicorn`
+- Create and enable service: `sudo systemctl start backend && sudo systemctl enable backend`
 
 #### Deploy new version
 
@@ -107,7 +99,7 @@ Needs: Postgres environment variables set
 
 - `git pull`
 - `./restart.sh`
-- `sudo service gunicorn restart`
+- `sudo service backend restart`
 
 
 #### Set up Postgres
@@ -127,6 +119,8 @@ ALTER ROLE backenduser SET timezone TO 'UTC';
 
 - Grant all priviledges to your user for the created database: `GRANT ALL PRIVILEGES ON DATABASE myproject TO myprojectuser;`
 - Exit PSQL console: `\q`
+
+Other SQL engines may be used, we recommend PostgreSQL for it's robustness. To use other please check [this documentation](https://docs.djangoproject.com/en/1.11/ref/databases/) for more information on SQL engines in Django.
 
 #### Set up nginx
 
@@ -159,18 +153,15 @@ server {
 
 ### Set up dummy data
 
-We provide with dummy data created to agilize the development process. Load our data by running:
-`./manage.py loaddata fixtures/initial_data.json`
+TODO: CREATE NEW DUMMY DATA
 
 
 ## Management
 
 ### Commands
 
-- `TP_KEY=REPLACE_WITH_TYPEFORM_API_KEY python manange.py insert_applications`: Fetches all aplications and inserts those who don't exist in the DB
 - `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`: Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
 
-- `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py applications_reminder`: Sends reminder to all hackers that have not completed the application process.
 
 #### Production
 
@@ -184,22 +175,11 @@ Create your own management.sh script and add to crontab.
 */5 * * * * cd /home/user/project_folder/ && ./management.sh > /home/user/project_folder/management.log 2> /home/user/project_folder/management_err.log
 ```
 
-### Permissions
+### User roles
 
-- **checkin.check_in**: Allows user to check-in hackers with QR and list view
-- **register.invite**: Allows user to invite hackers. Needs to be staff first and needs to be able to edit applications.
-- **register.vote**: Allows user to vote and review applications
-- **register.ranking**: Allows user to see ranking of reviewiers.
-- **register.reject**: Allows user to reject users. Needs to be staff first and needs to be able to edit applications.
-- **reimbursement.reimburse**: Allows a user to create and/or send reimbursement to a hacker. If user can edit applications will be able to create reimbursements. If user can edit reimbursemets will be able to send reimbursements.
-
-### Add new edition
-
-- Open `register/models.py`
-- Add edition in `EDITIONS` array
-- Change default in model `Applications`
-- Run `python manage.py makemigrations`
-- Run `python manage.py migrate`
+- **is_volunteer**: Allows user to check-in hackers with QR and list view
+- **is_organizer**: Allows user to vote, see voting ranking and check-in hackers.
+- **is_director**: Allows user to enter Admin interface and invite hackers
 
 
 ## Personalization
@@ -217,9 +197,8 @@ The email base template is in [app/templates/base_email.html](app/templates/base
 ### Content
 
 - Emails:
-    - Account (verification email, passord reset reset): [app/templates/account/email/](app/templates/account/email/)
-    - Register (application invite, event ticket): [register/templates/mails/](register/templates/mails/)
-    - Reimbursement (reimbursement email): [reimbursement/templates/reimbursement/mails/](reimbursement/templates/mails/)
+    - Hackers (application invite, event ticket): [hackers/templates/mails/](register/templates/mails/)
+    - Reimbursement (reimbursement email): [reimbursement/templates/mails/](reimbursement/templates/mails/)
 - General information (documented in the file itself): [app/settings.py](app/settings.py)
 
 # Want to Contribute?
