@@ -6,6 +6,7 @@
     {% include 'include/applications_closed.html' %}
 
 {% elif not application %}
+    You will still be able to edit until your application has been reviewed.
     {% include 'include/application_form.html' %}
 {% elif application.is_invited or application.is_last_reminder %}
     <p>Congrats! You have been invited to come to {{ event_name }}! Please respond this invite.
@@ -25,6 +26,12 @@
     {% include 'include/cancel.html' %}
     {% include 'include/reimbursement.html' %}
 {% else %}
-    Thanks for completing the application. You can still edit it.
-    {% include 'include/application_form.html' %}
+    Thanks for completing the application.
+
+    {% if application.can_be_edit %}
+        You can still edit it.
+        {% include 'include/application_form.html' %}
+    {% else %}
+        You can't edit your application any more as it has been reviewed already once.
+    {% endif %}
 {% endif %}

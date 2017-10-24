@@ -223,6 +223,9 @@ class Application(models.Model):
     def is_pending(self):
         return self.status == APP_PENDING
 
+    def can_be_edit(self):
+        return self.status == APP_PENDING and not self.vote_set.exists()
+
     def is_invited(self):
         return self.status == APP_INVITED
 

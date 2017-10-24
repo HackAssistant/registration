@@ -26,8 +26,8 @@ VOTES = (
 
 
 class Vote(models.Model):
-    application = models.OneToOneField(Application)
-    user = models.OneToOneField(User)
+    application = models.ForeignKey(Application)
+    user = models.ForeignKey(User)
     tech = models.IntegerField(choices=VOTES, null=True)
     personal = models.IntegerField(choices=VOTES, null=True)
     calculated_vote = models.FloatField(null=True)
