@@ -3,7 +3,7 @@ from table.columns import Column
 from table.columns import LinkColumn, Link
 from table.utils import A
 
-from register.models import Application
+from hackers.models import Application
 
 
 class ApplicationsTable(Table):

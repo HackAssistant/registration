@@ -12,17 +12,15 @@ from reimbursement import models, emails
 class ReimbursementAdmin(admin.ModelAdmin):
     list_display = (
         'application', 'name', 'money', 'origin', 'status',
-        'status_last_updated', 'application_status',
+        'expiration_time', 'application_status',
         'requested_reimb')
-    list_filter = ('status', 'reimbursed_by', 'origin_country',
+    list_filter = ('status', 'origin_country',
                    'reimbursed_by', 'application__status')
 
-    search_fields = ['application__hacker__name', 'application__hacker__lastname', 'application__hacker__user__email',
+    search_fields = ['application__user__name', 'application__user__lastname', 'application__user__email',
                      'origin_city']
     list_per_page = 200
 
-    # search_fields = ('hacker__name', 'hacker__lastname',
-    # 'hacker__user__email', 'description', 'id')
     ordering = ('creation_date',)
     actions = ['send', 'delete_selected']
 
@@ -32,11 +30,11 @@ class ReimbursementAdmin(admin.ModelAdmin):
     money.admin_order_field = 'assigned_money'
 
     def name(self, obj):
-        hacker = obj.application.hacker
-        return hacker.name + ' ' + hacker.lastname + ' (' + hacker.user.email + ')'
+        user = obj.application.user
+        return user.full_name + ' (' + user.email + ')'
 
     name.admin_order_field = \
-        'application__hacker__name'  # Allows column order sorting
+        'application__user__full_name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
 
     def requested_reimb(self, obj):
@@ -64,10 +62,6 @@ class ReimbursementAdmin(admin.ModelAdmin):
     status_last_updated.admin_order_field = 'status_update_date'
 
     def send(self, request, queryset):
-        if not request.user.has_perm('reimbursement.reimburse'):
-            self.message_user(request, "You don't have permission to send "
-                                       "reimbursements")
-            return
         msgs = []
         sent = 0
         errors = 0

@@ -1,0 +1,59 @@
+{% load bootstrap3 %}
+{% load static %}
+{% load form_utils %}
+<form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
+    {% csrf_token %}
+    {% bootstrap_form_errors form %}
+    {% for fieldset in form.fieldsets %}
+        <fieldset>
+            <h3>{{ fieldset.name }}<br>
+            {% if fieldset.description %}
+                <small>{{ fieldset.description }}</small>
+            {% endif %}
+            </h3>
+            {% for field in fieldset %}
+                {% bootstrap_field field %}
+            {% endfor %}
+        </fieldset>
+    {% endfor %}
+    {#    {% bootstrap_form form|render placeholder=False %}#}
+    <button class="btn btn-primary btn-block" type="submit">Apply</button>
+</form>
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+<p>If you have any special need you want us to know about please send us an email
+    to {{ static_values.email|urlize }}</p>
+
+<script src="{% static 'lib/typeahead.min.js' %}"></script>
+
+<script>
+
+    $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "{% static 'schools.json' %}",
+                dataType: "json"
+            }).done(function (res) {
+                $(".typeahead-schools").typeahead({source: res});
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("AJAX call failed: " + textStatus + ", " + errorThrown);
+            });
+            var other_diet = $('#id_other_diet');
+            var diet = $('#id_diet');
+            var parent = other_diet.parent('div').parent('div');
+            diet.on('change', function () {
+                if (this.value == 'Others') {
+                    parent.fadeIn();
+                } else {
+                    parent.fadeOut();
+                    other_diet.val('');
+                }
+            });
+            if (diet.val() !== 'Others') {
+                parent.hide();
+            }
+
+        }
+    )
+
+</script>

@@ -6,11 +6,11 @@ from django.views.generic import TemplateView
 
 from checkin.models import CheckIn
 from checkin.tables import ApplicationsTable
-from register import models
+from hackers import models
+from user.mixins import IsVolunteerMixin
 
 
-class CheckInList(PermissionRequiredMixin, TemplateView):
-    permission_required = 'checkin.check_in'
+class CheckInList(IsVolunteerMixin, TemplateView):
     template_name = 'checkin/list.html'
 
     def get_context_data(self, **kwargs):
@@ -33,24 +33,17 @@ class CheckInAllList(CheckInList):
         return models.Application.objects.exclude(status=models.APP_ATTENDED)
 
 
-class QRView(PermissionRequiredMixin, TemplateView):
-    permission_required = 'checkin.check_in'
+class QRView(IsVolunteerMixin, TemplateView):
     template_name = 'checkin/qr.html'
 
 
-class CheckInHackerView(PermissionRequiredMixin, TemplateView):
+class CheckInHackerView(IsVolunteerMixin, TemplateView):
     template_name = 'checkin/hacker.html'
-    permission_required = 'checkin.check_in'
 
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
         app = get_object_or_404(models.Application, pk=appid)
-        if app.status == models.APP_ATTENDED:
-            messages.success(self.request, 'Hacker checked-in! Good job! '
-                                           'Nothing else to see here, '
-                                           'you can move on :D')
-
         context.update({
             'app': app,
             'hacker': app.hacker,
@@ -72,4 +65,7 @@ class CheckInHackerView(PermissionRequiredMixin, TemplateView):
         ci.application = app
         ci.signed_lopd = lopd_signed
         ci.save()
+        messages.success(self.request, 'Hacker checked-in! Good job! '
+                                       'Nothing else to see here, '
+                                       'you can move on :D')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

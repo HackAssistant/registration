@@ -33,28 +33,24 @@ INSTALLED_APPS = [
     'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'form_utils',
     'bootstrap3',
-    'register',
+    'organizers',
     'checkin',
     'reimbursement',
     'table',
+    'user',
+    'hackers'
 ]
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 MIDDLEWARE = [
@@ -134,13 +130,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'MST'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -165,60 +161,26 @@ SG_GENERAL_LIST_ID = os.environ.get('SG_GENERAL_LIST_ID', None)
 if not SG_GENERAL_LIST_ID:
     MAIL_LISTS_ENABLED = False
 
-# JET
-JET_THEMES = [
-    {
-        'theme': 'default',  # theme folder name
-        'color': '#47bac1',  # color of the theme's button in user menu
-        'title': 'Default'  # theme title
-    },
-    {
-        'theme': 'green',
-        'color': '#44b78b',
-        'title': 'Green'
-    },
-    {
-        'theme': 'light-green',
-        'color': '#2faa60',
-        'title': 'Light Green'
-    },
-    {
-        'theme': 'light-violet',
-        'color': '#a464c4',
-        'title': 'Light Violet'
-    },
-    {
-        'theme': 'light-blue',
-        'color': '#5EADDE',
-        'title': 'Light Blue'
-    },
-    {
-        'theme': 'light-gray',
-        'color': '#222',
-        'title': 'Light Gray'
-    }
-]
+# Jet configs
 JET_SIDE_MENU_COMPACT = True
-JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secret.json')
-JET_INDEX_DASHBOARD = 'app.dashboard.CustomIndexDashboard'
+JET_INDEX_DASHBOARD = 'app.jet_dashboard.CustomIndexDashboard'
 
-SITE_ID = 1
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_EMAIL_REQUIRED = True
-SOCIALACCOUNT_ENABLED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-LOGIN_REDIRECT_URL = 'root'
-LOGIN_URL = 'account_signup'
+# Set up custom auth
+AUTH_USER_MODEL = 'user.User'
+LOGIN_URL = 'account_login'
 
-ACCOUNT_ADAPTER = 'app.utils.AccountAdapter'
+# Reimbursement configuration
+DEFAULT_REIMBURSEMENT = 100
+DEFAULT_CURRENCY = '$'
+DEFAULT_EXPIRACY_DAYS = 5
 
+BOOTSTRAP3 = {
+    # Don't normally want placeholders.
+    'set_placeholder': False,
+}
 
-def ACCOUNT_USER_DISPLAY(x):
-    return x.email
-
-
-ACCOUNT_USERNAME_REQUIRED = False
+# Hackathon specific configuration
+HACKATHON_NAME = 'HackUPC'
 
 DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
 REIMBURSEMENT_EMAIL = 'HackUPC Reimbursements Team <reimbursement@hackupc.com>'
@@ -244,10 +206,9 @@ STATIC_KEYS_TEMPLATES = {
                       'the opening ceremony will be at 7:00 pm.',
     'when_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
                      'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.',
-    'applications_open': False,
+    'applications_open': True,
 
 }
-
 
 EMAIL_SUBJECT_PREFIX = '[HackUPC]'
 EVENT_NAME = 'HackUPC'
@@ -265,7 +226,6 @@ SLACK = {
 }
 
 # Default reimbursement amount, optional, will have empty value if no amount
-DEFAULT_REIMBURSEMENT = 100
 
 if os.environ.get('EMAIL_HOST_PASSWORD', None):
     # Error reporting email. Will send an email in any 500 error from server email

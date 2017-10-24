@@ -218,7 +218,7 @@ The email base template is in [app/templates/base_email.html](app/templates/base
 
 - Emails:
     - Account (verification email, passord reset reset): [app/templates/account/email/](app/templates/account/email/)
-    - Register (application invite, event ticket): [register/templates/register/mails/](register/templates/register/mails/)
+    - Register (application invite, event ticket): [register/templates/mails/](register/templates/mails/)
     - Reimbursement (reimbursement email): [reimbursement/templates/reimbursement/mails/](reimbursement/templates/reimbursement/mails/)
 - General information (documented in the file itself): [app/settings.py](app/settings.py)
 

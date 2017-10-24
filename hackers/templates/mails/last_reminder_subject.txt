@@ -1,0 +1,1 @@
+Invite for {{ edition_name }} expires in 24h

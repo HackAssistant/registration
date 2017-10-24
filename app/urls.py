@@ -21,17 +21,14 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # Auth views. Look at this in order to see who to use
-    # https://docs.djangoproject.com/en/1.10/topics/auth/default/
-
-    url(r'^accounts/', include('allauth.urls')),
+    url(r'^user/', include('user.urls')),
     url(r'^table/', include('table.urls')),
     url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
     url(r'^jet/dashboard/', include(
         'jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
-    url(r'^', include('register.urls')),
+    url(r'^', include('organizers.urls')),
+    url(r'^', include('hackers.urls')),
     url(r'^$', views.root_view, name='root'),
-    url(r'^email-test$', views.view_email, name='email-test'),
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
     url(r'^checkin/', include('checkin.urls')),
 ]

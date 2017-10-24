@@ -3,7 +3,6 @@ from logging import error
 
 import sendgrid
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import TemplateDoesNotExist, Context
 from django.template.loader import render_to_string
@@ -35,8 +34,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
 
-    current_site = Site.objects.get(id=settings.SITE_ID)
-    substitutions.update({'current_site': current_site,
+    substitutions.update({
                           'edition_name': settings.CURRENT_EDITION})
     substitutions.update(settings.STATIC_KEYS_TEMPLATES)
 
@@ -46,7 +44,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
     subject = " ".join(subject.splitlines()).strip()
     prefix = settings.EMAIL_SUBJECT_PREFIX
     if prefix is None:
-        prefix = "[{name}] ".format(name=current_site.name())
+        prefix = "[{name}] ".format(name='HackUPC')
     subject = prefix + ' ' + subject
     substitutions.update({'subject': subject})
 

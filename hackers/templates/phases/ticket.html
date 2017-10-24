@@ -1,0 +1,18 @@
+{% load utils %}
+{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+<div>
+    You are all good to go! See you soon in Barcelona!
+    <h2>QR Code</h2>
+    Please show the following QR code to our staff when you arrive for check-in.
+    <img src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl={{ application.uuid_str }}"/>
+    {% include 'include/cancel.html' %}
+
+    <h2>Important information</h2>
+
+    <h3>When to arrive</h3>
+    {{ static_values.when_to_arrive }}
+    <h3>When to leave</h3>
+    {{ static_values.when_to_leave }}<br>
+    {% include 'include/reimbursement.html' %}
+</div>
+
