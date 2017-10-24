@@ -2,15 +2,14 @@
 from django.db import IntegrityError
 from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
 
 from hackers.models import APP_PENDING
-from user.mixins import IsOrganizerMixin
-from user.models import User
 from organizers import models
 from organizers.tables import ApplicationsListTable
+from user.mixins import IsOrganizerMixin
+from user.models import User
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -75,7 +74,10 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
         application_id = kwargs.get('id', None)
         if not application_id:
             raise Http404
-        application = get_object_or_404(models.Application, pk=application_id)
+        application = models.Application.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
         return application
 
     def post(self, request, *args, **kwargs):
@@ -106,7 +108,7 @@ class VoteApplicationView(ApplicationDetailView):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
         comment_text = request.POST.get('comment_text', None)
-        application = models.Application.objects.get(id=request.POST.get('app_id'))
+        application = models.Application.objects.get(user_id=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)

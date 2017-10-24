@@ -3,7 +3,7 @@
 {% load bootstrap3 %}
 {% load utils %}
 {% load static %}
-{% block title %}{% if vote %}Vote applications{% else %}{{ user.full_name }}'s application{% endif %} - {% endblock %}
+{% block title %}{% if vote %}Vote applications{% else %}{{ app.user.nickname }}'s application{% endif %} - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
@@ -21,7 +21,7 @@
                     {# We set the title as lennyface, in out efforts to anonimize the data.. Okay, maybe no #}
                     <h4 class="text-center">{{ app.lennyface }}
                         <a target="_blank" style="color:black; text-decoration: none;" class="pull-right fa fa-link"
-                           href="{% url 'app_detail' app.id %}">
+                           href="{% url 'app_detail' app.uuid_str %}">
                             {#                            <i class=" pull-right fa fa-link" aria-hidden="true"></i>#}
                         </a>
                     </h4>
@@ -30,12 +30,12 @@
 
                     <h4 class="text-center">Personal</h4>
                     <dl class="dl-horizontal">
-                        {% include 'include/field.html' with desc='Name' value=user.full_name %}
+                        {% include 'include/field.html' with desc='Nickname' value=app.user.nickname %}
                         {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
                         {% include 'include/field.html' with desc='Country' value=app.origin_country %}
                         {% if not vote %}
                             {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
-                            {% include 'include/field.html' with desc='Email' value=user.email %}
+                            {% include 'include/field.html' with desc='Email' value=app.user.email %}
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
                         {% endif %}
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
@@ -79,7 +79,7 @@
                     {% if vote %}
                         <form action="" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                            <input type="hidden" name="app_id" value="{{ app.user_id }}"/>
                             <h4 class="text-center">Score</h4>
                             <dl class="dl-horizontal">
                                 <dt>Technical Skills</dt>

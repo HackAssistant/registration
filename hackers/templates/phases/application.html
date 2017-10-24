@@ -25,8 +25,6 @@
     {% include 'include/cancel.html' %}
     {% include 'include/reimbursement.html' %}
 {% else %}
-    When decisions are released, you'll be able to see your results on this page.
-    <p> If you have any questions or concerns, you can still reach us at {{ static_values.email|urlize }}</p>
+    Thanks for completing the application. You can still edit it.
     {% include 'include/application_form.html' %}
-
 {% endif %}
