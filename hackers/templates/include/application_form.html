@@ -7,9 +7,9 @@
     {% for fieldset in form.fieldsets %}
         <fieldset>
             <h3>{{ fieldset.name }}<br>
-            {% if fieldset.description %}
-                <small>{{ fieldset.description }}</small>
-            {% endif %}
+                {% if fieldset.description %}
+                    <small>{{ fieldset.description }}</small>
+                {% endif %}
             </h3>
             {% for field in fieldset %}
                 {% bootstrap_field field %}
@@ -50,7 +50,7 @@
             });
             var other_diet = $('#id_other_diet');
             var diet = $('#id_diet');
-            var parent = other_diet.parent('div').parent('div');
+            var parent = other_diet.parent('div');
             diet.on('change', function () {
                 if (this.value == 'Others') {
                     parent.fadeIn();
