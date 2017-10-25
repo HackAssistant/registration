@@ -3,6 +3,8 @@ from django.core.mail import EmailMultiAlternatives, EmailMessage
 from django.template import TemplateDoesNotExist, Context
 from django.template.loader import render_to_string
 
+from app import utils
+
 FROM_EMAIL = settings.HACKATHON_NAME + ' Team <' + settings.HACKATHON_CONTACT_EMAIL + '>'
 
 
@@ -12,7 +14,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
     Renders an e-mail to `email`.  `template_prefix` identifies the
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
-
+    substitutions.update(utils.get_substitutions_templates())
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
                                context=Context(substitutions))
     # remove superfluous line breaks

@@ -97,7 +97,7 @@ def is_app_closed():
     return False
 
 
-def hackathon_vars_processor(request):
+def get_substitutions_templates():
     return {'h_name': getattr(settings, 'HACKATHON_NAME', None),
             'h_contact_email': getattr(settings, 'HACKATHON_CONTACT_EMAIL', None),
             'h_domain': getattr(settings, 'HACKATHON_DOMAIN', None),
@@ -116,3 +116,7 @@ def hackathon_vars_processor(request):
             'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
 
             }
+
+
+def hackathon_vars_processor(request):
+    return get_substitutions_templates()
