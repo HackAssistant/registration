@@ -1,4 +1,3 @@
-
 # HACKATHON PERSONALIZATION
 import os
 
@@ -23,6 +22,9 @@ HACKATHON_TWITTER_ACCOUNT = 'hackupc'
 HACKATHON_FACEBOOK_PAGE = 'hackupc'
 # (OPTIONAL) Issues url. Where to redirect hackers if a 500 error occurs
 HACKATHON_ISSUES_URL = 'https://github.com/hackupc/backend/issues/new'
+# (OPTIONAL) Theme color for chrome.
+# https://developers.google.com/web/fundamentals/design-and-ux/browser-customization/#meta_theme_color_for_chrome_and_opera
+HACKATHON_THEME_COLOR = '#494949'
 
 # (OPTIONAL) Applications deadline
 HACKATHON_APP_DEADLINE = timezone.datetime(2017, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))

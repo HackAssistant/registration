@@ -112,5 +112,6 @@ def hackathon_vars_processor(request):
             'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
             'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
             'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
+            'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
 
             }
