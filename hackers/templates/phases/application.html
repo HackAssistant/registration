@@ -1,3 +1,8 @@
+<h3>Current application Status: <span
+        class="text-{% if application.is_confirmed or application.is_attended %}sucess{% elif application.is_cancelled %}danger{% else %}warning{% endif %}">{{ application.get_soft_status_display }}</span>
+</h3>
+
+
 {% if application.is_cancelled %}
     We are sorry that you can't come to {{ h_name }}. We are looking forward to welcome you next edition.
 {% elif application.answered_invite %}
@@ -39,4 +44,5 @@
             Edit your application <a href="?phase=application">here</a></p>
         {% endif %}
 {% endif %}
+
 

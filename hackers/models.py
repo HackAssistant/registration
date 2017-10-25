@@ -21,7 +21,7 @@ APP_EXPIRED = 'E'
 
 STATUS = [
     (APP_PENDING, 'Pending'),
-    (APP_REJECTED, 'Rejected'),
+    (APP_REJECTED, 'Not accepted'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
     (APP_CONFIRMED, 'Confirmed'),
@@ -134,6 +134,12 @@ class Application(models.Model):
     @property
     def uuid_str(self):
         return str(self.uuid)
+
+    def get_soft_status_display(self):
+        text = self.get_status_display()
+        if "Not" in text or 'Rejected' in text:
+            return "Pending"
+        return text
 
     def __str__(self):
         return self.user.email
