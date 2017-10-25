@@ -19,11 +19,13 @@ from app.utils import reverse
 from hackers import models, emails, forms
 
 
-class ConfirmApplication(UserPassesTestMixin, LoginRequiredMixin, View):
+class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         uuid = self.kwargs.get('id', None)
-
-        application = models.Application.objects.get(user=self.request.user)
+        try:
+            application = models.Application.objects.get(user=self.request.user)
+        except models.Application.DoesNotExist:
+            raise Http404
         if not application or uuid != application.uuid_str:
             raise Http404
         return True
@@ -49,13 +51,17 @@ class ConfirmApplication(UserPassesTestMixin, LoginRequiredMixin, View):
         return http.HttpResponseRedirect(reverse('dashboard'))
 
 
-class CancelApplication(UserPassesTestMixin, LoginRequiredMixin, TemplateView):
+class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'cancel.html'
 
     def test_func(self):
         uuid = self.kwargs.get('id', None)
 
-        application = models.Application.objects.get(user=self.request.user)
+        try:
+            application = models.Application.objects.get(user=self.request.user)
+        except models.Application.DoesNotExist:
+            raise Http404
+
         if not application or uuid != application.uuid_str:
             raise Http404
         return True
