@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import TemplateView
 
@@ -6,6 +7,7 @@ from checkin.models import CheckIn
 from checkin.tables import ApplicationsTable
 from hackers import models
 from user.mixins import IsVolunteerMixin
+from user.models import User
 
 
 class CheckInList(IsVolunteerMixin, TemplateView):
@@ -66,3 +68,15 @@ class CheckInHackerView(IsVolunteerMixin, TemplateView):
                                        'Nothing else to see here, '
                                        'you can move on :D')
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+class CheckinRankingView(IsVolunteerMixin, TemplateView):
+    template_name = 'checkin/ranking.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CheckinRankingView, self).get_context_data(**kwargs)
+        context['ranking'] = User.objects.annotate(
+            checkin_count=Count('checkin__application')) \
+            .order_by('-checkin_count').exclude(checkin_count=0).values('checkin_count',
+                                                                        'email')
+        return context

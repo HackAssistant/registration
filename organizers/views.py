@@ -31,7 +31,7 @@ def add_comment(application, user, text):
     return comment
 
 
-class RankingView(TemplateView):
+class RankingView(IsOrganizerMixin, TemplateView):
     template_name = 'ranking.html'
 
     def get_context_data(self, **kwargs):
