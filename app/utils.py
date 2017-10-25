@@ -111,5 +111,6 @@ def hackathon_vars_processor(request):
             'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),
             'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
             'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
+            'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
 
             }

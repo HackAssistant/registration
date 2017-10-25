@@ -204,36 +204,14 @@ HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Frida
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
                   'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
+# (OPTIONAL) Hackathon live page
+HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
 
 # (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
-
-# Loaded on email templates
-STATIC_KEYS_TEMPLATES = {
-    'fb': 'hackupc',
-    'twitter': 'hackupc',
-    'email': 'contact@hackupc.com',
-    'description': 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.',
-    # Static url to your logo
-    'logo_url': 'https://my.hackupc.com/static/logo.png',
-    # MailChimp subscribe URL (optional)
-    'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
-    # Live page url
-    'live_url': 'https://hackupc.com/live',
-    # Issues url, shows up on 500 error
-    'issues_url': 'https://github.com/hackupc/backend/issues/new',
-    # Regex to match possible organizers emails
-    'r_organizer_email': '^.*@hackupc\.com$',
-    'google_analytics': 'UA-69542332-2',
-    'when_to_arrive': 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, '
-                      'the opening ceremony will be at 7:00 pm.',
-    'when_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
-                     'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.',
-    'applications_open': True,
-}
 
 # Optional, if not set will skip invite.
 # Highly recommended to create a separate user account to extract the token from
