@@ -15,13 +15,13 @@ Backend for hackathon application management. Forked and adapted from [HackUPC's
 - Email sign up
 - Application submission
 - Role management: Organizer, Volunteer and Director
-- Review and vote application interface
+- Review and vote application interface for organizers
 - Sends invites and controls confirmation and cancellation application flow
 - Check-in interface with QR scanner
-- Admin dashboard
+- Admin dashboard for editing applications
 - Flexible email backend (SendGrid is the default supported backend)
 - Reimbursement management interface
-- (Optional) Slack invites on confirm and on demand in admin interface
+- (Optional) Automated slack invites on confirm and on demand in admin interface
 
 
 
