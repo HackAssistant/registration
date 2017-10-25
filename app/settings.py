@@ -14,6 +14,8 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.utils import timezone
+from hackathon_variables import *
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,10 +28,9 @@ SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not os.environ.get('PROD_MODE', None)
 
-ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
-
 INSTALLED_APPS = [
     'jet',
     'jet.dashboard',
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -133,8 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'MST'
-
 USE_I18N = True
 
 USE_L10N = True
@@ -167,59 +165,14 @@ JET_INDEX_DASHBOARD = 'app.jet_dashboard.CustomIndexDashboard'
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'account_login'
 
-# Reimbursement configuration
-DEFAULT_REIMBURSEMENT = 100
-DEFAULT_CURRENCY = '$'
-DEFAULT_EXPIRACY_DAYS = 5
-
 BOOTSTRAP3 = {
     # Don't normally want placeholders.
     'set_placeholder': False,
 }
 
-# HACKATHON CONFIG
-HACKATHON_NAME = 'HackUPC'
-# This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.'
-# Domain where application is deployed, can be set by env variable
-HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
-# Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
-HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
-# Hackathon logo url, will be used on all emails
-HACKATHON_LOGO_URL = 'https://my.hackupc.com/static/logo.png'
-# (OPTIONAL) Track visits on your website
-HACKATHON_GOOGLE_ANALYTICS = 'UA-69542332-2'
-# (OPTIONAL) Hackathon twitter user
-HACKATHON_TWITTER_ACCOUNT = 'hackupc'
-# (OPTIONAL) Hackathon Facebook page
-HACKATHON_FACEBOOK_PAGE = 'hackupc'
-# (OPTIONAL) Issues url. Where to redirect hackers if a 500 error occurs
-HACKATHON_ISSUES_URL = 'https://github.com/hackupc/backend/issues/new'
-# (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2017, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
-# (OPTIONAL) When to arrive at the hackathon
-HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
-                   'the opening ceremony will be at 7:00 pm.'
-
-# (OPTIONAL) When to arrive at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
-                  'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
-# (OPTIONAL) Hackathon live page
-HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
-
-# (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
-REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
-
-# Optional, if not set will skip invite.
-# Highly recommended to create a separate user account to extract the token from
-SLACK = {
-    'team': os.environ.get('SL_TEAM', 'hackupctest'),
-    # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
-    'token': os.environ.get('SL_TOKEN', None)
-}
 
 if os.environ.get('EMAIL_HOST_PASSWORD', None):
     # Error reporting email. Will send an email in any 500 error from server email
