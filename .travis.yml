@@ -10,4 +10,4 @@ python:
 install: "pip install -r requirements/test.txt"
 script:
   - ./manage.py test
-  - flake8 */*.py
+  - flake8

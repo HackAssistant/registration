@@ -8,6 +8,7 @@ from user.models import User
 
 REGEX_PATTERN = getattr(settings, 'REGEX_HACKATHON_ORGANIZER_EMAIL', None)
 
+
 # MAke user organizer if fits regex
 @receiver(post_save, sender=User)
 def user_organizer(sender, instance, created, *args, **kwargs):

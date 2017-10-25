@@ -12,10 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from django.utils import timezone
 from hackathon_variables import *
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -169,7 +166,6 @@ BOOTSTRAP3 = {
     # Don't normally want placeholders.
     'set_placeholder': False,
 }
-
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)

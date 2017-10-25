@@ -1,16 +1,16 @@
 # HACKATHON PERSONALIZATION
 import os
 
-from django.utils import timezone
-
 HACKATHON_NAME = 'HackCU'
 # Hackathon timezone
 TIME_ZONE = 'MST'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'HackCU is a student organization at the University of Colorado at Boulder who brings together '\
-    'people for our annual technology and design events, HackCU and Local Hack Day. ' \
-    'We are the largest hackathon in the Rocky Mountain Region, and '\
-    'our mission is to foster learning, designing, and building in order to turn student\'s ideas into a reality!'
+HACKATHON_DESCRIPTION = 'HackCU is a student organization ' \
+                        'at the University of Colorado at Boulder who brings together ' \
+                        'people for our annual technology and design events, HackCU and Local Hack Day. ' \
+                        'We are the largest hackathon in the Rocky Mountain Region, and ' \
+                        'our mission is to foster learning, designing, ' \
+                        'and building in order to turn student\'s ideas into a reality!'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails

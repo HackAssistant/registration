@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from app import emails
 from app.utils import reverse
 
@@ -7,7 +5,7 @@ from app.utils import reverse
 def create_reimbursement_email(reimb, request):
     app = reimb.application
     c = {
-        'app':app,
+        'app': app,
         'reimb': reimb,
         'confirm_url': str(reverse('confirm_app', request=request)),
         'form_url': reimb.get_form_url(),
