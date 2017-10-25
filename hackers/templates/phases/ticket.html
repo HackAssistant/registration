@@ -2,13 +2,15 @@
 
 {% if application.answered_invite %}
     <div>
-        You are all good to go! See you soon in Barcelona!
+        You are all good to go! See you soon!
         <h2>QR Code</h2>
         Please show the following QR code to our staff when you arrive for check-in.
         <img src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl={{ application.uuid_str }}"/>
         {% include 'include/cancel.html' %}
 
-        <h2>Important information</h2>
+        {% if h_arrive or h_leave %}
+            <h2>Important information</h2>
+        {% endif %}
 
         {% if h_arrive %}
             <h3>When to arrive</h3>

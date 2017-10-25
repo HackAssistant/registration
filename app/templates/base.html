@@ -22,8 +22,10 @@
     <meta property="og:title" content="My {{ h_name }}"/>
     <meta property="og:site_name" content="My {{ h_name }}"/>
     <meta property="og:description" content="{{ h_description }}"/>
-    <meta property="og:image" content="https://{{ h_domain }}{% static 'header_rrss.png' %}">
-    <meta property="og:image:secure_url" content="https://{{ h_domain }}{% static 'header_rrss.png' %}">
+    {% if h_og_image %}
+        <meta property="og:image" content="{{ h_og_image }}">
+        <meta property="og:image:secure_url" content="{{ h_og_image }}">
+    {% endif %}
     <meta property="og:url" content="https://{{ h_domain }}/">
 
     <!--TWITTER DESCRIPTION -->
@@ -34,7 +36,9 @@
     {% endif %}
     <meta name="twitter:title" content="My {{ h_name }}">
     <meta name="twitter:description" content="{{ h_description }}">
-    <meta name="twitter:image" content="https://{{ h_domain }}{% static 'header_rrss.png' %}">
+    {% if h_og_image %}
+        <meta name="twitter:image" content="{{ h_og_image }}">
+    {% endif %}
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -92,8 +92,8 @@ def application_timeleft():
 
 def is_app_closed():
     timeleft = application_timeleft()
-    if timeleft or timeleft != timezone.timedelta():
-        return application_timeleft() < timezone.timedelta()
+    if timeleft and timeleft != timezone.timedelta():
+        return timeleft < timezone.timedelta()
     return False
 
 
@@ -113,5 +113,6 @@ def hackathon_vars_processor(request):
             'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
             'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
             'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
+            'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
 
             }

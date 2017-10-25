@@ -16,9 +16,10 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
-    {#    {% bootstrap_form form|render placeholder=False %}#}
-    <button class="btn btn-success btn-block" type="submit">{% if application %}Save changes{% else %}
-        Apply{% endif %}</button>
+    {% if application.can_be_edit %}
+        <button class="btn btn-success btn-block" type="submit">{% if application %}Save changes{% else %}
+            Apply{% endif %}</button>
+    {% endif %}
 </form>
 <p>If you have any special need you want us to know about please send us an email
     to {{ h_contact_email|urlize }}</p>

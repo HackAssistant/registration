@@ -12,8 +12,6 @@ def render_mail(template_prefix, recipient_email, substitutions,
     Renders an e-mail to `email`.  `template_prefix` identifies the
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
     """
-    substitutions.update({'hackathon_name': settings.HACKATHON_NAME})
-    substitutions.update(settings.STATIC_KEYS_TEMPLATES)
 
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
                                context=Context(substitutions))
