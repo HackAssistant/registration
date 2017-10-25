@@ -1,5 +1,6 @@
 body {
-    background-color: #EFEAE4;
+    background: #2B546B linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;
+    background-size: cover;
     font-family: "Ek Mukta", Arial, sans-serif;
 }
 
@@ -7,16 +8,16 @@ nav.navbar {
     -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
-    background-color: #494949;
-    border-color: #494949;
+    /*background-color: #494949;*/
+    /*border-color: #494949;*/
 }
 
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
-        background-color: #292929;
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+    /*background-color: #292929;*/
 }
 
-nav.navbar > a, nav.navbar > p, nav.navbar  > button {
-    color: white;
+nav.navbar > a, nav.navbar > p, nav.navbar > button {
+    /*color: white;*/
 }
 
 div.panel {
@@ -41,11 +42,11 @@ div.panel {
 }
 
 .white-text {
-    color:white !important;
+    /*color: white !important;*/
 }
 
-.navbar-default .navbar-nav>li>a {
-    color: white !important;
+.navbar-default .navbar-nav > li > a {
+    /*color: white !important;*/
 }
 
 a.icon {
@@ -66,7 +67,7 @@ img.icon {
     margin-top: 5px;
 }
 
-.col-centered{
+.col-centered {
     width: 380px;
     position: absolute;
     margin: 0 0 0 -190px;

@@ -2,7 +2,8 @@
 {% load humanize %}
 {% load bootstrap3 %}
 {% load static %}
-{% block title %}{% if vote %}Vote applications{% else %}{{ app.user.nickname }}'s application{% endif %} - {% endblock %}
+{% block title %}{% if vote %}Vote applications{% else %}{{ app.user.nickname }}'s application{% endif %}
+    - {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
@@ -123,8 +124,8 @@
                     <form action="" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                          <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
-                                    required></textarea>
+                        <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
+                                  required></textarea>
                         <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
                         </button>
                     </form>
@@ -133,8 +134,15 @@
         </div>
 
     {% else %}
-        <h4 class="text-center" style="color: black;">No applications left to be voted.<br> Good job! Enjoy the
-            sun outside!</h4>
+        <div class="col-md-6 col-md-offset-3">
+
+            <div class="panel panel-success border-less">
+                <div class="panel-heading">
+                    <h4 class="text-center">No applications left to be voted.<br> Good job! Enjoy the
+                        sun outside!</h4>
+                </div>
+            </div>
+        </div>
     {% endif %}
 </div>
     {% if vote %}
