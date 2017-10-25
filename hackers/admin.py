@@ -162,7 +162,7 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
-admin.site.site_header = 'HackUPC Admin'
-admin.site.site_title = 'HackUPC Admin'
+admin.site.site_header = '%s Admin' % settings.HACKATHON_NAME
+admin.site.site_title = '%s Admin' % settings.HACKATHON_NAME
 admin.site.index_title = 'Home'
 admin.site.login = login_required(admin.site.login)
