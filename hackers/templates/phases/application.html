@@ -1,6 +1,6 @@
-<h3>Current application Status: <span
-        class="text-{% if application.is_confirmed or application.is_attended %}sucess{% elif application.is_cancelled %}danger{% else %}warning{% endif %}">{{ application.get_soft_status_display }}</span>
-</h3>
+<pre> Status: <span
+        class="text-{% if application.is_cancelled %}danger{% elif application.answered_invite %}success{% else %}warning{% endif %}">{{ application.get_soft_status_display }}</span>
+</pre>
 
 
 {% if application.is_cancelled %}
@@ -28,7 +28,7 @@
         {% include 'include/reimbursement.html' %}
     </div>
 {% elif application.is_invited or application.is_last_reminder %}
-    <p>Congrats! You have been invited to come to {{ event_name }}! Please respond this invite.</p>
+    <p>Congrats! You have been invited to come to {{ h_name }}! Please respond this invite.</p>
     {% if invite_timeleft %}
         <p>It will expire in
             {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}
