@@ -12,7 +12,8 @@ Backend for hackathon application management. Forked and adapted from [HackUPC's
 
 ## Features
 
-- Email sign up and basic data management interface for hackers
+- Email sign up
+- Application submission
 - Role management: Organizer, Volunteer and Director
 - Review and vote application interface
 - Sends invites and controls confirmation and cancellation application flow
@@ -32,7 +33,7 @@ Needs: Python 3.X, virtualenv
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
-- `pip install -r requirements.txt`. For production run: `pip install -r requirements/prod.txt`
+- `pip install -r requirements.txt`
 - `python manage.py migrate`
 - `python manage.py createsuperuser`
 
@@ -58,19 +59,25 @@ You can replace the email backend easily. See more [here](https://djangopackages
 
 ### Local environment
 
-- Add `SG_KEY` in environment (if you want to send emails)
 - `python manage.py runserver`
+- Sit back, relax and enjoy. That's it!
 
 ### Production environment
 
-See this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
+Inspired on this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
 
-#### Set up gunicorn service in Systemd
-Needs: Systemd.
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
 - Edit variables to match your environment
+- Create restart.sh from template: `cp restart.sh.template restart.sh`
+- `chmod +x restart.sh`
+- Edit variables to match your environment
 - Run `restart.sh`. This will update the database, dependecies and static files.
+- Set up Systemd (read next section)
+
+#### Set up gunicorn service in Systemd
+Needs: Systemd.
+
 - Edit this file `/etc/systemd/system/backend.service`
 - Add this content
 ```
@@ -92,14 +99,6 @@ WantedBy=multi-user.target
 - Replace `user` for your user (deploy in our server).
 - Replace `project_folder` by the name of the folder where the project is located
 - Create and enable service: `sudo systemctl start backend && sudo systemctl enable backend`
-
-#### Deploy new version
-
-Needs: Postgres environment variables set
-
-- `git pull`
-- `./restart.sh`
-- `sudo service backend restart`
 
 
 #### Set up Postgres
@@ -151,10 +150,15 @@ server {
 }
 ```
 
+#### Deploy new version
+
+- `git pull`
+- `./restart.sh`
+- `sudo service backend restart`
+
 ### Set up dummy data
 
 TODO: CREATE NEW DUMMY DATA
-
 
 ## Management
 
@@ -196,10 +200,19 @@ The email base template is in [app/templates/base_email.html](app/templates/base
 
 ### Content
 
-- Emails:
-    - Hackers (application invite, event ticket): [hackers/templates/mails/](register/templates/mails/)
-    - Reimbursement (reimbursement email): [reimbursement/templates/mails/](reimbursement/templates/mails/)
-- General information (documented in the file itself): [app/settings.py](app/settings.py)
+#### Update emails:
+
+You can update emails related to hackers (application invite, event ticket) at [hackers/templates/mails/](register/templates/mails/)
+and reimbursement (reimbursement email) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+
+#### Update hackathon variables
+Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). You can set the ones that you prefer at [app/hackathon_variable.py](app/hackathon_variable.py)
+
+#### Update application:
+   - Update model with specific fields:[hackers/models.py](hackers/models.py)
+   - Run `python manage.py makemigrations`
+   - Run `python manage.py migrate`
+   - Update form for specific labels: [hackers/forms.py](hackers/forms.py)
 
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
