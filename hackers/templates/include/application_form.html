@@ -16,7 +16,7 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
-    {% if application.can_be_edit %}
+    {% if not application or application.can_be_edit %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Save changes{% else %}
             Apply{% endif %}</button>
     {% endif %}

@@ -46,9 +46,9 @@ class ApplicationForm(BetterModelForm):
 
     under_age = forms.TypedChoiceField(
         required=True,
-        label='How old will you be by %s?' % settings.HACKATHON_NAME,
+        label='How old are you?',
         coerce=lambda x: x == 'True',
-        choices=((False, 'I\'ll be 18 or over by then'), (True, 'I\'ll be under age')),
+        choices=((False, '18 or over'), (True, 'Under 18')),
         widget=forms.RadioSelect
     )
 
@@ -87,7 +87,7 @@ class ApplicationForm(BetterModelForm):
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Where are you joing us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
+            ('Where are you joining us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
             ('Team', {'fields': ('team', 'teammates',), }),
         )
 
