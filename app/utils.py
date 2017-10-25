@@ -109,5 +109,7 @@ def hackathon_vars_processor(request):
             'h_app_timeleft': application_timeleft(),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
             'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),
+            'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
+            'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
 
             }

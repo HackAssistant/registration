@@ -102,13 +102,15 @@
             <div class="content"
                  style="box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px;">
                 <img class="max-width" width="1240" height=""
-                     src="{{ logo_url }}"
+                     src="{{ h_logo }}"
                      alt="" border="0"
                      style="display: block; color: #000; margin:0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-width: 1240px !important; width: 80% !important; height: auto !important; "/>
                 <!-- START CENTERED WHITE CONTAINER -->
                 <span class="preheader"
-                      style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">{% block preheader %}
-                    This is preheader text. Some clients will show this text as a preview.{% endblock %}</span>
+                      style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">
+                    {% block preheader %}
+                        New {{ h_name }} email for you!
+                    {% endblock %}</span>
                 {% block main %}
                     <table class="main"
                            style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;">
@@ -150,16 +152,16 @@
                                     style="font-family:sans-serif;font-size:14px;vertical-align:top;color:#999999;font-size:12px;text-align:center;">
                                     {% block footer_content %}
 
-                                        {% include 'include/email_footer_line.html' with text='You are receiving this because you applied to '|add:hackathon_name %}
-                                        {% include 'include/email_footer_line.html' with text='. If you think this is a mistake, please send us an email at '|add:email|urlize %}
+                                        {% include 'include/email_footer_line.html' with text='You are receiving this because you applied to '|add:h_name %}
+                                        {% include 'include/email_footer_line.html' with text='. If you think this is a mistake, please send us an email at '|add:h_contact_email|urlize %}
                                     {% endblock %}
                                     <table style="padding-top: 20px" cellpadding="0" cellspacing="0" border="0"
                                            align="center">
                                         <tr>
-                                            {% if fb %}
+                                            {% if h_fb %}
                                                 <td style="padding: 0px 5px;">
                                                     <a role="social-icon-link"
-                                                       href="http://www.facebook.com/{{ fb }}"
+                                                       href="http://www.facebook.com/{{ h_fb }}"
                                                        target="_blank" border="0" alt="Facebook" title="Facebook"
                                                        style="background-color: #3B579D; border-radius: 0px; -webkit-border-radius:0px; -moz-border-radius:0px; -ms-border-radius:0px; -o-border-radius:0px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
                                                         <img role="social-icon" alt="Facebook" title="Facebook"
@@ -171,9 +173,9 @@
                                                     </a>
                                                 </td>
                                             {% endif %}
-                                            {% if twitter %}
+                                            {% if h_tw %}
                                                 <td style="padding: 0px 5px;"><a role="social-icon-link"
-                                                                                 href="http://www.twitter.com/{{ twitter }}"
+                                                                                 href="http://www.twitter.com/{{ h_tw }}"
                                                                                  target="_blank" border="0"
                                                                                  alt="Twitter"
                                                                                  title="Twitter"
