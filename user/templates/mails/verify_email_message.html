@@ -1,0 +1,14 @@
+{% extends 'base_email.html' %}
+{% block preheader %}Verify your email address{% endblock %}
+
+{% block content %}
+    {% include 'include/email_line_start.html' %}
+    Hey {{ user.nickname }},
+    {% include 'include/email_line_end.html' %}
+    {% include 'include/email_line.html' with text="You have 5 days to verify your email address for your account at "|add:h_name %}
+    {% include 'include/email_button.html' with text='Verify' url=activate_url %}
+
+    {% include 'include/email_line.html' with text="Best," %}
+    {% include 'include/email_line.html' with text="" %}
+    {% include 'include/email_line.html' with text=h_name|add:" Team" %}
+{% endblock %}

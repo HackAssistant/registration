@@ -171,6 +171,8 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
     def get_phases(self):
         user = self.request.user
         phases = [
+            create_phase('verify', "Email verification",
+                         lambda x: x.email_verified, user),
             create_phase('application', "Application",
                          lambda x: x.application, user),
 

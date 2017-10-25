@@ -1,9 +1,13 @@
 from django.contrib import auth, messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
 from app.utils import reverse
 from user import forms, models
+from user.models import User
+from user.tokens import account_activation_token
 
 
 def login(request):
@@ -53,3 +57,25 @@ def logout(request):
     auth.logout(request)
     messages.success(request, 'Successfully logged out!')
     return HttpResponseRedirect(reverse('account_login'))
+
+
+def activate(request, uid, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uid))
+        user = User.objects.get(pk=uid)
+        if request.user != user:
+            messages.warning(request, "User email can be verified")
+            return redirect('root')
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        messages.warning(request, "User email can be verified")
+        return redirect('root')
+
+    if account_activation_token.check_token(user, token):
+        messages.success(request, "Email verified!")
+
+        user.email_verified = True
+        user.save()
+        auth.login(request, user)
+    else:
+        messages.error(request, "This email verification url has expired")
+    return redirect('root')
