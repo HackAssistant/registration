@@ -1,5 +1,3 @@
-{% load utils %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
 {% if application.scholarship %}
     <h3>Travel reimbursement</h3>
@@ -9,7 +7,7 @@
     {% elif reimbursement.is_expired %}
         Unfortunately your travel reimbursement has expired. We sent your travel reimbursement
         {{ reimbursement.status_update_date|timesince }} ago but you haven't uploaded a valid ticket. Send us an email to
-        {{ static_values.email|urlize }} if you
+        {{ h_contact_email|urlize}} if you
         think this is an error.
         {% if reimbursement.change_reason %}
             <p><b>Reason</b>: {{ reimbursement.change_reason }}</p>
