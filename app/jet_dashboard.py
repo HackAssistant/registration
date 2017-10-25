@@ -13,28 +13,6 @@ class CustomIndexDashboard(Dashboard):
         self.available_children.append(modules.RecentActions)
         self.available_children.append(dashboard_modules.BestReviewers)
         self.available_children.append(dashboard_modules.AppsStats)
-        self.children.append(modules.LinkList(
-            _('HackUPC URLs'),
-            children=[
-                {
-                    'title': _('HackUPC Landing'),
-                    'url': 'https://hackupc.com/',
-                    'external': True,
-                },
-                {
-                    'title': _('Sendgrid'),
-                    'url': 'https://sendgrid.com',
-                    'external': True,
-                },
-                {
-                    'title': _('HackUPC Live'),
-                    'url': 'https://hackupc.com/live',
-                    'external': True,
-                },
-            ],
-            column=2,
-            order=0
-        ))
         self.children.append(modules.ModelList(
             _('Models'),
             column=1,
