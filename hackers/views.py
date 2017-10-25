@@ -179,10 +179,11 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         # Try/Except caused by Hacker not existing
         try:
             current_app = self.get_current_app(user)
-            phases.append(
-                create_phase('ticket', "Ticket", lambda x: x.application.answered_invite(),
-                             self.request.user)
-            )
+            if not current_app.is_cancelled() and not current_app.is_expired():
+                phases.append(
+                    create_phase('ticket', "Ticket", lambda x: x.application.answered_invite(),
+                                 self.request.user)
+                )
 
             if current_app.status == models.APP_ATTENDED:
                 phases.append(
