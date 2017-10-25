@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
@@ -155,7 +156,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
                 deadline = last_updated + timedelta(days=5)
             else:
                 deadline = last_updated + timedelta(days=1)
-            context.update({'invite_deadline': deadline})
+            context.update({'invite_timeleft': deadline - timezone.now()})
         except:
             pass
 
@@ -173,20 +174,15 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         phases = [
             create_phase('verify', "Email verification",
                          lambda x: x.email_verified, user),
-            create_phase('application', "Application",
+            create_phase('general', "General information",
                          lambda x: x.application, user),
-
+            create_phase('application', "Application status", lambda x: x.application.answered_invite(),
+                         self.request.user)
         ]
 
         # Try/Except caused by Hacker not existing
         try:
             current_app = self.get_current_app(user)
-            if not current_app.is_cancelled() and not current_app.is_expired():
-                phases.append(
-                    create_phase('ticket', "Ticket", lambda x: x.application.answered_invite(),
-                                 self.request.user)
-                )
-
             if current_app.status == models.APP_ATTENDED:
                 phases.append(
                     create_phase('live', "Live", lambda x: True,

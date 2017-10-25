@@ -1,38 +1,42 @@
-{% load bootstrap3 %}
+{% if application.is_cancelled %}
+    We are sorry that you can't come to {{ h_name }}. We are looking forward to welcome you next edition.
+{% elif application.answered_invite %}
+    <div>
+        You are all good to go! See you soon!
+        <h2>QR Code</h2>
+        Please show the following QR code to our staff when you arrive for check-in.
+        <img src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl={{ application.uuid_str }}"/>
+        {% include 'include/cancel.html' %}
 
-{% if not application and h_app_closed %}
-    {% include 'include/applications_closed.html' %}
+        {% if h_arrive or h_leave %}
+            <h2>Important information</h2>
+        {% endif %}
 
-{% elif not application %}
-    {% if h_app_timeleft %}
-        <h4>Time until applications close: {% include 'include/deadline_countdown.html' %}</h4>
-    {% endif %}
-    <p>You will still be able to edit until your application has been reviewed.</p>
-    {% include 'include/application_form.html' %}
+        {% if h_arrive %}
+            <h3>When to arrive</h3>
+            {{ h_arrive }}
+        {% endif %}
+        {% if h_leave %}
+            <h3>When to leave</h3>
+            {{ h_leave }}<br>
+        {% endif %}
+        {% include 'include/reimbursement.html' %}
+    </div>
 {% elif application.is_invited or application.is_last_reminder %}
-    <p>Congrats! You have been invited to come to {{ event_name }}! Please respond this invite.
-        {% if invite_deadline %}It will expire in <b>{{ invite_deadline|timeuntil }}</b>{% endif %}
-    </p>
+    <p>Congrats! You have been invited to come to {{ event_name }}! Please respond this invite.</p>
+    {% if invite_timeleft %}
+        <p>It will expire in
+            {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}
+        </p>
+    {% endif %}
     <a href="{% url 'confirm_app' application.uuid_str %}" class="btn btn-block btn-success">Confirm</a>
     <a href="{% url 'cancel_app' application.uuid_str %}" class="btn btn-block btn-danger">Cancel</a>
     {% include 'include/reimbursement.html' %}
-{% elif application.is_expired %}
-    We are sorry, your invite expired. If you think this is an error or you still want to come, please message us at
-    {{ h_contact_email|urlize }}. We will decide case-per-case what is the result.
-{% elif application.is_cancelled %}
-    We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
-{% elif application.answered_invite %}
-    <p>Thanks for answering our invite! See you soon at {{ h_name }}!</p>
-    {% include 'include/cancel.html' %}
-    {% include 'include/reimbursement.html' %}
 {% else %}
-    Thanks for completing the application.
-
-    {% if application.can_be_edit %}
-        You can still edit it.
-
-    {% else %}
-        You can't edit your application any more as it has been reviewed already once or the deadline is over.
-    {% endif %}
-    {% include 'include/application_form.html' %}
+    <p> When decisions are released, you'll be able to see your results on this page.<br>
+        If you have any questions or concerns, you can still reach us at {{ h_contact_email }}<br>
+        {% if application.can_be_edit %}
+            Edit your application <a href="?phase=application">here</a></p>
+        {% endif %}
 {% endif %}
+
