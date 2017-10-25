@@ -1,4 +1,4 @@
-Congratulations {{ name }}, you have been officially accepted to {{ hackathon_name }}️!
+Congratulations {{ name }}, you have been officially accepted to {{ h_name }}️!
 
 Respond to this invitation by clicking on the link below.
 Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another hacker on the waitlist.
@@ -12,7 +12,7 @@ If you have been awarded with reimbursement you will get it in a separate email.
 If you cannot make it, please let us know by clicking on this link. We want as many people as possible to experience the
 hackathon!
 
-{{ cancel_url }}
+{{ h_name }}
 
 See you soon!
 

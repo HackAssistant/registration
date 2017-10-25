@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
 
+from app import utils
 from user.models import User
 
 APP_PENDING = 'P'
@@ -58,8 +59,8 @@ DIETS = [
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(size, size) for size in ('2016 2017 2018 2019 2020 2021 2022'.split(' '))]
-DEFAULT_YEAR = '2017'
+YEARS = [(int(size), size) for size in ('2016 2017 2018 2019 2020 2021 2022'.split(' '))]
+DEFAULT_YEAR = 2017
 
 
 class Application(models.Model):
@@ -92,7 +93,7 @@ class Application(models.Model):
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
     # Explain a little bit what projects have you done lately
-    projects = models.TextField(max_length=500)
+    projects = models.TextField(max_length=500, blank=True, null=True)
 
     # Reimbursement
     scholarship = models.BooleanField()
@@ -217,7 +218,7 @@ class Application(models.Model):
         return self.status == APP_PENDING
 
     def can_be_edit(self):
-        return self.status == APP_PENDING and not self.vote_set.exists()
+        return self.status == APP_PENDING and not self.vote_set.exists() and not utils.is_app_closed()
 
     def is_invited(self):
         return self.status == APP_INVITED

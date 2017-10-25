@@ -1,0 +1,28 @@
+{% if h_app_timeleft %}
+    <span id="secondsLeftDeadline"></span>
+    <script>
+
+        function timeRemaining(seconds) {
+            if (seconds < 0) seconds = 0;
+            const orig = seconds;
+            const days = Math.floor(seconds / (3600 * 24));
+            seconds %= (3600 * 24);
+            const hours = Math.floor(seconds / 3600);
+            seconds %= 3600;
+            const minutes = Math.floor(seconds / 60);
+            seconds %= 60;
+            return ""
+                + days + (days == 1 ? " day, " : " days, ")
+                + hours + (hours == 1 ? " hour " : " hours " )
+                + minutes + (minutes == 1 ? " minute " : " minutes ")
+                + seconds + (seconds == 1 ? " second" : " seconds")
+        }
+        var secondsTillHack = {{h_app_timeleft.seconds}} + {{h_app_timeleft.days}} * 3600 * 24;
+        document.getElementById("secondsLeftDeadline").textContent = timeRemaining(secondsTillHack);
+        setInterval(function () {
+            secondsTillHack--;
+            document.getElementById("secondsLeftDeadline").textContent =
+                timeRemaining(secondsTillHack);
+        }, 1000);
+    </script>
+{% endif %}

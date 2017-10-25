@@ -1,1 +1,1 @@
-Invite for {{ hackathon_name }} expires in 24h
+Invite for {{ h_name }} expires in 24h

@@ -1,6 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect, Http404
 from django.views.generic import TemplateView
 
 from checkin.models import CheckIn
@@ -42,7 +41,9 @@ class CheckInHackerView(IsVolunteerMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
-        app = get_object_or_404(models.Application, pk=appid)
+        app = models.Application.objects.filter(uuid=appid).first()
+        if not app:
+            raise Http404
         context.update({
             'app': app,
             'checkedin': app.status == models.APP_ATTENDED
@@ -55,13 +56,11 @@ class CheckInHackerView(IsVolunteerMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         appid = request.POST.get('app_id')
-        lopd_signed = request.POST.get('checkin') == 'checkin_lopd'
-        app = models.Application.objects.get(id=appid)
+        app = models.Application.objects.filter(uuid=appid).first()
         app.check_in()
         ci = CheckIn()
         ci.user = request.user
         ci.application = app
-        ci.signed_lopd = lopd_signed
         ci.save()
         messages.success(self.request, 'Hacker checked-in! Good job! '
                                        'Nothing else to see here, '

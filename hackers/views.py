@@ -192,15 +192,22 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         return models.Application.objects.get(user=user)
 
     def post(self, request, *args, **kwargs):
+        new_application = True
         try:
             form = forms.ApplicationForm(request.POST, request.FILES, instance=request.user.application)
+            new_application = False
         except:
             form = forms.ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            hacker = form.save(commit=False)
-            hacker.user = request.user
-            hacker.save()
-            messages.success(request, 'Application received!')
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+            if new_application:
+                messages.success(request,
+                                 'We have now received your application. '
+                                 'Processing your application will take some time, so please be patient.')
+            else:
+                messages.info(request, 'Application changes saved successfully!')
 
             return HttpResponseRedirect(reverse('root'))
         else:

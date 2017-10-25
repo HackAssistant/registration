@@ -1,1 +1,1 @@
-Ticket to {{ hackathon_name }}
+Ticket to {{ h_name }}

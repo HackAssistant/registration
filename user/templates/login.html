@@ -12,8 +12,10 @@
         {% csrf_token %}
         {% bootstrap_form form layout="horizontal" %}
         <button class="btn btn-primary btn-block" type="submit">{% trans "Sign In" %}</button>
-        <a class="btn btn-default btn-block"
-           href="{% url 'account_signup' %}">{% trans "...or sign up if you don't have an account" %}</a>
+        {% if not h_app_closed %}
+            <a class="btn btn-default btn-block"
+               href="{% url 'account_signup' %}">{% trans "...or sign up if you don't have an account" %}</a>
+        {% endif %}
 
     </form>
 

@@ -6,9 +6,7 @@
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
-{% load utils %}
 {% block body %}
-    {% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
     <div class="confirm-content">
         <div class="col-md-12">
@@ -31,7 +29,7 @@
 
                 </div>
                 <div class="panel-footer">
-                    Errors? Help? Reach us {{ static_values.email|urlize }}
+                    Errors? Help? Reach us {{ h_contact_email|urlize }}
                 </div>
             </div>
         </div>

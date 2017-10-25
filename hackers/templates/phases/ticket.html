@@ -1,5 +1,4 @@
-{% load utils %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
+
 
 {% if application.answered_invite %}
     <div>
@@ -11,18 +10,21 @@
 
         <h2>Important information</h2>
 
-        <h3>When to arrive</h3>
-        {{ static_values.when_to_arrive }}
-        <h3>When to leave</h3>
-        {{ static_values.when_to_leave }}<br>
+        {% if h_arrive %}
+            <h3>When to arrive</h3>
+            {{ h_arrive }}
+        {% endif %}
+        {% if h_leave %}
+            <h3>When to leave</h3>
+            {{ h_leave }}<br>
+        {% endif %}
         {% include 'include/reimbursement.html' %}
     </div>
 {% elif application.is_cancelled %}
-    We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
-    {% include 'include/subscribe_form.html' %}
+    We are sorry that you can't come to {{ h_name }}. We are looking forward to welcome you next edition.
 {% else %}
     <p> When decisions are released, you'll be able to see your results on this page.<br>
-        If you have any questions or concerns, you can still reach us at {{ static_values.email|urlize }}<br>
+        If you have any questions or concerns, you can still reach us at {{ h_contact_email }}<br>
         {% if application.can_be_edit %}
             Edit your application <a href="?phase=application">here</a></p>
         {% endif %}

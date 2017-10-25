@@ -1,12 +1,13 @@
-{% load utils %}
 {% load bootstrap3 %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 
-{% if not application and not static_values.applications_open %}
+{% if not application and h_app_closed %}
     {% include 'include/applications_closed.html' %}
 
 {% elif not application %}
-    You will still be able to edit until your application has been reviewed.
+    {% if h_app_timeleft %}
+        <h4>Time until applications close: {% include 'include/deadline_countdown.html' %}</h4>
+    {% endif %}
+    <p>You will still be able to edit until your application has been reviewed.</p>
     {% include 'include/application_form.html' %}
 {% elif application.is_invited or application.is_last_reminder %}
     <p>Congrats! You have been invited to come to {{ event_name }}! Please respond this invite.
@@ -17,10 +18,9 @@
     {% include 'include/reimbursement.html' %}
 {% elif application.is_expired %}
     We are sorry, your invite expired. If you think this is an error or you still want to come, please message us at
-    {{ static_values.email|urlize }}. We will decide case-per-case what is the result.
+    {{ h_contact_email|urlize }}. We will decide case-per-case what is the result.
 {% elif application.is_cancelled %}
     We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
-    {% include 'include/subscribe_form.html' %}
 {% elif application.answered_invite %}
     <p>Thanks for answering our invite! See you soon at HackUPC!</p>
     {% include 'include/cancel.html' %}
@@ -30,8 +30,9 @@
 
     {% if application.can_be_edit %}
         You can still edit it.
-        {% include 'include/application_form.html' %}
+
     {% else %}
-        You can't edit your application any more as it has been reviewed already once.
+        You can't edit your application any more as it has been reviewed already once or the deadline is over.
     {% endif %}
+    {% include 'include/application_form.html' %}
 {% endif %}

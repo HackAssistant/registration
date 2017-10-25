@@ -1,6 +1,4 @@
-{% load utils %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 {% include 'include/email_line_start.html' %}
-<b>When to arrive</b> {{ static_values.when_to_arrive }}<br><br>
-<b>When to leave</b> {{ static_values.when_to_leave }}
+{% if h_arrive %}<b>When to arrive</b> {{ h_arrive }}<br><br>{% endif %}
+{% if h_leave %}<b>When to leave</b> {{ h_leave }}{% endif %}
 {% include 'include/email_line_end.html' %}

@@ -1,9 +1,9 @@
 {% extends 'base_email.html' %}
-{% block preheader %}Confirmation of attendance for {{ hackathon_name }}{% endblock %}
+{% block preheader %}Confirmation of attendance for {{ h_name }}{% endblock %}
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
-    Thank you {{ name }} for confirming your attendance to  {{ hackathon_name }}!<br><br>
+    Thank you {{ name }} for confirming your attendance to  {{ h_name }}!<br><br>
     We are really excited to host this event and have you with us.
     <br><br>
     In order to make registration go smoother, please show us this QR code during the process so we can easily find you:

@@ -60,6 +60,11 @@ class ApplicationForm(BetterModelForm):
         widget=forms.RadioSelect
     )
 
+    def __getitem__(self, name):
+        item = super(ApplicationForm, self).__getitem__(name)
+        item.field.disabled = not self.instance.can_be_edit()
+        return item
+
     class Meta:
         model = models.Application
 

@@ -12,19 +12,16 @@
                 {% endif %}
             </h3>
             {% for field in fieldset %}
-                <div class="{{ field.class }}">
-                    {% bootstrap_field field %}
-                </div>
+                {% bootstrap_field field %}
             {% endfor %}
         </fieldset>
     {% endfor %}
     {#    {% bootstrap_form form|render placeholder=False %}#}
-    <button class="btn btn-primary btn-block" type="submit">Apply</button>
+    <button class="btn btn-success btn-block" type="submit">{% if application %}Save changes{% else %}
+        Apply{% endif %}</button>
 </form>
-{% load utils %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 <p>If you have any special need you want us to know about please send us an email
-    to {{ static_values.email|urlize }}</p>
+    to {{ h_contact_email|urlize }}</p>
 
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 <script src="{% static 'js/form_modifiers.js' %}"></script>

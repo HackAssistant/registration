@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% load bootstrap3 %}
-{% load utils %}
 {% load static %}
 {% block title %}{% if vote %}Vote applications{% else %}{{ app.user.nickname }}'s application{% endif %} - {% endblock %}
 {% block head %}
@@ -39,7 +38,7 @@
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
                         {% endif %}
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
-                        {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30|url_blank %}
+                        {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30 %}
                     </dl>
                     <h4 class="text-center">Academic</h4>
                     <dl class="dl-horizontal">
@@ -50,8 +49,8 @@
                     <h4 class="text-center">Background</h4>
                     <dl class="dl-horizontal">
                         {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
-                        {% include 'include/field.html' with desc='Looking forward?' value=app.description|safe|urlize|url_blank %}
-                        {% include 'include/field.html' with desc='Projects?' value=app.projects|safe|urlize|url_blank %}
+                        {% include 'include/field.html' with desc='Looking forward?' value=app.description|safe|urlize %}
+                        {% include 'include/field.html' with desc='Projects?' value=app.projects|safe|urlize %}
                         {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                         {% include 'include/field.html' with desc='Excited about' value=app.excited %}
                     </dl>

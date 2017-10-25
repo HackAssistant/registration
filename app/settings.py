@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.utils import timezone
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -77,6 +79,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
+                'app.utils.hackathon_vars_processor'
 
             ],
         },
@@ -174,10 +177,28 @@ BOOTSTRAP3 = {
     'set_placeholder': False,
 }
 
-# Hackathon specific configuration
+# HACKATHON CONFIG
 HACKATHON_NAME = 'HackUPC'
+# This description will be used on the html and sharing meta tags
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.'
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
 HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
+# (OPTIONAL) Track visits on your website
+HACKATHON_GOOGLE_ANALYTICS = 'UA-69542332-2'
+# (OPTIONAL) Hackathon twitter user
+HACKATHON_TWITTER_ACCOUNT = 'hackupc'
+# (OPTIONAL) Issues url. Where to redirect hackers if a 500 error occurs
+HACKATHON_ISSUES_URL = 'https://github.com/hackupc/backend/issues/new'
+# (OPTIONAL) Applications deadline
+HACKATHON_APP_DEADLINE = timezone.datetime(2017, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+# (OPTIONAL) When to arrive at the hackathon
+HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
+                   'the opening ceremony will be at 7:00 pm.'
+
+# (OPTIONAL) When to arrive at the hackathon
+HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
+                  'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
+
 # Regex to automatically match organizers emails
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 
