@@ -1,7 +1,8 @@
 body {
     background: #2B546B linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;
     background-size: cover;
-    font-family: "Ek Mukta", Arial, sans-serif;
+    font-family: Roboto, 'Helvetica Neue', Helvetica, sans-serif sans-serif;
+    font-size: 16dppx;
 }
 
 nav.navbar {
