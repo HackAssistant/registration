@@ -4,12 +4,12 @@ from django.db import models
 # Create your models here.
 from django.utils.datetime_safe import datetime
 
-from hackers.models import APP_CONFIRMED, APP_ATTENDED
+from applications.models import APP_CONFIRMED, APP_ATTENDED
 from user.models import User
 
 
 class CheckIn(models.Model):
-    application = models.OneToOneField('hackers.Application')
+    application = models.OneToOneField('applications.Application')
     user = models.ForeignKey(User)
     update_time = models.DateTimeField()
 

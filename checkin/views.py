@@ -7,7 +7,7 @@ from django_tables2 import SingleTableMixin
 
 from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter
-from hackers import models
+from applications import models
 from user.mixins import IsVolunteerMixin
 from user.models import User
 

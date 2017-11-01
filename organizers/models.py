@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
 
-from hackers.models import Application
+from applications.models import Application
 from user.models import User
 
 TECH_WEIGHT = 0.2

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from hackers.models import Application
+from applications.models import Application
 from reimbursement.models import Reimbursement
 
 

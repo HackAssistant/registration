@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from hackers import views
+from applications import views
 
 urlpatterns = [
     url(r'applications/(?P<id>[\w-]+)/confirm$', views.ConfirmApplication.as_view(),

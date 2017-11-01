@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import RequestConfig, SingleTableMixin
 
-from hackers.models import APP_PENDING
+from applications.models import APP_PENDING
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter
 from user.mixins import IsOrganizerMixin

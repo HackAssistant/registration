@@ -11,7 +11,7 @@ from django.utils.timesince import timesince
 
 from app import slack
 from app.slack import SlackInvitationException
-from hackers import models, emails
+from applications import models, emails
 
 EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
 

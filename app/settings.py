@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'checkin',
     'reimbursement',
     'user',
-    'hackers'
+    'applications'
 ]
 
 AUTHENTICATION_BACKENDS = (

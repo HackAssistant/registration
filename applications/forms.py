@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 from form_utils.forms import BetterModelForm
 
-from hackers import models
+from applications import models
 
 
 class ApplicationForm(BetterModelForm):

@@ -1,7 +1,7 @@
 import django_filters
 import django_tables2 as tables
 
-from hackers.models import Application
+from applications.models import Application
 
 
 class ApplicationCheckinFilter(django_filters.FilterSet):

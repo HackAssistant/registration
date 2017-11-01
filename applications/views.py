@@ -17,7 +17,7 @@ from django.views.generic import TemplateView
 from app import slack
 from app.slack import SlackInvitationException
 from app.utils import reverse
-from hackers import models, emails, forms
+from applications import models, emails, forms
 
 
 class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):

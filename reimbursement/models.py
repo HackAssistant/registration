@@ -34,7 +34,7 @@ RE_STATUS = [
 
 
 class Reimbursement(models.Model):
-    application = models.OneToOneField('hackers.Application', primary_key=True)
+    application = models.OneToOneField('applications.Application', primary_key=True)
     status = models.CharField(max_length=2, choices=RE_STATUS,
                               default=RE_DRAFT)
 
