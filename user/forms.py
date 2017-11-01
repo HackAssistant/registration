@@ -58,8 +58,8 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(LoginForm):
-    password2 = forms.CharField(widget=forms.PasswordInput, label='Password confirmation', max_length=100)
-    nickname = forms.CharField(label='Nickname', max_length=225, help_text='How do you want us to call you?')
+    password2 = forms.CharField(widget=forms.PasswordInput, label='Repeat password', max_length=100)
+    nickname = forms.CharField(label='Preferred name', max_length=225, help_text='How do you want us to call you?')
 
     def clean_password2(self):
         # Check that the two password entries match
