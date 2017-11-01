@@ -1,24 +1,30 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% load table_tags %}
+{% load django_tables2 %}
+{% load bootstrap3 %}
 {% load static %}
-{% block title %}Applications list - {% endblock %}
+{% block head_title %}Applications list {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-12">
             <div style="text-align: center;">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="text-center">Applications</h4>
                     </div>
                     <div class="panel-body">
-                        <div class="table-responsive">
-                            {% render_table app_list %}
-                        </div>
+                        {% if filter %}
+                            <form action="" method="get" class="form form-inline text-left filter">
+                                {% bootstrap_form filter.form %}
+                                {% bootstrap_button 'Search' %}
+                            </form>
+                            <hr/>
+                        {% endif %}
+                        {% render_table table 'django_tables2/bootstrap.html' %}
                     </div>
                 </div>
             </div>

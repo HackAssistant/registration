@@ -1,8 +1,8 @@
 body {
     background: #2B546B linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;
     background-size: cover;
-    font-family: Lato, 'Helvetica Neue', Helvetica, sans-serif sans-serif;
-    font-size: 16dppx;
+    font-family: 'Lato', sans-serif;
+    font-size: 160%;
 }
 
 nav.navbar {
@@ -73,4 +73,26 @@ img.icon {
     position: absolute;
     margin: 0 0 0 -190px;
     left: 50%;
+}
+
+.orderable {
+    background: url(../img/sort_both.png) no-repeat center right;
+}
+.orderable > a {
+    color: #333;
+    text-decoration: none;
+
+}
+
+.orderable.desc{
+    background: url(../img/sort_desc.png) no-repeat center right;
+}
+
+.orderable.asc{
+    background: url(../img/sort_asc.png) no-repeat center right;
+}
+
+.filter > div > label {
+    padding-right: 5px;
+    padding-left: 5px;
 }

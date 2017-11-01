@@ -39,7 +39,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     nickname = models.CharField(
-        verbose_name='Nickname',
+        verbose_name='Preferred name',
         max_length=255,
     )
     email_verified = models.BooleanField(default=False)

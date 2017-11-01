@@ -26,3 +26,4 @@ six==1.10.0
 uritemplate==3.0.0
 uuid==1.30
 pytz==2017.2
+django-tables2==1.14.2

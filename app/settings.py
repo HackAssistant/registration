@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'form_utils',
     'bootstrap3',
+    'django_tables2',
     'organizers',
     'checkin',
     'reimbursement',

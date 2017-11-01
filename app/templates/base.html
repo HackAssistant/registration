@@ -19,8 +19,8 @@
 
 
     <!--FACEBOOK DESCRIPTION -->
-    <meta property="og:title" content="My {{ h_name }}"/>
-    <meta property="og:site_name" content="My {{ h_name }}"/>
+    <meta property="og:title" content="{{ h_app_name }}"/>
+    <meta property="og:site_name" content="{{ h_app_name }}"/>
     <meta property="og:description" content="{{ h_description }}"/>
     {% if h_og_image %}
         <meta property="og:image" content="{{ h_og_image }}">
@@ -34,7 +34,7 @@
         <meta name="twitter:site" content="@{{ h_tw }}">
         <meta name="twitter:creator" content="@{{ h_tw }}">
     {% endif %}
-    <meta name="twitter:title" content="My {{ h_name }}">
+    <meta name="twitter:title" content="{{ h_app_name }}">
     <meta name="twitter:description" content="{{ h_description }}">
     {% if h_og_image %}
         <meta name="twitter:image" content="{{ h_og_image }}">
@@ -46,7 +46,7 @@
     {% block head %}
     {% endblock %}
 
-    <title>{% block title %}{% block head_title %}{% endblock %} - {% endblock %}My {{ h_name }}</title>
+    <title>{% block title %}{% block head_title %}{% endblock %} | {% endblock %}{{ h_app_name }}</title>
 </head>
 
 
@@ -62,7 +62,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand white-text" href="/">My {{ h_name }}</a>
+                <a class="navbar-brand white-text" href="/">{{ h_app_name }}</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 

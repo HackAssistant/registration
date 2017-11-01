@@ -99,6 +99,7 @@ def is_app_closed():
 
 def get_substitutions_templates():
     return {'h_name': getattr(settings, 'HACKATHON_NAME', None),
+            'h_app_name': getattr(settings, 'HACKATHON_APPLICATION_NAME', None),
             'h_contact_email': getattr(settings, 'HACKATHON_CONTACT_EMAIL', None),
             'h_domain': getattr(settings, 'HACKATHON_DOMAIN', None),
             'h_description': getattr(settings, 'HACKATHON_DESCRIPTION', None),

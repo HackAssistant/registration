@@ -4,6 +4,8 @@ import os
 from django.utils import timezone
 
 HACKATHON_NAME = 'HackUPC'
+# What's the name for the application
+HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'MST'
 # This description will be used on the html and sharing meta tags

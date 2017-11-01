@@ -1,21 +1,22 @@
-from table import Table
-from table.columns import Column
-from table.columns import LinkColumn, Link
-from table.utils import A
+import django_filters
+import django_tables2 as tables
 
 from hackers.models import Application
 
 
-class ApplicationsListTable(Table):
-    nickname = Column(field='user.nickname', header='Nickname', sortable=True, )
-    email = Column(field='user.email', header='Email', sortable=True, )
-    vote_avg = Column(field='vote_avg', header='Current valoration', searchable=False, visible=True)
-    status = Column(field='get_status_display', header='Status', searchable=False)
-    detail_link = LinkColumn(field='id', header='Detail', sortable=False, searchable=False,
-                             links=[Link(text=u'Detail', viewname='app_detail', kwargs={'id': A('uuid_str')}), ])
+class ApplicationFilter(django_filters.FilterSet):
+    user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
+    user__nickname = django_filters.CharFilter('user__nickname', label='Preferred name', lookup_expr='icontains')
 
     class Meta:
-        sort = [(2, 'desc'), ]
         model = Application
-        search = True
-        zero_records = 'No applications'
+        fields = ['user__email', 'user__nickname', 'status']
+
+
+class ApplicationsListTable(tables.Table):
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.nickname', 'vote_avg', 'user.email', 'status']
+        empty_text = 'No applications available'

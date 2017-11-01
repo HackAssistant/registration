@@ -2,6 +2,8 @@
 import os
 
 HACKATHON_NAME = 'HackCU'
+# What's the name for the application
+HACKATHON_APPLICATION_NAME = 'HackCU registration'
 # Hackathon timezone
 TIME_ZONE = 'MST'
 # This description will be used on the html and sharing meta tags

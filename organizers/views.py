@@ -4,10 +4,12 @@ from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django_filters.views import FilterView
+from django_tables2 import RequestConfig, SingleTableMixin
 
 from hackers.models import APP_PENDING
 from organizers import models
-from organizers.tables import ApplicationsListTable
+from organizers.tables import ApplicationsListTable, ApplicationFilter
 from user.mixins import IsOrganizerMixin
 from user.models import User
 
@@ -43,17 +45,25 @@ class RankingView(IsOrganizerMixin, TemplateView):
         return context
 
 
-class ApplicationsListView(IsOrganizerMixin, TemplateView):
+class ApplicationsListView(IsOrganizerMixin, SingleTableMixin,FilterView):
     template_name = 'applications_list.html'
+    table_class = ApplicationsListTable
+    filterset_class = ApplicationFilter
 
-    def get_context_data(self, **kwargs):
-        context = super(ApplicationsListView, self).get_context_data(**kwargs)
-        apps = models.Application.annotate_vote(models.Application.objects.all())
-        table = ApplicationsListTable(apps)
-        context.update({
-            'app_list': table,
-        })
-        return context
+    def get_queryset(self):
+        return models.Application.annotate_vote(models.Application.objects.all())
+
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(ApplicationsListView, self).get_context_data(**kwargs)
+    #     apps = models.Application.annotate_vote(models.Application.objects.all())
+    #     table = ApplicationsListTable(apps)
+    #     RequestConfig(self.request).configure(table)
+    #
+    #     context.update({
+    #         'app_list': table,
+    #     })
+    #     return context
 
 
 class ApplicationDetailView(IsOrganizerMixin, TemplateView):
