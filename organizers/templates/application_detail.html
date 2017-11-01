@@ -37,6 +37,7 @@
                             {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                             {% include 'include/field.html' with desc='Email' value=app.user.email %}
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
+                            {% include 'include/field.html' with desc='Money assigned' value=app.reimbursment.money_assigned|default:'0' %}
                         {% endif %}
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                         {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30 %}
@@ -75,8 +76,9 @@
                     </p>
 
                 </div>
-                <div class="panel-footer">
-                    {% if vote %}
+                {% if vote %}
+                    <div class="panel-footer">
+
                         <form action="" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="app_id" value="{{ app.user_id }}"/>
@@ -92,12 +94,9 @@
                                 application
                             </button>
                         </form>
-                    {% else %}
-                        <a class="btn btn-default btn-block" href="javascript:history.back()">Go back</a>
+                    </div>
+                {% endif %}
 
-
-                    {% endif %}
-                </div>
             </div>
 
         </div>
