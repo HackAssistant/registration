@@ -1,19 +1,26 @@
-from table import Table
-from table.columns import Column
-from table.columns import LinkColumn, Link
-from table.utils import A
+import django_filters
+import django_tables2 as tables
 
 from hackers.models import Application
 
 
-class ApplicationsTable(Table):
-    nickname = Column(field='user.nickname', header='Name', sortable=True, )
-    email = Column(field='user.email', header='Email', sortable=True, )
-    checkin = LinkColumn(field='id', header='Checkin', sortable=False,
-                         links=[Link(text=u'checkin',
-                                     viewname='check_in_hacker',
-                                     kwargs={'id': A('uuid_str')}), ])
+class ApplicationCheckinFilter(django_filters.FilterSet):
+    user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
+    user__nickname = django_filters.CharFilter('user__nickname', label='Preferred name', lookup_expr='icontains')
 
     class Meta:
         model = Application
-        search = True
+        fields = ['user__email', 'user__nickname']
+
+
+class ApplicationsCheckInTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'check_in_hacker' record.uuid %}' class='btn btn-success'>Check-in</a> ",
+        verbose_name='Actions', )
+
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.nickname', 'user.email']
+        empty_text = 'No applications available'

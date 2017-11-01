@@ -2,34 +2,29 @@ from django.contrib import messages
 from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import TemplateView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from checkin.models import CheckIn
-from checkin.tables import ApplicationsTable
+from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter
 from hackers import models
 from user.mixins import IsVolunteerMixin
 from user.models import User
 
 
-class CheckInList(IsVolunteerMixin, TemplateView):
+class CheckInList(IsVolunteerMixin, SingleTableMixin, FilterView):
     template_name = 'checkin/list.html'
+    table_class = ApplicationsCheckInTable
+    filterset_class = ApplicationCheckinFilter
 
-    def get_context_data(self, **kwargs):
-        context = super(CheckInList, self).get_context_data(**kwargs)
-        attended = self.get_applications()
-        table = ApplicationsTable(attended)
-        context.update({
-            'applicationsTable': table,
-        })
-        return context
-
-    def get_applications(self):
+    def get_queryset(self):
         return models.Application.objects.filter(status=models.APP_CONFIRMED)
 
 
 class CheckInAllList(CheckInList):
     template_name = 'checkin/list_all.html'
 
-    def get_applications(self):
+    def get_queryset(self):
         return models.Application.objects.exclude(status=models.APP_ATTENDED)
 
 

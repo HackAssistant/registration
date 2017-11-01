@@ -2,7 +2,6 @@ appdirs==1.4.0
 Django==1.10.4
 django-bootstrap3==8.2.3
 django-form-utils==1.0.3
-django-datatable==0.2.1
 django-filter==1.0.1
 django-jet==1.0.4
 google-api-python-client==1.6.1

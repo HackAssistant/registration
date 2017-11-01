@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'organizers',
     'checkin',
     'reimbursement',
-    'table',
     'user',
     'hackers'
 ]
