@@ -16,3 +16,6 @@ tmp/
 
 .DS_Store
 __pycache__/
+
+uploads/*
+!uploads/.keep

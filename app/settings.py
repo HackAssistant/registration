@@ -146,6 +146,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
 
+#  File configuration
+
+MEDIA_ROOT = 'files'
+MEDIA_URL = '/files/'
+
 SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
 # Load filebased email backend if no Sendgrid credentials and debug mode
 if not SENDGRID_API_KEY and DEBUG:

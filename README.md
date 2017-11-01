@@ -140,7 +140,11 @@ server {
     location /static/ {
         alias /home/user/project_folder/staticfiles/;
     }
-
+    
+    location /files/ {
+        alias /home/user/project_folder/files/;
+    }
+    
     location / {
         include proxy_params;
         proxy_pass http://unix:/home/user/project_folder/backend.sock;

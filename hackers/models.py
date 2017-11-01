@@ -102,7 +102,7 @@ class Application(models.Model):
     lennyface = models.CharField(max_length=300, default='-.-')
 
     # Giv me a resume here!
-    resume = models.FileField(blank=True, null=True)
+    resume = models.FileField(upload_to='resumes')
 
     # Needs to be set to true
     authorized_privacy = models.BooleanField(default=False)
