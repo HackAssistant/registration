@@ -14,6 +14,10 @@ class ApplicationFilter(django_filters.FilterSet):
 
 
 class ApplicationsListTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'app_detail' record.uuid %}' target='_blank' class='btn btn-default'>Detail</a> ",
+        verbose_name='Detail', )
+
     class Meta:
         model = Application
         attrs = {'class': 'table table-hover'}
