@@ -13,3 +13,5 @@ check_invites.sh
 app/prod_settings.py
 tmp/
 *.csv
+
+.DS_Store
