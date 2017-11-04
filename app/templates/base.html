@@ -42,7 +42,7 @@
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     {% block head %}
     {% endblock %}
 
@@ -70,18 +70,18 @@
                 <ul class="nav navbar-nav navbar-right ">
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_director %}
-                            <li class="white-text"><a href="{% url 'admin:index' %}">Admin</a></li>
+                            <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
                         {% if request.user.is_organizer %}
-                            <li class="white-text"><a href="{% url 'vote' %}">Vote</a></li>
-                            <li><a href="{% url 'app_list' %}">Applications</a></li>
-                            <li class="white-text"><a href="{% url 'ranking' %}">Ranking</a></li>
+                            <li class="{% if request.resolver_match.url_name == "vote" %}active{% endif %}"><a href="{% url 'vote' %}">Vote</a></li>
+                            <li class="{% if request.resolver_match.url_name == "app_list" %}active{% endif %}"><a href="{% url 'app_list' %}">Applications</a></li>
+                            <li class="{% if request.resolver_match.url_name == "ranking" %}active{% endif %}"><a href="{% url 'ranking' %}">Ranking</a></li>
                         {% endif %}
                         {% if request.user.is_organizer or request.user.is_volunteer %}
-                            <li class="white-text"><a href="{% url 'check_in_list' %}">Check-in</a></li>
+                            <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}"><a href="{% url 'check_in_list' %}">Check-in</a></li>
                         {% endif %}
                         {% if not request.user.is_organizer %}
-                            <li class="white-text"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                            <li class="{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}"><a href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
 

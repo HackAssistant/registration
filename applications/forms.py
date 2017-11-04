@@ -47,6 +47,7 @@ class ApplicationForm(BetterModelForm):
     under_age = forms.TypedChoiceField(
         required=True,
         label='How old are you?',
+        initial=False,
         coerce=lambda x: x == 'True',
         choices=((False, '18 or over'), (True, 'Under 18')),
         widget=forms.RadioSelect

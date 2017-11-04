@@ -171,6 +171,7 @@ PASSWORD_RESET_TIMEOUT_DAYS = 1
 BOOTSTRAP3 = {
     # Don't normally want placeholders.
     'set_placeholder': False,
+    'required_css_class': 'required',
 }
 
 # Add domain to allowed hosts
