@@ -54,18 +54,6 @@ class ApplicationsListView(IsOrganizerMixin, SingleTableMixin, FilterView):
         return models.Application.annotate_vote(models.Application.objects.all())
 
 
-        # def get_context_data(self, **kwargs):
-        #     context = super(ApplicationsListView, self).get_context_data(**kwargs)
-        #     apps = models.Application.annotate_vote(models.Application.objects.all())
-        #     table = ApplicationsListTable(apps)
-        #     RequestConfig(self.request).configure(table)
-        #
-        #     context.update({
-        #         'app_list': table,
-        #     })
-        #     return context
-
-
 class ApplicationDetailView(IsOrganizerMixin, TemplateView):
     template_name = 'application_detail.html'
 
