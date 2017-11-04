@@ -1,6 +1,6 @@
-<pre> Status: <span
-        class="text-{% if application.is_cancelled %}danger{% elif application.answered_invite %}success{% else %}warning{% endif %}">{{ application.get_soft_status_display }}</span>
-</pre>
+<p class="lead"> Your application status:
+    <span class="text-{% if application.is_cancelled %}danger{% elif application.answered_invite %}success{% else %}warning{% endif %}">{{ application.get_soft_status_display }}</span>
+</p>
 
 
 {% if application.is_cancelled %}

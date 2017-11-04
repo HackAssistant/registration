@@ -1,6 +1,7 @@
 {% load bootstrap3 %}
 {% load static %}
 {% load form_utils %}
+<small class="pull-right"><span style="color: red">*</span>Indicates required field</small>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% bootstrap_form_errors form %}
@@ -16,11 +17,13 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
+
     {% if not application or application.can_be_edit %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Save changes{% else %}
             Apply{% endif %}</button>
     {% endif %}
 </form>
+
 <p>If you have any special need you want us to know about please send us an email
     to {{ h_contact_email|urlize }}</p>
 
