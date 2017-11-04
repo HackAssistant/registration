@@ -1,16 +1,16 @@
 {% include 'include/email_line_start.html' %}
-Have any other question? Email us at {{ email|urlize }}
+Have any other question? Email us at {{ h_contact_email|urlize }}
 {#    TODO: Check if email and fb or twitter are defined before #}
-{% if fb or twitter %}
+{% if h_fb or h_tw %}
     or message us on
-    {% if fb %}
-        <a href="https://facebook.com/{{ fb }}" target="_blank">Facebook</a>
-        {% if twitter %}
+    {% if h_fb %}
+        <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
+        {% if h_tw %}
             and
-            <a href="https://twitter.com/{{ twitter }}" target="_blank">Twitter</a>
+            <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
         {% endif %}
-    {% elif twitter %}
-        <a href="https://twitter.com/{{ twitter }}" target="_blank">Twitter</a>
+    {% elif h_tw %}
+        <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
     {% endif %}
     .
 {% endif %}
