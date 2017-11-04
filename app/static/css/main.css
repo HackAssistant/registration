@@ -81,6 +81,6 @@ img.icon {
 }
 
 .required > label::after{
-    content: '*';
+    content: ' *';
     color: red;
 }
