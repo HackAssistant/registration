@@ -20,8 +20,8 @@
     {% endfor %}
 
     {% if not application or application.can_be_edit %}
-        <button class="btn btn-success btn-block" type="submit">{% if application %}Save changes{% else %}
-            Apply{% endif %}</button>
+        <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
+            Submit application{% endif %}</button>
     {% endif %}
 </form>
 
