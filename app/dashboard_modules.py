@@ -2,7 +2,7 @@ from django import forms
 from django.db.models import Count, Sum
 from jet.dashboard.modules import DashboardModule
 
-from hackers.models import Application, STATUS
+from applications.models import Application, STATUS
 from reimbursement.models import Reimbursement, RE_VALIDATED, RE_ACCEPTED, RE_NEEDS_CHANGE, RE_FRIEND_VALIDATED
 from user.models import User
 

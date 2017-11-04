@@ -40,7 +40,7 @@
                             {% include 'include/field.html' with desc='Money assigned' value=app.reimbursment.money_assigned|default:'0' %}
                         {% endif %}
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
-                        {% include 'include/field.html' with desc='Resume' value=app.resume|urlizetrunc:30 %}
+                        {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
                     </dl>
                     <h4 class="text-center">Academic</h4>
                     <dl class="dl-horizontal">
