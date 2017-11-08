@@ -106,7 +106,7 @@ class VoteApplicationView(ApplicationDetailView):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
         comment_text = request.POST.get('comment_text', None)
-        application = models.Application.objects.get(user_id=request.POST.get('app_id'))
+        application = models.Application.objects.get(pk=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)

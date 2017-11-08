@@ -81,7 +81,7 @@
 
                         <form action="" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="app_id" value="{{ app.user_id }}"/>
+                            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
                             <h4 class="text-center">Score</h4>
                             <dl class="dl-horizontal">
                                 <dt>Technical Skills</dt>
@@ -112,7 +112,7 @@
                         <li class="list-group-item">
                             <h4>{{ comment.text }}</h4>
 
-                            <p style="color:gray;">by {{ comment.author.username }}
+                            <p style="color:gray;">by {{ comment.author.get_full_name }}
                                 <small class="pull-right">{{ comment.created_at|timesince }} ago</small>
                             </p>
                         </li>
@@ -122,7 +122,7 @@
                 <div class="panel-footer">
                     <form action="" method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="app_id" value="{{ app.id }}"/>
+                        <input type="hidden" name="app_id" value="{{ app.pk }}"/>
                         <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
                                   required></textarea>
                         <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
