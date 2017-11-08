@@ -10,44 +10,32 @@ from reimbursement import models, emails
 
 
 class ReimbursementAdmin(admin.ModelAdmin):
-    list_display = (
-        'application', 'name', 'money', 'origin', 'status',
-        'expiration_time', 'application_status',
-        'requested_reimb')
+    list_display = ('hacker', 'money', 'origin', 'status',
+                    'timeleft_expiration', 'application_status',)
     list_filter = ('status', 'origin_country',
-                   'reimbursed_by', 'application__status')
+                   'reimbursed_by', 'hacker__application__status')
 
     search_fields = ['application__user__name', 'application__user__lastname', 'application__user__email',
                      'origin_city']
     list_per_page = 200
 
-    ordering = ('creation_date',)
-    actions = ['send', 'delete_selected']
+    ordering = ('creation_time',)
+    actions = ['send', ]
 
     def money(self, obj):
-        return str(obj.assigned_money) + obj.currency_sign
-
-    money.admin_order_field = 'assigned_money'
+        return str(obj.max_assignable_money)
 
     def name(self, obj):
         user = obj.application.user
         return user.full_name + ' (' + user.email + ')'
 
-    name.admin_order_field = \
-        'application__user__full_name'  # Allows column order sorting
+    name.admin_order_field = 'hacker__full_name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
 
-    def requested_reimb(self, obj):
-        return obj.application.scholarship
-
-    requested_reimb.admin_order_field = \
-        'application__scholarship'  # Allows column order sorting
-
     def application_status(self, obj):
-        return obj.application.get_status_display()
+        return obj.hacker.application.get_status_display()
 
-    application_status.admin_order_field = \
-        'application__status'  # Allows column order sorting
+    application_status.admin_order_field = 'hacker__application__status'  # Allows column order sorting
 
     def origin(self, obj):
         return obj.origin_city + ' (' + obj.origin_country + ')'

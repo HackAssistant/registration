@@ -115,9 +115,23 @@ def get_substitutions_templates():
             'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
             'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
             'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
-
+            'h_currency': getattr(settings, 'DEFAULT_CURRENCY', '$'),
+            'h_r_requirements': getattr(settings, 'REIMBURSEMENT_REQUIREMENTS', None),
             }
 
 
+def get_user_substitutions(request):
+    user = getattr(request, 'user', None)
+    if not user:
+        return {}
+    return {
+        'application': getattr(user, 'application', None),
+        'reimbursement': getattr(user, 'reimbursement', None),
+        'user': user
+    }
+
+
 def hackathon_vars_processor(request):
-    return get_substitutions_templates()
+    c = get_substitutions_templates()
+    c.update(get_user_substitutions(request))
+    return c

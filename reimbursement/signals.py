@@ -9,8 +9,4 @@ from reimbursement.models import Reimbursement
 def reimbursement_create(sender, instance, created, *args, **kwargs):
     if created and instance.scholarship:
         reimb = Reimbursement()
-        reimb.application = instance
-        reimb.origin_country = instance.origin_country
-        reimb.origin_city = instance.origin_city
-        reimb.check_prices()
-        reimb.save()
+        reimb.generate_draft(instance)

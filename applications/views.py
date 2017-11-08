@@ -150,20 +150,13 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         try:
             application = self.get_current_app(self.request.user)
             form = forms.ApplicationForm(instance=application)
-            context.update({'application': application, 'form': form})
+            context.update({'form': form})
             last_updated = application.status_update_date
             if application.status == models.APP_INVITED:
                 deadline = last_updated + timedelta(days=5)
             else:
                 deadline = last_updated + timedelta(days=1)
             context.update({'invite_timeleft': deadline - timezone.now()})
-        except:
-            pass
-
-        try:
-            reimbursement = self.get_current_app(self.request.user) \
-                .reimbursement
-            context.update({'reimbursement': reimbursement})
         except:
             pass
 

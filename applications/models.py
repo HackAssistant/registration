@@ -21,7 +21,7 @@ APP_EXPIRED = 'E'
 
 STATUS = [
     (APP_PENDING, 'Pending'),
-    (APP_REJECTED, 'Not accepted'),
+    (APP_REJECTED, 'Wait listed'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
     (APP_CONFIRMED, 'Confirmed'),

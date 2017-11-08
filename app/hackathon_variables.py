@@ -49,9 +49,11 @@ HACKATHON_THEME_COLOR = '#494949'
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackcu\.org$'
 
 # Reimbursement configuration
-DEFAULT_REIMBURSEMENT = 100
-DEFAULT_CURRENCY = '$'
-DEFAULT_EXPIRACY_DAYS = 5
+DEFAULT_REIMBURSEMENT_AMOUNT = 100
+CURRENCY = '$'
+REIMBURSEMENT_EXPIRACY_DAYS = 5
+REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
+
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from

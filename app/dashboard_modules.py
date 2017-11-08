@@ -1,9 +1,8 @@
 from django import forms
-from django.db.models import Count, Sum
+from django.db.models import Count
 from jet.dashboard.modules import DashboardModule
 
 from applications.models import Application, STATUS
-from reimbursement.models import Reimbursement, RE_VALIDATED, RE_ACCEPTED, RE_NEEDS_CHANGE, RE_FRIEND_VALIDATED
 from user.models import User
 
 
@@ -51,7 +50,6 @@ class AppsStats(DashboardModule):
 
     def init_with_context(self, context):
         qs = Application.objects.all()
-        reimb = Reimbursement.objects.all()
 
         if self.status != '__all__':
             qs = qs.filter(status=self.status)
@@ -59,9 +57,3 @@ class AppsStats(DashboardModule):
         self.tshirts = qs.values('tshirt_size') \
             .annotate(count=Count('tshirt_size'))
         self.diets = qs.values('diet').annotate(count=Count('diet'))
-        self.amount__total = reimb.exclude(status=RE_FRIEND_VALIDATED).aggregate(total=Sum('assigned_money'))
-        self.amount__sent = reimb.filter(status__in=[RE_ACCEPTED, RE_NEEDS_CHANGE]).aggregate(
-            total=Sum('assigned_money'))
-        self.amount__accepted = reimb.filter(status=RE_VALIDATED).aggregate(total=Sum('assigned_money'))
-        self.count_status = Application.objects.all().values('status') \
-            .annotate(count=Count('status'))

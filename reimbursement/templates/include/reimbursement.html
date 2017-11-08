@@ -1,45 +1,43 @@
+{% if reimbursement.waitlisted %}
+    <p>Unfortunately, we don't have enough budget to cover your travel expenses. We would like to have enough money for
+        everyone but our budget is limited. We added you to our travel reimbursement wait list.
+        Hope you can still make it! If you can't, please cancel your application invite.</p>
+{% elif reimbursement.expired %}
+    Unfortunately your travel reimbursement has expired. We sent your travel reimbursement
+    {{ reimbursement.update_time|timesince }} ago but you haven't uploaded a valid ticket. Send us an email to
+    {{ h_contact_email|urlize }} if you
+    think this is an error.
+{% elif reimbursement.friend_submission %}
+    <p>Your friend {{ reimbursement.friend_submission.hacker.get_full_name }} already uploaded a receipt that covered
+        your travel. Let us know if you think this is an error.</p>
+{% else %}
+    <dl >
+        <dt>Origin</dt>
+        <dd>{{ reimbursement.origin_city }} ({{ reimbursement.origin_country }})</dd>
 
-{% if application.scholarship %}
-    <h3>Travel reimbursement</h3>
-    {% if not reimbursement %}
-        Unfortunately, we don't have enough budget to cover your travel expenses. We would like to have enough money for
-        everyone but our budget is limited. Hope you can still make it! If you can't, please cancel your application invite.
-    {% elif reimbursement.is_expired %}
-        Unfortunately your travel reimbursement has expired. We sent your travel reimbursement
-        {{ reimbursement.status_update_date|timesince }} ago but you haven't uploaded a valid ticket. Send us an email to
-        {{ h_contact_email|urlize}} if you
-        think this is an error.
-        {% if reimbursement.change_reason %}
-            <p><b>Reason</b>: {{ reimbursement.change_reason }}</p>
+        <dt>Status</dt>
+        <dd>{{ reimbursement.get_status_display }}</dd>
+        {% if not reimbursement.is_draft  and not reimbursement.waitlisted %}
+            <dt>Amount</dt>
+            <dd>{{ reimbursement.assigned_money }}{{ h_currency }}</dd>
         {% endif %}
-    {% elif reimbursement.is_sent %}
-        <p>You have been granted travel reimbursement for your trip from {{ reimbursement.origin_city }}
-            ({{ reimbursement.origin_country }}).</p>
-
-        <h4>Amount granted: {{ reimbursement.assigned_money }}{{ reimbursement.currency_sign }}</h4>
-        <p>You have {{ reimbursement.expiration_time|timeuntil }} to upload your ticket, or your travel reimbursement
-            will expire.</p>
-        <a href="{{ reimbursement.get_form_url }}" target="_blank" class="btn btn-success btn-block">Submit your
-            ticket</a>
-        <p>The review process is done manually, so it may take a while to be processed.  We apologize for the inconvenience.</p>
-    {% elif reimbursement.friend_accepted %}
-        <p>A friend uploaded a receipt that covered your travel. Let us know if you think this is an error.</p>
-    {% elif reimbursement.is_accepted %}
-        <p>Your travel reimbursement tickets have been accepted. Here is the amount that we will reimburse to you (and any friend included in your ticket):</p>
-        <h4>Amount to be reimbursed: {{ reimbursement.assigned_money }}{{ reimbursement.currency_sign }}</h4>
-        <p>We will send this money to your Paypal account a month or two after the event.</p>
-        <h4>WARNING: You have to submit a project and demo it during the event in order to get reimbursed.</h4>
-    {% elif reimbursement.needs_change %}
-        <p>Your ticket submission had an error, please upload your receipt again.</p>
-        {% if reimbursement.change_reason %}
-            <p><b>Reason</b>: {{ reimbursement.change_reason }}</p>
+        {% if reimbursement.pending_receipt %}
+            <dt>Expiration countdown</dt>
+            <dd>{% include 'include/deadline_countdown.html' with dl=reimbursement.timeleft_expiration id='expiration_reimb_count' %}</dd>
         {% endif %}
-        <h4>Amount granted: {{ reimbursement.assigned_money }}{{ reimbursement.currency_sign }}</h4>
-        <a href="{{ reimbursement.get_form_url }}" target="_blank" class="btn btn-success btn-block">Submit your
-            ticket</a>
-        <p>The review process is done manually, so it may take a while to be processed. We apologize for the inconvenience.</p>
+        {% if reimbursement.comment %}
+            <dt>Reason</dt>
+            <dd>{{ reimbursement.comment }}</dd>
+        {% endif %}
+    </dl>
 
-    {% else %}
+
+
+    {% if reimbursement.is_draft %}
         <p>We are currently assessing your travel reimbursement scholarship. </p>
+    {% elif reimbursement.pending_receipt %}
+        <a href="{{ reimbursement.get_form_url }}" target="_blank" class="btn btn-success btn-block">Submit your
+            ticket</a>
     {% endif %}
+    {% if h_r_requirements %}<p><span class="text-warning">WARNING:</span> {{ h_r_requirements }}</p>{% endif %}
 {% endif %}

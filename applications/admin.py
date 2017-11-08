@@ -25,8 +25,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     search_fields = ('user__nickname', 'user__email',
                      'description',)
     ordering = ('submission_date',)
-    actions = ['reject_application', 'invite', 'ticket',
-               'create_reimbursement', 'invite_slack', 'reject']
+    actions = ['invite', 'ticket', 'invite_slack', 'reject']
 
     def name(self, obj):
         return obj.user.nickname + ' (' + obj.user.email + ')'
