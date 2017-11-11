@@ -2,7 +2,6 @@
 {% load static %}
 {% load form_utils %}
 <h1>Application</h1>
-<small class="pull-right"><span style="color: red">*</span>Indicates required field</small>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% bootstrap_form_errors form %}
@@ -18,6 +17,7 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
+    <small><span style="color: red">*</span>Indicates required field</small>
 
     {% if not application or application.can_be_edit %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}

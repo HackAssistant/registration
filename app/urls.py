@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^$', views.root_view, name='root'),
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
     url(r'^checkin/', include('checkin.urls')),
+    url(r'^reimbursement/', include('reimbursement.urls')),
 ]
 
 if settings.DEBUG:

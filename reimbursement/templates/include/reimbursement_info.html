@@ -34,7 +34,7 @@
 
 
     {% if reimbursement.pending_receipt %}
-        <a href="{{ reimbursement.get_form_url }}" target="_blank" class="btn btn-success btn-block">Submit your
+        <a href="{% url 'reimbursement_form' %}" target="_blank" class="btn btn-success btn-block">Submit your
             ticket</a>
     {% endif %}
     {% if h_r_requirements %}<p><span class="text-warning">WARNING:</span> {{ h_r_requirements }}</p>{% endif %}

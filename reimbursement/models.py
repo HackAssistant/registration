@@ -47,6 +47,7 @@ class Reimbursement(models.Model):
 
     # User controlled
     paypal_email = models.EmailField(null=True, blank=True)
+    venmo_user = models.CharField(max_length=40,null=True, blank=True)
     receipt = models.FileField(null=True, blank=True)
     multiple_hackers = models.BooleanField(default=False)
     friend_emails = models.CharField(null=True, blank=True, max_length=400)
