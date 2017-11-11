@@ -1,7 +1,7 @@
-{% with dl=timeleft|default:h_app_timeleft id='secondsLeftDeadline' %}
+{% with dl=timeleft|default:h_app_timeleft in_id=id|default:'secondsLeftDeadline' %}
     {% if dl %}
 
-        <span id="{{ id }}"></span>
+        <span id="{{ in_id }}"></span>
         <script>
 
             function timeRemaining(seconds) {
@@ -20,10 +20,10 @@
                     + seconds + (seconds == 1 ? " second" : " seconds")
             }
             var secondsTillHack = {{dl.seconds}} + {{dl.days}} * 3600 * 24;
-            document.getElementById("{{ id }}").textContent = timeRemaining(secondsTillHack);
+            document.getElementById("{{ in_id }}").textContent = timeRemaining(secondsTillHack);
             setInterval(function () {
                 secondsTillHack--;
-                document.getElementById("{{ id }}").textContent =
+                document.getElementById("{{ in_id }}").textContent =
                     timeRemaining(secondsTillHack);
             }, 1000);
         </script>

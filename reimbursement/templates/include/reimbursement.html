@@ -23,7 +23,7 @@
         {% endif %}
         {% if reimbursement.pending_receipt %}
             <dt>Expiration countdown</dt>
-            <dd>{% include 'include/deadline_countdown.html' with dl=reimbursement.timeleft_expiration id='expiration_reimb_count' %}</dd>
+            <dd>{% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}</dd>
         {% endif %}
         {% if reimbursement.comment %}
             <dt>Reason</dt>
@@ -33,9 +33,7 @@
 
 
 
-    {% if reimbursement.is_draft %}
-        <p>We are currently assessing your travel reimbursement scholarship. </p>
-    {% elif reimbursement.pending_receipt %}
+    {% if reimbursement.pending_receipt %}
         <a href="{{ reimbursement.get_form_url }}" target="_blank" class="btn btn-success btn-block">Submit your
             ticket</a>
     {% endif %}
