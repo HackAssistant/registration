@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 
 from app.utils import reverse
 from reimbursement import forms, models
-from user.mixins import IsDirectorMixin
+from user.mixins import IsOrganizerMixin
 
 
 class ReimbursementReceipt(LoginRequiredMixin, TemplateView):
@@ -37,7 +37,7 @@ class ReimbursementReceipt(LoginRequiredMixin, TemplateView):
             return render(request, self.template_name, c)
 
 
-class ReceiptReview(IsDirectorMixin, TemplateView):
+class ReceiptReview(IsOrganizerMixin, TemplateView):
     template_name = 'reimbursement_review.html'
 
     def get_context_data(self, **kwargs):
@@ -68,7 +68,8 @@ class ReceiptReview(IsDirectorMixin, TemplateView):
             r_form = forms.RejectReceiptForm(request.POST, instance=reimb)
             if r_form.is_valid():
                 r_form.save(commit=False)
-                r_form.instance.reject_receipt(request.user)
+                m = r_form.instance.reject_receipt(request.user, request)
+                m.send()
                 r_form.save()
                 messages.success(request, 'Receipt rejected')
             else:

@@ -39,7 +39,7 @@
 
     {% if reimbursement.can_submit_receipt %}
         <p><a href="{% url 'reimbursement_form' %}" target="_blank" class="btn btn-success btn-block">Submit your
-            ticket</a></p>
+            receipt</a></p>
     {% endif %}
     {% if h_r_requirements %}<p><span class="text-warning">WARNING:</span> {{ h_r_requirements }}</p>{% endif %}
 {% endif %}

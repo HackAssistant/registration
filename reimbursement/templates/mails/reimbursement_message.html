@@ -1,13 +1,13 @@
 {% extends 'base_email.html' %}
-{% block preheader %}Travel reimbursement award for {{ hackathon_name }}{% endblock %}
+{% block preheader %}Travel reimbursement award for {{ h_name }}{% endblock %}
 
 {% block content %}
     {% include 'include/email_line_start.html' %}
     Congrats {{ app.user.nickname }}, you have been granted travel reimbursement for this edition of {{ h_name }}. We will
     reimburse you <b>{{ reimb.assigned_money }}{{ h_currency }}</b> as you are coming from {{ reimb.origin_city }} ({{ reimb.origin_country }}).
-    <b>You have {{ h_r_days }} days to fill the following form and submit your tickets.</b>
+    <b>You have {{ h_r_days }} days to submit a receipt of your tickets.</b>
     {% include 'include/email_line_end.html' %}
-    {% include 'include/email_button.html' with text='Submit form' url=form_url %}
+    {% include 'include/email_button.html' with text='Submit receupt' url=form_url %}
     {% include 'include/email_line_start.html' %}
     In order to receive your travel reimbursement, remember to confirm your attendance as soon as possible. Here you can
     do it:

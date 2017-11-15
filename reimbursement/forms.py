@@ -24,6 +24,7 @@ class ReceiptSubmissionReceipt(BetterModelForm):
         paypal = self.cleaned_data.get('paypal_email', '')
         if not venmo and not paypal:
             raise forms.ValidationError("Please add either venmo or paypal so we can send you reimbursement")
+        return paypal
 
     def save(self, commit=True):
         reimb = super(ReceiptSubmissionReceipt, self).save(commit=False)

@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from reimbursement import emails
 from user.models import User
 
 DEFAULT_REIMBURSEMENT_AMOUNT = settings.DEFAULT_REIMBURSEMENT_AMOUNT
@@ -23,9 +24,9 @@ RE_FRIEND_SUBMISSION = 'FS'
 RE_STATUS = [
     (RE_DRAFT, 'Pending review'),
     (RE_WAITLISTED, 'Wait listed'),
-    (RE_PEND_TICKET, 'Pending ticket submission'),
-    (RE_PEND_APPROVAL, 'Pending ticket approval'),
-    (RE_APPROVED, 'Ticket approved'),
+    (RE_PEND_TICKET, 'Pending receipt submission'),
+    (RE_PEND_APPROVAL, 'Pending receipt approval'),
+    (RE_APPROVED, 'Receipt approved'),
     (RE_FRIEND_SUBMISSION, 'Friend submission'),
 ]
 
@@ -150,11 +151,12 @@ class Reimbursement(models.Model):
     def can_submit_receipt(self):
         return self.status == RE_PEND_TICKET and not self.expired and not self.hacker.application.is_rejected()
 
-    def reject_receipt(self, user):
+    def reject_receipt(self, user, request):
         self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
         self.status = RE_PEND_TICKET
         self.reimbursed_by = user
         self.reimbursement_money = None
+        self.receipt.delete()
         if self.multiple_hackers:
             for reimb in self.friend_submissions.all():
                 reimb.friend_submission = None
@@ -162,6 +164,8 @@ class Reimbursement(models.Model):
                 reimb.public_comment = 'Your friend %s submission has not been accepted' % self.hacker.get_full_name()
                 reimb.status = RE_PEND_TICKET
                 reimb.save()
+        return emails.create_reject_receipt_email(self, request)
+
 
     def accept_receipt(self, user):
         self.status = RE_APPROVED
