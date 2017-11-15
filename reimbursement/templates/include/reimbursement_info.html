@@ -11,7 +11,7 @@
     <p>Your friend {{ reimbursement.friend_submission.hacker.get_full_name }} already uploaded a receipt that covered
         your travel. Let us know if you think this is an error.</p>
 {% else %}
-    <dl >
+    <dl>
         <dt>Origin</dt>
         <dd>{{ reimbursement.origin_city }} ({{ reimbursement.origin_country }})</dd>
 
@@ -19,23 +19,27 @@
         <dd>{{ reimbursement.get_status_display }}</dd>
         {% if not reimbursement.is_draft  and not reimbursement.waitlisted %}
             <dt>Amount</dt>
-            <dd>{{ reimbursement.assigned_money }}{{ h_currency }}</dd>
+            <dd>{{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}{{ h_currency }}</dd>
+            {% if reimbursement.multiple_hackers %}
+                <dt>Other hackers covered</dt>
+                <dd>{{ reimbursement.friend_emails }}</dd>
+            {% endif %}
         {% endif %}
-        {% if reimbursement.pending_receipt %}
+        {% if reimbursement.can_submit_receipt %}
             <dt>Expiration countdown</dt>
             <dd>{% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}</dd>
         {% endif %}
-        {% if reimbursement.comment %}
+        {% if reimbursement.public_comment %}
             <dt>Reason</dt>
-            <dd>{{ reimbursement.comment }}</dd>
+            <dd>{{ reimbursement.public_comment }} - <small>comment by {{ reimbursement.reimbursed_by.email|urlize }}</small></dd>
         {% endif %}
     </dl>
 
 
 
-    {% if reimbursement.pending_receipt %}
-        <a href="{% url 'reimbursement_form' %}" target="_blank" class="btn btn-success btn-block">Submit your
-            ticket</a>
+    {% if reimbursement.can_submit_receipt %}
+        <p><a href="{% url 'reimbursement_form' %}" target="_blank" class="btn btn-success btn-block">Submit your
+            ticket</a></p>
     {% endif %}
     {% if h_r_requirements %}<p><span class="text-warning">WARNING:</span> {{ h_r_requirements }}</p>{% endif %}
 {% endif %}

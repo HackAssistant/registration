@@ -22,7 +22,8 @@
                     <div class="list-group">
                         {% for phase in phases %}
                             <a class="list-group-item {% if phase.finished %}finished{% elif phase.key != current.key %}disabled{% endif %} {% if phase.key == active.key %}active{% endif %}"
-                               href="{% if phase.finished or phase.key == current.key %}?phase={{ phase.key }}{% else %}#{% endif %}">
+                               href="{% if phase.finished or phase.key == current.key %}?phase=
+                                   {{ phase.key }}{% else %}#{% endif %}">
                                 {{ phase.title }}
                             </a>
                         {% endfor %}
@@ -33,7 +34,7 @@
                     Errors? Help? Reach us {{ h_contact_email|urlize }}
                 </div>
             </div>
-            {% if reimbursement %}
+            {% if reimbursement and not application.is_rejected %}
                 <div class="panel panel-default border-less">
                     <div class="panel-heading">
                         <h3 class="panel-title">Reimbursement information</h3>

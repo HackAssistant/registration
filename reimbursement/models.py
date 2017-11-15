@@ -39,11 +39,18 @@ def check_friend_emails(friend_emails):
             raise Exception('%s is not a registered hacker' % email)
 
         try:
-            if user.reimbursement and not user.reimbursement.status == RE_PEND_TICKET:
-                raise Exception('%s doesn\'t have a correct reimbursement' % email)
-            if not user.reimbursement:
-                raise Exception('%s didn\'t ask for reimbursement' % email)
-        except:
+            if user.reimbursement.waitlisted():
+                raise Exception('%s has a waitlisted reimbursement' % email)
+            if user.reimbursement.expired:
+                raise Exception('%s reimbursement is expired' % email)
+            if user.reimbursement.is_draft():
+                raise Exception('%s reimbursement is still under revision' % email)
+            if user.reimbursement.status == RE_APPROVED:
+                raise Exception('%s already has an accepted reimbursement' % email)
+            if user.reimbursement.status == RE_FRIEND_SUBMISSION:
+                raise Exception('%s already has an accepted reimbursement' % email)
+
+        except Reimbursement.DoesNotExist:
             raise Exception('%s didn\'t ask for reimbursement' % email)
 
 
@@ -81,7 +88,7 @@ class Reimbursement(models.Model):
             return 0
         if not self.multiple_hackers:
             return self.assigned_money
-        return sum([reimb.assigned_money for reimb in self.friend_submissions]) + self.assigned_money
+        return sum([reimb.assigned_money for reimb in self.friend_submissions.all()]) + self.assigned_money
 
     @property
     def friend_emails_list(self):
@@ -134,29 +141,41 @@ class Reimbursement(models.Model):
     def is_draft(self):
         return self.status == RE_DRAFT
 
+    def is_accepted(self):
+        return self.status in RE_APPROVED
+
     def waitlisted(self):
         return self.status == RE_WAITLISTED
 
-    def pending_receipt(self):
-        return self.status in RE_PEND_TICKET
+    def can_submit_receipt(self):
+        return self.status == RE_PEND_TICKET and not self.expired and not self.hacker.application.is_rejected()
 
-    def reject_receipt(self, comment):
+    def reject_receipt(self, user):
         self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
-        self.public_comment = comment
+        self.status = RE_PEND_TICKET
+        self.reimbursed_by = user
+        self.reimbursement_money = None
         if self.multiple_hackers:
-            for reimb in self.friend_submissions:
+            for reimb in self.friend_submissions.all():
                 reimb.friend_submission = None
                 reimb.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
                 reimb.public_comment = 'Your friend %s submission has not been accepted' % self.hacker.get_full_name()
                 reimb.status = RE_PEND_TICKET
                 reimb.save()
 
+    def accept_receipt(self, user):
+        self.status = RE_APPROVED
+        self.reimbursed_by = user
+        self.reimbursement_money = min(self.reimbursement_money, self.max_assignable_money)
+
     def submit_receipt(self):
         self.status = RE_PEND_APPROVAL
+        self.public_comment = None
         if self.multiple_hackers:
             for reimb in Reimbursement.objects.filter(hacker__email__in=self.friend_emails_list):
                 reimb.friend_submission = self
                 reimb.status = RE_FRIEND_SUBMISSION
+                reimb.public_comment = None
                 reimb.save()
 
     def save(self, force_insert=False, force_update=False, using=None,

@@ -3,14 +3,58 @@
 {% load i18n %}
 {% load bootstrap3 %}
 {% block head_title %}Reimbursement{% endblock %}
+{% load static %}
 
-{% block content %}
-    {% if reimbursement.pending_receipt %}
-        {% include "include/reimbursement_form.html" %}
-    {% else %}
-        <p>You can't submit your receipt now.</p>
-        <div class="lead">        {% include 'include/reimbursement_info.html' %}
-        </div>
-    {% endif %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 {% endblock %}
+
+{% block body %}
+
+    <div class="confirm-content">
+        {% if reimbursement.can_submit_receipt %}
+
+            <div class="col-md-8 col-md-offset-2">
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3>Reimbursement information</h3>
+                        <dl>
+                            <dt>Amount</dt>
+                            <dd>
+                                {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}{{ h_currency }}
+                            </dd>
+                            {% if reimbursement.public_comment %}
+                                <dt>Comment</dt>
+                                <dd>{{ reimbursement.public_comment }} -
+                                    <small>comment by {{ reimbursement.reimbursed_by.email|urlize }}</small>
+                                </dd>
+                            {% endif %}
+                        </dl>
+                        <p>If you are submitting a reimbursement for multiple hackers, we will allow you to submit up
+                            until the sum of all assigned
+                            amounts between you and your friends. Make sure they have also a valid reimbursement. If you
+                            have any doubts please send us a message {{ h_email|urlize }}</p>
+                        {% include "include/reimbursement_form.html" %}
+                    </div>
+                    <div class="panel-footer">
+                        Expires
+                        in {% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="lead">{% include 'include/reimbursement_info.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endif %}
+    </div>
+{% endblock %}
+
 

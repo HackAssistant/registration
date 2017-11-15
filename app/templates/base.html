@@ -91,7 +91,20 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true" aria-expanded="false">Reimbursements <span
+                                        class="caret"></span></a>
+                                <ul class="dropdown-menu">
 
+                                    {#                                    <li class="{% if request.resolver_match.url_name == "app_list" %}active{% endif %}">#}
+                                    {#                                        <a href="{% url 'app_list' %}">List</a>#}
+                                    {#                                    </li>#}
+                                    <li class="{% if request.resolver_match.url_name == "receipt_review" %}active{% endif %}">
+                                        <a href="{% url 'receipt_review' %}">Review receipts</a>
+                                    </li>
+                                </ul>
+                            </li>
                         {% endif %}
                         {% if request.user.is_organizer or request.user.is_volunteer %}
                             <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}"><a
