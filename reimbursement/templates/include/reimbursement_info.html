@@ -6,7 +6,8 @@
     {{ h_contact_email|urlize }} if you
     think this is an error.
 {% elif reimbursement.has_friend_submitted %}
-    <p>Your friend {{ reimbursement.friend_submission.hacker.get_full_name }} already uploaded a receipt that covered
+    <p>Your friend {{ reimbursement.friend_submission.hacker.get_full_name }}
+        ({{ reimbursement.friend_submission.hacker.email }}) already uploaded a receipt that covered
         your travel. Let us know if you think this is an error.</p>
 {% else %}
     <dl>

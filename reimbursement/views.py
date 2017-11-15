@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
 from django_filters.views import FilterView
@@ -17,6 +17,9 @@ class ReimbursementReceipt(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         c = super(ReimbursementReceipt, self).get_context_data(**kwargs)
+        reimb = getattr(self.request.user, 'reimbursement', None)
+        if not reimb:
+            raise Http404
         c.update({'form': forms.ReceiptSubmissionReceipt(instance=self.request.user.reimbursement)})
         return c
 
