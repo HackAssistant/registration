@@ -16,6 +16,8 @@ class CheckInList(IsVolunteerMixin, SingleTableMixin, FilterView):
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
+    table_pagination = {'per_page': 100}
+
 
     def get_queryset(self):
         return models.Application.objects.filter(status=models.APP_CONFIRMED)

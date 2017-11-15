@@ -98,6 +98,7 @@ class ReimbursementListView(IsOrganizerMixin, SingleTableMixin, FilterView):
     template_name = 'reimbursements_table.html'
     table_class = ReimbursementTable
     filterset_class = ReimbursementFilter
+    table_pagination = {'per_page': 100}
 
     def get_queryset(self):
         return models.Reimbursement.objects.all()

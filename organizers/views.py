@@ -49,6 +49,7 @@ class ApplicationsListView(IsOrganizerMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
     table_class = ApplicationsListTable
     filterset_class = ApplicationFilter
+    table_pagination = {'per_page': 100}
 
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.all())
