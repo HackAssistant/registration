@@ -15,7 +15,7 @@
         {% bootstrap_messages %}
         {% if reimb %}
 
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-8 {% if not review %}col-md-offset-2{% endif %}">
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -44,13 +44,25 @@
                             {% include 'include/field.html' with desc='Country' value=reimb.origin_country %}
                             {% include 'include/field.html' with desc='City' value=reimb.origin_city %}
                         </dl>
-                        {% if review %}
+
+                    </div>
+                </div>
+            </div>
+            {% if review %}
+                <div class="col-md-4 ">
+
+                    <div class="panel panel-success border-less">
+                        <div class="panel-heading">
+                            <h4 class="text-center">Review</h4>
+                        </div>
+                        <div class="panel-body">
+
                             <hr>
                             <h4 class="text-center">Reject receipt</h4>
                             <form action="" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="id" value="{{ reimb.pk }}"/>
-                                {% bootstrap_form reject_form layout="horizontal" %}
+                                {% bootstrap_form reject_form%}
                                 <button name="reject" class="btn btn-danger btn-block"
                                         value="reject">Reject
                                 </button>
@@ -58,18 +70,19 @@
                             </form>
                             <hr>
                             <h4 class="text-center">Accept receipt</h4>
-                            <form action="" method="post" class="form-horizontal">
+                            <form action="" method="post" >
                                 {% csrf_token %}
                                 <input type="hidden" name="id" value="{{ reimb.pk }}"/>
-                                {% bootstrap_form accept_form layout="horizontal" %}
+                                {% bootstrap_form accept_form %}
                                 <button name="accept" class="btn btn-success btn-block"
                                         value="accept">Accept
                                 </button>
                             </form>
-                        {% endif %}
+
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
         {% else %}
             <div class="col-md-6 col-md-offset-3">
 

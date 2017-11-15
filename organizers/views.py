@@ -102,6 +102,12 @@ class VoteApplicationView(ApplicationDetailView):
             .order_by('count', 'submission_date') \
             .first()
 
+    def get(self, request, *args, **kwargs):
+        r = super(VoteApplicationView, self).get(request, *args, **kwargs)
+        if not self.get_application(kwargs):
+            return HttpResponseRedirect(reverse('receipt_review'))
+        return r
+
     def post(self, request, *args, **kwargs):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)

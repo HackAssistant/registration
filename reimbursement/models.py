@@ -139,6 +139,9 @@ class Reimbursement(models.Model):
     def is_sent(self):
         return self.status in [RE_PEND_APPROVAL, RE_PEND_TICKET, ]
 
+    def has_friend_submitted(self):
+        return self.status == RE_FRIEND_SUBMISSION
+
     def is_draft(self):
         return self.status == RE_DRAFT
 
@@ -166,7 +169,6 @@ class Reimbursement(models.Model):
                 reimb.save()
         return emails.create_reject_receipt_email(self, request)
 
-
     def accept_receipt(self, user):
         self.status = RE_APPROVED
         self.reimbursed_by = user
@@ -175,10 +177,12 @@ class Reimbursement(models.Model):
     def submit_receipt(self):
         self.status = RE_PEND_APPROVAL
         self.public_comment = None
+        self.friend_submission = None
         if self.multiple_hackers:
             for reimb in Reimbursement.objects.filter(hacker__email__in=self.friend_emails_list):
                 reimb.friend_submission = self
                 reimb.status = RE_FRIEND_SUBMISSION
+
                 reimb.public_comment = None
                 reimb.save()
 
