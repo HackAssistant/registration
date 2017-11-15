@@ -32,11 +32,19 @@ RE_STATUS = [
 
 def check_friend_emails(friend_emails):
     emails = friend_emails.replace(' ', '').split(',')
-    for user in User.objects.filter(email__in=emails):
-        if user.reimbursement and not user.reimbursement.status == RE_PEND_TICKET:
-            raise Exception('%s doesn\'t have a correct reimbursement' % user.get_full_name())
-        if not user.reimbursement:
-            raise Exception('%s didn\'t ask for reimbursement' % user.get_full_name())
+    for email in emails:
+        try:
+            user = User.objects.get(email=email)
+        except:
+            raise Exception('%s is not a registered hacker' % email)
+
+        try:
+            if user.reimbursement and not user.reimbursement.status == RE_PEND_TICKET:
+                raise Exception('%s doesn\'t have a correct reimbursement' % email)
+            if not user.reimbursement:
+                raise Exception('%s didn\'t ask for reimbursement' % email)
+        except:
+            raise Exception('%s didn\'t ask for reimbursement' % email)
 
 
 class Reimbursement(models.Model):
@@ -47,8 +55,8 @@ class Reimbursement(models.Model):
 
     # User controlled
     paypal_email = models.EmailField(null=True, blank=True)
-    venmo_user = models.CharField(max_length=40,null=True, blank=True)
-    receipt = models.FileField(null=True, blank=True)
+    venmo_user = models.CharField(max_length=40, null=True, blank=True)
+    receipt = models.FileField(null=True, blank=True, upload_to='receipt', )
     multiple_hackers = models.BooleanField(default=False)
     friend_emails = models.CharField(null=True, blank=True, max_length=400)
     origin_city = models.CharField(max_length=300)

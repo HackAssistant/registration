@@ -5,7 +5,12 @@
 {% block head_title %}Reimbursement{% endblock %}
 
 {% block content %}
-
-    {% include "include/reimbursement_form.html" %}
+    {% if reimbursement.pending_receipt %}
+        {% include "include/reimbursement_form.html" %}
+    {% else %}
+        <p>You can't submit your receipt now.</p>
+        <div class="lead">        {% include 'include/reimbursement_info.html' %}
+        </div>
+    {% endif %}
 {% endblock %}
 
