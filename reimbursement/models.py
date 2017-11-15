@@ -123,6 +123,7 @@ class Reimbursement(models.Model):
         self.origin_country = application.origin_country
         self.origin_city = application.origin_city
         self.hacker = application.user
+        self.reimbursement_money = None
         self.save()
 
     def send(self, user):
@@ -133,6 +134,7 @@ class Reimbursement(models.Model):
             self.status = RE_PEND_TICKET
             self.status_update_date = timezone.now()
             self.reimbursed_by = user
+            self.reimbursement_money = None
             self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
             self.save()
 
@@ -163,6 +165,7 @@ class Reimbursement(models.Model):
         if self.multiple_hackers:
             for reimb in self.friend_submissions.all():
                 reimb.friend_submission = None
+                reimb.reimbursement_money = None
                 reimb.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
                 reimb.public_comment = 'Your friend %s submission has not been accepted' % self.hacker.get_full_name()
                 reimb.status = RE_PEND_TICKET
@@ -178,11 +181,11 @@ class Reimbursement(models.Model):
         self.status = RE_PEND_APPROVAL
         self.public_comment = None
         self.friend_submission = None
+        self.reimbursement_money = None
         if self.multiple_hackers:
             for reimb in Reimbursement.objects.filter(hacker__email__in=self.friend_emails_list):
                 reimb.friend_submission = self
                 reimb.status = RE_FRIEND_SUBMISSION
-
                 reimb.public_comment = None
                 reimb.save()
 

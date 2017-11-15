@@ -18,11 +18,13 @@ class ReimbursementFilter(django_filters.FilterSet):
 class ReimbursementTable(tables.Table):
     detail = tables.TemplateColumn(
         "<a href='{% url 'reimbursement_detail' record.pk %}' class='btn btn-default'>Detail</a> ",
-        verbose_name='Actions', )
+        verbose_name='Actions', orderable=False)
 
     class Meta:
         model = Reimbursement
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['hacker.nickname', 'hacker.email', 'assigned_money', 'status', 'origin_city', 'origin_country']
+        fields = ['hacker.nickname', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin_city',
+                  'origin_country', ]
+
         empty_text = 'No applications available'
