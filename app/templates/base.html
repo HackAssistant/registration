@@ -97,9 +97,9 @@
                                         class="caret"></span></a>
                                 <ul class="dropdown-menu">
 
-                                    {#                                    <li class="{% if request.resolver_match.url_name == "app_list" %}active{% endif %}">#}
-                                    {#                                        <a href="{% url 'app_list' %}">List</a>#}
-                                    {#                                    </li>#}
+                                    <li class="{% if request.resolver_match.url_name == "reimbursement_list" %}active{% endif %}">
+                                        <a href="{% url 'reimbursement_list' %}">List</a>
+                                    </li>
                                     <li class="{% if request.resolver_match.url_name == "receipt_review" %}active{% endif %}">
                                         <a href="{% url 'receipt_review' %}">Review receipts</a>
                                     </li>

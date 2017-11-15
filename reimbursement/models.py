@@ -129,12 +129,12 @@ class Reimbursement(models.Model):
         if not self.assigned_money:
             raise ValidationError('Reimbursement can\'t be sent because '
                                   'there\'s no assigned money')
-
-        self.status = RE_PEND_TICKET
-        self.status_update_date = timezone.now()
-        self.reimbursed_by = user
-        self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
-        self.save()
+        if self.status == RE_DRAFT:
+            self.status = RE_PEND_TICKET
+            self.status_update_date = timezone.now()
+            self.reimbursed_by = user
+            self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
+            self.save()
 
     def is_sent(self):
         return self.status in [RE_PEND_APPROVAL, RE_PEND_TICKET, ]

@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from app.utils import reverse
 from reimbursement import forms, models
+from reimbursement.tables import ReimbursementTable, ReimbursementFilter
 from user.mixins import IsOrganizerMixin
 
 
@@ -37,12 +40,19 @@ class ReimbursementReceipt(LoginRequiredMixin, TemplateView):
             return render(request, self.template_name, c)
 
 
-class ReceiptReview(IsOrganizerMixin, TemplateView):
+class ReimbursementDetail(IsOrganizerMixin, TemplateView):
     template_name = 'reimbursement_review.html'
 
     def get_context_data(self, **kwargs):
+        id_ = kwargs.get('id', None)
+        reimb = get_object_or_404(models.Reimbursement, pk=id_)
+        return {'reimb': reimb}
+
+
+class ReceiptReview(ReimbursementDetail):
+    def get_context_data(self, **kwargs):
         reimb = models.Reimbursement.objects.filter(status=models.RE_PEND_APPROVAL).order_by('-update_time').first()
-        return {'reimb': reimb, 'reject_form': forms.RejectReceiptForm(instance=reimb),
+        return {'reimb': reimb, 'reject_form': forms.RejectReceiptForm(instance=reimb), 'review': True,
                 'accept_form': forms.AcceptReceiptForm(instance=reimb)}
 
     def post(self, request, *args, **kwargs):
@@ -79,3 +89,12 @@ class ReceiptReview(IsOrganizerMixin, TemplateView):
                 return render(request, self.template_name, c)
 
         return HttpResponseRedirect(reverse('receipt_review'))
+
+
+class ReimbursementListView(IsOrganizerMixin, SingleTableMixin, FilterView):
+    template_name = 'reimbursements_table.html'
+    table_class = ReimbursementTable
+    filterset_class = ReimbursementFilter
+
+    def get_queryset(self):
+        return models.Reimbursement.objects.all()
