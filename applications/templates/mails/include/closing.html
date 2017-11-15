@@ -1,21 +1,20 @@
-{% include 'include/email_line_start.html' %}
-Have any other question? Email us at {{ h_contact_email|urlize }}
-{#    TODO: Check if email and fb or twitter are defined before #}
-{% if h_fb or h_tw %}
-    or message us on
-    {% if h_fb %}
-        <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
-        {% if h_tw %}
-            and
+<p>
+    Have any other question? Email us at {{ h_contact_email|urlize }}
+    {% if h_fb or h_tw %}
+        or message us on
+        {% if h_fb %}
+            <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
+            {% if h_tw %}
+                and
+                <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+            {% endif %}
+        {% elif h_tw %}
             <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
         {% endif %}
-    {% elif h_tw %}
-        <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+        .
     {% endif %}
-    .
-{% endif %}
-{% include 'include/email_line_end.html' %}
-{% include 'include/email_line.html' with text="See you soon!" %}
-{% include 'include/email_line.html' with text="Best," %}
-{% include 'include/email_line.html' with text="" %}
-{% include 'include/email_line.html' with text=h_name|add:" Team" %}
+</p>
+<p>See you soon!</p>
+<p>Best,</p>
+<br>
+<p>{{ h_name }} Team</p>

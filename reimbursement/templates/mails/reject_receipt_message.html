@@ -2,30 +2,21 @@
 {% block preheader %}Receipt is rejected{% endblock %}
 
 {% block content %}
-    {% include 'include/email_line_start.html' %}
-    Hey {{ app.user.nickname }},<br><br>
-    The receipt you submitted is invalid.<br><br>
-    <b>Comment on receipt submitted: </b>{{ reimb.public_comment }}
+    <p> Hey {{ app.user.nickname }},</p>
+    <br>
+    <p>The receipt you submitted is invalid.</p>
+    <p><b>Comment on receipt submitted: </b>{{ reimb.public_comment }}</p>
 
-    {% include 'include/email_line_end.html' %}
     {% include 'include/email_button.html' with text='Submit receipt' url=form_url %}
-    {% include 'include/email_line_start.html' %}
-    Please submit a valid receipt to be reimbursed. I have extended the deadline so you can submit a valid receipt.
-    You have {{ h_r_days }} to submit a valid receipt.
-    {% include 'include/email_line_end.html' %}
-    {% if app.is_invited %}
-        {% include 'include/email_line_start.html' %}
-        In order to receive your travel reimbursement, remember to confirm your attendance as soon as possible. Here you
-        can do it:
-        {% include 'include/email_line_end.html' %}
-        {% include 'include/email_line_start.html' with extra_style='text-align:center;' %}
-        <a href="{{ confirm_url }}">Confirm</a>
-        {% include 'include/email_line_end.html' %}
-    {% endif %}
-    {% include 'include/email_line_start.html' %}
-    Best,<br><br><br>
-    {{ reimb.reimbursed_by.get_full_name }}<br>
-    Organizer, {{ h_name }}
-    {% include 'include/email_line_end.html' %}
+    <p>
+        Please submit a valid receipt to be reimbursed. I have extended the deadline so you can submit a valid receipt.
+        You have {{ h_r_days }} to submit a valid receipt.
+    </p>
+    {% include 'mails/include/confirm_reimbursement.html' %}
 
+    <p>Best,</p><br>
+    <p>
+        {{ reimb.reimbursed_by.get_full_name }}<br>
+        Organizer, {{ h_name }}
+    </p>
 {% endblock %}
