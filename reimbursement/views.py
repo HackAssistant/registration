@@ -44,7 +44,7 @@ class ReimbursementReceipt(LoginRequiredMixin, TemplateView):
 
 
 class ReimbursementDetail(IsOrganizerMixin, TemplateView):
-    template_name = 'reimbursement_review.html'
+    template_name = 'reimbursement_detail.html'
 
     def get_context_data(self, **kwargs):
         id_ = kwargs.get('id', None)
