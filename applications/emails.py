@@ -7,7 +7,7 @@ from app.utils import reverse
 def create_invite_email(application, request):
     c = {
         'name': application.user.nickname,
-        'reimbursement': application.scholarship,
+        'reimb': getattr(application.user, 'reimbursement', None),
         'confirm_url': str(reverse('confirm_app', request=request, kwargs={'id': application.uuid_str})),
         'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str}))
     }

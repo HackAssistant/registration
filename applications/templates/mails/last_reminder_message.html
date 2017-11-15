@@ -2,16 +2,17 @@
 {% block preheader %} Last reminder email for {{ h_name }}{% endblock %}
 
 {% block content %}
-    {% include 'include/email_line_start.html' %}
-    Hi  {{ name }},
-    {% include 'include/email_line_end.html' %}
-    {% include 'include/email_line_start.html' %}
-    We are still waiting for your answer! You have been officially accepted to {{ h_name }}
-    {{ h_name }} but you still haven't either confirmed or canceled your spot.
-    <b>You have 24h to answer, after that, your application will expire and we will give your spot to another
-        hacker.</b>
-    {% include 'include/email_line_end.html' %}
-    {% include 'include/email_button.html' with text='Confirm' url=confirm_url %}
+    <p>
+        Hi {{ name }},
+    </p>
+    <p>
+        We are still waiting for your answer! You have been officially accepted to {{ h_name }}
+        but you still haven't either confirmed or canceled your spot.
+
+        <b>You have 24h to answer, after that, your application will expire and we will give your spot to another
+            hacker.</b>
+    </p>
+    {% include 'mails/include/email_button.html' with text='Confirm' url=confirm_url %}
 
     {% include 'mails/include/cancel.html' %}
     {% include 'mails/include/closing.html' %}

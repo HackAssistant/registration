@@ -1,7 +1,5 @@
 {% if reimbursement.waitlisted %}
-    <p>Unfortunately, we don't have enough budget to cover your travel expenses. We would like to have enough money for
-        everyone but our budget is limited. We added you to our travel reimbursement wait list.
-        Hope you can still make it! If you can't, please cancel your application invite.</p>
+    {% include 'include/waitlisted_reimbursement.html' %}
 {% elif reimbursement.expired %}
     Unfortunately your travel reimbursement has expired. We sent your travel reimbursement
     {{ reimbursement.update_time|timesince }} ago but you haven't uploaded a valid ticket. Send us an email to
@@ -31,7 +29,9 @@
         {% endif %}
         {% if reimbursement.public_comment %}
             <dt>Reason</dt>
-            <dd>{{ reimbursement.public_comment }} - <small>comment by {{ reimbursement.reimbursed_by.email|urlize }}</small></dd>
+            <dd>{{ reimbursement.public_comment }} -
+                <small>comment by {{ reimbursement.reimbursed_by.email|urlize }}</small>
+            </dd>
         {% endif %}
     </dl>
 

@@ -7,7 +7,7 @@
     <p>The receipt you submitted is invalid.</p>
     <p><b>Comment on receipt submitted: </b>{{ reimb.public_comment }}</p>
 
-    {% include 'include/email_button.html' with text='Submit receipt' url=form_url %}
+    {% include 'mails/include/email_button.html' with text='Submit receipt' url=form_url %}
     <p>
         Please submit a valid receipt to be reimbursed. I have extended the deadline so you can submit a valid receipt.
         You have {{ h_r_days }} to submit a valid receipt.
