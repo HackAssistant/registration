@@ -68,6 +68,9 @@ class ApplicationForm(BetterModelForm):
 
     def clean_code_conduct(self):
         cc = self.cleaned_data.get('code_conduct', False)
+        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
             raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
         return cc
@@ -90,13 +93,13 @@ class ApplicationForm(BetterModelForm):
             ('Team', {'fields': ('team', 'teammates',), }),
         ]
         # Fields that we only need the first time the hacker fills the application
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',), }))
+            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
         model = models.Application
-
         help_texts = {
             'gender': 'This is for demographic purposes. You can skip this '
                       'question if you want',

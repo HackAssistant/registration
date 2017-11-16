@@ -100,7 +100,7 @@ class Application(models.Model):
 
     # Random lenny face
     lennyface = models.CharField(max_length=300, default='-.-')
-    phone_number = models.CharField(max_length=300, blank=True,null=True)
+    phone_number = models.CharField(max_length=300, blank=True, null=True)
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes')
