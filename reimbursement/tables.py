@@ -6,13 +6,13 @@ from reimbursement.models import Reimbursement
 
 class ReimbursementFilter(django_filters.FilterSet):
     hacker__email = django_filters.CharFilter('hacker__email', label='Email', lookup_expr='icontains')
-    hacker__nickname = django_filters.CharFilter('hacker__nickname', label='Preferred name', lookup_expr='icontains')
+    hacker__name = django_filters.CharFilter('hacker__name', label='Preferred name', lookup_expr='icontains')
     origin_city = django_filters.CharFilter('origin_city', label='Origin city', lookup_expr='icontains')
     origin_country = django_filters.CharFilter('origin_country', label='Origin country', lookup_expr='icontains')
 
     class Meta:
         model = Reimbursement
-        fields = ['hacker__email', 'hacker__nickname', 'origin_country', 'origin_city', 'status']
+        fields = ['hacker__email', 'hacker__name', 'origin_country', 'origin_city', 'status']
 
 
 class ReimbursementTable(tables.Table):
@@ -24,7 +24,7 @@ class ReimbursementTable(tables.Table):
         model = Reimbursement
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['hacker.nickname', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin_city',
+        fields = ['hacker.name', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin_city',
                   'origin_country', ]
 
         empty_text = 'No reimbursement match criteria'
@@ -32,13 +32,13 @@ class ReimbursementTable(tables.Table):
 
 class SendReimbursementFilter(django_filters.FilterSet):
     hacker__email = django_filters.CharFilter('hacker__email', label='Email', lookup_expr='icontains')
-    hacker__nickname = django_filters.CharFilter('hacker__nickname', label='Preferred name', lookup_expr='icontains')
+    hacker__name = django_filters.CharFilter('hacker__name', label='Preferred name', lookup_expr='icontains')
     origin_city = django_filters.CharFilter('origin_city', label='Origin city', lookup_expr='icontains')
     origin_country = django_filters.CharFilter('origin_country', label='Origin country', lookup_expr='icontains')
 
     class Meta:
         model = Reimbursement
-        fields = ['hacker__email', 'hacker__nickname', 'origin_country', 'origin_city', ]
+        fields = ['hacker__email', 'hacker__name', 'origin_country', 'origin_city', ]
 
 
 class SendReimbursementTable(tables.Table):

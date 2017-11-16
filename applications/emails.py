@@ -7,7 +7,7 @@ from app.utils import reverse
 
 def create_invite_email(application, request):
     c = {
-        'name': application.user.nickname,
+        'name': application.user.get_full_name,
         'reimb': getattr(application.user, 'reimbursement', None),
         'confirm_url': str(reverse('confirm_app', request=request, kwargs={'id': application.uuid_str})),
         'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str}))
@@ -18,7 +18,7 @@ def create_invite_email(application, request):
 
 def create_confirmation_email(application, request):
     c = {
-        'name': application.user.nickname,
+        'name': application.user.get_full_name,
         'token': application.uuid_str,
         'qr_url': 'http://chart.googleapis.com/chart?cht=qr&chs=350x350&chl=%s'
                   % application.uuid_str,
@@ -30,7 +30,7 @@ def create_confirmation_email(application, request):
 
 def create_lastreminder_email(application):
     c = {
-        'name': application.user.nickname,
+        'name': application.user.get_full_name,
         # We need to make sure to redirect HTTP to HTTPS in production
         'confirm_url': 'http://%s%s' % (settings.EVENT_DOMAIN,
                                         reverse('confirm_app')),

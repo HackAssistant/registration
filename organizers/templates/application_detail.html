@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load bootstrap3 %}
 {% load static %}
-{% block head_title %}{% if vote %}Vote applications{% else %}{{ app.user.nickname }}'s application{% endif %}
+{% block head_title %}{% if vote %}Vote applications{% else %}{{ app.user.name }}'s application{% endif %}
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -30,7 +30,7 @@
 
                     <h4 class="text-center">Personal</h4>
                     <dl class="dl-horizontal">
-                        {% include 'include/field.html' with desc='Nickname' value=app.user.nickname %}
+                        {% include 'include/field.html' with desc='Name' value=app.user.name %}
                         {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
                         {% include 'include/field.html' with desc='Country' value=app.origin_country %}
                         {% if not vote %}

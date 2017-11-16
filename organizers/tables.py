@@ -6,11 +6,11 @@ from applications.models import Application
 
 class ApplicationFilter(django_filters.FilterSet):
     user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
-    user__nickname = django_filters.CharFilter('user__nickname', label='Preferred name', lookup_expr='icontains')
+    user__name = django_filters.CharFilter('user__name', label='Preferred name', lookup_expr='icontains')
 
     class Meta:
         model = Application
-        fields = ['user__email', 'user__nickname', 'status', 'first_timer', 'scholarship']
+        fields = ['user__email', 'user__name', 'status', 'first_timer', 'scholarship']
 
 
 class ApplicationsListTable(tables.Table):
@@ -22,7 +22,7 @@ class ApplicationsListTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.nickname', 'vote_avg', 'user.email', 'status']
+        fields = ['user.name', 'vote_avg', 'user.email', 'status']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
@@ -34,6 +34,6 @@ class AdminApplicationsListTable(ApplicationsListTable):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'user.nickname', 'vote_avg', 'user.email', 'status']
+        fields = ['selected', 'user.name', 'vote_avg', 'user.email', 'status']
         empty_text = 'No applications available'
         order_by = '-vote_avg'

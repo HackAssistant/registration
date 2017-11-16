@@ -2,7 +2,7 @@
 {% block preheader %}Receipt is rejected{% endblock %}
 
 {% block content %}
-    <p> Hey {{ app.user.nickname }},</p>
+    <p> Hey {{ app.user.get_full_name }},</p>
     <br>
     <p>The receipt you submitted is invalid.</p>
     <p><b>Comment on receipt submitted: </b>{{ reimb.public_comment }}</p>

@@ -5,27 +5,28 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, nickname, password=None):
+    def create_user(self, email, name, password=None):
         if not email:
             raise ValueError('Users must have a email')
 
         user = self.model(
             email=email,
-            nickname=nickname
+            name=name
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, nickname, password):
+    def create_superuser(self, email, name, password):
         user = self.create_user(
             email,
-            nickname=nickname,
+            name=name,
             password=password,
         )
         user.is_director = True
         user.is_organizer = True
+        user.is_admin = True
         user.email_verified = True
         user.is_volunteer = True
         user.save(using=self._db)
@@ -38,7 +39,7 @@ class User(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    nickname = models.CharField(
+    name = models.CharField(
         verbose_name='Preferred name',
         max_length=255,
     )
@@ -47,16 +48,17 @@ class User(AbstractBaseUser):
     is_volunteer = models.BooleanField(default=False)
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = ['nickname', ]
+    REQUIRED_FIELDS = ['name', ]
 
     def get_full_name(self):
-        # The user is identified by their email address
-        return self.nickname
+        # The user is identified by their nickname/full_name address
+        return self.name
 
     def get_short_name(self):
         # The user is identified by their email address
@@ -78,5 +80,4 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         "Is the user a member of staff?"
-        # Simplest possible answer: All directors are staff
-        return self.is_director
+        return self.is_admin

@@ -38,12 +38,12 @@ def signup(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            nickname = form.cleaned_data['nickname']
+            name = form.cleaned_data['name']
 
             if models.User.objects.filter(email=email).first() is not None:
                 messages.error(request, 'An account with this email already exists')
             else:
-                user = models.User.objects.create_user(email=email, password=password, nickname=nickname)
+                user = models.User.objects.create_user(email=email, password=password, name=name)
                 user = auth.authenticate(email=email, password=password)
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('root'))

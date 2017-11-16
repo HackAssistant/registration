@@ -15,7 +15,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             {% if application %}
-                                We are sorry {{ application.user.nickname }}
+                                We are sorry {{ application.user.get_full_name }}
                             {% else %}
                                 ¯\_(ツ)_/¯
                             {% endif %}

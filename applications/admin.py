@@ -22,15 +22,15 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ('status', 'first_timer', 'scholarship', 'graduation_year',
                    'university', 'origin_country', 'under_age', 'diet')
     list_per_page = 200
-    search_fields = ('user__nickname', 'user__email',
+    search_fields = ('user__name', 'user__email',
                      'description',)
     ordering = ('submission_date',)
     actions = ['invite', 'ticket', 'invite_slack', 'reject']
 
     def name(self, obj):
-        return obj.user.nickname + ' (' + obj.user.email + ')'
+        return obj.user.get_full_name + ' (' + obj.user.email + ')'
 
-    name.admin_order_field = 'user__nickname'  # Allows column order sorting
+    name.admin_order_field = 'user__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head
 
     def votes(self, app):

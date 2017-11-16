@@ -6,11 +6,11 @@ from applications.models import Application
 
 class ApplicationCheckinFilter(django_filters.FilterSet):
     user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
-    user__nickname = django_filters.CharFilter('user__nickname', label='Preferred name', lookup_expr='icontains')
+    user__name = django_filters.CharFilter('user__name', label='Preferred name', lookup_expr='icontains')
 
     class Meta:
         model = Application
-        fields = ['user__email', 'user__nickname']
+        fields = ['user__email', 'user__name']
 
 
 class ApplicationsCheckInTable(tables.Table):
@@ -22,5 +22,5 @@ class ApplicationsCheckInTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.nickname', 'user.email']
+        fields = ['user.name', 'user.email']
         empty_text = 'No applications available'

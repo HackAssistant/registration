@@ -29,7 +29,7 @@
                     <div class="panel-body">
                         <h4 class="text-center">Personal</h4>
                         <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='Full name' value=reimb.hacker.nickname %}
+                            {% include 'include/field.html' with desc='Full name' value=reimb.hacker.name %}
                             {% include 'include/field.html' with desc='Email' value=reimb.hacker.email %}
                             {% include 'include/field.html' with desc='Last update' value=reimb.update_time|naturaltime %}
                             {% include 'include/field.html' with desc='Status' value=reimb.get_status_display %}
