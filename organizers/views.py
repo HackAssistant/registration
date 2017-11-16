@@ -89,7 +89,7 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
         comment_text = request.POST.get('comment_text', None)
         if request.POST.get('add_comment'):
             add_comment(application, request.user, comment_text)
-        elif request.POST.get('invite'):
+        elif request.POST.get('invite') and request.user.is_director:
             try:
                 application.invite(request.user)
                 messages.success(request, "Invite to %s successfully sent" % application.user.email)
@@ -97,7 +97,7 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
                 m.send()
             except ValidationError as e:
                 messages.error(request, e.message)
-        elif request.POST.get('confirm'):
+        elif request.POST.get('confirm') and request.user.is_director:
             try:
                 application.confirm()
                 messages.success(request, "Ticket to %s successfully sent" % application.user.email)
@@ -106,13 +106,13 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
             except ValidationError as e:
                 messages.error(request, e.message)
 
-        elif request.POST.get('cancel'):
+        elif request.POST.get('cancel') and request.user.is_director:
             try:
                 application.cancel()
                 messages.success(request, "%s application cancelled" % application.user.email)
             except ValidationError as e:
                 messages.error(request, e.message)
-        elif request.POST.get('waitlist'):
+        elif request.POST.get('waitlist') and request.user.is_director:
             try:
                 application.reject(request)
                 messages.success(request, "%s application wait listed" % application.user.email)
