@@ -2,14 +2,10 @@
 export PROD_MODE="True"
 # You can create it by running os.urandom(24) in Python
 export SECRET="SECRET"
-# Sendgrid general list id
-export SG_GENERAL_LIST_ID="876178"
 # Set up your postgres password
 export PG_PWD="password"
 # If using Sendgrid set api key here
 export SG_KEY="API_KEY"
-# Typeform API key
-export TP_KEY="TYPEFORM_KEY"
 # Optional: Slack  token and team
 export SL_TOKEN="TOKEN"
 export SL_TEAM="test-team"
@@ -17,4 +13,5 @@ export SL_TEAM="test-team"
 export DOMAIN="my.hackupc.com"
 # SMTP password
 export EMAIL_HOST_PASSWORD="password"
+
 ./env/bin/gunicorn --workers 3 --log-file=gunicorn.log --bind unix:backend.sock app.wsgi:application
