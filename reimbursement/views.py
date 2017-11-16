@@ -128,7 +128,7 @@ class SendReimbursementListView(IsDirectorMixin, SingleTableMixin, FilterView):
                 reimb.send(request.user)
                 m = emails.create_reimbursement_email(reimb, request)
                 mails.append(m)
-            except ValidationError as e:
+            except ValidationError:
                 errors += 1
 
         if mails:

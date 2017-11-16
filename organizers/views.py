@@ -78,7 +78,7 @@ class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
                 app.invite(request.user)
                 m = emails.create_invite_email(app, request)
                 mails.append(m)
-            except ValidationError as e:
+            except ValidationError:
                 errors += 1
         if mails:
             send_batch_emails(mails)

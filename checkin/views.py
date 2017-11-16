@@ -5,9 +5,9 @@ from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
+from applications import models
 from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter
-from applications import models
 from user.mixins import IsVolunteerMixin
 from user.models import User
 
@@ -17,7 +17,6 @@ class CheckInList(IsVolunteerMixin, SingleTableMixin, FilterView):
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
     table_pagination = {'per_page': 100}
-
 
     def get_queryset(self):
         return models.Application.objects.filter(status=models.APP_CONFIRMED)
