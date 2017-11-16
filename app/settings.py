@@ -180,6 +180,8 @@ BOOTSTRAP3 = {
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 if os.environ.get('EMAIL_HOST_PASSWORD', None):
     # Error reporting email. Will send an email in any 500 error from server email
