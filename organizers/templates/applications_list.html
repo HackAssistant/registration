@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load django_tables2 %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head_title %}Applications list {% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        {% bootstrap_messages %}
+        <div class="col-md-12">
+            <div style="text-align: center;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="text-center">Applications</h4>
+                    </div>
+                    <div class="panel-body">
+                        {% if filter %}
+                            <form action="" method="get" class="form form-inline text-left filter">
+                                {% bootstrap_form filter.form size='small' %}
+                                {% bootstrap_button 'Search' size='small' button_class='btn-info' %}
+                            </form>
+                            <hr/>
+                        {% endif %}
+                        {% render_table table 'django_tables2/bootstrap.html' %}
+                    </div>
+                    {% if user.is_director %}
+                        <div class="panel-footer">
+                            <a href="{% url 'invite_list' %}" class="btn-block btn btn-info">Invite applications</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

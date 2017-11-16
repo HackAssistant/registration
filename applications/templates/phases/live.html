@@ -1,0 +1,9 @@
+
+<div>
+    <p>Glad you could make it! Hope you enjoy your time at {{ h_name }}. Let us know if you need any help!</p>
+    {% if h_live %}
+        <p>Follow our live page for more information during the event</p>
+        <a href="{{ h_live }}" target="_blank" class="btn btn-block btn-success">Go to live page</a>
+
+    {% endif %}
+</div>

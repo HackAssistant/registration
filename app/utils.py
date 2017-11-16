@@ -1,11 +1,11 @@
 import csv
 
-from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Func
 from django.http import HttpResponse
 from django.urls import reverse as django_reverse
+from django.utils import timezone
 
 
 def reverse(viewname, args=None, kwargs=None, request=None, format=None,
@@ -77,11 +77,62 @@ def create_modeladmin(modeladmin, model, name=None):
     return modeladmin
 
 
-class AccountAdapter(DefaultAccountAdapter):
-    def is_open_for_signup(self, request):
-        return settings.STATIC_KEYS_TEMPLATES.get('applications_open', True)
-
-
 class Round4(Func):
     function = 'ROUND'
     template = '%(function)s(%(expressions)s, 4)'
+
+
+def application_timeleft():
+    deadline = getattr(settings, 'HACKATHON_APP_DEADLINE', None)
+    if deadline:
+        return deadline - timezone.now()
+    else:
+        return None
+
+
+def is_app_closed():
+    timeleft = application_timeleft()
+    if timeleft and timeleft != timezone.timedelta():
+        return timeleft < timezone.timedelta()
+    return False
+
+
+def get_substitutions_templates():
+    return {'h_name': getattr(settings, 'HACKATHON_NAME', None),
+            'h_app_name': getattr(settings, 'HACKATHON_APPLICATION_NAME', None),
+            'h_contact_email': getattr(settings, 'HACKATHON_CONTACT_EMAIL', None),
+            'h_domain': getattr(settings, 'HACKATHON_DOMAIN', None),
+            'h_description': getattr(settings, 'HACKATHON_DESCRIPTION', None),
+            'h_ga': getattr(settings, 'HACKATHON_GOOGLE_ANALYTICS', None),
+            'h_tw': getattr(settings, 'HACKATHON_TWITTER_ACCOUNT', None),
+            'h_issues_url': getattr(settings, 'HACKATHON_ISSUES_URL', None),
+            'h_app_closed': is_app_closed(),
+            'h_app_timeleft': application_timeleft(),
+            'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
+            'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),
+            'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
+            'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
+            'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
+            'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
+            'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
+            'h_currency': getattr(settings, 'DEFAULT_CURRENCY', '$'),
+            'h_r_requirements': getattr(settings, 'REIMBURSEMENT_REQUIREMENTS', None),
+            'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRACY_DAYS', None),
+            }
+
+
+def get_user_substitutions(request):
+    user = getattr(request, 'user', None)
+    if not user:
+        return {}
+    return {
+        'application': getattr(user, 'application', None),
+        'reimbursement': getattr(user, 'reimbursement', None),
+        'user': user
+    }
+
+
+def hackathon_vars_processor(request):
+    c = get_substitutions_templates()
+    c.update(get_user_substitutions(request))
+    return c

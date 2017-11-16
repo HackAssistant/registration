@@ -1,8 +1,4 @@
 {% load static %}
-{% load account %}
-{% load utils %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
-{% settings_value "CURRENT_EDITION" as edition_name %}
 {# Based on https://github.com/leemunroe/responsive-html-email-template #}
 <!DOCTYPE html>
 <html>
@@ -61,6 +57,14 @@
             }
         }
 
+        p {
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            margin: 0;
+            Margin-bottom: 15px;
+        }
+
         @media all {
             .ExternalClass {
                 width: 100%;
@@ -105,14 +109,16 @@
             style="font-family:sans-serif;font-size:14px;vertical-align:top;display:block;max-width:580px;padding:10px;width:580px;Margin:0 auto !important;">
             <div class="content"
                  style="box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px;">
-                <img class="max-width" width="1240" height=""
-                     src="{{ static_values.logo_url }}"
+                <img class="max-width"
+                     src="{{ h_logo }}"
                      alt="" border="0"
-                     style="display: block; color: #000; margin:0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-width: 1240px !important; width: 80% !important; height: auto !important; "/>
+                     style="display: block; color: #000; margin: 0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-height:170px !important; max-width: 70% !important; width: auto !important; height: auto !important; "/>
                 <!-- START CENTERED WHITE CONTAINER -->
                 <span class="preheader"
-                      style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">{% block preheader %}
-                    This is preheader text. Some clients will show this text as a preview.{% endblock %}</span>
+                      style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">
+                    {% block preheader %}
+                        New {{ h_name }} email for you!
+                    {% endblock %}</span>
                 {% block main %}
                     <table class="main"
                            style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;">
@@ -126,15 +132,18 @@
                                     <tr>
                                         <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">
                                             {% block content %}
-                                                {% include 'include/email_line_start.html' %}
-                                                Hi there
-                                                {% if user.is_authenticated %}
-                                                    {{ user.username }}{% endif %},
-                                                {% include 'include/email_line_end.html' %}
-                                                {% include 'include/email_line.html' with text='This is just a sample text. Replace it with what you need. Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.' %}
-                                                {% include 'include/email_button.html' with url='https://my.hackupc.com' text='Call to action!' %}
-                                                {% include 'include/email_line.html' with text='This is a really simple email template. Its sole purpose is to get the recipient to click the button with no distractions.' %}
-                                                {% include 'include/email_line.html' with text=' Good luck! Hope it works.' %}
+                                                <p>
+                                                    Hi there
+                                                    {% if user.is_authenticated %}
+                                                        {{ user.username }}
+                                                    {% endif %},</p>
+                                                <p>This is just a sample text. Replace it with what you need. Sometimes
+                                                    you just want to send a simple HTML email with a simple design and
+                                                    clear call to action. This is it.</p>
+                                                {% include 'mails/include/email_button.html' with url='https://gerard.space' text='Call to action!' %}
+                                                <p>This is a really simple email template. Its sole purpose is to get
+                                                    the recipient to click the button with no distractions.</p>
+                                                <p>Good luck! Hope it works.</p>
                                             {% endblock %}
                                         </td>
                                     </tr>
@@ -152,20 +161,19 @@
                             <tr>
                                 <td class="content-block"
                                     style="font-family:sans-serif;font-size:14px;vertical-align:top;color:#999999;font-size:12px;text-align:center;">
-                                    {% block footer_content %}
 
-                                        {% include 'include/email_footer_line.html' with text='You are receiving this because you applied to '|add:current_site.name|add:' '|add:edition_name %}
-                                        {% include 'include/email_footer_line.html' with text='. If you think this is a mistake, please send us an email at '|add:static_values.email|urlize %}
-                                    {% endblock %}
+                                    <span class="apple-link" style="color:#999999;font-size:12px;text-align:center;">You are receiving this because you applied to {{ h_name }}.</span><br>
+                                    <span class="apple-link" style="color:#999999;font-size:12px;text-align:center;"> If you think this is a mistake, please send us an email
+                                           at {{ h_contact_email|urlize }}</span>
                                     <table style="padding-top: 20px" cellpadding="0" cellspacing="0" border="0"
                                            align="center">
                                         <tr>
-                                            {% if static_values.fb %}
+                                            {% if h_fb %}
                                                 <td style="padding: 0px 5px;">
                                                     <a role="social-icon-link"
-                                                       href="http://www.facebook.com/{{ static_values.fb }}"
+                                                       href="http://www.facebook.com/{{ h_fb }}"
                                                        target="_blank" border="0" alt="Facebook" title="Facebook"
-                                                       style="background-color: #3B579D; border-radius: 0px; -webkit-border-radius:0px; -moz-border-radius:0px; -ms-border-radius:0px; -o-border-radius:0px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                       style="background-color: #3B579D; border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
                                                         <img role="social-icon" alt="Facebook" title="Facebook"
                                                              border="0"
                                                              height="30" width="30"
@@ -175,13 +183,13 @@
                                                     </a>
                                                 </td>
                                             {% endif %}
-                                            {% if static_values.twitter %}
+                                            {% if h_tw %}
                                                 <td style="padding: 0px 5px;"><a role="social-icon-link"
-                                                                                 href="http://www.twitter.com/{{ static_values.twitter }}"
+                                                                                 href="http://www.twitter.com/{{ h_tw }}"
                                                                                  target="_blank" border="0"
                                                                                  alt="Twitter"
                                                                                  title="Twitter"
-                                                                                 style="background-color: #7AC4F7; border-radius: 0px; -webkit-border-radius:0px; -moz-border-radius:0px; -ms-border-radius:0px; -o-border-radius:0px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                                                 style="background-color: #7AC4F7; border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
                                                     <img role="social-icon" alt="Twitter" title="Twitter" border="0"
                                                          height="30" width="30"
                                                          style="height: 30px; width: 30px; border:none; color: white; font-family: Helvetica, arial, sans-serif;"

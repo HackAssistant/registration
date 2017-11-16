@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+    <h1>Sign in</h1>
+
+    <form action="" method="post" class="form form-horizontal">
+        {% csrf_token %}
+        {% bootstrap_form form layout="horizontal" %}
+        <button class="btn btn-primary btn-block" type="submit">{% trans "Sign In" %}</button>
+        {% if not h_app_closed %}
+            <a class="btn btn-default btn-block"
+               href="{% url 'account_signup' %}">{% trans "...or sign up if you don't have an account" %}</a>
+        {% endif %}
+
+    </form>
+
+{% endblock %}

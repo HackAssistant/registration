@@ -1,0 +1,25 @@
+{% extends 'base_email.html' %}
+{% block preheader %}Acceptance email for {{ h_name }}{% endblock %}
+
+{% block content %}
+    <p>
+        Congratulations {{ name }}, you have been officially invited to <b>{{ h_name }}</b>!
+    </p>
+    <p>
+        Respond to this invitation by clicking on the "Confirm" link below.
+        <b>Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another
+            hacker on the waitlist.</b>
+    </p>
+    {% include 'mails/include/email_button.html' with text='Confirm' url=confirm_url %}
+    {% include 'mails/include/cancel.html' %}
+    {% if reimb.waitlisted %}
+        {% include 'include/waitlisted_reimbursement.html' %}
+    {% elif reimb %}
+        <p>
+            Your reimbursement petition is being reviewed by our staff. Check your email in the next few days for an
+            update.
+        </p>
+    {% endif %}
+    {% include 'mails/include/arrival_departure_info.html' %}
+    {% include 'mails/include/closing.html' %}
+{% endblock %}

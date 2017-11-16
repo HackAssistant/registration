@@ -1,0 +1,11 @@
+{% if app.is_invited %}
+
+    <p>
+        In order to receive your travel reimbursement, remember to confirm your attendance as soon as possible. Here you
+        can
+        do it:
+    </p>
+    <p style="text-align:center;">
+        <a href="{{ confirm_url }}">Confirm</a>
+    </p>
+{% endif %}

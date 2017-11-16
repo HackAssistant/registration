@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load static %}
+{% load bootstrap3 %}
+{% block head_title %}Volunteers Ranking{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        {% bootstrap_messages %}
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">{{ h_name }} Check-in Leaderboard</div>
+                <div class="panel-body">
+                    <p>So you think you have checked in tons of hackers, huh?</p>
+                    <p>Drop your self esteem and look at the ranking.</p>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Email</th>
+                        <th>Hackers checked in</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in ranking %}
+                        <tr>
+                            <td>{{ forloop.counter | ordinal }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.checkin_count }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No hackers checked in yet... Why? :'(</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

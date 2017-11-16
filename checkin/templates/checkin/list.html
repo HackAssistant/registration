@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% load table_tags %}
+{% load django_tables2 %}
+{% load bootstrap3 %}
 {% load static %}
-{% block title %}Check In - {% endblock %}
+{% block head_title %}Check In{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
@@ -16,9 +17,14 @@
                         <h4 class="text-center">{% block panel_title %}Confirmed applications{% endblock %}</h4>
                     </div>
                     <div class="panel-body">
-                        <div class="table-responsive">
-                            {% render_table applicationsTable %}
-                        </div>
+                        {% if filter %}
+                            <form action="" method="get" class="form form-inline text-left filter">
+                                {% bootstrap_form filter.form %}
+                                {% bootstrap_button 'Search' %}
+                            </form>
+                            <hr/>
+                        {% endif %}
+                        {% render_table table 'django_tables2/bootstrap.html' %}
                     </div>
                     <div class="panel-footer">
                         {% block extra_buttons %}

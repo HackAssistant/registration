@@ -1,0 +1,1 @@
+Invite for {{ h_name }} expires in 24h

@@ -1,0 +1,32 @@
+{% with dl=timeleft|default:h_app_timeleft in_id=id|default:'secondsLeftDeadline' %}
+    {% if dl %}
+
+        <span id="{{ in_id }}"></span>
+        <script>
+
+            function timeRemaining(seconds) {
+                if (seconds < 0) seconds = 0;
+                const orig = seconds;
+                const days = Math.floor(seconds / (3600 * 24));
+                seconds %= (3600 * 24);
+                const hours = Math.floor(seconds / 3600);
+                seconds %= 3600;
+                const minutes = Math.floor(seconds / 60);
+                seconds %= 60;
+                return ""
+                    + days + (days == 1 ? " day, " : " days, ")
+                    + hours + (hours == 1 ? " hour " : " hours " )
+                    + minutes + (minutes == 1 ? " minute " : " minutes ")
+                    + seconds + (seconds == 1 ? " second" : " seconds")
+            }
+            var secondsTillHack = {{dl.seconds}} + {{dl.days}} * 3600 * 24;
+            document.getElementById("{{ in_id }}").textContent = timeRemaining(secondsTillHack);
+            setInterval(function () {
+                secondsTillHack--;
+                document.getElementById("{{ in_id }}").textContent =
+                    timeRemaining(secondsTillHack);
+            }, 1000);
+        </script>
+
+    {% endif %}
+{% endwith %}

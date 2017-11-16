@@ -1,0 +1,71 @@
+{% load bootstrap3 %}
+{% load static %}
+{% load form_utils %}
+<h1>Application</h1>
+<form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
+    {% csrf_token %}
+    {% bootstrap_form_errors form %}
+    {% for fieldset in form.fieldsets %}
+        <fieldset>
+            <h3>{{ fieldset.name }}<br>
+                {% if fieldset.description %}
+                    <small>{{ fieldset.description }}</small>
+                {% endif %}
+            </h3>
+            {% for field in fieldset %}
+                {% bootstrap_field field %}
+            {% endfor %}
+        </fieldset>
+    {% endfor %}
+    <small><span style="color: red">*</span>Indicates required field</small>
+
+    {% if not application or application.can_be_edit %}
+        <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
+            Submit application{% endif %}</button>
+    {% endif %}
+</form>
+
+<p>If you have any special need you want us to know about please send us an email
+    to {{ h_contact_email|urlize }}</p>
+
+<script src="{% static 'lib/typeahead.min.js' %}"></script>
+<script src="{% static 'js/form_modifiers.js' %}"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+            make_field_typeahead('university', '{% static 'schools.json' %}');
+            make_field_typeahead('degree', '{% static 'degrees.json' %}');
+            make_field_typeahead('origin_country', '{% static 'countries.json' %}');
+
+
+            var other_diet = $('#id_other_diet');
+            var diet = $('#id_diet');
+            conditional_field(other_diet, diet, function () {
+                return diet.val() === 'Others';
+            });
+
+            var has_team = $('input[name="team"][value="True"]');
+            var no_team = $('input[name="team"][value="False"]');
+            var teammates = $('#id_teammates');
+            conditional_field(teammates, has_team, function () {
+                return has_team.prop("checked");
+            });
+            conditional_field(teammates, no_team, function () {
+                return has_team.prop("checked");
+            });
+
+            var is_firsttime = $('input[name="first_timer"][value="True"]');
+            var experienced = $('input[name="first_timer"][value="False"]');
+            var projects = $('#id_projects');
+            conditional_field(projects, is_firsttime, function () {
+                return experienced.prop("checked");
+            });
+            conditional_field(projects, experienced, function () {
+                return experienced.prop("checked");
+            });
+        }
+    )
+
+</script>
