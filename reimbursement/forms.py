@@ -14,7 +14,7 @@ class ReceiptSubmissionReceipt(BetterModelForm):
         multipl_hacks = self.cleaned_data.get('friend_emails', '')
         if multipl_hacks:
             try:
-                check_friend_emails(multipl_hacks)
+                check_friend_emails(multipl_hacks, self.instance.hacker.email)
             except Exception as e:
                 raise forms.ValidationError(e.message)
         return multipl_hacks

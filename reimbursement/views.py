@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView
@@ -7,9 +8,11 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from app.utils import reverse
-from reimbursement import forms, models
-from reimbursement.tables import ReimbursementTable, ReimbursementFilter
-from user.mixins import IsOrganizerMixin
+from applications.emails import send_batch_emails
+from reimbursement import forms, models, emails
+from reimbursement.tables import ReimbursementTable, ReimbursementFilter, SendReimbursementTable, \
+    SendReimbursementFilter
+from user.mixins import IsOrganizerMixin, IsDirectorMixin
 
 
 class ReimbursementReceipt(LoginRequiredMixin, TemplateView):
@@ -102,3 +105,36 @@ class ReimbursementListView(IsOrganizerMixin, SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return models.Reimbursement.objects.all()
+
+
+class SendReimbursementListView(IsDirectorMixin, SingleTableMixin, FilterView):
+    template_name = 'reimbursement_send_table.html'
+    table_class = SendReimbursementTable
+    filterset_class = SendReimbursementFilter
+    table_pagination = {'per_page': 100}
+
+    def get_queryset(self):
+        return models.Reimbursement.objects.filter(status=models.RE_DRAFT).all()
+
+    def post(self, request, *args, **kwargs):
+        ids = request.POST.getlist('selected')
+        reimbs = models.Reimbursement.objects.filter(pk__in=ids).all()
+        mails = []
+        errors = 0
+        for reimb in reimbs:
+            try:
+                assigned_money = request.POST.get('am_' + str(reimb.pk))
+                reimb.assigned_money = assigned_money
+                reimb.send(request.user)
+                m = emails.create_reimbursement_email(reimb, request)
+                mails.append(m)
+            except ValidationError as e:
+                errors += 1
+
+        if mails:
+            send_batch_emails(mails)
+            messages.success(request, "%s reimbursements sent" % len(mails))
+        else:
+            messages.error(request, "%s reimbursements not sent" % errors)
+
+        return HttpResponseRedirect(reverse('send_reimbursement'))

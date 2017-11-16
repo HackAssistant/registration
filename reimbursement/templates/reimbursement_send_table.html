@@ -7,6 +7,7 @@
 
 {% block body %}
     <div class="row margin-top">
+        {% bootstrap_messages %}
         <div class="col-md-12">
             <div style="text-align: center;">
                 <div class="panel panel-default">
@@ -21,14 +22,14 @@
                             </form>
                             <hr/>
                         {% endif %}
-                        {% render_table table 'django_tables2/bootstrap.html' %}
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {% render_table table 'django_tables2/bootstrap.html' %}
+                            <button name="invite" class="btn btn-success btn-block"
+                                    value="invite">Send reimbursement
+                            </button>
+                        </form>
                     </div>
-                    {% if user.is_director %}
-                        <div class="panel-footer">
-                            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-info">Send
-                                reimbursements</a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>

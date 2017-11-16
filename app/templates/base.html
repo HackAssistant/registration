@@ -108,6 +108,11 @@
                                     <li class="{% if request.resolver_match.url_name == "receipt_review" %}active{% endif %}">
                                         <a href="{% url 'receipt_review' %}">Review receipts</a>
                                     </li>
+                                    {% if request.user.is_director %}
+                                        <li class="{% if request.resolver_match.url_name == "send_reimbursement" %}active{% endif %}">
+                                            <a href="{% url 'send_reimbursement' %}">Send reimbursements</a>
+                                        </li>
+                                    {% endif %}
                                 </ul>
                             </li>
                         {% endif %}

@@ -6,7 +6,7 @@
     reimburse you <b>{{ reimb.assigned_money }}{{ h_currency }}</b> as you are coming from {{ reimb.origin_city }} ({{ reimb.origin_country }}).
     <b>You have {{ h_r_days }} days to submit a receipt of your tickets.</b>
 </p>
-    {% include 'include/../../../app/templates/mails/include/email_button.html' with text='Submit receupt' url=form_url %}
+    {% include 'include/../../../app/templates/mails/include/email_button.html' with text='Submit receipt' url=form_url %}
     {% include 'mails/include/confirm_reimbursement.html' %}
     <p>
     If you need an invite letter for your visa, answer this email with your full name, university name and passport number,

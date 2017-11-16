@@ -69,7 +69,7 @@ class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
         return models.Application.annotate_vote(models.Application.objects.filter(status=APP_PENDING))
 
     def post(self, request, *args, **kwargs):
-        ids = request.POST.get('selected')
+        ids = request.POST.getlist('selected')
         apps = models.Application.objects.filter(pk__in=ids).all()
         mails = []
         errors = 0

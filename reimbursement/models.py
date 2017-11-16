@@ -31,8 +31,10 @@ RE_STATUS = [
 ]
 
 
-def check_friend_emails(friend_emails):
+def check_friend_emails(friend_emails, user_email):
     emails = friend_emails.replace(' ', '').split(',')
+    if user_email in emails:
+        raise Exception('%s is your own email' % user_email)
     for email in emails:
         try:
             user = User.objects.get(email=email)
