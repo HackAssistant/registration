@@ -18,8 +18,11 @@ urlpatterns = [
     url(r'^$', views.root_view, name='root'),
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
     url(r'^checkin/', include('checkin.urls')),
-    url(r'^reimbursement/', include('reimbursement.urls')),
+
 ]
+
+if settings.REIMBURSEMENT_ENABLED:
+    urlpatterns.append(url(r'^reimbursement/', include('reimbursement.urls')))
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

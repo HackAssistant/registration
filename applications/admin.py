@@ -28,7 +28,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     actions = ['invite', 'ticket', 'invite_slack', 'reject']
 
     def name(self, obj):
-        return obj.user.get_full_name + ' (' + obj.user.email + ')'
+        return obj.user.get_full_name() + ' (' + obj.user.email + ')'
 
     name.admin_order_field = 'user__name'  # Allows column order sorting
     name.short_description = 'Hacker info'  # Renames column head

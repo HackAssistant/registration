@@ -100,12 +100,10 @@ class Application(models.Model):
 
     # Random lenny face
     lennyface = models.CharField(max_length=300, default='-.-')
+    phone_number = models.CharField(max_length=300, blank=True, null=True)
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes')
-
-    # Needs to be set to true
-    authorized_privacy = models.BooleanField(default=False)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)

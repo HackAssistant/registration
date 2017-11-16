@@ -118,6 +118,7 @@ def get_substitutions_templates():
             'h_currency': getattr(settings, 'DEFAULT_CURRENCY', '$'),
             'h_r_requirements': getattr(settings, 'REIMBURSEMENT_REQUIREMENTS', None),
             'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRACY_DAYS', None),
+            'h_r_enabled': getattr(settings, 'REIMBURSEMENT_ENABLED', False),
             }
 
 

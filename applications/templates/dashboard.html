@@ -34,7 +34,7 @@
                     Errors? Help? Reach us {{ h_contact_email|urlize }}
                 </div>
             </div>
-            {% if reimbursement and not application.is_rejected %}
+            {% if reimbursement and not application.is_rejected and h_r_enabled %}
                 <div class="panel panel-default border-less">
                     <div class="panel-heading">
                         <h3 class="panel-title">Reimbursement information</h3>

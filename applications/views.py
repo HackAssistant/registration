@@ -212,3 +212,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
             c = self.get_context_data()
             c.update({'form': form})
             return render(request, self.template_name, c)
+
+
+def code_conduct(request):
+    return render(request, 'code_conduct.html')
