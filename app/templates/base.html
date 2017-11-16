@@ -89,6 +89,11 @@
                                     <li class="{% if request.resolver_match.url_name == "ranking" %}active{% endif %}">
                                         <a href="{% url 'ranking' %}">Vote ranking</a>
                                     </li>
+                                    {% if request.user.is_director %}
+                                        <li class="{% if request.resolver_match.url_name == "invite_list" %}active{% endif %}">
+                                            <a href="{% url 'invite_list' %}">Send invitations</a>
+                                        </li>
+                                    {% endif %}
                                 </ul>
                             </li>
                             <li class="dropdown">

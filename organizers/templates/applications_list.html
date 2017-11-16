@@ -27,6 +27,11 @@
                         {% endif %}
                         {% render_table table 'django_tables2/bootstrap.html' %}
                     </div>
+                    {% if user.is_director %}
+                        <div class="panel-footer">
+                            <a href="{% url 'invite_list' %}" class="btn-block btn btn-info">Invite applications</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
