@@ -40,7 +40,7 @@
                         <h4 class="text-center">Receipt</h4>
                         <dl class="dl-horizontal">
                             {% if reimb.receipt %}
-                                {% include 'include/field.html' with desc='Receipt' value='<a href="'|add:reimb.receipt.url|add:'" target="_blank">'|add:reimb.receipt.url|add:"</a>"|safe %}
+                                {% include 'include/field.html' with desc='Receipt' value='<a href="'|add:reimb.receipt.url|add:'" target="_blank">'|add:reimb.receipt.name|add:"</a>"|safe %}
                             {% endif %}
                             {% include 'include/field.html' with desc='Multiple hackers covered' value=reimb.multiple_hackers|yesno %}
                             {% include 'include/field.html' with desc='Other hackers covered' value=reimb.friend_emails %}
