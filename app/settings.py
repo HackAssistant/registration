@@ -179,6 +179,8 @@ BOOTSTRAP3 = {
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
+CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
+
 if os.environ.get('EMAIL_HOST_PASSWORD', None):
     # Error reporting email. Will send an email in any 500 error from server email
     SERVER_EMAIL = 'server@hackupc.com'
