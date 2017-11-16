@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.template.defaultfilters import filesizeformat
 from form_utils.forms import BetterModelForm
 
 from applications import models
@@ -65,6 +66,13 @@ class ApplicationForm(BetterModelForm):
                                       label='I have read and accept '
                                             '<a href="/code_conduct" target="_blank">%s Code of conduct</a>' % (
                                                 settings.HACKATHON_NAME), )
+
+    def clean_resume(self):
+        resume = self.cleaned_data['resume']
+        if resume._size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
+                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(resume._size)))
+        return resume
 
     def clean_code_conduct(self):
         cc = self.cleaned_data.get('code_conduct', False)

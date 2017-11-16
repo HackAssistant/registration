@@ -1,5 +1,7 @@
 from django import forms
+from django.conf import settings
 from django.forms import ModelForm
+from django.template.defaultfilters import filesizeformat
 from form_utils.forms import BetterModelForm
 
 from reimbursement.models import Reimbursement, check_friend_emails
@@ -25,6 +27,13 @@ class ReceiptSubmissionReceipt(BetterModelForm):
         if not venmo and not paypal:
             raise forms.ValidationError("Please add either venmo or paypal so we can send you reimbursement")
         return paypal
+
+    def clean_receipt(self):
+        receipt = self.cleaned_data['receipt']
+        if receipt._size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
+                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(receipt._size)))
+        return receipt
 
     def save(self, commit=True):
         reimb = super(ReceiptSubmissionReceipt, self).save(commit=False)
