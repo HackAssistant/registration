@@ -10,6 +10,8 @@ from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
+from app import slack
+from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
@@ -122,36 +124,56 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
         if request.POST.get('add_comment'):
             add_comment(application, request.user, comment_text)
         elif request.POST.get('invite') and request.user.is_director:
-            try:
-                application.invite(request.user)
-                messages.success(request, "Invite to %s successfully sent" % application.user.email)
-                m = emails.create_invite_email(application, request)
-                m.send()
-            except ValidationError as e:
-                messages.error(request, e.message)
+            self.invite_application(application)
         elif request.POST.get('confirm') and request.user.is_director:
-            try:
-                application.confirm()
-                messages.success(request, "Ticket to %s successfully sent" % application.user.email)
-                m = emails.create_confirmation_email(application, request)
-                m.send()
-            except ValidationError as e:
-                messages.error(request, e.message)
-
+            self.confirm_application(application)
         elif request.POST.get('cancel') and request.user.is_director:
-            try:
-                application.cancel()
-                messages.success(request, "%s application cancelled" % application.user.email)
-            except ValidationError as e:
-                messages.error(request, e.message)
+            self.cancel_application(application)
         elif request.POST.get('waitlist') and request.user.is_director:
-            try:
-                application.reject(request)
-                messages.success(request, "%s application wait listed" % application.user.email)
-            except ValidationError as e:
-                messages.error(request, e.message)
+            self.waitlist_application(application)
+        elif request.POST.get('slack') and request.user.is_organizer:
+            self.slack_invite(application)
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
+
+    def waitlist_application(self, application):
+        try:
+            application.reject(self.request)
+            messages.success(self.request, "%s application wait listed" % application.user.email)
+        except ValidationError as e:
+            messages.error(self.request, e.message)
+
+    def slack_invite(self, application):
+        try:
+            slack.send_slack_invite(application.user.email)
+            messages.success(self.request, "Slack invite sent to %s" % application.user.email)
+        except SlackInvitationException as e:
+            messages.error(self.request, "Slack error: %s" % e.message)
+
+    def cancel_application(self, application):
+        try:
+            application.cancel()
+            messages.success(self.request, "%s application cancelled" % application.user.email)
+        except ValidationError as e:
+            messages.error(self.request, e.message)
+
+    def confirm_application(self, application):
+        try:
+            application.confirm()
+            messages.success(self.request, "Ticket to %s successfully sent" % application.user.email)
+            m = emails.create_confirmation_email(application, self.request)
+            m.send()
+        except ValidationError as e:
+            messages.error(self.request, e.message)
+
+    def invite_application(self, application):
+        try:
+            application.invite(self.request.user)
+            messages.success(self.request, "Invite to %s successfully sent" % application.user.email)
+            m = emails.create_invite_email(application, self.request)
+            m.send()
+        except ValidationError as e:
+            messages.error(self.request, e.message)
 
 
 class VoteApplicationView(ApplicationDetailView):

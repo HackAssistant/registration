@@ -136,4 +136,5 @@ def get_user_substitutions(request):
 def hackathon_vars_processor(request):
     c = get_substitutions_templates()
     c.update(get_user_substitutions(request))
+    c.update({'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None)})
     return c

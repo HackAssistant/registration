@@ -61,5 +61,5 @@ REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during th
 SLACK = {
     'team': os.environ.get('SL_TEAM', 'hackupctest'),
     # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
-    'token': os.environ.get('SL_TOKEN', None)
+    'token': os.environ.get('SL_TOKEN', 'test')
 }
