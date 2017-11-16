@@ -19,13 +19,12 @@
                                 {% bootstrap_form filter.form size='small' %}
                                 {% bootstrap_button 'Search' size='small' button_class='btn-info' %}
                             </form>
-                            <hr/>
                         {% endif %}
-                        {% render_table table 'django_tables2/bootstrap.html' %}
                     </div>
+                    {% render_table table 'django_tables2/bootstrap-responsive.html' %}
                     {% if user.is_director %}
                         <div class="panel-footer">
-                            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-info">Send
+                            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-default">Send
                                 reimbursements</a>
                         </div>
                     {% endif %}
