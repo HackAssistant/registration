@@ -113,6 +113,11 @@
                                 <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
                                     ticket
                                 </button>
+                                {% if slack_enabled %}
+                                    <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
+                                        invite
+                                    </button>
+                                {% endif %}
                                 <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
                                 </button>
                             {% endif %}
