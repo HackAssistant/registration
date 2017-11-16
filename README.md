@@ -29,7 +29,7 @@ Backend for hackathon application management. Forked and adapted from [HackUPC's
 
 Needs: Python 3.X, virtualenv
 
-- `git clone https://github.com/hackupc/backend && cd backend`
+- `git clone https://github.com/hackcu/backend && cd backend`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
