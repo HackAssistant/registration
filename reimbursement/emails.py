@@ -15,11 +15,10 @@ def create_reject_receipt_email(reimb, request):
 
 
 def _get_context(app, reimb, request):
-    c = {
+    return {
         'app': app,
         'reimb': reimb,
         'confirm_url': str(reverse('confirm_app', kwargs={'id': app.uuid_str}, request=request)),
         'form_url': str(reverse('reimbursement_form', request=request)),
         'cancel_url': str(reverse('cancel_app', kwargs={'id': app.uuid_str}, request=request))
     }
-    return c
