@@ -12,7 +12,7 @@ class ReimbursementFilter(django_filters.FilterSet):
 
     class Meta:
         model = Reimbursement
-        fields = ['hacker__email', 'hacker__nickname', 'origin_country', 'origin_city']
+        fields = ['hacker__email', 'hacker__nickname', 'origin_country', 'origin_city', 'status']
 
 
 class ReimbursementTable(tables.Table):
@@ -27,4 +27,4 @@ class ReimbursementTable(tables.Table):
         fields = ['hacker.nickname', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin_city',
                   'origin_country', ]
 
-        empty_text = 'No applications available'
+        empty_text = 'No reimbursement match criteria'
