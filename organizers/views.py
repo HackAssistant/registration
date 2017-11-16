@@ -1,4 +1,6 @@
 # Create your views here.
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count
 from django.http import Http404, HttpResponseRedirect
@@ -88,17 +90,34 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
         if request.POST.get('add_comment'):
             add_comment(application, request.user, comment_text)
         elif request.POST.get('invite'):
-            application.invite(request.user)
-            m = emails.create_invite_email(application, request)
-            m.send()
+            try:
+                application.invite(request.user)
+                messages.success(request, "Invite to %s successfully sent" % application.user.email)
+                m = emails.create_invite_email(application, request)
+                m.send()
+            except ValidationError as e:
+                messages.error(request, e.message)
         elif request.POST.get('confirm'):
-            application.confirm()
-            m = emails.create_confirmation_email(application, request)
-            m.send()
+            try:
+                application.confirm()
+                messages.success(request, "Ticket to %s successfully sent" % application.user.email)
+                m = emails.create_confirmation_email(application, request)
+                m.send()
+            except ValidationError as e:
+                messages.error(request, e.message)
+
         elif request.POST.get('cancel'):
-            application.cancel()
+            try:
+                application.cancel()
+                messages.success(request, "%s application cancelled" % application.user.email)
+            except ValidationError as e:
+                messages.error(request, e.message)
         elif request.POST.get('waitlist'):
-            application.reject(request)
+            try:
+                application.reject(request)
+                messages.success(request, "%s application wait listed" % application.user.email)
+            except ValidationError as e:
+                messages.error(request, e.message)
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 

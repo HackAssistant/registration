@@ -22,8 +22,8 @@
                     <div class="list-group">
                         {% for phase in phases %}
                             <a class="list-group-item {% if phase.finished %}finished{% elif phase.key != current.key %}disabled{% endif %} {% if phase.key == active.key %}active{% endif %}"
-                               href="{% if phase.finished or phase.key == current.key %}?phase=
-                                   {{ phase.key }}{% else %}#{% endif %}">
+                               href="{% if phase.finished or phase.key == current.key %}?phase={{ phase.key }}
+                                {% else %}#{% endif %}">
                                 {{ phase.title }}
                             </a>
                         {% endfor %}
