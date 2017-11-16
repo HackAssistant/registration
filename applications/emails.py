@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core import mail
 
 from app import emails
 from app.utils import reverse
@@ -38,3 +39,8 @@ def create_lastreminder_email(application):
     }
     return emails.render_mail('mails/last_reminder',
                               application.user.email, c)
+
+
+def send_batch_emails(emails):
+    connection = mail.get_connection()
+    connection.send_messages(emails)

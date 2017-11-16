@@ -3,7 +3,7 @@
 {% load django_tables2 %}
 {% load bootstrap3 %}
 {% load static %}
-{% block head_title %}Applications list {% endblock %}
+{% block head_title %}Invite applications {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
@@ -15,7 +15,7 @@
             <div style="text-align: center;">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4 class="text-center">Applications</h4>
+                        <h4 class="text-center">Invite</h4>
                     </div>
                     <div class="panel-body">
                         {% if filter %}
@@ -25,7 +25,13 @@
                             </form>
                             <hr/>
                         {% endif %}
-                        {% render_table table 'django_tables2/bootstrap.html' %}
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {% render_table table 'django_tables2/bootstrap.html' %}
+                            <button name="invite" class="btn btn-success btn-block"
+                                    value="invite">Invite
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

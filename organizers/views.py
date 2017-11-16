@@ -10,10 +10,11 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from applications import emails
+from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
-from organizers.tables import ApplicationsListTable, ApplicationFilter
-from user.mixins import IsOrganizerMixin
+from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable
+from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
 
 
@@ -56,6 +57,36 @@ class ApplicationsListView(IsOrganizerMixin, SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.all())
+
+
+class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
+    template_name = 'invite_list.html'
+    table_class = AdminApplicationsListTable
+    filterset_class = ApplicationFilter
+    table_pagination = {'per_page': 100}
+
+    def get_queryset(self):
+        return models.Application.annotate_vote(models.Application.objects.filter(status=APP_PENDING))
+
+    def post(self, request, *args, **kwargs):
+        ids = request.POST.get('selected')
+        apps = models.Application.objects.filter(pk__in=ids).all()
+        mails = []
+        errors = 0
+        for app in apps:
+            try:
+                app.invite(request.user)
+                m = emails.create_invite_email(app, request)
+                mails.append(m)
+            except ValidationError as e:
+                errors += 1
+        if mails:
+            send_batch_emails(mails)
+            messages.success(request, "%s applications invited" % len(mails))
+        else:
+            messages.error(request, "%s applications not invited" % errors)
+
+        return HttpResponseRedirect(reverse('invite_list'))
 
 
 class ApplicationDetailView(IsOrganizerMixin, TemplateView):

@@ -22,6 +22,18 @@ class ApplicationsListTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.nickname', 'vote_avg', 'user.email', 'status', 'reimbursement.assigned_money']
+        fields = ['user.nickname', 'vote_avg', 'user.email', 'status']
+        empty_text = 'No applications available'
+        order_by = '-vote_avg'
+
+
+class AdminApplicationsListTable(ApplicationsListTable):
+    selected = tables.CheckBoxColumn(accessor="pk", verbose_name='Select')
+
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['selected', 'user.nickname', 'vote_avg', 'user.email', 'status']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
