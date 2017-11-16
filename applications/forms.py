@@ -61,10 +61,38 @@ class ApplicationForm(BetterModelForm):
         widget=forms.RadioSelect
     )
 
+    code_conduct = forms.BooleanField(required=False,
+                                      label='I have read and accept '
+                                            '<a href="/code_conduct" target="_blank">%s Code of conduct</a>' % (
+                                                settings.HACKATHON_NAME), )
+
+    def clean_code_conduct(self):
+        cc = self.cleaned_data.get('code_conduct', False)
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
+        return cc
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
         return item
+
+    def fieldsets(self):
+        # Fieldsets ordered and with description
+        self._fieldsets = [
+            ('Personal Info',
+             {'fields': ('gender', 'university', 'degree',
+                         'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age', 'lennyface'),
+              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
+            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
+            ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
+            ('Where are you joining us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
+            ('Team', {'fields': ('team', 'teammates',), }),
+        ]
+        # Fields that we only need the first time the hacker fills the application
+        if not self.instance.pk:
+            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',), }))
+        return super(ApplicationForm, self).fieldsets
 
     class Meta:
         model = models.Application
@@ -80,17 +108,6 @@ class ApplicationForm(BetterModelForm):
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>'
         }
-
-        fieldsets = (
-            ('Personal Info',
-             {'fields': ('gender', 'university', 'degree',
-                         'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age', 'lennyface'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
-            ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Where are you joining us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
-            ('Team', {'fields': ('team', 'teammates',), }),
-        )
 
         widgets = {
             'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
