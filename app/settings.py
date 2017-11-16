@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'django_tables2',
     'organizers',
     'checkin',
-    'reimbursement',
     'user',
     'applications'
 ]
+
+if REIMBURSEMENT_ENABLED:
+    INSTALLED_APPS.append('reimbursement')
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

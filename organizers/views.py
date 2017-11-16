@@ -1,4 +1,5 @@
 # Create your views here.
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -170,7 +171,7 @@ class VoteApplicationView(ApplicationDetailView):
 
     def get(self, request, *args, **kwargs):
         r = super(VoteApplicationView, self).get(request, *args, **kwargs)
-        if not self.get_application(kwargs):
+        if not self.get_application(kwargs) and settings.REIMBURSEMENT_ENABLED:
             return HttpResponseRedirect(reverse('receipt_review'))
         return r
 
