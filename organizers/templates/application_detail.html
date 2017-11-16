@@ -95,6 +95,29 @@
                             </button>
                         </form>
                     </div>
+                {% elif user.is_director %}
+                    <div class="panel-footer">
+
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                            {% if  app.is_pending %}
+                                <button name="waitlist" class="btn btn-danger btn-block" value="waitlis">Wait list
+                                </button>
+                            {% endif %}
+                            {% if not app.answered_invite or app.is_cancelled %}
+                                <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
+                                </button>
+                            {% endif %}
+                            {% if app.can_be_cancelled %}
+                                <button name="confirm" class="btn btn-info btn-block" value="confirm">Send ticket
+                                </button>
+                                <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
+                                </button>
+                            {% endif %}
+                        </form>
+                    </div>
+
                 {% endif %}
 
             </div>
@@ -123,7 +146,8 @@
                     <form action="" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                        <textarea name="comment_text" class="form-control" placeholder="Write a comment..." rows="3"
+                        <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
+                                  rows="3"
                                   required></textarea>
                         <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
                         </button>

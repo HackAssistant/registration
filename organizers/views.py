@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
+from applications import emails
 from applications.models import APP_PENDING
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter
@@ -81,11 +82,25 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         id_ = request.POST.get('app_id')
-        comment_text = request.POST.get('comment_text', None)
-        application = models.Application.objects.get(id=id_)
+        application = models.Application.objects.get(pk=id_)
 
-        add_comment(application, request.user, comment_text)
-        return HttpResponseRedirect(reverse('app_detail', kwargs={'id': id_}))
+        comment_text = request.POST.get('comment_text', None)
+        if request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+        elif request.POST.get('invite'):
+            application.invite(request.user)
+            m = emails.create_invite_email(application, request)
+            m.send()
+        elif request.POST.get('confirm'):
+            application.confirm()
+            m = emails.create_confirmation_email(application, request)
+            m.send()
+        elif request.POST.get('cancel'):
+            application.cancel()
+        elif request.POST.get('waitlist'):
+            application.reject(request)
+
+        return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 
 
 class VoteApplicationView(ApplicationDetailView):
