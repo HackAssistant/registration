@@ -20,15 +20,18 @@ from app.utils import reverse
 from applications import models, emails, forms
 
 
+def check_application_exists(user, uuid):
+    try:
+        application = models.Application.objects.get(user=user)
+    except models.Application.DoesNotExist:
+        raise Http404
+    if not application or uuid != application.uuid_str:
+        raise Http404
+
+
 class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
-        uuid = self.kwargs.get('id', None)
-        try:
-            application = models.Application.objects.get(user=self.request.user)
-        except models.Application.DoesNotExist:
-            raise Http404
-        if not application or uuid != application.uuid_str:
-            raise Http404
+        check_application_exists(self.request.user, self.kwargs.get('id', None))
         return True
 
     def get(self, request, *args, **kwargs):
@@ -56,50 +59,25 @@ class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'cancel.html'
 
     def test_func(self):
-        uuid = self.kwargs.get('id', None)
-
-        try:
-            application = models.Application.objects.get(user=self.request.user)
-        except models.Application.DoesNotExist:
-            raise Http404
-
-        if not application or uuid != application.uuid_str:
-            raise Http404
+        check_application_exists(self.request.user, self.kwargs.get('id', None))
         return True
 
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
 
         application = models.Application.objects.get(user=self.request.user)
-        context.update({
-            'application': application,
-        })
-
+        context.update({'application': application, })
         if application.status == models.APP_CANCELLED:
-            context.update({
-                'error':
-                    """
-                    Thank you for responding. We're sorry you won't be able to
-                    make it. Hope to see you next edition!
-                    """
-            })
+            context.update({'error': "Thank you for responding. We're sorry you won't be able to make it."
+                                     " Hope to see you next edition!"
+                            })
         elif application.status == models.APP_EXPIRED:
-            context.update({
-                'error':
-                    """
-                    Unfortunately your invite has expired.
-                    """
-            })
+            context.update({'error': "Unfortunately your invite has expired."})
         elif not application.can_be_cancelled():
             context.update({
-                'error':
-                    """
-                    You found a glitch! You can't cancel this invitation.
-                    Is this the question for 42?
-                    """,
+                'error': "You found a glitch! You can't cancel this invitation. Is this the question for 42?",
                 'application': None
             })
-
         return context
 
     def post(self, request, *args, **kwargs):
@@ -123,6 +101,23 @@ def create_phase(phase_key, title, finished_func, user):
             'finished': is_finished, 'title': title, 'key': phase_key}
 
 
+def get_deadline(application):
+    last_updated = application.status_update_date
+    if application.status == models.APP_INVITED:
+        deadline = last_updated + timedelta(days=5)
+    else:
+        deadline = last_updated + timedelta(days=1)
+    return deadline
+
+
+def get_current_phase(phases):
+    try:
+        current = [p for p in phases if not p['finished']][0]
+    except IndexError:
+        current = [p for p in phases if p['finished']][-1]
+    return current
+
+
 class HackerDashboard(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
 
@@ -130,11 +125,24 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
 
         phases = self.get_phases()
+        current = get_current_phase(phases)
+        active = self.get_active_phase(current, phases)
+        form = forms.ApplicationForm()
+        context.update({'phases': phases, 'current': current,
+                        'active': active, 'form': form})
         try:
-            current = [p for p in phases if not p['finished']][0]
-        except IndexError:
-            current = [p for p in phases if p['finished']][-1]
+            application = self.get_current_app(self.request.user)
+            form = forms.ApplicationForm(instance=application)
+            context.update({'form': form})
+            deadline = get_deadline(application)
+            context.update({'invite_timeleft': deadline - timezone.now()})
+        except:
+            # We ignore this as we are okay if the user has not created an application yet
+            pass
 
+        return context
+
+    def get_active_phase(self, current, phases):
         active_key = self.request.GET.get('phase', None)
         active = current
         if active_key:
@@ -142,25 +150,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
                 active = [p for p in phases if p['key'] == active_key][0]
             except:
                 pass
-
-        form = forms.ApplicationForm()
-
-        context.update({'phases': phases, 'current': current,
-                        'active': active, 'form': form})
-        try:
-            application = self.get_current_app(self.request.user)
-            form = forms.ApplicationForm(instance=application)
-            context.update({'form': form})
-            last_updated = application.status_update_date
-            if application.status == models.APP_INVITED:
-                deadline = last_updated + timedelta(days=5)
-            else:
-                deadline = last_updated + timedelta(days=1)
-            context.update({'invite_timeleft': deadline - timezone.now()})
-        except:
-            pass
-
-        return context
+        return active
 
     def get_phases(self):
         user = self.request.user
