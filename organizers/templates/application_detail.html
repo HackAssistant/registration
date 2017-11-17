@@ -37,7 +37,7 @@
                             {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                             {% include 'include/field.html' with desc='Email' value=app.user.email %}
                             {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
-                            {% include 'include/field.html' with desc='Money assigned' value=reimbursment.money_assigned|default:'0' %}
+                            {% include 'include/field.html' with desc='Money assigned' value=reimbursment.money_assigned %}
                         {% endif %}
                         {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                         {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}

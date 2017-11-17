@@ -117,11 +117,15 @@ class ApplicationForm(BetterModelForm):
             'teammatess': 'Add each teammate in a new line.',
             'diet': 'If you select Others, please write detail in the "Other diet" field that will appear',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
-                         ' http://textsmili.es/</a>'
+                         ' http://textsmili.es/</a>',
+            'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
+                        '(we love links) Show us your passion! :D'
         }
 
         widgets = {
             'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
         }
@@ -134,10 +138,8 @@ class ApplicationForm(BetterModelForm):
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin_city': 'City',
             'origin_country': 'Country',
-            'description': 'What are you most excited about %s?' % settings.HACKATHON_NAME,
-            'projects': 'What projects have you worked on? '
-                        'You can talk about about past hackathons, personal projects, awards etc. (we love links) '
-                        'Show us your passion! :D',
+            'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
+            'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
             'teammates': 'What are your teammates\'s full names?'
 

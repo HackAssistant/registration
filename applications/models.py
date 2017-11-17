@@ -103,7 +103,7 @@ class Application(models.Model):
     phone_number = models.CharField(max_length=300, blank=True, null=True)
 
     # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes')
+    resume = models.FileField(upload_to='resumes', null=True, blank=True)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)

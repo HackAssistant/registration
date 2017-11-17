@@ -11,8 +11,7 @@ class UserChangeForm(forms.ModelForm):
     """
     password = ReadOnlyPasswordHashField(label=("Password"),
                                          help_text=("Raw passwords are not stored, so there is no way to see "
-                                                    "this user's password, but you can change the password "
-                                                    "using <a href=\"password/\">this form</a>."))
+                                                    "this user's password"))
 
     class Meta:
         model = User
@@ -32,7 +31,7 @@ class LoginForm(forms.Form):
 
 class RegisterForm(LoginForm):
     password2 = forms.CharField(widget=forms.PasswordInput, label='Repeat password', max_length=100)
-    name = forms.CharField(label='Preferred name', max_length=225, help_text='How do you want us to call you?')
+    name = forms.CharField(label='Full name', max_length=225, help_text='How do you want us to call you?')
 
     field_order = ['name', 'email', 'password', 'password2']
 
