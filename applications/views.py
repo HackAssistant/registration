@@ -194,7 +194,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
                                  'We have now received your application. '
                                  'Processing your application will take some time, so please be patient.')
             else:
-                messages.info(request, 'Application changes saved successfully!')
+                messages.success(request, 'Application changes saved successfully!')
 
             return HttpResponseRedirect(reverse('root'))
         else:
