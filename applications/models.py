@@ -97,6 +97,7 @@ class Application(models.Model):
 
     # Reimbursement
     scholarship = models.BooleanField()
+    # amount_desired = models.FloatField(blank=True, null=True)
 
     # Random lenny face
     lennyface = models.CharField(max_length=300, default='-.-')

@@ -1,6 +1,8 @@
 # HACKATHON PERSONALIZATION
 import os
 
+from django.utils import timezone
+
 HACKATHON_NAME = 'HackCU'
 # What's the name for the application
 HACKATHON_APPLICATION_NAME = 'HackCU registration'
@@ -31,7 +33,7 @@ HACKATHON_FACEBOOK_PAGE = 'hackcu'
 HACKATHON_ISSUES_URL = 'https://github.com/hackcu/backend/issues/new'
 
 # (OPTIONAL) Applications deadline
-# HACKATHON_APP_DEADLINE = timezone.datetime(2017, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 # HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
 #                    'the opening ceremony will be at 7:00 pm.'

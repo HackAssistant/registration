@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from form_utils.forms import BetterModelForm
 
+from app.utils import validate_url
 from applications import models
 
 
@@ -83,6 +84,21 @@ class ApplicationForm(BetterModelForm):
         if not cc and not self.instance.pk:
             raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
         return cc
+
+    def clean_github(self):
+        data = self.cleaned_data['github']
+        validate_url(data, 'github.com')
+        return data
+
+    def clean_devpost(self):
+        data = self.cleaned_data['devpost']
+        validate_url(data, 'devpost.com')
+        return data
+
+    def clean_linkedin(self):
+        data = self.cleaned_data['linkedin']
+        validate_url(data, 'linkedin.com')
+        return data
 
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
