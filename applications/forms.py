@@ -19,6 +19,8 @@ class ApplicationForm(BetterModelForm):
                'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
+    phone_number = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': '+#########'}))
     university = forms.CharField(required=True,
                                  label='What university are you studying in?',
                                  help_text='Current or most recent school you attended.',
@@ -109,8 +111,9 @@ class ApplicationForm(BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'university', 'degree',
-                         'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age', 'lennyface'),
+             {'fields': ('gender', 'university', 'degree', 'phone_number',
+                         'graduation_year', 'tshirt_size', 'diet', 'other_diet',
+                         'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
@@ -162,5 +165,4 @@ class ApplicationForm(BetterModelForm):
 
         }
 
-        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status',
-                   'authorized_privacy', ]
+        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', ]
