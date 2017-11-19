@@ -40,7 +40,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     name = models.CharField(
-        verbose_name='Preferred name',
+        verbose_name='Full name',
         max_length=255,
     )
     email_verified = models.BooleanField(default=False)

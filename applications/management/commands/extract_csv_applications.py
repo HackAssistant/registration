@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 
-from hackers import models
+from applications import models
 
-EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
+EXPORT_CSV_FIELDS = ['name', 'university', 'country', 'email']
 
 
 class Command(BaseCommand):
@@ -22,6 +22,6 @@ class Command(BaseCommand):
 
         self.stdout.write(','.join(EXPORT_CSV_FIELDS))
         for app in applications:
-            res = [app.hacker.name, app.hacker.lastname, app.hacker.university, app.origin_country,
-                   app.hacker.user.email]
+            res = [app.user.name,  app.university, app.origin_country,
+                   app.user.email]
             self.stdout.write(','.join(res))

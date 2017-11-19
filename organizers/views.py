@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+from django_tables2.export import ExportMixin
 
 from app import slack
 from app.slack import SlackInvitationException
@@ -52,11 +53,12 @@ class RankingView(IsOrganizerMixin, TemplateView):
         return context
 
 
-class ApplicationsListView(IsOrganizerMixin, SingleTableMixin, FilterView):
+class ApplicationsListView(IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
     table_class = ApplicationsListTable
     filterset_class = ApplicationFilter
     table_pagination = {'per_page': 100}
+    exclude_columns = ('detail', 'status', 'vote_avg')
 
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.all())
