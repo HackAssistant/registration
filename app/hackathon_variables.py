@@ -30,7 +30,7 @@ HACKATHON_TWITTER_ACCOUNT = 'hackcu'
 # (OPTIONAL) Hackathon Facebook page
 HACKATHON_FACEBOOK_PAGE = 'hackcu'
 # (OPTIONAL) Issues url. Where to redirect hackers if a 500 error occurs
-HACKATHON_ISSUES_URL = 'https://github.com/hackcu/backend/issues/new'
+HACKATHON_GITHUB_REPO = 'https://github.com/hackcu/backend/'
 
 # (OPTIONAL) Applications deadline
 HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))

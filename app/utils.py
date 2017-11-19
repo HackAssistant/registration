@@ -107,7 +107,7 @@ def get_substitutions_templates():
             'h_description': getattr(settings, 'HACKATHON_DESCRIPTION', None),
             'h_ga': getattr(settings, 'HACKATHON_GOOGLE_ANALYTICS', None),
             'h_tw': getattr(settings, 'HACKATHON_TWITTER_ACCOUNT', None),
-            'h_issues_url': getattr(settings, 'HACKATHON_ISSUES_URL', None),
+            'h_repo': getattr(settings, 'HACKATHON_GITHUB_REPO', None),
             'h_app_closed': is_app_closed(),
             'h_app_timeleft': application_timeleft(),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),

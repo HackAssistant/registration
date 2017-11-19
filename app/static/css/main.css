@@ -5,6 +5,70 @@ body {
     font-size: 13.14159px;
 }
 
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 95px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    padding-top: 2em;
+
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+
+    -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+}
+
+footer p, footer small {
+    color: #777;
+    opacity: 0.5;
+}
+
+footer p > a {
+    color: #4b4b4b;
+    opacity: 1;
+}
+
+footer .row {
+    margin-bottom: 10px;
+}
+
+footer a, footer a:focus, footer a:active {
+    opacity: 0.5;
+    color: #777;
+    -webkit-transition: all .1s linear;
+    -moz-transition: all .1s linear;
+    -o-transition: all .1s linear;
+    transition: all .1s linear;
+}
+
+footer a:hover {
+    opacity: 0.9;
+    color: #4b4b4b;
+}
+
+.social-icons > a {
+    text-decoration: none;
+    padding: 10px;
+    font-size: 100%;
+    -webkit-transition: all .1s linear;
+    -moz-transition: all .1s linear;
+    -o-transition: all .1s linear;
+    transition: all .1s linear;
+}
+
 nav.navbar {
     -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
@@ -80,7 +144,27 @@ img.icon {
     padding-left: 5px;
 }
 
-.required > label::after{
+.required > label::after {
     content: ' *';
     color: red;
+}
+
+@media (max-width: 768px) {
+    .text-center-xs {
+        text-align: center;
+    }
+
+    footer {
+        text-align: center;
+
+    }
+
+    body {
+        /* Margin bottom by footer height */
+        margin-bottom: 130px;
+    }
+
+    .footer {
+        height: 130px;
+    }
 }
