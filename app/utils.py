@@ -1,5 +1,6 @@
 import csv
 
+import logging
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Func

@@ -123,7 +123,6 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
-
         phases = self.get_phases()
         current = get_current_phase(phases)
         active = self.get_active_phase(current, phases)
