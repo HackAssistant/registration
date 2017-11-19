@@ -40,7 +40,7 @@ class ApplicationForm(BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    scholarship = forms.TypedChoiceField(
+    reimb = forms.TypedChoiceField(
         required=True,
         label='Do you need travel reimbursement to attend?',
         coerce=lambda x: x == 'True',
@@ -115,9 +115,10 @@ class ApplicationForm(BetterModelForm):
                          'graduation_year', 'tshirt_size', 'diet', 'other_diet',
                          'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Where are you joining us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
+            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
+            ('Where are you joining us from?',
+             {'fields': ('origin_city', 'origin_country', 'reimb', 'reimb_amount'), }),
             ('Team', {'fields': ('team', 'teammates',), }),
         ]
         # Fields that we only need the first time the hacker fills the application
@@ -135,11 +136,12 @@ class ApplicationForm(BetterModelForm):
                                'you graduate',
             'degree': 'What\'s your major?',
             'teammatess': 'Add each teammate in a new line.',
-            'diet': 'If you select Others, please write detail in the "Other diet" field that will appear',
+            'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
-                        '(we love links) Show us your passion! :D'
+                        '(we love links) Show us your passion! :D',
+            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
         }
 
         widgets = {
@@ -161,7 +163,9 @@ class ApplicationForm(BetterModelForm):
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
-            'teammates': 'What are your teammates\'s full names?'
+            'teammates': 'What are your teammates\'s full names?',
+            'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
+                settings.CURRENCY, settings.HACKATHON_NAME),
 
         }
 

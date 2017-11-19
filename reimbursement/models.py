@@ -110,20 +110,11 @@ class Reimbursement(models.Model):
         return timezone.now() > self.expiration_time and self.status == RE_PEND_TICKET
 
     def generate_draft(self, application):
-        price = DEFAULT_REIMBURSEMENT_AMOUNT
-        try:
-            price_t = Reimbursement.objects.filter(
-                origin_city=self.origin_city,
-                origin_country=self.origin_country) \
-                .order_by('-creation_time') \
-                .values('assigned_money').first()
-            price = price_t['assigned_money']
-        except:
-            pass
-
-        self.assigned_money = price
+        if self.status != RE_DRAFT:
+            return
         self.origin_country = application.origin_country
         self.origin_city = application.origin_city
+        self.assigned_money = min(DEFAULT_REIMBURSEMENT_AMOUNT, application.reimb_amount)
         self.hacker = application.user
         self.reimbursement_money = None
         self.save()

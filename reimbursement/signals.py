@@ -7,8 +7,12 @@ from reimbursement.models import Reimbursement
 
 @receiver(post_save, sender=Application)
 def reimbursement_create(sender, instance, created, *args, **kwargs):
-    if instance.scholarship:
-        reimb = Reimbursement.objects.get_or_create(hacker=instance.user)
-        reimb.generate_draft(instance)
+    exists = Reimbursement.objects.filter(hacker=instance.user).exists()
+    if not instance.reimb:
+        Reimbursement.objects.get(hacker=instance.user).delete()
+        return
+    if exists:
+        reimb = Reimbursement.objects.get(hacker=instance.user)
     else:
-        reimb = Reimbursement.objects.filter(hacker=instance.user).delete()
+        reimb = Reimbursement()
+    reimb.generate_draft(instance)

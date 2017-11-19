@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import uuid as uuid
 
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
@@ -102,8 +102,9 @@ class Application(models.Model):
     projects = models.TextField(max_length=500, blank=True, null=True)
 
     # Reimbursement
-    scholarship = models.BooleanField()
-    # amount_desired = models.FloatField(blank=True, null=True)
+    reimb = models.BooleanField()
+    reimb_amount = models.FloatField(blank=True, null=True, validators=[
+        MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
     # Random lenny face
     lennyface = models.CharField(max_length=300, default='-.-')
