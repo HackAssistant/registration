@@ -6,11 +6,11 @@ from applications.models import Application
 
 class ApplicationFilter(django_filters.FilterSet):
     user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
-    user__name = django_filters.CharFilter('user__name', label='Preferred name', lookup_expr='icontains')
+    user__name = django_filters.CharFilter('user__name', label='Name', lookup_expr='icontains')
 
     class Meta:
         model = Application
-        fields = ['user__email', 'user__name', 'status', 'first_timer', 'scholarship']
+        fields = ['user__email', 'user__name', 'status', 'first_timer',]
 
 
 class ApplicationsListTable(tables.Table):

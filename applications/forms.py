@@ -69,9 +69,10 @@ class ApplicationForm(BetterModelForm):
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
-        if resume._size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
-                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(resume._size)))
+        size = getattr(resume, '_size', 0)
+        if size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError("Please keep resume size under %s. Current filesize %s" % (
+                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         return resume
 
     def clean_code_conduct(self):

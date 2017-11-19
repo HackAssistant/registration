@@ -20,8 +20,8 @@
                     <div class="panel-body">
                         {% if filter %}
                             <form action="" method="get" class="form form-inline text-left filter">
-                                {% bootstrap_form filter.form size='small' set_placeholder="True" layout="inline" %}
-                                {% bootstrap_button 'Search' size='small' button_class='btn-info' %}
+                                {% bootstrap_form filter.form size='small' %}
+                                <button type="submit" class="btn btn-block btn-info">Search</button>
                             </form>
                         {% endif %}
 
@@ -29,7 +29,7 @@
                     {% render_table table 'django_tables2/bootstrap-responsive.html' %}
                     {% if user.is_director %}
                         <div class="panel-footer">
-                            <a href="{% url 'invite_list' %}" class="btn-block btn btn-info">Invite applications</a>
+                            <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Invite applications</a>
                         </div>
                     {% endif %}
                 </div>

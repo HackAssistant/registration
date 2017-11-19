@@ -8,6 +8,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from app.utils import reverse
+from applications import models as app_mod
 from applications.emails import send_batch_emails
 from reimbursement import forms, models, emails
 from reimbursement.tables import ReimbursementTable, ReimbursementFilter, SendReimbursementTable, \
@@ -114,7 +115,12 @@ class SendReimbursementListView(IsDirectorMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 100}
 
     def get_queryset(self):
-        return models.Reimbursement.objects.filter(status=models.RE_DRAFT).all()
+        return models.Reimbursement.objects.filter(status=models.RE_DRAFT).filter(hacker__application__status__in=
+                                                                                  [app_mod.APP_INVITED,
+                                                                                   app_mod.APP_LAST_REMIDER,
+                                                                                   app_mod.APP_CONFIRMED,
+                                                                                   app_mod.APP_ATTENDED]) \
+            .all()
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')

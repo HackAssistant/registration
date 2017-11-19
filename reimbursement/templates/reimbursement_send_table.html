@@ -18,7 +18,7 @@
                         {% if filter %}
                             <form action="" method="get" class="form form-inline text-left filter">
                                 {% bootstrap_form filter.form size='small' %}
-                                {% bootstrap_button 'Search' size='small' button_class='btn-info' %}
+                                <button type="submit" class="btn btn-block btn-info">Search</button>
                             </form>
                         {% endif %}
 
@@ -26,9 +26,11 @@
                     <form action="" method="post">
                         {% csrf_token %}
                         {% render_table table 'django_tables2/bootstrap-responsive.html' %}
-                        <button name="invite" class="btn btn-success btn-block"
-                                value="invite">Send reimbursement
-                        </button>
+                        <div class="panel-footer">
+                            <button name="invite" class="btn btn-success btn-block"
+                                    value="invite">Send reimbursement
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
