@@ -19,11 +19,11 @@ def login(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = auth.authenticate(email=email, password=password)
-            if user is not None and user.is_active:
+            if user and user.is_active:
                 auth.login(request, user)
                 return HttpResponseRedirect(next_)
             else:
-                messages.error(request, 'There\'s no such a user. Sign up if you haven\'t yet created an account')
+                form.add_error(None, 'Wrong Username or Password. Please try again.')
 
     else:
         form = forms.LoginForm()

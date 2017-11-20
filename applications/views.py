@@ -123,7 +123,6 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
-
         phases = self.get_phases()
         current = get_current_phase(phases)
         active = self.get_active_phase(current, phases)
@@ -157,13 +156,13 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
         phases = [
             create_phase('verify', "Email verification",
                          lambda x: x.email_verified, user),
-            create_phase('general', "General information",
+            create_phase('general', "General",
                          lambda x: x.application, user),
             create_phase('application', "Application status", lambda x: x.application.answered_invite(),
                          self.request.user)
         ]
 
-        # Try/Except caused by Hacker not existing
+        # Try/Except caused by application not existing
         try:
             current_app = self.get_current_app(user)
             if current_app.status == models.APP_ATTENDED:
@@ -195,7 +194,7 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
                                  'We have now received your application. '
                                  'Processing your application will take some time, so please be patient.')
             else:
-                messages.info(request, 'Application changes saved successfully!')
+                messages.success(request, 'Application changes saved successfully!')
 
             return HttpResponseRedirect(reverse('root'))
         else:

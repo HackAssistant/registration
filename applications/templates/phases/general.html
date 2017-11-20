@@ -5,24 +5,39 @@
 
 {% elif not application %}
     {% if h_app_timeleft %}
-        <h4>Time until applications close: {% include 'include/deadline_countdown.html' %}</h4>
+        <div class="alert alert-info">
+            <p class="lead"> Time until applications close: <strong
+                    class="text-info">{% include 'include/deadline_countdown.html' %}</strong></p>
+        </div>
     {% endif %}
-    <p>You will still be able to edit until your information has been reviewed.</p>
+
 {% elif application.is_expired %}
-    We are sorry, your invite expired. If you think this is an error or you still want to come, please message us at
-    {{ h_contact_email|urlize }}. We will decide case-per-case what is the result.
+    <div class="alert alert-warning">
+
+        <p class="lead"> We are sorry, your invite expired. If you think this is an error or you still want to come,
+            please
+            message us at
+            {{ h_contact_email|urlize }}. We will decide case-per-case what is the result.</p>
+    </div>
 {% elif application.is_cancelled %}
-    We are sorry that you can't come to {{ event_name }}. We are looking forward to welcome you next edition.
+    <div class="alert alert-info">
+        <p class="lead">We are sorry that you can't come to {{ h_name }}. We are looking forward to welcome you next
+            edition.</p>
+    </div>
 {% elif application.answered_invite %}
-    <p>Thanks for answering our invite! See you soon at {{ h_name }}!</p>
+    <div class="alert alert-success">
+        <p class="lead">Thanks for answering our invite! See you soon at {{ h_name }}!</p>
+    </div>
 {% else %}
-    Thanks for completing the application.
-
-    {% if application.can_be_edit %}
-        You can still edit it.
-
-    {% else %}
-        You can't edit your application any more as it has been reviewed already once or the deadline is over.
+    <div class="alert alert-success">
+        <p class="lead">Thanks for completing the application. Processing your application will take some time, so
+            please be patient.</p>
+    </div>
+    {% if not application.can_be_edit %}
+        <div class="alert alert-info">
+            <p class="lead">You can't edit your application any more as it has been reviewed already once or the
+                deadline is over.</p>
+        </div>
     {% endif %}
 {% endif %}
 {% include 'include/application_form.html' %}

@@ -1,7 +1,6 @@
 {% load bootstrap3 %}
 {% load static %}
 {% load form_utils %}
-<h1>Application</h1>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% bootstrap_form_errors form %}
@@ -54,6 +53,16 @@
             });
             conditional_field(teammates, no_team, function () {
                 return has_team.prop("checked");
+            });
+
+            var needs_reimb = $('input[name="reimb"][value="True"]');
+            var no_reimb = $('input[name="reimb"][value="False"]');
+            var reimb_amout = $('#id_reimb_amount');
+            conditional_field(reimb_amout, needs_reimb, function () {
+                return needs_reimb.prop("checked");
+            });
+            conditional_field(reimb_amout, no_reimb, function () {
+                return needs_reimb.prop("checked");
             });
 
             var is_firsttime = $('input[name="first_timer"][value="True"]');

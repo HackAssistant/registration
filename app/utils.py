@@ -1,8 +1,10 @@
 import csv
 
+import logging
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Func
+from django.forms import forms
 from django.http import HttpResponse
 from django.urls import reverse as django_reverse
 from django.utils import timezone
@@ -105,7 +107,7 @@ def get_substitutions_templates():
             'h_description': getattr(settings, 'HACKATHON_DESCRIPTION', None),
             'h_ga': getattr(settings, 'HACKATHON_GOOGLE_ANALYTICS', None),
             'h_tw': getattr(settings, 'HACKATHON_TWITTER_ACCOUNT', None),
-            'h_issues_url': getattr(settings, 'HACKATHON_ISSUES_URL', None),
+            'h_repo': getattr(settings, 'HACKATHON_GITHUB_REPO', None),
             'h_app_closed': is_app_closed(),
             'h_app_timeleft': application_timeleft(),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
@@ -138,3 +140,14 @@ def hackathon_vars_processor(request):
     c.update(get_user_substitutions(request))
     c.update({'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None)})
     return c
+
+
+def validate_url(data, query):
+    """
+    Checks if the given url contains the specified query. Used for custom url validation in the ModelForms
+    :param data: full url
+    :param query: string to search within the url
+    :return:
+    """
+    if data and query not in data:
+        raise forms.ValidationError('Please enter a valid {} url'.format(query))

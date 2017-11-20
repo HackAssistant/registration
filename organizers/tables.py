@@ -6,23 +6,25 @@ from applications.models import Application
 
 class ApplicationFilter(django_filters.FilterSet):
     user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
-    user__name = django_filters.CharFilter('user__name', label='Preferred name', lookup_expr='icontains')
+    user__name = django_filters.CharFilter('user__name', label='Name', lookup_expr='icontains')
+    university = django_filters.CharFilter('university', label='University', lookup_expr='icontains')
 
     class Meta:
         model = Application
-        fields = ['user__email', 'user__name', 'status', 'first_timer', 'scholarship']
+        fields = ['user__email', 'user__name', 'status', 'first_timer', 'university']
 
 
 class ApplicationsListTable(tables.Table):
     detail = tables.TemplateColumn(
         "<a href='{% url 'app_detail' record.uuid %}' target='_blank' class='btn btn-default'>Detail</a> ",
         verbose_name='Actions', orderable=False)
+    country = tables.Column(accessor='origin_country', verbose_name='Country')
 
     class Meta:
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'vote_avg', 'user.email', 'status']
+        fields = ['user.name', 'vote_avg', 'user.email', 'status', 'university', 'country']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 

@@ -30,9 +30,10 @@ class ReceiptSubmissionReceipt(BetterModelForm):
 
     def clean_receipt(self):
         receipt = self.cleaned_data['receipt']
-        if receipt._size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
-                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(receipt._size)))
+        size = getattr(receipt, '_size', 0)
+        if size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError("Please keep resume under %s. Current filesize %s" % (
+                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         return receipt
 
     def save(self, commit=True):

@@ -1,6 +1,8 @@
 # HACKATHON PERSONALIZATION
 import os
 
+from django.utils import timezone
+
 HACKATHON_NAME = 'HackCU'
 # What's the name for the application
 HACKATHON_APPLICATION_NAME = 'HackCU registration'
@@ -28,13 +30,10 @@ HACKATHON_TWITTER_ACCOUNT = 'hackcu'
 # (OPTIONAL) Hackathon Facebook page
 HACKATHON_FACEBOOK_PAGE = 'hackcu'
 # (OPTIONAL) Issues url. Where to redirect hackers if a 500 error occurs
-HACKATHON_ISSUES_URL = 'https://github.com/hackcu/backend/issues/new'
-# (OPTIONAL) Theme color for chrome.
-# https://developers.google.com/web/fundamentals/design-and-ux/browser-customization/#meta_theme_color_for_chrome_and_opera
-HACKATHON_THEME_COLOR = '#494949'
+HACKATHON_GITHUB_REPO = 'https://github.com/hackcu/backend/'
 
 # (OPTIONAL) Applications deadline
-# HACKATHON_APP_DEADLINE = timezone.datetime(2017, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 # HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
 #                    'the opening ceremony will be at 7:00 pm.'
@@ -47,6 +46,8 @@ HACKATHON_THEME_COLOR = '#494949'
 
 # (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackcu\.org$'
+# (OPTIONAL) Send 500 errors to email while on production mode
+HACKATHON_DEV_EMAILS = ['devs@hackcu.org', ]
 
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
@@ -54,7 +55,6 @@ DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '$'
 REIMBURSEMENT_EXPIRACY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from

@@ -3,6 +3,7 @@ from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from form_utils.forms import BetterModelForm
 
+from app.utils import validate_url
 from applications import models
 
 
@@ -18,6 +19,8 @@ class ApplicationForm(BetterModelForm):
                'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
+    phone_number = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': '+#########'}))
     university = forms.CharField(required=True,
                                  label='What university are you studying in?',
                                  help_text='Current or most recent school you attended.',
@@ -37,7 +40,7 @@ class ApplicationForm(BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    scholarship = forms.TypedChoiceField(
+    reimb = forms.TypedChoiceField(
         required=True,
         label='Do you need travel reimbursement to attend?',
         coerce=lambda x: x == 'True',
@@ -69,9 +72,10 @@ class ApplicationForm(BetterModelForm):
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
-        if resume._size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
-                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(resume._size)))
+        size = getattr(resume, '_size', 0)
+        if size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError("Please keep resume size under %s. Current filesize %s" % (
+                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         return resume
 
     def clean_code_conduct(self):
@@ -83,6 +87,21 @@ class ApplicationForm(BetterModelForm):
             raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
         return cc
 
+    def clean_github(self):
+        data = self.cleaned_data['github']
+        validate_url(data, 'github.com')
+        return data
+
+    def clean_devpost(self):
+        data = self.cleaned_data['devpost']
+        validate_url(data, 'devpost.com')
+        return data
+
+    def clean_linkedin(self):
+        data = self.cleaned_data['linkedin']
+        validate_url(data, 'linkedin.com')
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -92,12 +111,14 @@ class ApplicationForm(BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'university', 'degree',
-                         'graduation_year', 'tshirt_size', 'diet', 'other_diet', 'under_age', 'lennyface'),
+             {'fields': ('gender', 'university', 'degree', 'phone_number',
+                         'graduation_year', 'tshirt_size', 'diet', 'other_diet',
+                         'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Where are you joining us from?', {'fields': ('origin_city', 'origin_country', 'scholarship',), }),
+            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
+            ('Where are you joining us from?',
+             {'fields': ('origin_city', 'origin_country', 'reimb', 'reimb_amount'), }),
             ('Team', {'fields': ('team', 'teammates',), }),
         ]
         # Fields that we only need the first time the hacker fills the application
@@ -115,13 +136,18 @@ class ApplicationForm(BetterModelForm):
                                'you graduate',
             'degree': 'What\'s your major?',
             'teammatess': 'Add each teammate in a new line.',
-            'diet': 'If you select Others, please write detail in the "Other diet" field that will appear',
+            'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
-                         ' http://textsmili.es/</a>'
+                         ' http://textsmili.es/</a>',
+            'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
+                        '(we love links) Show us your passion! :D',
+            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
         }
 
         widgets = {
             'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
         }
@@ -134,14 +160,13 @@ class ApplicationForm(BetterModelForm):
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin_city': 'City',
             'origin_country': 'Country',
-            'description': 'What are you most excited about %s?' % settings.HACKATHON_NAME,
-            'projects': 'What projects have you worked on? '
-                        'You can talk about about past hackathons, personal projects, awards etc. (we love links) '
-                        'Show us your passion! :D',
+            'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
+            'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
-            'teammates': 'What are your teammates\'s full names?'
+            'teammates': 'What are your teammates\'s full names?',
+            'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
+                settings.CURRENCY, settings.HACKATHON_NAME),
 
         }
 
-        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status',
-                   'authorized_privacy', ]
+        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', ]

@@ -24,7 +24,6 @@ SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not os.environ.get('PROD_MODE', None)
-
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
@@ -114,9 +113,6 @@ if os.environ.get('PG_PWD', None):
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
@@ -127,29 +123,45 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Logging config to send logs to email automatically
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'admin_email': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'app.log.HackathonDevEmailHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'ERROR',
+            'handlers': ['admin_email'],
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR + '/staticfiles'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
 
-#  File configuration
-
+#  File upload configuration
 MEDIA_ROOT = 'files'
 MEDIA_URL = '/files/'
 
@@ -179,18 +191,10 @@ BOOTSTRAP3 = {
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
+# Deployment configurations for proxy pass and csrf
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Maximum file upload size for forms
 MAX_UPLOAD_SIZE = 5242880
-
-if os.environ.get('EMAIL_HOST_PASSWORD', None):
-    # Error reporting email. Will send an email in any 500 error from server email
-    SERVER_EMAIL = 'server@hackupc.com'
-    ADMINS = [('Devs', 'devs@hackupc.com'), ]
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
-    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hupc_mail')
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True

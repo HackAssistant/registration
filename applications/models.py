@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import uuid as uuid
 
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
@@ -84,6 +85,11 @@ class Application(models.Model):
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
+    phone_number = models.CharField(blank=True, null=True, max_length=16,
+                                    validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
+                                                               message="Phone number must be entered in the format: \
+                                                                  '+#########'. Up to 15 digits allowed.")])
+
     # Where is this person coming from?
     origin_city = models.CharField(max_length=300)
     origin_country = models.CharField(max_length=300)
@@ -96,14 +102,15 @@ class Application(models.Model):
     projects = models.TextField(max_length=500, blank=True, null=True)
 
     # Reimbursement
-    scholarship = models.BooleanField()
+    reimb = models.BooleanField()
+    reimb_amount = models.FloatField(blank=True, null=True, validators=[
+        MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
     # Random lenny face
     lennyface = models.CharField(max_length=300, default='-.-')
-    phone_number = models.CharField(max_length=300, blank=True, null=True)
 
     # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes')
+    resume = models.FileField(upload_to='resumes', null=True, blank=True)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)

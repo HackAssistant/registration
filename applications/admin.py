@@ -10,9 +10,9 @@ EXPORT_CSV_FIELDS = ['name', 'lastname', 'university', 'country', 'email']
 
 
 class ApplicationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'votes', 'scholarship', 'status',
+    list_display = ('user', 'name', 'votes', 'reimb', 'status',
                     'status_last_updated', 'diet')
-    list_filter = ('status', 'first_timer', 'scholarship', 'graduation_year',
+    list_filter = ('status', 'first_timer', 'reimb', 'graduation_year',
                    'university', 'origin_country', 'under_age', 'diet')
     list_per_page = 200
     search_fields = ('user__name', 'user__email',

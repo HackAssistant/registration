@@ -6,9 +6,9 @@ from reimbursement.models import Reimbursement
 
 class ReimbursementFilter(django_filters.FilterSet):
     hacker__email = django_filters.CharFilter('hacker__email', label='Email', lookup_expr='icontains')
-    hacker__name = django_filters.CharFilter('hacker__name', label='Preferred name', lookup_expr='icontains')
-    origin_city = django_filters.CharFilter('origin_city', label='Origin city', lookup_expr='icontains')
-    origin_country = django_filters.CharFilter('origin_country', label='Origin country', lookup_expr='icontains')
+    hacker__name = django_filters.CharFilter('hacker__name', label='Name', lookup_expr='icontains')
+    origin_city = django_filters.CharFilter('origin_city', label='City', lookup_expr='icontains')
+    origin_country = django_filters.CharFilter('origin_country', label='Country', lookup_expr='icontains')
 
     class Meta:
         model = Reimbursement
@@ -32,9 +32,9 @@ class ReimbursementTable(tables.Table):
 
 class SendReimbursementFilter(django_filters.FilterSet):
     hacker__email = django_filters.CharFilter('hacker__email', label='Email', lookup_expr='icontains')
-    hacker__name = django_filters.CharFilter('hacker__name', label='Preferred name', lookup_expr='icontains')
-    origin_city = django_filters.CharFilter('origin_city', label='Origin city', lookup_expr='icontains')
-    origin_country = django_filters.CharFilter('origin_country', label='Origin country', lookup_expr='icontains')
+    hacker__name = django_filters.CharFilter('hacker__name', label='Name', lookup_expr='icontains')
+    origin_city = django_filters.CharFilter('origin_city', label='City', lookup_expr='icontains')
+    origin_country = django_filters.CharFilter('origin_country', label='Country', lookup_expr='icontains')
 
     class Meta:
         model = Reimbursement
