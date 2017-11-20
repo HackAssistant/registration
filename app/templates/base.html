@@ -73,7 +73,7 @@
                             <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
                                     href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
-                        {% if request.user.is_organizer %}
+                        {% if request.user.is_organizer and request.user.email_verified %}
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                    aria-haspopup="true" aria-expanded="false">Applications <span
@@ -119,8 +119,10 @@
                             {% endif %}
                         {% endif %}
                         {% if request.user.is_organizer or request.user.is_volunteer %}
-                            <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}"><a
-                                    href="{% url 'check_in_list' %}">Check-in</a></li>
+                            {% if request.user.email_verified %}
+                                <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}">
+                                    <a href="{% url 'check_in_list' %}">Check-in</a></li>
+                            {% endif %}
                         {% endif %}
                         {% if not request.user.is_organizer %}
                             <li class="{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}"><a

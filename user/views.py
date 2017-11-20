@@ -1,4 +1,5 @@
 from django.contrib import auth, messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
@@ -131,3 +132,19 @@ def password_reset_complete(request):
 
 def password_reset_done(request):
     return TemplateResponse(request, 'password_reset_done.html', None)
+
+
+@login_required
+def verify_email_required(request):
+    if request.user.email_verified:
+        return HttpResponseRedirect(reverse('root'))
+    return TemplateResponse(request, 'verify_email_required.html', None)
+
+
+@login_required
+def send_email_verification(request):
+    if request.user.email_verified:
+        return HttpResponseRedirect(reverse('root'))
+    msg = tokens.generate_verify_email(request.user)
+    msg.send()
+    return HttpResponseRedirect(reverse('root'))

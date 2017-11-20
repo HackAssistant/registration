@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^reset/(?P<uid>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.password_reset_confirm, name='password_reset_confirm'),
     url(r'^reset/done/$', views.password_reset_complete, name='password_reset_complete'),
+    url(r'^verify/$', views.verify_email_required, name='verify_email_required'),
+    url(r'^verify/send$', views.send_email_verification, name='send_email_verification'),
 ]
