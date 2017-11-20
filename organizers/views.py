@@ -216,7 +216,7 @@ class ReviewApplicationView(ApplicationDetailView):
         # application
         except IntegrityError:
             pass
-        return HttpResponseRedirect(reverse('vote'))
+        return HttpResponseRedirect(reverse('review'))
 
     def can_vote(self):
         return True
