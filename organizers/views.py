@@ -179,7 +179,7 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
             messages.error(self.request, e.message)
 
 
-class VoteApplicationView(ApplicationDetailView):
+class ReviewApplicationView(ApplicationDetailView):
     def get_application(self, kwargs):
         """
         Django model to the rescue. This is transformed to an SQL sentence
@@ -195,7 +195,7 @@ class VoteApplicationView(ApplicationDetailView):
             .first()
 
     def get(self, request, *args, **kwargs):
-        r = super(VoteApplicationView, self).get(request, *args, **kwargs)
+        r = super(ReviewApplicationView, self).get(request, *args, **kwargs)
         if not self.get_application(kwargs) and settings.REIMBURSEMENT_ENABLED:
             return HttpResponseRedirect(reverse('receipt_review'))
         return r

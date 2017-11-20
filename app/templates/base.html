@@ -81,13 +81,13 @@
                                 <ul class="dropdown-menu">
 
                                     <li class="{% if request.resolver_match.url_name == "app_list" %}active{% endif %}">
-                                        <a href="{% url 'app_list' %}">List</a>
+                                        <a href="{% url 'app_list' %}">All applications</a>
                                     </li>
-                                    <li class="{% if request.resolver_match.url_name == "vote" %}active{% endif %}">
-                                        <a href="{% url 'vote' %}">Vote</a>
+                                    <li class="{% if request.resolver_match.url_name == "review" %}active{% endif %}">
+                                        <a href="{% url 'review' %}">Review applications</a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == "ranking" %}active{% endif %}">
-                                        <a href="{% url 'ranking' %}">Vote ranking</a>
+                                        <a href="{% url 'ranking' %}">Reviewer ranking</a>
                                     </li>
                                     {% if request.user.is_director %}
                                         <li class="{% if request.resolver_match.url_name == "invite_list" %}active{% endif %}">
@@ -104,7 +104,7 @@
                                     <ul class="dropdown-menu">
 
                                         <li class="{% if request.resolver_match.url_name == "reimbursement_list" %}active{% endif %}">
-                                            <a href="{% url 'reimbursement_list' %}">List</a>
+                                            <a href="{% url 'reimbursement_list' %}">All reimbursements</a>
                                         </li>
                                         <li class="{% if request.resolver_match.url_name == "receipt_review" %}active{% endif %}">
                                             <a href="{% url 'receipt_review' %}">Review receipts</a>

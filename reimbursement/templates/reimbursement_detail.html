@@ -3,7 +3,7 @@
 {% load bootstrap3 %}
 {% load static %}
 {% block head_title %}
-    Review reimbursement
+    {% if review %} Review receipts{% else %}{{ reimb.hacker.get_full_name }}'s reimbursement{% endif %}
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">

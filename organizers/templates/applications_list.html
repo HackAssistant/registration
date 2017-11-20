@@ -1,41 +1,14 @@
-{% extends "base.html" %}
-{% load humanize %}
+{% extends "base_table.html" %}
 {% load django_tables2 %}
-{% load bootstrap3 %}
-{% load static %}
-{% block head_title %}Applications list {% endblock %}
-{% block head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
-{% endblock %}
-{% block body %}
-    <div class="row margin-top">
-        {% bootstrap_messages %}
-        <div class="col-md-12">
-            <div style="text-align: center;">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="text-center">Applications</h4>
-                    </div>
-                    <div class="panel-body">
-                        {% if filter %}
-                            <form action="" method="get" class="form form-inline text-left filter">
-                                {% bootstrap_form filter.form size='small' %}
-                                <button type="submit" class="btn btn-block btn-info">Search</button>
-                            </form>
-                        {% endif %}
+{% block head_title %}All application{% endblock %}
 
-                    </div>
-                    {% render_table table 'django_tables2/bootstrap-responsive.html' %}
-                    {% if user.is_director %}
-                        <div class="panel-footer">
-                            <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Invite applications</a>
-                            <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Download
-                                CSV</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+{% block table_title %}All applications{% endblock %}
+{% block table_footer %}
+    {% if user.is_director %}
+        <div class="panel-footer">
+            <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Invite applications</a>
+            <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Download
+                CSV</a>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}

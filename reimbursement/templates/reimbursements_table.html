@@ -1,35 +1,12 @@
-{% extends "base.html" %}
-{% load humanize %}
-{% load django_tables2 %}
-{% load bootstrap3 %}
-{% load static %}
-{% block head_title %}Reimbursement list {% endblock %}
+{% extends "base_table.html" %}
+{% block head_title %}All Reimbursements{% endblock %}
 
-{% block body %}
-    <div class="row margin-top">
-        <div class="col-md-12">
-            <div style="text-align: center;">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="text-center">Applications</h4>
-                    </div>
-                    <div class="panel-body">
-                        {% if filter %}
-                            <form action="" method="get" class="form form-inline text-left filter">
-                                {% bootstrap_form filter.form size='small' %}
-                                <button type="submit" class="btn btn-block btn-info">Search</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                    {% render_table table 'django_tables2/bootstrap-responsive.html' %}
-                    {% if user.is_director %}
-                        <div class="panel-footer">
-                            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-default">Send
-                                reimbursements</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+{% block table_title %}All Reimbursements{% endblock %}
+{% block table_footer %}
+    {% if user.is_director %}
+        <div class="panel-footer">
+            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-default">Send
+                reimbursements</a>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}

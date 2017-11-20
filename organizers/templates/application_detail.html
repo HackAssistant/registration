@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load bootstrap3 %}
 {% load static %}
-{% block head_title %}{% if vote %}Vote applications{% else %}{{ app.user.name }}'s application{% endif %}
+{% block head_title %}{% if vote %}Review applications{% else %}{{ app.user.name }}'s application{% endif %}
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
