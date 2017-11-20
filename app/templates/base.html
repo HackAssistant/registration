@@ -1,9 +1,5 @@
 {% load static %}
 {% load bootstrap3 %}
-{% load utils %}
-{% settings_value "EVENT_NAME" as event_name %}
-{% settings_value "EVENT_DOMAIN" as domain %}
-{% settings_value "STATIC_KEYS_TEMPLATES" as static_values %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,37 +10,43 @@
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <meta name="theme-color" content="#494949">
-    <meta name="author" content="{{ event_name }}">
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}"/>
-    <meta name="description" content="{{ static_values.description }}">
+    <meta name="theme-color" content="#f8f8f8">
+    <meta name="author" content="{{ h_name }}">
+    <link rel="icon" href="{% static 'favicon.png' %}" type="image/png">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <meta name="description" content="{{ h_description }}">
 
 
     <!--FACEBOOK DESCRIPTION -->
-    <meta property="og:title" content="My {{ event_name }}"/>
-    <meta property="og:site_name" content="My {{ event_name }}"/>
-    <meta property="og:description" content="{{ static_values.description }}"/>
-    <meta property="og:image" content="https://{{ domain }}{% static 'header_rrss.png' %}">
-	<meta property="og:image:secure_url" content="https://{{ domain }}{% static 'header_rrss.png' %}">
-	<meta property="og:url" content="https://{{ domain }}/">
+    <meta property="og:title" content="{{ h_app_name }}"/>
+    <meta property="og:site_name" content="{{ h_app_name }}"/>
+    <meta property="og:description" content="{{ h_description }}"/>
+    {% if h_og_image %}
+        <meta property="og:image" content="{{ h_og_image }}">
+        <meta property="og:image:secure_url" content="{{ h_og_image }}">
+    {% endif %}
+    <meta property="og:url" content="https://{{ h_domain }}/">
 
     <!--TWITTER DESCRIPTION -->
-	<meta name="twitter:card" content="summary_large_image">
-    {% if static_values.twitter  %}
-        <meta name="twitter:site" content="@{{ static_values.twitter }}">
-        <meta name="twitter:creator" content="@{{ static_values.twitter }}">
+    <meta name="twitter:card" content="summary">
+    {% if h_tw %}
+        <meta name="twitter:site" content="@{{ h_tw }}">
+        <meta name="twitter:creator" content="@{{ h_tw }}">
     {% endif %}
-	<meta name="twitter:title" content="My {{ event_name }}">
-	<meta name="twitter:description" content="{{ static_values.description }}">
-	<meta name="twitter:image" content="https://{{ domain }}{% static 'header_rrss.png' %}">
+    <meta name="twitter:title" content="{{ h_app_name }}">
+    <meta name="twitter:description" content="{{ h_description }}">
+    {% if h_og_image %}
+        <meta name="twitter:image" content="{{ h_og_image }}">
+    {% endif %}
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Ek+Mukta" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     {% block head %}
     {% endblock %}
 
-    <title>{% block title %}{% block head_title %}{% endblock %} - {% endblock %}My {{ event_name }}</title>
+    <title>{% block title %}{% block head_title %}{% endblock %} | {% endblock %}{{ h_app_name }}</title>
 </head>
 
 
@@ -60,46 +62,73 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand white-text" href="/">My {{ event_name }}</a>
+                <a class="navbar-brand white-text" href="/">{{ h_app_name }}</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
 
                 <ul class="nav navbar-nav navbar-right ">
                     {% if request.user.is_authenticated %}
-                        {% if request.user.is_staff %}
-                            <li class="white-text"><a href="{% url 'admin:index' %}">Admin</a></li>
+                        {% if request.user.is_admin %}
+                            <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
+                                    href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
-                        {% if perms.register.vote %}
-                            <li class="white-text"><a href="{% url 'vote' %}">Vote</a></li>
-                            <li><a href="{% url 'app_list'%}">Applications</a></li>
-                        {% endif %}
-                        {% if perms.register.ranking %}
-                            <li class="white-text"><a href="{% url 'ranking' %}">Ranking</a></li>
-                        {% endif %}
-                        {% if perms.checkin.check_in %}
-                            <li class="white-text"><a href="{% url 'check_in_list' %}">Check-in</a></li>
-                        {% endif %}
-                        {% if not perms.register.vote and not perms.checkin.check_in %}
-                            <li class="white-text"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                            <li class="white-text"><a href="{% url 'profile' %}">Profile</a></li>
-                        {% endif %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false"> {{ request.user.email }}<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'account_change_password' %}">Change password</a></li>
-                                <li><a href="{% url 'account_email' %}">Edit emails</a></li>
-                                {% if perms.register.vote or perms.checkin.check_in %}
-                                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                                    <li><a href="{% url 'profile' %}">Profile</a></li>
-                                {% endif %}
-                                <li><a href="{% url 'account_logout' %}">Logout</a></li>
-                            </ul>
-                        </li>
+                        {% if request.user.is_organizer and request.user.email_verified %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true" aria-expanded="false">Applications <span
+                                        class="caret"></span></a>
+                                <ul class="dropdown-menu">
 
+                                    <li class="{% if request.resolver_match.url_name == "app_list" %}active{% endif %}">
+                                        <a href="{% url 'app_list' %}">All applications</a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == "review" %}active{% endif %}">
+                                        <a href="{% url 'review' %}">Review applications</a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == "ranking" %}active{% endif %}">
+                                        <a href="{% url 'ranking' %}">Reviewer ranking</a>
+                                    </li>
+                                    {% if request.user.is_director %}
+                                        <li class="{% if request.resolver_match.url_name == "invite_list" %}active{% endif %}">
+                                            <a href="{% url 'invite_list' %}">Invite applications</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% if h_r_enabled %}
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                       aria-haspopup="true" aria-expanded="false">Reimbursements <span
+                                            class="caret"></span></a>
+                                    <ul class="dropdown-menu">
 
+                                        <li class="{% if request.resolver_match.url_name == "reimbursement_list" %}active{% endif %}">
+                                            <a href="{% url 'reimbursement_list' %}">All reimbursements</a>
+                                        </li>
+                                        <li class="{% if request.resolver_match.url_name == "receipt_review" %}active{% endif %}">
+                                            <a href="{% url 'receipt_review' %}">Review receipts</a>
+                                        </li>
+                                        {% if request.user.is_director %}
+                                            <li class="{% if request.resolver_match.url_name == "send_reimbursement" %}active{% endif %}">
+                                                <a href="{% url 'send_reimbursement' %}">Send reimbursements</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        {% if request.user.is_organizer or request.user.is_volunteer %}
+                            {% if request.user.email_verified %}
+                                <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}">
+                                    <a href="{% url 'check_in_list' %}">Check-in</a></li>
+                            {% endif %}
+                        {% endif %}
+                        {% if not request.user.is_organizer %}
+                            <li class="{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}"><a
+                                    href="{% url 'dashboard' %}">Dashboard</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'account_logout' %}">Logout</a></li>
 
                     {% else %}
                         <li><a href="{% url 'account_login' %}">Sign In</a></li>
@@ -111,34 +140,88 @@
     </nav>
 {% endblock %}
 <div class="content container">
+    <div class="content-inside">
 
-    {% block body %}
-        <div class="margin-top">
-            {% bootstrap_messages %}
-            <div class="col-md-6 col-md-offset-3">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        {% block content %}
-                        {% endblock %}
 
+        {% block body %}
+            <div class="margin-top">
+                {% bootstrap_messages %}
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            {% block content %}
+                            {% endblock %}
+
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        {% block extra_body %}
+            {% block extra_body %}
+            {% endblock %}
+
         {% endblock %}
-
-    {% endblock %}
+    </div>
 </div>
-{% if static_values.google_analytics  %}
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+<footer class="footer navbar-fixed-bottom">
+    <div class="container">
+        <div class="row">
 
-      ga('create', '{{ static_values.google_analytics }}', 'auto');
-      ga('send', 'pageview');
+            <div class="col-sm-6">
+                <p>Have a question? We're here for you! {{ h_contact_email | urlize }}</p>
+            </div>
+            <div class="social-icons col-sm-6 text-right text-center-xs">
+                {% if h_tw %}
+                    <a class="btns" target="_blank" href="https://twitter.com/{{ h_tw }}">
+                        <i aria-hidden="true" class="fa fa-twitter fa-lg"></i>
+                    </a>
+                {% endif %}
+                {% if h_fb %}
+                    <a class="btns" target="_blank" href="https://fb.com/{{ h_fb }}">
+                        <i aria-hidden="true" class="fa fa-facebook fa-lg"></i>
+                    </a>
+                {% endif %}
+                {% if h_contact_email %}
+                    <a class="btns" target="_blank" href="mailto:{{ h_contact_email }}">
+                        <i aria-hidden="true" class="fa fa-envelope-o fa-lg"></i>
+                    </a>
+                {% endif %}
+
+                {% if h_repo %}
+                    <a class="btns" target="_blank" href="{{ h_repo }}">
+                        <i aria-hidden="true" class="fa fa-github fa-lg"></i>
+                    </a>
+                {% endif %}
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <small>Made with <i class="fa fa-heart" aria-hidden="true"></i> by {{ h_name }} </small>
+                {# OH NO YOU FOUND ME! This is just an internal joke that appeared at the first edition of HackUPC. #}
+                {# You can remove it, but if you dont care, please keep it. I'm a sentimental - Gerard Casas contact@gerard.space #}
+                <span style="display: none">BIENE {{ h_name }}</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+{% if h_ga %}
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', '{{ h_ga }}', 'auto');
+        ga('send', 'pageview');
 
     </script>
 {% endif %}

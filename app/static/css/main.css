@@ -1,22 +1,78 @@
 body {
-    background-color: #EFEAE4;
-    font-family: "Ek Mukta", Arial, sans-serif;
+    background: #2B546B; /*linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;*/
+    background-size: cover;
+    font-family: 'Roboto', Helvetica, sans-serif;
+    font-size: 13.14159px;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 95px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    padding-top: 2em;
+
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 95px;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+
+    -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
+}
+
+footer p, footer small {
+    color: #777;
+    opacity: 0.5;
+}
+
+footer p > a {
+    color: #4b4b4b;
+    opacity: 1;
+}
+
+footer .row {
+    margin-bottom: 10px;
+}
+
+footer a, footer a:focus, footer a:active {
+    opacity: 0.5;
+    color: #777;
+    -webkit-transition: all .1s linear;
+    -moz-transition: all .1s linear;
+    -o-transition: all .1s linear;
+    transition: all .1s linear;
+}
+
+footer a:hover {
+    opacity: 0.9;
+    color: #4b4b4b;
+}
+
+.social-icons > a {
+    text-decoration: none;
+    padding: 10px;
+    font-size: 100%;
+    -webkit-transition: all .1s linear;
+    -moz-transition: all .1s linear;
+    -o-transition: all .1s linear;
+    transition: all .1s linear;
 }
 
 nav.navbar {
     -webkit-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     -moz-box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 4px 5px rgba(0, 0, 0, 0.2);
-    background-color: #494949;
-    border-color: #494949;
-}
-
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
-        background-color: #292929;
-}
-
-nav.navbar > a, nav.navbar > p, nav.navbar  > button {
-    color: white;
 }
 
 div.panel {
@@ -40,14 +96,6 @@ div.panel {
     margin-top: 50px;
 }
 
-.white-text {
-    color:white !important;
-}
-
-.navbar-default .navbar-nav>li>a {
-    color: white !important;
-}
-
 a.icon {
     text-decoration: none;
     position: relative;
@@ -66,9 +114,57 @@ img.icon {
     margin-top: 5px;
 }
 
-.col-centered{
+.col-centered {
     width: 380px;
     position: absolute;
     margin: 0 0 0 -190px;
     left: 50%;
+}
+
+.orderable {
+    background: url(../img/sort_both.png) no-repeat center right;
+}
+
+.orderable > a {
+    color: #333;
+    text-decoration: none;
+
+}
+
+.orderable.desc {
+    background: url(../img/sort_desc.png) no-repeat center right;
+}
+
+.orderable.asc {
+    background: url(../img/sort_asc.png) no-repeat center right;
+}
+
+.filter > div > label {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.required > label::after {
+    content: ' *';
+    color: red;
+}
+
+@media (max-width: 768px) {
+    .text-center-xs {
+        text-align: center;
+    }
+
+    footer {
+        text-align: center;
+
+    }
+
+    body {
+        /* Margin bottom by footer height */
+        margin-bottom: 130px;
+    }
+
+    .footer {
+        height: 130px;
+    }
 }

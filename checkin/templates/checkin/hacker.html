@@ -2,7 +2,7 @@
 {% load humanize %}
 {% load static %}
 {% load bootstrap3 %}
-{% block title %}Check In - {% endblock %}
+{% block head_title %}Check In Hacker{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
@@ -17,14 +17,11 @@
                 </div>
                 <div class="panel-body">
                     <dl class="dl-horizontal">
-                        {% include 'include/field.html' with desc='Name' value=hacker.name|add:' '|add:hacker.lastname %}
-                        {% include 'include/field.html' with desc='Email' value=hacker.email %}
-                        {% include 'include/field.html' with desc='Shirt Size' value=hacker.tshirt_size %}
-                        {% include 'include/field.html' with desc='Diet' value=hacker.diet %}
+                        {% include 'include/field.html' with desc='Name' value=app.user.name %}
+                        {% include 'include/field.html' with desc='Email' value=app.user.email %}
+                        {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
+                        {% include 'include/field.html' with desc='Diet' value=app.diet %}
                         {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
-                        {% if checkin %}
-                            {% include 'include/field.html' with desc='Have signed LOPD?' value=checkin.signed_lopd|yesno:'Yes,No,Maybe' %}
-                        {% endif %}
                     </dl>
                 </div>
                 <div class="panel-footer">
@@ -37,9 +34,8 @@
                     {% else %}
                         <form action="" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="app_id" value="{{ app.id }}"/>
-                            <button class="btn btn-success btn-block" name="checkin" value="checkin_lopd">Check In and signed!</button>
-                            <button class="btn btn-warning btn-block" name="checkin" value="checkin_nolopd">Check In but NO signature!</button>
+                            <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
+                            <button class="btn btn-success btn-block" name="checkin">Check In</button>
                         </form>
                         <a class="btn btn-default btn-block" href="javascript:history.back()">Go back</a>
                     {% endif %}

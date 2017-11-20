@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head_title %}
+    {% if review %} Review receipts{% else %}{{ reimb.hacker.get_full_name }}'s reimbursement{% endif %}
+{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
+
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        {% bootstrap_messages %}
+        {% if reimb %}
+
+            <div class="col-md-8 {% if not review %}col-md-offset-2{% endif %}">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {# We set the title as lennyface, in out efforts to anonimize the data.. Okay, maybe no #}
+                        <h4 class="text-center">{{ reimb.hacker.email }}
+                            <a target="_blank" style="color:black; text-decoration: none;" class="pull-right fa fa-link"
+                               href="{% url 'reimbursement_detail' reimb.pk %}">
+                            </a>
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <h4 class="text-center">Personal</h4>
+                        <dl class="dl-horizontal">
+                            {% include 'include/field.html' with desc='Full name' value=reimb.hacker.name %}
+                            {% include 'include/field.html' with desc='Email' value=reimb.hacker.email %}
+                            {% include 'include/field.html' with desc='Last update' value=reimb.update_time|naturaltime %}
+                            {% include 'include/field.html' with desc='Status' value=reimb.get_status_display %}
+                            {% include 'include/field.html' with desc='Country' value=reimb.origin_country %}
+                            {% include 'include/field.html' with desc='City' value=reimb.origin_city %}
+
+                        </dl>
+                        <h4 class="text-center">Receipt</h4>
+                        <dl class="dl-horizontal">
+                            {% if reimb.receipt %}
+                                {% include 'include/field.html' with desc='Receipt' value='<a href="'|add:reimb.receipt.url|add:'" target="_blank">'|add:reimb.receipt.name|add:"</a>"|safe %}
+                            {% endif %}
+                            {% include 'include/field.html' with desc='Multiple hackers covered' value=reimb.multiple_hackers|yesno %}
+                            {% include 'include/field.html' with desc='Other hackers covered' value=reimb.friend_emails %}
+                            {% include 'include/field.html' with desc='Maximum assignable' value=reimb.max_assignable_money %}
+                        </dl>
+                        {% if reimb.is_accepted %}
+                            <h4 class="text-center">Sending the monies</h4>
+                            <dl class="dl-horizontal">
+                                {% include 'include/field.html' with desc='Reimbursement money' value=reimb.reimbursement_money %}
+                                {% include 'include/field.html' with desc='PayPal email' value=reimb.paypal_email %}
+                                {% include 'include/field.html' with desc='Venmo user' value=reimb.venmo_user %}
+
+                            </dl>
+                        {% endif %}
+
+                    </div>
+                    {% if not review and user.is_director  %}
+                        <form action="" method="post" class="form form-horizontal">
+                            {% csrf_token %}
+                            <div class="container-fluid">
+                                <h4 class="text-center">Edit reimbursement</h4>
+                                {% bootstrap_form edit_form layout="horizontal" %}
+                            </div>
+                            <div class="panel-footer">
+                                <button name="invite" class="btn btn-success btn-block"
+                                        value="invite">Submit changes
+                                </button>
+                            </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% if review %}
+                <div class="col-md-4 ">
+
+                    <div class="panel panel-success border-less">
+                        <div class="panel-heading">
+                            <h4 class="text-center">Review</h4>
+                        </div>
+                        <div class="panel-body">
+
+                            <hr>
+                            <h4 class="text-center">Reject receipt</h4>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ reimb.pk }}"/>
+                                {% bootstrap_form reject_form %}
+                                <button name="reject" class="btn btn-danger btn-block"
+                                        value="reject">Reject
+                                </button>
+
+                            </form>
+                            <hr>
+                            <h4 class="text-center">Accept receipt</h4>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ reimb.pk }}"/>
+                                {% bootstrap_form accept_form %}
+                                <button name="accept" class="btn btn-success btn-block"
+                                        value="accept">Accept
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="col-md-6 col-md-offset-3">
+
+                <div class="panel panel-success border-less">
+                    <div class="panel-heading">
+                        <h4 class="text-center">No receipts left to be reviewed.<br> Good job! Enjoy the
+                            sun outside!</h4>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+                var exp_time = $('input[name="expiration_time"]');
+                exp_time.daterangepicker({
+                    timePicker: true,
+                    singleDatePicker: true,
+                    timePickerIncrement: 30,
+                    startDate: moment(exp_time.val()),
+                    locale: {
+                        format: 'YYYY-MM-DD H:mm:ss'
+                    }
+                });
+                make_field_typeahead('origin_country', '{% static 'countries.json' %}');
+            }
+        )
+
+    </script>
+
+{% endblock %}

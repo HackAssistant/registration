@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block head_title %}500 Oops {% endblock %}
+
+{% block body %}
+    <style>
+        .text-white {
+            color: white;
+        }
+    </style>
+    <div class="text-white">
+        <h1 class="text-center margin-top">500 Oops</h1>
+        <h2 class="text-center">Server Error </h2>
+        <p class="text-center">It seems like you found an error. Please reach us out
+            at {{ h_contact_email|urlize }} if the problem persists.</p>
+        {% if h_repo %}
+            <p class="text-center">
+                Or you can open an issue
+                <a target="_blank" href="{{ h_repo }}issues/new">here</a>.
+            </p>
+        {% endif %}
+    </div>
+
+{% endblock %}

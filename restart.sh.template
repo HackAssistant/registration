@@ -4,11 +4,10 @@ export PROD_MODE="True"
 export PG_PWD="password"
 # Domain where running
 export DOMAIN="my.hackupc.com"
-# SMTP password
-export EMAIL_HOST_PASSWORD="password"
+
 
 echo "checking updates..."
-./env/bin/pip install -r requirements.txt
+./env/bin/pip install -r requirements/prod.txt
 echo "checking updates...done"
 echo "migrating db..."
 ./env/bin/python manage.py migrate

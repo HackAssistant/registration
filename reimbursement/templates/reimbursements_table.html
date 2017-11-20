@@ -1,0 +1,12 @@
+{% extends "base_table.html" %}
+{% block head_title %}All Reimbursements{% endblock %}
+
+{% block table_title %}All Reimbursements{% endblock %}
+{% block table_footer %}
+    {% if user.is_director %}
+        <div class="panel-footer">
+            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-default">Send
+                reimbursements</a>
+        </div>
+    {% endif %}
+{% endblock %}

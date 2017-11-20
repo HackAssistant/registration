@@ -1,0 +1,22 @@
+{% extends 'base_email.html' %}
+{% block preheader %}Receipt is rejected{% endblock %}
+
+{% block content %}
+    <p> Hey {{ app.user.get_full_name }},</p>
+    <br>
+    <p>The receipt you submitted is invalid.</p>
+    <p><b>Comment on receipt submitted: </b>{{ reimb.public_comment }}</p>
+
+    {% include 'mails/include/email_button.html' with text='Submit receipt' url=form_url %}
+    <p>
+        Please submit a valid receipt to be reimbursed. I have extended the deadline so you can submit a valid receipt.
+        You have {{ h_r_days }} to submit a valid receipt.
+    </p>
+    {% include 'mails/include/confirm_reimbursement.html' %}
+
+    <p>Best,</p><br>
+    <p>
+        {{ reimb.reimbursed_by.get_full_name }}<br>
+        Organizer, {{ h_name }}
+    </p>
+{% endblock %}

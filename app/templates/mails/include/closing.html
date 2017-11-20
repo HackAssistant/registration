@@ -1,0 +1,19 @@
+<p>
+    Have any other question? Email us at {{ h_contact_email|urlize }}
+    {% if h_fb or h_tw %}
+        or message us on
+        {% if h_fb %}
+            <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
+            {% if h_tw %}
+                and
+                <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+            {% endif %}
+        {% elif h_tw %}
+            <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+        {% endif %}
+        .
+    {% endif %}
+</p>
+<p>See you soon!</p>
+<p>Best,</p>
+<p>{{ h_name }} Team</p>

@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from .hackathon_variables import *
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -23,38 +24,33 @@ SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not os.environ.get('PROD_MODE', None)
-
-ALLOWED_HOSTS = ['localhost', 'my.hackupc.com', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
-
 INSTALLED_APPS = [
     'jet',
     'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'form_utils',
     'bootstrap3',
-    'register',
+    'django_tables2',
+    'organizers',
     'checkin',
-    'reimbursement',
-    'table',
+    'user',
+    'applications'
 ]
 
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
+if REIMBURSEMENT_ENABLED:
+    INSTALLED_APPS.append('reimbursement')
 
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 MIDDLEWARE = [
@@ -81,6 +77,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.request',
+                'app.utils.hackathon_vars_processor'
 
             ],
         },
@@ -116,9 +113,6 @@ if os.environ.get('PG_PWD', None):
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
@@ -129,28 +123,47 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Logging config to send logs to email automatically
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'admin_email': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'app.log.HackathonDevEmailHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'level': 'ERROR',
+            'handlers': ['admin_email'],
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR + '/staticfiles'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
+
+#  File upload configuration
+MEDIA_ROOT = 'files'
+MEDIA_URL = '/files/'
 
 SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
 # Load filebased email backend if no Sendgrid credentials and debug mode
@@ -160,130 +173,28 @@ if not SENDGRID_API_KEY and DEBUG:
 else:
     EMAIL_BACKEND = "sgbackend.SendGridBackend"
 
-MAIL_LISTS_ENABLED = True
-SG_GENERAL_LIST_ID = os.environ.get('SG_GENERAL_LIST_ID', None)
-if not SG_GENERAL_LIST_ID:
-    MAIL_LISTS_ENABLED = False
-
-# JET
-JET_THEMES = [
-    {
-        'theme': 'default',  # theme folder name
-        'color': '#47bac1',  # color of the theme's button in user menu
-        'title': 'Default'  # theme title
-    },
-    {
-        'theme': 'green',
-        'color': '#44b78b',
-        'title': 'Green'
-    },
-    {
-        'theme': 'light-green',
-        'color': '#2faa60',
-        'title': 'Light Green'
-    },
-    {
-        'theme': 'light-violet',
-        'color': '#a464c4',
-        'title': 'Light Violet'
-    },
-    {
-        'theme': 'light-blue',
-        'color': '#5EADDE',
-        'title': 'Light Blue'
-    },
-    {
-        'theme': 'light-gray',
-        'color': '#222',
-        'title': 'Light Gray'
-    }
-]
+# Jet configs
 JET_SIDE_MENU_COMPACT = True
-JET_MODULE_GOOGLE_ANALYTICS_CLIENT_SECRETS_FILE = os.path.join(BASE_DIR, 'client_secret.json')
-JET_INDEX_DASHBOARD = 'app.dashboard.CustomIndexDashboard'
+JET_INDEX_DASHBOARD = 'app.jet_dashboard.CustomIndexDashboard'
 
-SITE_ID = 1
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_EMAIL_REQUIRED = True
-SOCIALACCOUNT_ENABLED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-LOGIN_REDIRECT_URL = 'root'
-LOGIN_URL = 'account_signup'
+# Set up custom auth
+AUTH_USER_MODEL = 'user.User'
+LOGIN_URL = 'account_login'
+PASSWORD_RESET_TIMEOUT_DAYS = 1
 
-ACCOUNT_ADAPTER = 'app.utils.AccountAdapter'
-
-
-def ACCOUNT_USER_DISPLAY(x):
-    return x.email
-
-
-ACCOUNT_USERNAME_REQUIRED = False
-
-DEFAULT_FROM_EMAIL = 'HackUPC Team <contact@hackupc.com>'
-REIMBURSEMENT_EMAIL = 'HackUPC Reimbursements Team <reimbursement@hackupc.com>'
-
-# Loaded on email templates (except auth ones)
-STATIC_KEYS_TEMPLATES = {
-    'fb': 'hackupc',
-    'twitter': 'hackupc',
-    'email': 'contact@hackupc.com',
-    'description': 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.',
-    # Static url to your logo
-    'logo_url': 'https://my.hackupc.com/static/logo.png',
-    # MailChimp subscribe URL (optional)
-    'subscribe_url': '//hackupc.us12.list-manage.com/subscribe/post?u=d49fc444ec7d45ce418dc02d2&amp;id=3aeef9df9d',
-    # Live page url
-    'live_url': 'https://hackupc.com/live',
-    # Issues url, shows up on 500 error
-    'issues_url': 'https://github.com/hackupc/backend/issues/new',
-    # Regex to match possible organizers emails
-    'r_organizer_email': '^.*@hackupc\.com$',
-    'google_analytics': 'UA-69542332-2',
-    'when_to_arrive': 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, '
-                      'the opening ceremony will be at 7:00 pm.',
-    'when_to_leave': 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
-                     'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.',
-    'applications_open': False,
-
+BOOTSTRAP3 = {
+    # Don't normally want placeholders.
+    'set_placeholder': False,
+    'required_css_class': 'required',
 }
 
-REGISTER_APP = {
-    'typeform_key': os.environ.get('TP_KEY'),
-    'typeform_form': 'KaZTUa',
-    'typeform_user': 'hackersatupc',
-}
+# Add domain to allowed hosts
+ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
-REIMBURSEMENT_APP = {
-    'typeform_form': 'ZrEOYT',
-    'typeform_user': 'hackersatupc',
+# Deployment configurations for proxy pass and csrf
+CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-}
-
-EMAIL_SUBJECT_PREFIX = '[HackUPC]'
-EVENT_NAME = 'HackUPC'
-
-EVENT_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
-ALLOWED_HOSTS.append(EVENT_DOMAIN)
-CURRENT_EDITION = 'Fall 2017'
-
-# Optional, if not set will skip invite.
-# Highly recommended to create a separate user account to extract the token from
-SLACK = {
-    'team': os.environ.get('SL_TEAM', 'hackupctest'),
-    # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
-    'token': os.environ.get('SL_TOKEN', None)
-}
-
-# Default reimbursement amount, optional, will have empty value if no amount
-DEFAULT_REIMBURSEMENT = 100
-
-if os.environ.get('EMAIL_HOST_PASSWORD', None):
-    # Error reporting email. Will send an email in any 500 error from server email
-    SERVER_EMAIL = 'server@hackupc.com'
-    ADMINS = [('Devs', 'devs@hackupc.com'), ]
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
-    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hupc_mail')
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
+# Maximum file upload size for forms
+MAX_UPLOAD_SIZE = 5242880

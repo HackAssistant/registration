@@ -1,0 +1,43 @@
+{% load bootstrap3 %}
+{% load static %}
+{% load form_utils %}
+<form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
+    {% csrf_token %}
+    {% bootstrap_form_errors form %}
+    {% for fieldset in form.fieldsets %}
+        <fieldset>
+            <h3>{{ fieldset.name }}<br>
+                {% if fieldset.description %}
+                    <small>{{ fieldset.description }}</small>
+                {% endif %}
+            </h3>
+            {% for field in fieldset %}
+                {% bootstrap_field field %}
+            {% endfor %}
+        </fieldset>
+    {% endfor %}
+    <small><span style="color: red">*</span>Indicates required field</small>
+
+    <button class="btn btn-success btn-block" type="submit">Submit receipt</button>
+</form>
+
+
+<script src="{% static 'lib/typeahead.min.js' %}"></script>
+<script src="{% static 'js/form_modifiers.js' %}"></script>
+
+<script>
+
+    $(document).ready(function () {
+            make_field_typeahead('origin_country', '{% static 'countries.json' %}');
+
+            var multiple_hacker = $('#id_multiple_hackers');
+            var teammates = $('#id_friend_emails');
+            conditional_field(teammates, multiple_hacker, function () {
+                return multiple_hacker.prop("checked");
+            });
+
+
+        }
+    )
+
+</script>

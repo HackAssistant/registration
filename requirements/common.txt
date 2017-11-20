@@ -1,8 +1,7 @@
 appdirs==1.4.0
 Django==1.10.4
-django-allauth==0.32.0
 django-bootstrap3==8.2.3
-django-datatable==0.2.1
+django-form-utils==1.0.3
 django-filter==1.0.1
 django-jet==1.0.4
 google-api-python-client==1.6.1
@@ -25,3 +24,6 @@ sendgrid-django==4.0.4
 six==1.10.0
 uritemplate==3.0.0
 uuid==1.30
+pytz==2017.2
+django-tables2==1.14.2
+tablib==0.12.1
