@@ -69,7 +69,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 
 ### Heroku deploy
 
-You can deploy this project into heroku for free. You will need to verify your account to use the scheduler for automatic application expirations emails.
+You can deploy this project into heroku for free. You will need to verify your account to use the scheduler for automatic application expirations emails. See "Use in your hackathon" for more details on using in your hackathon.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -207,7 +207,7 @@ You can use this for your own hackathon. How?
 - Fork this repo
 - Update [app/hackathon_variable.py](app/hackathon_variable.py)
 - Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
-- Deploy into your server!
+- Deploy into your server or in Heroku (see above)!
 
 ## Personalization
 
