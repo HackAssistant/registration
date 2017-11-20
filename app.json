@@ -20,6 +20,13 @@
     "SL_TEAM": {
       "description": "Slack team name (xxx on xxx.slack.com)",
       "required": false
+    },
+    "PROD_MODE": {
+      "description": "Disables Django debug mode.",
+      "value":"true"
     }
+  },
+  "scripts": {
+    "postdeploy": "python manage.py migrate"
   }
 }

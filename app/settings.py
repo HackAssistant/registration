@@ -88,12 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-HEROKU = os.environ.get('HEROKU', False)
-
-if HEROKU:
-    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-    WSGI_APPLICATION = 'app.heroku_wsgi.application'
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
