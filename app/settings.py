@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+import dj_database_url
+
 from .hackathon_variables import *
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -86,6 +88,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
+HEROKU = os.environ.get('HEROKU', False)
+
+if HEROKU:
+    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+    WSGI_APPLICATION = 'app.heroku_wsgi.application'
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -95,6 +103,9 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+if os.environ.get('DATABASE_URL', None):
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 if os.environ.get('PG_PWD', None):
     DATABASES = {

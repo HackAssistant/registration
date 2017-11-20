@@ -72,7 +72,6 @@ You can replace the email backend easily. See more [here](https://djangopackages
 Inspired on this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
 
 - Set up (see above)
-- `pip install -r requirements/prod.txt`
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
 - Edit variables to match your environment and add extra if required (see environment variables available above)

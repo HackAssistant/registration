@@ -1,0 +1,9 @@
+{
+  "name": "HackAssistant Registration",
+  "description": "Hackathon registration server",
+  "env": {
+    "DOMAIN": "{SET THIS}.herokuapp.com",
+    "SECRET": "You can generate a random secret with python running: os.urandom(24)",
+    "SG_KEY": "Sendgrid Key. Get it here: https://app.sendgrid.com/settings/api_keys"
+  }
+}
