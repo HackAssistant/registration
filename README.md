@@ -197,6 +197,7 @@ You can use this for your own hackathon. How?
 - Fork this repo
 - Update [app/hackathon_variable.py](app/hackathon_variable.py)
 - Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
+- Update favicon [app/static/](app/static/)
 - Deploy into your server!
 
 ## Personalization
@@ -206,6 +207,8 @@ You can use this for your own hackathon. How?
 - Colors and presentation: [app/static/css/main.css](app/static/css/main.css).
 - Navbar & content/disposition: [app/templates/base.html](app/templates/base.html)
 - Email base template: [app/templates/base_email.html](app/templates/base_email.html)
+- Update favicon [app/static/](app/static/)
+
 
 ### Content
 
