@@ -1,39 +1,11 @@
-{% extends "base.html" %}
-{% load humanize %}
-{% load django_tables2 %}
-{% load bootstrap3 %}
-{% load static %}
-{% block head_title %}Reimbursement list {% endblock %}
+{% extends "base_table.html" %}
+{% block head_title %}Send reimbursements{% endblock %}
 
-{% block body %}
-    <div class="row margin-top">
-        {% bootstrap_messages %}
-        <div class="col-md-12">
-            <div style="text-align: center;">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="text-center">Applications</h4>
-                    </div>
-                    <div class="panel-body">
-                        {% if filter %}
-                            <form action="" method="get" class="form form-inline text-left filter">
-                                {% bootstrap_form filter.form size='small' %}
-                                <button type="submit" class="btn btn-block btn-info">Search</button>
-                            </form>
-                        {% endif %}
-
-                    </div>
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        {% render_table table 'django_tables2/bootstrap-responsive.html' %}
-                        <div class="panel-footer">
-                            <button name="invite" class="btn btn-success btn-block"
-                                    value="invite">Send reimbursement
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+{% block table_title %}Reimbursements eligible{% endblock %}
+{% block table_footer %}
+    <div class="panel-footer">
+        <button name="invite" class="btn btn-success btn-block"
+                value="invite">Send reimbursement
+        </button>
     </div>
 {% endblock %}
