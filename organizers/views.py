@@ -59,6 +59,7 @@ class ApplicationsListView(IsOrganizerMixin, ExportMixin, SingleTableMixin, Filt
     filterset_class = ApplicationFilter
     table_pagination = {'per_page': 100}
     exclude_columns = ('detail', 'status', 'vote_avg')
+    export_name = 'applications'
 
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.all())
