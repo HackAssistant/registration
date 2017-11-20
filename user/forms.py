@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth import password_validation
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.password_validation import validate_password, password_validators_help_texts
 
@@ -45,3 +46,41 @@ class RegisterForm(LoginForm):
             raise forms.ValidationError("Passwords don't match")
         validate_password(password)
         return password2
+
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(label="Email", max_length=254)
+
+
+class SetPasswordForm(forms.Form):
+    """
+    A form that lets a user change set their password without entering the old
+    password
+    """
+
+    new_password1 = forms.CharField(
+        label="New password",
+        widget=forms.PasswordInput,
+        strip=False,
+
+    )
+    new_password2 = forms.CharField(
+        label="New password confirmation",
+        strip=False,
+        widget=forms.PasswordInput,
+        help_text=' '.join(password_validation.password_validators_help_texts()),
+    )
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2:
+            if password1 != password2:
+                raise forms.ValidationError("The two password fields didn't match.")
+        password_validation.validate_password(password2)
+        return password2
+
+    def save(self, user):
+        password = self.cleaned_data["new_password1"]
+        user.set_password(password)
+        user.save()

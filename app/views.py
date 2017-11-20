@@ -9,6 +9,8 @@ def root_view(request):
         return HttpResponseRedirect(reverse('account_signup'))
     if not request.user.is_authenticated() and utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_login'))
+    if (request.user.is_organizer or request.user.is_volunteer) and not request.user.email_verified:
+        return HttpResponseRedirect(reverse('verify_email_required'))
     if request.user.is_organizer:
         return HttpResponseRedirect(reverse('vote'))
     elif request.user.is_volunteer:

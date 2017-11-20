@@ -1,6 +1,5 @@
 import csv
 
-import logging
 from django.conf import settings
 from django.contrib import admin
 from django.db.models import Func
@@ -8,6 +7,7 @@ from django.forms import forms
 from django.http import HttpResponse
 from django.urls import reverse as django_reverse
 from django.utils import timezone
+from django.utils.functional import keep_lazy_text
 
 
 def reverse(viewname, args=None, kwargs=None, request=None, format=None,
@@ -151,3 +151,8 @@ def validate_url(data, query):
     """
     if data and query not in data:
         raise forms.ValidationError('Please enter a valid {} url'.format(query))
+
+
+@keep_lazy_text
+def lazy_format(s, f):
+    return format(s, f)

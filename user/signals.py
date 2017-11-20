@@ -20,9 +20,9 @@ def user_organizer(sender, instance, created, *args, **kwargs):
         instance.save()
 
 
-# MAke user organizer if fits regex
+# Send user verification
 @receiver(post_save, sender=User)
 def user_verify_email(sender, instance, created, *args, **kwargs):
     if created:
-        msg = tokens.create_token_email(instance)
+        msg = tokens.generate_verify_email(instance)
         msg.send()
