@@ -12,7 +12,7 @@ def root_view(request):
     if (request.user.is_organizer or request.user.is_volunteer) and not request.user.email_verified:
         return HttpResponseRedirect(reverse('verify_email_required'))
     if request.user.is_organizer:
-        return HttpResponseRedirect(reverse('vote'))
+        return HttpResponseRedirect(reverse('review'))
     elif request.user.is_volunteer:
         return HttpResponseRedirect(reverse('check_in_list'))
     return HttpResponseRedirect(reverse('dashboard'))
