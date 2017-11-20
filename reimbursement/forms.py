@@ -100,3 +100,13 @@ class AcceptReceiptForm(ModelForm):
         widgets = {
             'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
+
+
+class EditReimbursementForm(ModelForm):
+    class Meta:
+        model = Reimbursement
+        fields = ('reimbursement_money', 'expiration_time',)
+        labels = {
+            'reimbursement_money': 'Amount to be reimbursed',
+            'expiration_time': 'When is the reimbursement expiring?'
+        }

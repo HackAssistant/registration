@@ -8,6 +8,7 @@
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
 
 {% endblock %}
 {% block body %}
@@ -57,6 +58,20 @@
                         {% endif %}
 
                     </div>
+                    {% if not review and user.is_director %}
+                        <form action="" method="post" class="form form-horizontal">
+                            {% csrf_token %}
+                            <div class="container-fluid">
+                                <h4 class="text-center">Edit reimbursement</h4>
+                                {% bootstrap_form edit_form layout="horizontal" %}
+                            </div>
+                            <div class="panel-footer">
+                                <button name="invite" class="btn btn-success btn-block"
+                                        value="invite">Submit changes
+                                </button>
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
             {% if review %}
@@ -109,9 +124,22 @@
 
     <script src="{% static 'lib/typeahead.min.js' %}"></script>
     <script src="{% static 'js/form_modifiers.js' %}"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+
     <script>
 
         $(document).ready(function () {
+                var exp_time = $('input[name="expiration_time"]');
+                exp_time.daterangepicker({
+                    timePicker: true,
+                    singleDatePicker: true,
+                    timePickerIncrement: 30,
+                    startDate: moment(exp_time.val()),
+                    locale: {
+                        format: 'YYYY-MM-DD H:mm:ss'
+                    }
+                });
                 make_field_typeahead('origin_country', '{% static 'countries.json' %}');
             }
         )

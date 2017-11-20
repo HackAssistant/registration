@@ -53,7 +53,20 @@ class ReimbursementDetail(IsOrganizerMixin, TemplateView):
     def get_context_data(self, **kwargs):
         id_ = kwargs.get('id', None)
         reimb = get_object_or_404(models.Reimbursement, pk=id_)
-        return {'reimb': reimb}
+        return {'reimb': reimb, 'edit_form': forms.EditReimbursementForm(instance=reimb)}
+
+    def post(self, request, *args, **kwargs):
+        id_ = kwargs.get('id', None)
+        reimb = models.Reimbursement.objects.get(pk=id_)
+        form = forms.EditReimbursementForm(request.POST, instance=reimb)
+
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, "Changes in reimbursement successfully saved!")
+        else:
+            return render(request, self.template_name, {'reimb': reimb, 'edit_form': form})
+
+        return HttpResponseRedirect(reverse('reimbursement_detail', kwargs={'id': reimb.pk}))
 
 
 class ReceiptReview(ReimbursementDetail):
@@ -116,7 +129,7 @@ class SendReimbursementListView(IsDirectorMixin, SingleTableMixin, FilterView):
 
     def get_queryset(self):
         status = [app_mod.APP_INVITED, app_mod.APP_LAST_REMIDER, app_mod.APP_CONFIRMED, app_mod.APP_ATTENDED]
-        return models.Reimbursement.objects.filter(status=models.RE_DRAFT)\
+        return models.Reimbursement.objects.filter(status=models.RE_DRAFT) \
             .filter(hacker__application__status__in=status).all()
 
     def post(self, request, *args, **kwargs):
