@@ -91,7 +91,7 @@
                                     </li>
                                     {% if request.user.is_director %}
                                         <li class="{% if request.resolver_match.url_name == "invite_list" %}active{% endif %}">
-                                            <a href="{% url 'invite_list' %}">Send invitations</a>
+                                            <a href="{% url 'invite_list' %}">Invite applications</a>
                                         </li>
                                     {% endif %}
                                 </ul>
