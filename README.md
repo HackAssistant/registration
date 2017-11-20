@@ -233,7 +233,7 @@ If you need extra labels for your hackathon, you can change the model and add yo
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
 
-By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackupc.com and appropriate action will be taken against the offender after investigation.
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to report@gerard.space and appropriate action will be taken against the offender after investigation.
 
 # License
 
