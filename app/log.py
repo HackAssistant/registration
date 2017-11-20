@@ -12,9 +12,8 @@ class HackathonDevEmailHandler(logging.Handler):
 
     If the request is passed as the first argument to the log record,
     request data will be provided in the email report.
-    
     This is replicated from Django log to use the default backend properly.
-    
+
     See: https://docs.djangoproject.com/en/1.11/howto/error-reporting/
     """
 
