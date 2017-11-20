@@ -39,7 +39,9 @@
                                 {% include 'include/field.html' with desc='Money assigned' value=reimbursment.money_assigned %}
                             {% endif %}
                             {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
-                            {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
+                            {% if app.resume %}
+                                {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
+                            {% endif %}
                         </dl>
                         <h4 class="text-center">Academic</h4>
                         <dl class="dl-horizontal">
