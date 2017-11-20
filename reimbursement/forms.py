@@ -108,6 +108,8 @@ class EditReimbursementForm(ModelForm):
         # Hide reimbursement money if it has not been approved yet!
         if not self.instance.is_accepted() and item.name == 'reimbursement_money':
             item.field.widget = forms.HiddenInput()
+        else:
+            item.field.required = True
         return item
 
     class Meta:
