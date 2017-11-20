@@ -115,12 +115,9 @@ class SendReimbursementListView(IsDirectorMixin, SingleTableMixin, FilterView):
     table_pagination = {'per_page': 100}
 
     def get_queryset(self):
-        return models.Reimbursement.objects.filter(status=models.RE_DRAFT).filter(hacker__application__status__in=
-                                                                                  [app_mod.APP_INVITED,
-                                                                                   app_mod.APP_LAST_REMIDER,
-                                                                                   app_mod.APP_CONFIRMED,
-                                                                                   app_mod.APP_ATTENDED]) \
-            .all()
+        status = [app_mod.APP_INVITED, app_mod.APP_LAST_REMIDER, app_mod.APP_CONFIRMED, app_mod.APP_ATTENDED]
+        return models.Reimbursement.objects.filter(status=models.RE_DRAFT)\
+            .filter(hacker__application__status__in=status).all()
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')

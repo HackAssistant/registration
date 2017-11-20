@@ -22,6 +22,5 @@ class Command(BaseCommand):
 
         self.stdout.write(','.join(EXPORT_CSV_FIELDS))
         for app in applications:
-            res = [app.user.name,  app.university, app.origin_country,
-                   app.user.email]
+            res = [app.user.name, app.university, app.origin_country, app.user.email]
             self.stdout.write(','.join(res))
