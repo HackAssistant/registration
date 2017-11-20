@@ -23,6 +23,6 @@ def user_organizer(sender, instance, created, *args, **kwargs):
 # Send user verification
 @receiver(post_save, sender=User)
 def user_verify_email(sender, instance, created, *args, **kwargs):
-    if created:
+    if created and not instance.email_verified:
         msg = tokens.generate_verify_email(instance)
         msg.send()
