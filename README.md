@@ -13,15 +13,17 @@ Backend for hackathon application management. Forked and adapted from [HackUPC's
 ## Features
 
 - Email sign up
-- Application submission
-- Role management: Organizer, Volunteer and Director
-- Review and vote application interface for organizers
-- Sends invites and controls confirmation and cancellation application flow
+- Email verification
+- Forgot password
+- Hackathon registration
+- Internal user role management: Hacker, Organizer, Volunteer, Director and Admin
+- Review applications interface for organizers (includes vote)
+- Automatic control of confirmation, expiration and cancellation flows
 - Check-in interface with QR scanner
-- Admin dashboard for editing applications
-- Flexible email backend (SendGrid is the default supported backend)
+- Django Admin dashboard to manually edit applications, reimbursement and users
+- Flexible email backend (SendGrid is the default and recommended supported backend)
 - Reimbursement management interface
-- (Optional) Automated slack invites on confirm and on demand in admin interface
+- (Optional) Automated slack invites on confirm 
 
 
 
@@ -32,16 +34,16 @@ Needs: Python 3.X, virtualenv
 - `git clone https://github.com/hackupc/backend && cd backend`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
-- (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
 - `pip install -r requirements.txt`
+- (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
 - `python manage.py migrate`
-- `python manage.py createsuperuser`
+- `python manage.py createsuperuser` (creates super user to manage all the app)
 
 ## Available enviroment variables
 
 - **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
 You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
-- **PROD_MODE**(optional): Disables debug mode. Avoids using filesystem mail backend.
+- **PROD_MODE**(optional): Disables Django debug mode. 
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
 - **PG_PWD**(optional): Postgres password. Also enables Postgres as the default database with the default values specified below.
 - **PG_NAME**(optional): Postgres database name. Default: backend
@@ -50,15 +52,13 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
-- **EMAIL_HOST_PASSWORD**(optional): STMP host password for admin emails. Enables admin emails.
-- **EMAIL_HOST**(optional): STMP host name. Defaults: smtp.sendgrid.net
-- **EMAIL_HOST_USER**(optional): STMP host username. Defaults: hupc_mail
 
 
-## Run server
+## Server
 
 ### Local environment
 
+- Set up (see above)
 - `python manage.py runserver`
 - Sit back, relax and enjoy. That's it!
 
@@ -66,12 +66,14 @@ You can replace the email backend easily. See more [here](https://djangopackages
 
 Inspired on this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
 
+- Set up (see above)
+- - `pip install -r requirements/prod.txt`
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
-- Edit variables to match your environment
+- Edit variables to match your environment and add extra if required (see environment variables available above)
 - Create restart.sh from template: `cp restart.sh.template restart.sh`
 - `chmod +x restart.sh`
-- Edit variables to match your environment
+- Edit variables to match your environment and add extra if required (see environment variables available above)
 - Run `restart.sh`. This will update the database, dependecies and static files.
 - Set up Systemd (read next section)
 
@@ -96,7 +98,7 @@ WantedBy=multi-user.target
 
 ```
 
-- Replace `user` for your user (deploy in our server).
+- Replace `user` for your linux user.
 - Replace `project_folder` by the name of the folder where the project is located
 - Create and enable service: `sudo systemctl start backend && sudo systemctl enable backend`
 
@@ -166,18 +168,11 @@ TODO: CREATE NEW DUMMY DATA
 
 ## Management
 
-### Commands
-
-- `SG_KEY=REPLACE_WITH_SENDGRID_KEY python manange.py expire_applications`: Sends last reminder email to applications invited (not confirmed or cancelled) that are 4 days old. Sets application as expired after 24 hours of sending last reminder email.
-
-
-#### Production
-
-Create your own management.sh script and add to crontab.
+### Automated expiration
 
 - Create management.sh from template: `cp management.sh.template management.sh`
 - `chmod +x management.sh`
-- Edit variables to match your environment
+- Edit variables to match your environment and add extra if required (see environment variables available above)
 - Add to crontab: `crontab -e`
 ```
 */5 * * * * cd /home/user/project_folder/ && ./management.sh > /home/user/project_folder/management.log 2> /home/user/project_folder/management_err.log
@@ -187,12 +182,14 @@ Create your own management.sh script and add to crontab.
 
 - **is_volunteer**: Allows user to check-in hackers with QR and list view
 - **is_organizer**: Allows user to vote, see voting ranking and check-in hackers.
-- **is_director**: Allows user to enter Admin interface and invite hackers
+- **is_director**: Allows user to send invites to hackers as well as send reimbursement.
+- **is_admin**: Allows user to enter Django Admin interface
+
 
 
 ## Personalization
 
-You can personalize this backend in style and strings for your hackathon.
+You can personalize this backend for your hackathon.
 
 ### Style
 
@@ -206,17 +203,24 @@ The email base template is in [app/templates/base_email.html](app/templates/base
 
 #### Update emails:
 
-You can update emails related to hackers (application invite, event ticket) at [hackers/templates/mails/](register/templates/mails/)
-and reimbursement (reimbursement email) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+You can update emails related to 
+- Applications (application invite, event ticket, last reminder) at [applications/templates/mails/](applications/templates/mails/)
+- Reimbursements (reimbursement email, reject receipt) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+- User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
 
 #### Update hackathon variables
-Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). You can set the ones that you prefer at [app/hackathon_variable.py](app/hackathon_variable.py)
+Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). 
+You can set the ones that you prefer at [app/hackathon_variable.py](app/hackathon_variable.py)
 
-#### Update application:
-   - Update model with specific fields:[hackers/models.py](hackers/models.py)
-   - Run `python manage.py makemigrations`
-   - Run `python manage.py migrate`
-   - Update form for specific labels: [hackers/forms.py](hackers/forms.py)
+#### Update registration form
+You can change the form, titles, texts in [applications/forms.py](applications/forms.py)
+
+#### Update application model
+If you need extra labels for your hackathon, you can change the model and add your own fields.
+
+   - Update model with specific fields:[applications/models.py](applications/models.py)
+   - `python manage.py makemigrations`
+   - `python manage.py migrate`
 
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.

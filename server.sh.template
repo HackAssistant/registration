@@ -11,7 +11,5 @@ export SL_TOKEN="TOKEN"
 export SL_TEAM="test-team"
 # Domain where running
 export DOMAIN="my.hackupc.com"
-# SMTP password
-export EMAIL_HOST_PASSWORD="password"
 
 ./env/bin/gunicorn --workers 3 --log-file=gunicorn.log --bind unix:backend.sock app.wsgi:application

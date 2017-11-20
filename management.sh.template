@@ -3,7 +3,8 @@ export PROD_MODE="True"
 # Set up your postgres password
 export PG_PWD="password"
 # If using Sendgrid set api key here
+export SG_KEY="API_KEY"
+# Domain where running
+export DOMAIN="my.hackupc.com"
 
-./env/bin/python manage.py insert_applications
 ./env/bin/python manage.py expire_applications
-./env/bin/python manage.py applications_reminder
