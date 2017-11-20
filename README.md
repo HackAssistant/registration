@@ -25,7 +25,7 @@
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
 - (Optional) Automated slack invites on confirm 
 
-**Demo**: http://registration.gerard.space (updated from master automatically)
+**Demo**: http://registration.gerard.space (updated from master automatically. Running on Heroku free dyno)
 
 ## Setup
 
