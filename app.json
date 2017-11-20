@@ -4,6 +4,8 @@
   "env": {
     "DOMAIN": "{SET THIS}.herokuapp.com",
     "SECRET": "You can generate a random secret with python running: os.urandom(24)",
-    "SG_KEY": "Sendgrid Key. Get it here: https://app.sendgrid.com/settings/api_keys"
+    "SG_KEY": "Sendgrid Key. Get it here: https://app.sendgrid.com/settings/api_keys",
+    "SL_TOKEN": "(Optional) Slack token to invite hackers automatically on confirmation. https://api.slack.com/custom-integrations/legacy-tokens",
+    "SL_TEAM": "(Optional)  Slack team name (xxx on xxx.slack.com)"
   }
 }
