@@ -37,7 +37,7 @@
     <a href="{% url 'cancel_app' application.uuid_str %}" class="btn btn-block btn-danger">Cancel</a>
 {% else %}
     <p> When decisions are released, you'll be able to see your results on this page.<br>
-        If you have any questions or concerns, you can still reach us at {{ h_contact_email }}<br>
+        If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}<br>
         {% if application.can_be_edit %}
             Edit your application <a href="?phase=general">here</a></p>
         {% endif %}
