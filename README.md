@@ -1,28 +1,28 @@
 <br>
 <p align="center">
-  <img alt="HackCU" src="https://github.com/HackCU/splash-page/blob/master/img/hackcu_black.png" width="200"/>
+  <img alt="HackAssistant" src="https://avatars2.githubusercontent.com/u/33712329?s=200&v=4" width="200"/>
 </p>
 <br>
 
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/0806a9c40ea11ded0efd/maintainability)](https://codeclimate.com/github/HackCU/backend/maintainability)
-[![Build Status](https://travis-ci.org/HackCU/backend.svg?branch=master)](https://travis-ci.org/hackcu/backend)
+[![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
+[![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
 
-Backend for hackathon application management. Forked and adapted from [HackUPC's Backend](https://github.com/hackupc/backend).
+📝 Registration for hackathons. Originally at [HackUPC](https://github.com/hackupc). Also work by [HackCU](https://github.com/hackcu)
 
 ## Features
 
-- Email sign up
+- Email sign up ✉️
+- Travel reimbursement management 💰
+- Hackathon registration form 📝
+- Check-in interface with QR scanner 📱
+- Review applications interface for organizers (includes vote) ⚖️
 - Email verification
 - Forgot password
-- Hackathon registration
 - Internal user role management: Hacker, Organizer, Volunteer, Director and Admin
-- Review applications interface for organizers (includes vote)
 - Automatic control of confirmation, expiration and cancellation flows
-- Check-in interface with QR scanner
 - Django Admin dashboard to manually edit applications, reimbursement and users
 - Flexible email backend (SendGrid is the default and recommended supported backend)
-- Reimbursement management interface
 - (Optional) Automated slack invites on confirm 
 
 
@@ -31,13 +31,18 @@ Backend for hackathon application management. Forked and adapted from [HackUPC's
 
 Needs: Python 3.X, virtualenv
 
-- `git clone https://github.com/hackcu/backend && cd backend`
+- `git clone https://github.com/hackassistant/registration && cd registration`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
 - `python manage.py migrate`
 - `python manage.py createsuperuser` (creates super user to manage all the app)
+
+
+### Dummy data
+
+_Coming soon_
 
 ## Available enviroment variables
 
@@ -67,7 +72,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 Inspired on this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
 
 - Set up (see above)
-- - `pip install -r requirements/prod.txt`
+- `pip install -r requirements/prod.txt`
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
 - Edit variables to match your environment and add extra if required (see environment variables available above)
@@ -162,9 +167,7 @@ server {
 - `./restart.sh`
 - `sudo service backend restart`
 
-### Set up dummy data
 
-TODO: CREATE NEW DUMMY DATA
 
 ## Management
 
@@ -187,17 +190,22 @@ TODO: CREATE NEW DUMMY DATA
 
 
 
-## Personalization
+## Use in your hackathon
 
-You can personalize this backend for your hackathon.
+You can use this for your own hackathon. How?
+
+- Fork this repo
+- Update [app/hackathon_variable.py](app/hackathon_variable.py)
+- Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
+- Deploy into your server!
+
+## Personalization
 
 ### Style
 
-For colors and presentation of views you can edit [app/static/css/main.css](app/static/css/main.css).
-
-To edit the navbar content/disposition you can modify [app/templates/base.html](app/templates/base.html)
-
-The email base template is in [app/templates/base_email.html](app/templates/base_email.html)
+- Colors and presentation: [app/static/css/main.css](app/static/css/main.css).
+- Navbar & content/disposition: [app/templates/base.html](app/templates/base.html)
+- Email base template: [app/templates/base_email.html](app/templates/base_email.html)
 
 ### Content
 
@@ -225,10 +233,8 @@ If you need extra labels for your hackathon, you can change the model and add yo
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
 
-By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackcu.org and appropriate action will be taken against the offender after investigation.
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackupc.com and appropriate action will be taken against the offender after investigation.
 
 # License
 
 MIT © Hackers@UPC
-
-MIT © HackCU

@@ -1,16 +1,24 @@
-## Description
+<!--  Thanks for sending a pull request!  Here are some tips for you:
+1. If this is your first time, read our contributor guidelines  https://github.com/HackAssistant/registration/blob/master/.github/CONTRIBUTING.md
+-->
+
+## What this PR does / why we need it
 A few sentences describing the overall goals of the pull request's commits.
 
-## Related Issues
-Link to any issues that are relevant to this PR. This could be an issue this PR fixes.
+## Which issue(s) this PR fixes 
+(optional) Fixes #<issue number>(, fixes #<issue_number>, ...) format, will close the issue(s) when PR gets merged)
+Fixes #
+
+## Special notes for your reviewer
+(optional)
+
 
 ## Some questions
-1. Did you read the contributing guidelines?
-	(Your answer)
-2. Do you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md)?
-	(Your answer)
-If you answered No to question 1, go back and read the [instructions](.github/CONTRIBUTING.md) carefully.
-If you answered No to question 2, go back and read the [Code of Conduct](.github/CODE_OF_CONDUCT.md) carefully.
+- [ ] I have read the contributing guidelines
+- [ ] I abide by this repository Code of Conduct
+- [ ] I understand that my PR won't be merged until Travis gives a "green light"
+
+You can leave this and check them once the PR has been created.
 
 ## Additional Notes
 Do you want to add anything else? We :heart: to hear your opinions!

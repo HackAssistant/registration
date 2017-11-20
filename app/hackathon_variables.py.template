@@ -1,4 +1,4 @@
-# HACKATHON PERSONALIZATION
+# HACKATHON PERSONALIZATION. HackUPC example
 import os
 
 from django.utils import timezone
