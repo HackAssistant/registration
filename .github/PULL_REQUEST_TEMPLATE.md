@@ -2,15 +2,15 @@
 1. If this is your first time, read our contributor guidelines  https://github.com/HackAssistant/registration/blob/master/.github/CONTRIBUTING.md
 -->
 
-## What this PR does / why we need it
+## What this PR does / Why we need it
 A few sentences describing the overall goals of the pull request's commits.
 
-## Which issue(s) this PR fixes 
-(optional) Fixes #<issue number>(, fixes #<issue_number>, ...) format, will close the issue(s) when PR gets merged)
+## Which issue(s) this PR fixes (optional) 
+<!--Fixes #<issue number>(, fixes #<issue_number>, ...) format, will close the issue(s) when PR gets merged)-->
 Fixes #
 
-## Special notes for your reviewer
-(optional)
+## Special notes for your reviewer (optional)
+
 
 
 ## Some questions
@@ -18,7 +18,7 @@ Fixes #
 - [ ] I abide by this repository Code of Conduct
 - [ ] I understand that my PR won't be merged until Travis gives a "green light"
 
-You can leave this and check them once the PR has been created.
+<!--You can leave this and check them once the PR has been created.-->
 
-## Additional Notes
+## Additional Notes (optional)
 Do you want to add anything else? We :heart: to hear your opinions!
