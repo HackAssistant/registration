@@ -103,6 +103,13 @@ class AcceptReceiptForm(ModelForm):
 
 
 class EditReimbursementForm(ModelForm):
+    def __getitem__(self, item):
+        item = super(EditReimbursementForm, self).__getitem__(item)
+        # Hide reimbursement money if it has not been approved yet!
+        if not self.instance.is_accepted() and item.name == 'reimbursement_money':
+            item.field.widget = forms.HiddenInput()
+        return item
+
     class Meta:
         model = Reimbursement
         fields = ('reimbursement_money', 'expiration_time',)

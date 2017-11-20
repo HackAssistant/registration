@@ -58,7 +58,7 @@
                         {% endif %}
 
                     </div>
-                    {% if not review and user.is_director and reimb.is_accepted %}
+                    {% if not review and user.is_director  %}
                         <form action="" method="post" class="form form-horizontal">
                             {% csrf_token %}
                             <div class="container-fluid">
