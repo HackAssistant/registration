@@ -29,7 +29,8 @@ class UserAdmin(admin.ModelAdmin):
          ),
     )
     search_fields = ('email',)
-    ordering = ('email',)
+    ordering = ('created_time',)
+    date_hierarchy = 'created_time'
     filter_horizontal = ()
 
     def get_fieldsets(self, request, obj=None):

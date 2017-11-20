@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -49,6 +50,7 @@ class User(AbstractBaseUser):
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    created_time = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
 
