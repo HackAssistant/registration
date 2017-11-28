@@ -8,7 +8,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
 
+
 📝 Registration for hackathons. Forked from [HackAssistant/registration](HackAssistant/registration)
+
 
 ## Features
 
@@ -17,15 +19,15 @@
 - Hackathon registration form 📝
 - Check-in interface with QR scanner 📱
 - Review applications interface for organizers (includes vote) ⚖️
-- Email verification
-- Forgot password
-- Internal user role management: Hacker, Organizer, Volunteer, Director and Admin
-- Automatic control of confirmation, expiration and cancellation flows
-- Django Admin dashboard to manually edit applications, reimbursement and users
-- Flexible email backend (SendGrid is the default and recommended supported backend)
+- Email verification 📨
+- Forgot password 🤔
+- Internal user role management: Hacker, Organizer, Volunteer, Director and Admin ☕️
+- Automatic control of confirmation, expiration and cancellation flows 🔄
+- Django Admin dashboard to manually edit applications, reimbursement and users 👓
+- Flexible email backend (SendGrid is the default and recommended supported backend) 📮
 - (Optional) Automated slack invites on confirm 
 
-
+**Demo**: http://registration.gerard.space (updated from master automatically. Running on Heroku free dyno)
 
 ## Setup
 
@@ -47,7 +49,7 @@ _Coming soon_
 ## Available enviroment variables
 
 - **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
-You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
+You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/).
 - **PROD_MODE**(optional): Disables Django debug mode. 
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
 - **PG_PWD**(optional): Postgres password. Also enables Postgres as the default database with the default values specified below.
@@ -67,12 +69,22 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - `python manage.py runserver`
 - Sit back, relax and enjoy. That's it!
 
+### Heroku deploy
+
+You can deploy this project into heroku for free. You will need to verify your account to use the scheduler for automatic application expirations emails. See "Use in your hackathon" for more details on using in your hackathon.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+- Create super user by running `python manage.py createsuperuser` once the heroku app is deployed
+- Add scheduler addon: https://elements.heroku.com/addons/scheduler
+- Open scheduler dashboard: https://scheduler.heroku.com/dashboard (make sure it opens the just created heroku app)
+- Add daily job `python manage.py expire_applications`
+
 ### Production environment
 
 Inspired on this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
 
 - Set up (see above)
-- `pip install -r requirements/prod.txt`
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
 - Edit variables to match your environment and add extra if required (see environment variables available above)
@@ -197,7 +209,7 @@ You can use this for your own hackathon. How?
 - Fork this repo
 - Update [app/hackathon_variable.py](app/hackathon_variable.py)
 - Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
-- Deploy into your server!
+- Deploy into your server or in Heroku (see above)!
 
 ## Personalization
 

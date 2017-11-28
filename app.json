@@ -1,0 +1,32 @@
+{
+  "name": "HackAssistant Registration",
+  "description": "Hackathon registration server",
+  "env": {
+    "DOMAIN": {
+      "description": "Domain where app will be running",
+      "value": "{SET THIS}.herokuapp.com"
+    },
+    "SECRET": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "SG_KEY": {
+      "description": "Sendgrid Key. Get it here: https://app.sendgrid.com/settings/api_keys"
+    },
+    "SL_TOKEN": {
+      "description": "Slack token to invite hackers automatically on confirmation. https://api.slack.com/custom-integrations/legacy-tokens",
+      "required": false
+    },
+    "SL_TEAM": {
+      "description": "Slack team name (xxx on xxx.slack.com)",
+      "required": false
+    },
+    "PROD_MODE": {
+      "description": "Disables Django debug mode.",
+      "value":"true"
+    }
+  },
+  "scripts": {
+    "postdeploy": "python manage.py migrate"
+  }
+}
