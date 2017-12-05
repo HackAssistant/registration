@@ -1,6 +1,18 @@
 {% load bootstrap3 %}
 {% load static %}
 {% load form_utils %}
+<style>
+    #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
+    #id_scholarship > div,  #id_reimb > div {
+        display: inline-block;
+        padding-right: 20px;
+        margin-bottom: 0;
+        margin-top: 0;
+        font-weight: 400;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+</style>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% bootstrap_form_errors form %}
@@ -24,8 +36,6 @@
     {% endif %}
 </form>
 
-<p>If you have any special need you want us to know about please send us an email
-    to {{ h_contact_email|urlize }}</p>
 
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 <script src="{% static 'js/form_modifiers.js' %}"></script>
@@ -36,7 +46,17 @@
 
             make_field_typeahead('university', '{% static 'schools.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
-            make_field_typeahead('origin_country', '{% static 'countries.json' %}');
+            $("#id_origin").typeahead({
+                minLength: 3,
+                source: function (query, process) {
+                    $.get('https://api.teleport.org/api/cities/', {search: query}, function (data) {
+                        var cities = jQuery.map(data._embedded["city:search-results"], function (c) {
+                            return c.matching_full_name;
+                        });
+                        return process(cities);
+                    });
+                }
+            });
 
 
             var other_diet = $('#id_other_diet');

@@ -4,12 +4,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+
     <meta name="theme-color" content="#f8f8f8">
     <meta name="author" content="{{ h_name }}">
     <link rel="icon" href="{% static 'favicon.png' %}" type="image/png">
@@ -39,12 +35,19 @@
         <meta name="twitter:image" content="{{ h_og_image }}">
     {% endif %}
 
-
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
     {% block head %}
     {% endblock %}
+
 
     <title>{% block title %}{% block head_title %}{% endblock %} | {% endblock %}{{ h_app_name }}</title>
 </head>
@@ -74,28 +77,8 @@
                                     href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
                         {% if request.user.is_organizer and request.user.email_verified %}
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                   aria-haspopup="true" aria-expanded="false">Applications <span
-                                        class="caret"></span></a>
-                                <ul class="dropdown-menu">
-
-                                    <li class="{% if request.resolver_match.url_name == "app_list" %}active{% endif %}">
-                                        <a href="{% url 'app_list' %}">All applications</a>
-                                    </li>
-                                    <li class="{% if request.resolver_match.url_name == "review" %}active{% endif %}">
-                                        <a href="{% url 'review' %}">Review applications</a>
-                                    </li>
-                                    <li class="{% if request.resolver_match.url_name == "ranking" %}active{% endif %}">
-                                        <a href="{% url 'ranking' %}">Reviewer ranking</a>
-                                    </li>
-                                    {% if request.user.is_director %}
-                                        <li class="{% if request.resolver_match.url_name == "invite_list" %}active{% endif %}">
-                                            <a href="{% url 'invite_list' %}">Invite applications</a>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </li>
+                            <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
+                                    href="{% url 'app_list' %}">Applications</a></li>
                             {% if h_r_enabled %}
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -123,10 +106,6 @@
                                 <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}
-                        {% endif %}
-                        {% if not request.user.is_organizer %}
-                            <li class="{% if request.resolver_match.url_name == "dashboard" %}active{% endif %}"><a
-                                    href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
 
@@ -205,6 +184,7 @@
         </div>
     </div>
 </footer>
+
 
 {% if h_ga %}
     <script>

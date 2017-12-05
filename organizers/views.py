@@ -1,5 +1,4 @@
 # Create your views here.
-from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -12,12 +11,13 @@ from django_tables2 import SingleTableMixin
 from django_tables2.export import ExportMixin
 
 from app import slack
+from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
-from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable
+from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
 
@@ -41,19 +41,26 @@ def add_comment(application, user, text):
     return comment
 
 
-class RankingView(IsOrganizerMixin, TemplateView):
+def organizer_tabs(user):
+    t = [('Applications', reverse('app_list')), ('Review', reverse('review')), ('Ranking', reverse('ranking'))]
+    if user.is_director:
+        t.append(('Invite', reverse('invite_list')))
+    return t
+
+
+class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'ranking.html'
+    table_class = RankingListTable
 
-    def get_context_data(self, **kwargs):
-        context = super(RankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(
-            vote_count=Count('vote__calculated_vote')) \
-            .order_by('-vote_count').exclude(vote_count=0).values('vote_count',
-                                                                  'email')
-        return context
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return User.objects.annotate(
+            vote_count=Count('vote__calculated_vote')).exclude(vote_count=0)
 
 
-class ApplicationsListView(IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
     table_class = ApplicationsListTable
     filterset_class = ApplicationFilter
@@ -61,15 +68,21 @@ class ApplicationsListView(IsOrganizerMixin, ExportMixin, SingleTableMixin, Filt
     exclude_columns = ('detail', 'status', 'vote_avg')
     export_name = 'applications'
 
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.all())
 
 
-class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
+class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
     template_name = 'invite_list.html'
     table_class = AdminApplicationsListTable
     filterset_class = ApplicationFilter
     table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
 
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.filter(status=APP_PENDING))
@@ -95,8 +108,11 @@ class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
         return HttpResponseRedirect(reverse('invite_list'))
 
 
-class ApplicationDetailView(IsOrganizerMixin, TemplateView):
+class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
     template_name = 'application_detail.html'
+
+    def get_back_url(self):
+        return reverse('app_list')
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationDetailView, self).get_context_data(**kwargs)
@@ -180,6 +196,12 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
 
 
 class ReviewApplicationView(ApplicationDetailView):
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_back_url(self):
+        return None
+
     def get_application(self, kwargs):
         """
         Django model to the rescue. This is transformed to an SQL sentence
@@ -196,8 +218,6 @@ class ReviewApplicationView(ApplicationDetailView):
 
     def get(self, request, *args, **kwargs):
         r = super(ReviewApplicationView, self).get(request, *args, **kwargs)
-        if not self.get_application(kwargs) and settings.REIMBURSEMENT_ENABLED:
-            return HttpResponseRedirect(reverse('receipt_review'))
         return r
 
     def post(self, request, *args, **kwargs):

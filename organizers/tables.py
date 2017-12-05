@@ -2,6 +2,7 @@ import django_filters
 import django_tables2 as tables
 
 from applications.models import Application
+from user.models import User
 
 
 class ApplicationFilter(django_filters.FilterSet):
@@ -16,15 +17,15 @@ class ApplicationFilter(django_filters.FilterSet):
 
 class ApplicationsListTable(tables.Table):
     detail = tables.TemplateColumn(
-        "<a href='{% url 'app_detail' record.uuid %}' target='_blank' class='btn btn-default'>Detail</a> ",
+        "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
-    country = tables.Column(accessor='origin_country', verbose_name='Country')
+    origin = tables.Column(accessor='origin', verbose_name='Origin')
 
     class Meta:
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'vote_avg', 'user.email', 'status', 'university', 'country']
+        fields = ['user.name', 'vote_avg', 'user.email', 'status', 'university', 'origin']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
@@ -39,3 +40,13 @@ class AdminApplicationsListTable(ApplicationsListTable):
         fields = ['selected', 'user.name', 'vote_avg', 'user.email', 'status']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
+
+
+class RankingListTable(tables.Table):
+    class Meta:
+        model = User
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['email', 'vote_count', ]
+        empty_text = 'No organizers voted yet... Why? :\'('
+        order_by = '-vote_count'

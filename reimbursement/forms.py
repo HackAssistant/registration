@@ -46,16 +46,15 @@ class ReceiptSubmissionReceipt(BetterModelForm):
     class Meta:
         model = Reimbursement
         fields = (
-            'venmo_user', 'paypal_email', 'receipt', 'multiple_hackers', 'friend_emails', 'origin_city',
-            'origin_country')
+            'venmo_user', 'paypal_email', 'receipt', 'multiple_hackers', 'friend_emails', 'origin',)
         fieldsets = (
             ('Upload your receipt',
              {'fields': ('receipt', 'multiple_hackers', 'friend_emails'), }),
             ('Where should we send you the monies?', {'fields': ('venmo_user', 'paypal_email',), }),
-            ('Where are you joining us from?', {'fields': ('origin_city', 'origin_country',), }),
+            ('Where are you joining us from?', {'fields': ('origin',), }),
         )
         widgets = {
-            'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
 
         labels = {
@@ -91,14 +90,13 @@ class AcceptReceiptForm(ModelForm):
     class Meta:
         model = Reimbursement
         fields = (
-            'reimbursement_money', 'origin_city',
-            'origin_country')
+            'reimbursement_money', 'origin',)
         labels = {
             'reimbursement_money': 'Total cost in receipt'
         }
 
         widgets = {
-            'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
 
 

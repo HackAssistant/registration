@@ -7,9 +7,7 @@
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
-
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
@@ -35,7 +33,7 @@
                             {% include 'include/field.html' with desc='Last update' value=reimb.update_time|naturaltime %}
                             {% include 'include/field.html' with desc='Status' value=reimb.get_status_display %}
                             {% include 'include/field.html' with desc='Country' value=reimb.origin_country %}
-                            {% include 'include/field.html' with desc='City' value=reimb.origin_city %}
+                            {% include 'include/field.html' with desc='City' value=reimb.origin %}
 
                         </dl>
                         <h4 class="text-center">Receipt</h4>

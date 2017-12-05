@@ -147,4 +147,5 @@ def send_email_verification(request):
         return HttpResponseRedirect(reverse('root'))
     msg = tokens.generate_verify_email(request.user)
     msg.send()
+    messages.success(request, "Verification email successfully sent")
     return HttpResponseRedirect(reverse('root'))

@@ -1,0 +1,7 @@
+{% if application %}
+    <p class="text-center lead">Status</p>
+    <div class="alert alert-{% if application.is_cancelled %}danger{% elif application.answered_invite %}success{% else %}warning{% endif %} lead">
+        {{ application.get_soft_status_display }}
+    </div>
+    <hr>
+{% endif %}
