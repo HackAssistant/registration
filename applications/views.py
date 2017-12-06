@@ -15,7 +15,7 @@ from django.views import View
 
 from app import slack
 from app.slack import SlackInvitationException
-from app.utils import reverse
+from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
 
@@ -110,15 +110,14 @@ def get_current_phase(phases):
     return current
 
 
-class HackerDashboard(LoginRequiredMixin, TabsView):
-    template_name = 'application.html'
+class HackerApplication(LoginRequiredMixin, TabsView):
+    template_name = 'hacker_application.html'
 
     def get_current_tabs(self):
-        return [('Application', reverse('dashboard'),
-                 'Invited' if self.request.user.application.needs_action() else False), ]
+        return hacker_tabs(self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super(HackerDashboard, self).get_context_data(**kwargs)
+        context = super(HackerApplication, self).get_context_data(**kwargs)
         form = forms.ApplicationForm()
         context.update({'form': form})
         try:
@@ -154,7 +153,3 @@ class HackerDashboard(LoginRequiredMixin, TabsView):
             c = self.get_context_data()
             c.update({'form': form})
             return render(request, self.template_name, c)
-
-
-def code_conduct(request):
-    return render(request, 'code_conduct.html')

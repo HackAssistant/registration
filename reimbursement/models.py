@@ -144,6 +144,9 @@ class Reimbursement(models.Model):
     def waitlisted(self):
         return self.status == RE_WAITLISTED
 
+    def needs_action(self):
+        return self.can_submit_receipt()
+
     def can_submit_receipt(self):
         return self.status == RE_PEND_TICKET and not self.expired and not self.hacker.application.is_rejected()
 

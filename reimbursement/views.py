@@ -7,7 +7,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from app.mixins import TabsViewMixin
-from app.utils import reverse
+from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models as app_mod
 from applications.emails import send_batch_emails
@@ -26,14 +26,14 @@ def organizer_tabs(user):
     return t
 
 
-class ReimbursementReceipt(LoginRequiredMixin, TabsView):
-    template_name = 'reimbursement.html'
+class ReimbursementHacker(LoginRequiredMixin, TabsView):
+    template_name = 'submit_receipt.html'
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_context_data(self, **kwargs):
-        c = super(ReimbursementReceipt, self).get_context_data(**kwargs)
+        c = super(ReimbursementHacker, self).get_context_data(**kwargs)
         reimb = getattr(self.request.user, 'reimbursement', None)
         if not reimb:
             raise Http404
@@ -53,7 +53,7 @@ class ReimbursementReceipt(LoginRequiredMixin, TabsView):
                              'We have now received your reimbursement. '
                              'Processing will take some time, so please be patient.')
 
-            return HttpResponseRedirect(reverse('root'))
+            return HttpResponseRedirect(reverse('reimbursement_dashboard'))
         else:
             c = self.get_context_data()
             c.update({'form': form})
