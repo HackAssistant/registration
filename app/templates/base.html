@@ -80,25 +80,8 @@
                             <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
                                     href="{% url 'app_list' %}">Applications</a></li>
                             {% if h_r_enabled %}
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                       aria-haspopup="true" aria-expanded="false">Reimbursements <span
-                                            class="caret"></span></a>
-                                    <ul class="dropdown-menu">
-
-                                        <li class="{% if request.resolver_match.url_name == "reimbursement_list" %}active{% endif %}">
-                                            <a href="{% url 'reimbursement_list' %}">All reimbursements</a>
-                                        </li>
-                                        <li class="{% if request.resolver_match.url_name == "receipt_review" %}active{% endif %}">
-                                            <a href="{% url 'receipt_review' %}">Review receipts</a>
-                                        </li>
-                                        {% if request.user.is_director %}
-                                            <li class="{% if request.resolver_match.url_name == "send_reimbursement" %}active{% endif %}">
-                                                <a href="{% url 'send_reimbursement' %}">Send reimbursements</a>
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                </li>
+                                <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}"><a
+                                        href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
                             {% endif %}
                         {% endif %}
                         {% if request.user.is_organizer or request.user.is_volunteer %}

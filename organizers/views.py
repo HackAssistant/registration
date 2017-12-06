@@ -42,9 +42,12 @@ def add_comment(application, user, text):
 
 
 def organizer_tabs(user):
-    t = [('Applications', reverse('app_list')), ('Review', reverse('review')), ('Ranking', reverse('ranking'))]
+    t = [('Applications', reverse('app_list'), False),
+         ('Review', reverse('review'),
+          'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
+         ('Ranking', reverse('ranking'), False)]
     if user.is_director:
-        t.append(('Invite', reverse('invite_list')))
+        t.append(('Invite', reverse('invite_list'), False))
     return t
 
 

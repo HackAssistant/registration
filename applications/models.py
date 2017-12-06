@@ -210,6 +210,7 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.status_update_date = timezone.now()
             self.save()
+            self.user.reimbursement.delete()
 
     def check_in(self):
         self.status = APP_ATTENDED
@@ -224,6 +225,9 @@ class Application(models.Model):
 
     def answered_invite(self):
         return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
+
+    def needs_action(self):
+        return self.status == APP_INVITED
 
     def is_pending(self):
         return self.status == APP_PENDING

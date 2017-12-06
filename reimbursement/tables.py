@@ -16,7 +16,7 @@ class ReimbursementFilter(django_filters.FilterSet):
 
 class ReimbursementTable(tables.Table):
     detail = tables.TemplateColumn(
-        "<a href='{% url 'reimbursement_detail' record.pk %}' class='btn btn-default'>Detail</a> ",
+        "<a href='{% url 'reimbursement_detail' record.pk %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
 
     class Meta:
@@ -40,7 +40,7 @@ class SendReimbursementFilter(django_filters.FilterSet):
 
 class SendReimbursementTable(tables.Table):
     detail = tables.TemplateColumn(
-        "<a href='{% url 'reimbursement_detail' record.pk %}' target='_blank' class='btn btn-default'>Open</a> ",
+        "<a href='{% url 'reimbursement_detail' record.pk %}' target='_blank'>Open</a> ",
         verbose_name='Actions', orderable=False)
 
     selected = tables.CheckBoxColumn(accessor="pk", verbose_name='Select')

@@ -4,98 +4,128 @@
 {% block head_title %}Hacker application{% endblock %}
 
 {% block panel %}
-    {% if not application and h_app_closed %}
-        {% include 'include/applications_closed.html' %}
-    {% elif not user.email_verified %}
-        Please check your inbox  to verify that <b>{{ user.email }}</b> is your email. Check your SPAM folder. If you
-        haven't received an email, you can ask to send it again.
-        <a href="{% url 'send_email_verification' %}" class="btn  btn-success btn-block">Send verification email
-            again</a>
-    {% elif not application %}
-        {% if h_app_timeleft %}
-            <div class="alert alert-info">
-                <p> Time until applications close: <strong
-                        class="text-info">{% include 'include/deadline_countdown.html' %}</strong></p>
+    <div class="row">
+        {% if not application and h_app_closed %}
+            <div class="col-md-12">
+                {% include 'include/applications_closed.html' %}
+            </div>
+        {% elif not user.email_verified %}
+            <div class="col-md-12">
+                Please check your inbox to verify that <b>{{ user.email }}</b> is your email. Check your SPAM folder. If
+                you
+                haven't received an email, you can ask to send it again.
+                <a href="{% url 'send_email_verification' %}" class="btn  btn-success btn-block">Send verification email
+                    again</a>
+            </div>
+        {% elif not application %}
+            <div class="col-md-12">
+                {% if h_app_timeleft %}
+                    <div class="alert alert-info">
+                        <p> Time until applications close: <strong
+                                class="text-info">{% include 'include/deadline_countdown.html' %}</strong></p>
+                    </div>
+                {% endif %}
+                {% include 'include/application_form.html' %}
+            </div>
+
+        {% elif application.is_expired %}
+            <div class="col-md-12">
+                {% include 'include/status.html' %}
+
+                <p> We are sorry, your invite expired. If you think this is an error or you still want to come,
+                    please
+                    message us at
+                    {{ h_contact_email|urlize }}. We will decide case-per-case what is the result.</p>
+            </div>
+        {% elif application.is_cancelled %}
+            <div class="col-md-12">
+                {% include 'include/status.html' %}
+
+                <p>We are sorry that you can't come to {{ h_name }}. We are looking forward to welcome you next edition.
+                    If you
+                    think this is an error or you still want to come, please message us at {{ h_contact_email|urlize }}.
+                    We will
+                    decide case-per-case what is the result.</p>
+            </div>
+        {% elif application.is_attended %}
+            <div class="col-md-12">
+                <p class="lead">Welcome to {{ h_name }}. Let us know if you need any help!</p>
+                {% if h_live %}
+                    <p>Follow our live page for more information during the event</p>
+                    <a href="{{ h_live }}" target="_blank" class="btn btn-block btn-success">Go to live page</a>
+
+                {% endif %}
+            </div>
+        {% elif application.answered_invite %}
+
+            <div class="col-md-4">
+                <img class="img-responsive "
+                     src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chld=L|0&chl={{ application.uuid_str }}"/>
+            </div>
+            <div class="col-md-8">
+                <p>Thank you {{ user.get_full_name }} for confirming your attendance
+                    to {{ h_name }}! In order to make registration go smoother, please show us this QR code during the
+                    process so we can
+                    easily find
+                    you.</p>
+                {% if h_arrive %}
+                    <h3>When to arrive</h3>
+                    <p>{{ h_arrive }}</p>
+                {% endif %}
+                {% if h_leave %}
+                    <h3>When to leave</h3>
+                    <p>{{ h_leave }}</p>
+                {% endif %}
+                {% include 'include/cancel.html' %}
+            </div>
+
+
+        {% elif application.is_invited or application.is_last_reminder %}
+            <div class="col-md-12">
+                <div class="alert alert-success ">Congrats! you have been officially invited to {{ h_name }}! Please
+                    confirm
+                    your attendance as soon as possible.
+                </div>
+
+                <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
+                    please let us know by clicking "Cancel". We want as many people as possible to experience the
+                    hackathon!
+                    <b>This invite expires in
+                        {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
+                </p>
+
+                {% if h_arrive %}
+                    <h3>When to arrive</h3>
+                    <p>{{ h_arrive }}</p>
+                {% endif %}
+                {% if h_leave %}
+                    <h3>When to leave</h3>
+                    <p>{{ h_leave }}</p>
+                {% endif %}
+
+                <div class="col-md-6 no-padding"><a href="{% url 'confirm_app' application.uuid_str %}"
+                                                    class="btn  btn-success btn-block">Confirm</a>
+                </div>
+                <div class="col-md-6 no-padding"><a href="{% url 'cancel_app' application.uuid_str %}"
+                                                    class="btn  btn-danger btn-block">Cancel</a></div>
+            </div>
+        {% else %}
+            <div class="col-md-12">
+                {% include 'include/status.html' %}
+                <p> When decisions are released, you'll be able to see your results on this page.</p>
+                <p>If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}</p>
             </div>
         {% endif %}
-        {% include 'include/application_form.html' %}
+    </div>
 
-
-    {% elif application.is_expired %}
-        {% include 'include/status.html' %}
-
-        <p> We are sorry, your invite expired. If you think this is an error or you still want to come,
-            please
-            message us at
-            {{ h_contact_email|urlize }}. We will decide case-per-case what is the result.</p>
-    {% elif application.is_cancelled %}
-        {% include 'include/status.html' %}
-
-        We are sorry that you can't come to {{ h_name }}. We are looking forward to welcome you next edition. If you
-        think this is an error or you still want to come, please message us at {{ h_contact_email|urlize }}. We will
-        decide case-per-case what is the result.
-    {% elif application.is_attended %}
-
-        <p class="lead">Welcome to {{ h_name }}. Let us know if you need any help!</p>
-        {% if h_live %}
-            <p>Follow our live page for more information during the event</p>
-            <a href="{{ h_live }}" target="_blank" class="btn btn-block btn-success">Go to live page</a>
-
-        {% endif %}
-
-    {% elif application.answered_invite %}
-
-        <div class="col-md-4">
-            <img class="img-responsive "
-                 src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chld=L|0&chl={{ application.uuid_str }}"/>
+    {% if reimbursement %}
+        <div class="row">
+            <div class="col-md-12">
+                <hr>
+                <h3>Travel reimbursement information</h3>
+                {% include 'reimbursement_info.html' %}
+            </div>
         </div>
-        <div class="col-md-8">
-            <p>Thank you {{ user.get_full_name }} for confirming your attendance
-                to {{ h_name }}! In order to make registration go smoother, please show us this QR code during the
-                process so we can
-                easily find
-                you.</p>
-            {% if h_arrive %}
-                <h3>When to arrive</h3>
-                <p>{{ h_arrive }}</p>
-            {% endif %}
-            {% if h_leave %}
-                <h3>When to leave</h3>
-                <p>{{ h_leave }}</p>
-            {% endif %}
-            {% include 'include/cancel.html' %}
-        </div>
-
-
-    {% elif application.is_invited or application.is_last_reminder %}
-        <div class="alert alert-success ">Congrats! you have been officially invited to {{ h_name }}! Please confirm
-            your attendance as soon as possible.
-        </div>
-
-        <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
-            please let us know by clicking "Cancel". We want as many people as possible to experience the hackathon!
-            <b>This invite expires in
-                {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
-        </p>
-
-        {% if h_arrive %}
-            <h3>When to arrive</h3>
-            <p>{{ h_arrive }}</p>
-        {% endif %}
-        {% if h_leave %}
-            <h3>When to leave</h3>
-            <p>{{ h_leave }}</p>
-        {% endif %}
-
-        <div class="col-md-6"><a href="{% url 'confirm_app' application.uuid_str %}" class="btn  btn-success btn-block">Confirm</a>
-        </div>
-        <div class="col-md-6"><a href="{% url 'cancel_app' application.uuid_str %}"
-                                 class="btn  btn-reverse btn-block">Cancel</a></div>
-    {% else %}
-        {% include 'include/status.html' %}
-        <p> When decisions are released, you'll be able to see your results on this page.<br>
-        If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}<br>
-
     {% endif %}
 
 {% endblock %}

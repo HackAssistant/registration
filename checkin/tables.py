@@ -15,7 +15,7 @@ class ApplicationCheckinFilter(django_filters.FilterSet):
 
 class ApplicationsCheckInTable(tables.Table):
     detail = tables.TemplateColumn(
-        "<a href='{% url 'check_in_hacker' record.uuid %}' class='btn btn-success'>Check-in</a> ",
+        "<a href='{% url 'check_in_hacker' record.uuid %}'>Check-in</a> ",
         verbose_name='Actions', )
 
     class Meta:

@@ -114,7 +114,8 @@ class HackerDashboard(LoginRequiredMixin, TabsView):
     template_name = 'application.html'
 
     def get_current_tabs(self):
-        return [('Application', reverse('dashboard')), ]
+        return [('Application', reverse('dashboard'),
+                 'Invited' if self.request.user.application.needs_action() else False), ]
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)

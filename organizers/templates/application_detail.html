@@ -96,7 +96,7 @@
                 <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
                           rows="3"
                           required></textarea>
-                <button name="add_comment" class="btn btn-block" value="comment">Add comment
+                <button name="add_comment" class="btn btn-block btn-default" value="comment">Add comment
                 </button>
             </form>
         </div>
@@ -149,7 +149,7 @@
             {% csrf_token %}
             <input type="hidden" name="app_id" value="{{ app.pk }}"/>
             {% if  app.is_pending %}
-                <button name="waitlist" class="btn btn-reverse btn-block" value="waitlis">Wait list
+                <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">Wait list
                 </button>
             {% endif %}
             {% if not app.answered_invite or app.is_cancelled %}
@@ -165,7 +165,7 @@
                         invite
                     </button>
                 {% endif %}
-                <button name="cancel" class="btn btn-reverse btn-block" value="cancel">Cancel
+                <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
                 </button>
             {% endif %}
         </form>

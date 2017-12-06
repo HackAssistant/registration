@@ -10,9 +10,18 @@
         <div class="col-md-12">
             <div>
                 <ul class="nav nav-tabs">
-                    {% for title,url in tabs %}
-                        <li role="presentation" {% if request.get_full_path == url %}class="active"{% endif %}><a
-                                {% if request.get_full_path != url %}href="{{ url }}"{% endif %}>{{ title }}</a></li>
+                    {% for title,url,needs_action in tabs %}
+
+                        <li role="presentation" {% if request.get_full_path == url %}class="active action"{% endif %}>
+
+                            <a {% if request.get_full_path != url %}href="{{ url }}"{% endif %}>
+                                {{ title }}
+                                {% if needs_action %}
+                                    <span class="label label-success">{{ needs_action }}</span>
+                                {% endif %}
+                            </a>
+
+                        </li>
 
                     {% endfor %}
                 </ul>
@@ -20,7 +29,7 @@
 
                     <div class="panel-body">
                         {% if back %}
-                            <p><a href="{{ back }}" class="btn btn-info"> < Back </a>
+                            <p><a href="{{ back }}" class="btn btn-default"> < Back </a>
                             </p>
                         {% endif %}
 

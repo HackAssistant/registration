@@ -31,39 +31,39 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
-.btn {
-    background: #2B2B2B;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-    color: white;
-    border: 0;
-    overflow-y: hidden;
-    font-size: 17px;
-    -webkit-transition: all .1s linear;
-    -moz-transition: all .1s linear;
-    -o-transition: all .1s linear;
-    transition: all .1s linear;
-    padding-left: 20px;
-    padding-right: 20px;
-}
+/*.btn {*/
+    /*background: #2B2B2B;*/
+    /*box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);*/
+    /*-webkit-border-radius: 0;*/
+    /*-moz-border-radius: 0;*/
+    /*border-radius: 0;*/
+    /*color: white;*/
+    /*border: 0;*/
+    /*overflow-y: hidden;*/
+    /*font-size: 17px;*/
+    /*-webkit-transition: all .1s linear;*/
+    /*-moz-transition: all .1s linear;*/
+    /*-o-transition: all .1s linear;*/
+    /*transition: all .1s linear;*/
+    /*padding-left: 20px;*/
+    /*padding-right: 20px;*/
+/*}*/
 
-.btn:hover, .btn:active, .btn:focus {
-    background: #4b4b4b !important;
-    color: white;
-}
+/*.btn:hover, .btn:active, .btn:focus {*/
+    /*background: #4b4b4b !important;*/
+    /*color: white;*/
+/*}*/
 
-.btn-reverse {
-    background: #4c0300;
-    color: white;
-}
+/*.btn-reverse {*/
+    /*background: #4c0300;*/
+    /*color: white;*/
+/*}*/
 
-.btn-reverse:hover, .btn-reverse:active, .btn-reverse:focus {
-    background: #810500 !important;
-    color: white;
+/*.btn-reverse:hover, .btn-reverse:active, .btn-reverse:focus {*/
+    /*background: #810500 !important;*/
+    /*color: white;*/
 
-}
+/*}*/
 
 footer p, footer small {
     color: #777;
