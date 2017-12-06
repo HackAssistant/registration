@@ -26,6 +26,7 @@ class ApplicationsCheckInTable(tables.Table):
         fields = ['user.name', 'user.email']
         empty_text = 'All hackers checked in! Yay!'
 
+
 class RankingListTable(tables.Table):
     class Meta:
         model = User
