@@ -7,7 +7,7 @@
 {% endblock %}
 {% block body %}
     <div class="row margin-top">
-        <div class="col-md-12">
+        <div class="{% block cols-panel %}col-md-12{% endblock %}">
             <div>
                 <ul class="nav nav-tabs">
                     {% for title,url,needs_action in tabs %}

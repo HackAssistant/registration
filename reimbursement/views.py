@@ -18,9 +18,9 @@ from user.mixins import IsOrganizerMixin, IsDirectorMixin
 
 
 def organizer_tabs(user):
-    t = [('Reimbursements', reverse('reimbursement_list'), False), ('Receipts', reverse('receipt_review'),
-                                                                    'new' if models.Reimbursement.objects.filter(
-                                                                        status=models.RE_PEND_APPROVAL).count() else False), ]
+    t = [('Reimbursements', reverse('reimbursement_list'), False),
+         ('Receipts', reverse('receipt_review'), 'new' if models.Reimbursement.objects.filter(
+             status=models.RE_PEND_APPROVAL).count() else False), ]
     if user.is_director:
         t.append(('Send', reverse('send_reimbursement'), False))
     return t

@@ -116,6 +116,13 @@ class ApplicationForm(BetterModelForm):
             raise forms.ValidationError("To apply for reimbursement please set a valid amount")
         return data
 
+    def clean_other_diet(self):
+        data = self.cleaned_data['other_diet']
+        diet = self.cleaned_data['diet']
+        if diet == 'Others' and not data:
+            raise forms.ValidationError("Please fill your specific diet requirements")
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
