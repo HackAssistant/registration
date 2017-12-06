@@ -76,17 +76,18 @@
                             <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
                                     href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
-                        {% if request.user.is_organizer and request.user.email_verified %}
-                            <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
-                                    href="{% url 'app_list' %}">Applications</a></li>
-                            {% if h_r_enabled %}
-                                <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
+                        {% if request.user.email_verified %}
+                            {% if request.user.is_organizer %}
+                                <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
+                                        href="{% url 'app_list' %}">Applications</a></li>
+                                {% if h_r_enabled %}
+                                    <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
+                                        <a
+                                                href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
-                        {% if request.user.is_organizer or request.user.is_volunteer %}
-                            {% if request.user.email_verified %}
-                                <li class="{% if request.resolver_match.url_name == "check_in_list" %}active{% endif %}">
+                            {% if request.user.is_organizer or request.user.is_volunteer %}
+                                <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}
                         {% endif %}

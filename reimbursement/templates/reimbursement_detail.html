@@ -122,9 +122,19 @@
                         format: 'YYYY-MM-DD H:mm:ss'
                     }
                 });
-                make_field_typeahead('origin_country', '{% static 'countries.json' %}');
             }
-        )
+        );
+        $("#id_origin").typeahead({
+            minLength: 3,
+            source: function (query, process) {
+                $.get('https://api.teleport.org/api/cities/', {search: query}, function (data) {
+                    var cities = jQuery.map(data._embedded["city:search-results"], function (c) {
+                        return c.matching_full_name;
+                    });
+                    return process(cities);
+                });
+            }
+        });
 
     </script>
 
