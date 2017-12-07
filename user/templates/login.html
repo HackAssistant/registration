@@ -8,15 +8,14 @@
 
     <h1>Sign in</h1>
 
-    <form action="" method="post" class="form form-horizontal">
+    <form action="" method="post" class="form ">
         {% csrf_token %}
-        {% bootstrap_form form layout="horizontal" %}
-        <div class="col-md-9 col-md-offset-3">
-            <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
-        </div>
+        {% bootstrap_form form %}
+
+        <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
         <button class="btn btn-primary btn-block" type="submit">{% trans "Sign In" %}</button>
         {% if not h_app_closed %}
-            <a class="btn btn-default btn-block"
+            <a class="btn btn-block"
                href="{% url 'account_signup' %}">{% trans "...or sign up if you don't have an account" %}</a>
         {% endif %}
 

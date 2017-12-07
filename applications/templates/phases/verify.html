@@ -1,9 +1,0 @@
-{% if user.email_verified %}
-    <p>
-        Your email has been verified!
-
-    </p>
-{% else %}
-    Please check your inbox  to verify that <b>{{ user.email }}</b> is your email. Check your SPAM folder. If you
-    haven't received an email, you can ask to send it again <a href="{% url 'send_email_verification' %}">here</a>.
-{% endif %}

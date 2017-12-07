@@ -1,7 +1,9 @@
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
+from django.views.generic import TemplateView
 
-from app import utils
+from app import utils, mixins
 
 
 def root_view(request):
@@ -16,3 +18,11 @@ def root_view(request):
     elif request.user.is_volunteer:
         return HttpResponseRedirect(reverse('check_in_list'))
     return HttpResponseRedirect(reverse('dashboard'))
+
+
+def code_conduct(request):
+    return render(request, 'code_conduct.html')
+
+
+class TabsView(mixins.TabsViewMixin, TemplateView):
+    pass

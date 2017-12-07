@@ -69,8 +69,7 @@ class Reimbursement(models.Model):
     receipt = models.FileField(null=True, blank=True, upload_to='receipt', )
     multiple_hackers = models.BooleanField(default=False)
     friend_emails = models.CharField(null=True, blank=True, max_length=400)
-    origin_city = models.CharField(max_length=300)
-    origin_country = models.CharField(max_length=300)
+    origin = models.CharField(max_length=300)
 
     # If a friend submitted receipt
     friend_submission = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='friend_submissions',
@@ -112,8 +111,7 @@ class Reimbursement(models.Model):
     def generate_draft(self, application):
         if self.status != RE_DRAFT:
             return
-        self.origin_country = application.origin_country
-        self.origin_city = application.origin_city
+        self.origin = application.origin
         self.assigned_money = min(DEFAULT_REIMBURSEMENT_AMOUNT, application.reimb_amount)
         self.hacker = application.user
         self.reimbursement_money = None
@@ -145,6 +143,9 @@ class Reimbursement(models.Model):
 
     def waitlisted(self):
         return self.status == RE_WAITLISTED
+
+    def needs_action(self):
+        return self.can_submit_receipt()
 
     def can_submit_receipt(self):
         return self.status == RE_PEND_TICKET and not self.expired and not self.hacker.application.is_rejected()

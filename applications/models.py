@@ -31,11 +31,13 @@ STATUS = [
     (APP_EXPIRED, 'Expired'),
 ]
 
+NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
 NON_BINARY = 'NB'
 
 GENDERS = [
+    (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
     (NON_BINARY, 'Non-binary'),
@@ -80,8 +82,7 @@ class Application(models.Model):
 
     # ABOUT YOU
     # Population analysis, optional
-    gender = models.CharField(max_length=20, blank=True, null=True,
-                              choices=GENDERS)
+    gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
@@ -91,8 +92,7 @@ class Application(models.Model):
                                                                   '+#########'. Up to 15 digits allowed.")])
 
     # Where is this person coming from?
-    origin_city = models.CharField(max_length=300)
-    origin_country = models.CharField(max_length=300)
+    origin = models.CharField(max_length=300)
 
     # Is this your first hackathon?
     first_timer = models.BooleanField()
@@ -210,6 +210,7 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.status_update_date = timezone.now()
             self.save()
+            self.user.reimbursement.delete()
 
     def check_in(self):
         self.status = APP_ATTENDED
@@ -224,6 +225,9 @@ class Application(models.Model):
 
     def answered_invite(self):
         return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
+
+    def needs_action(self):
+        return self.status == APP_INVITED
 
     def is_pending(self):
         return self.status == APP_PENDING

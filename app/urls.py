@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^$', views.root_view, name='root'),
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
     url(r'^checkin/', include('checkin.urls')),
+    url(r'code_conduct/$', views.code_conduct, name='code_conduct'),
 
 ]
 

@@ -1,46 +1,33 @@
-{% extends "base.html" %}
-{% load humanize %}
-{% load static %}
-{% load bootstrap3 %}
-{% block head_title %}Check In Hacker{% endblock %}
-{% block head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-{% endblock %}
-{% block body %}
+{% extends "base_tabs.html" %}
+{% block head_title %}Check In {{ app.user.name }}{% endblock %}
+{% block panel %}
 
-    <div class="row margin-top">
-        {% bootstrap_messages %}
-        <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="text-center">{{ app.lennyface }}</h4>
-                </div>
-                <div class="panel-body">
-                    <dl class="dl-horizontal">
-                        {% include 'include/field.html' with desc='Name' value=app.user.name %}
-                        {% include 'include/field.html' with desc='Email' value=app.user.email %}
-                        {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
-                        {% include 'include/field.html' with desc='Diet' value=app.diet %}
-                        {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
-                    </dl>
-                </div>
-                <div class="panel-footer">
-                    {% if checkedin %}
-                        <h4>Let's keep this up!</h4>
-                        <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
-                            manually...</a>
-                        <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">... or try the QR
-                            better?</a>
-                    {% else %}
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
-                            <button class="btn btn-success btn-block" name="checkin">Check In</button>
-                        </form>
-                        <a class="btn btn-default btn-block" href="javascript:history.back()">Go back</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+    <dl class="dl-horizontal">
+        {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
+        {% include 'include/field.html' with desc='Name' value=app.user.name %}
+        {% include 'include/field.html' with desc='Email' value=app.user.email %}
+        {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
+        {% include 'include/field.html' with desc='Diet' value=app.diet %}
+        {% include 'include/field.html' with desc='Other' value=app.other_diet %}
+        {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+    </dl>
+
+{% endblock %}
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+{% block out_panel %}
+    <div class="panel-footer">
+        {% if checkedin %}
+            <h4>Let's keep this up!</h4>
+            <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
+                manually...</a>
+            <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">... or try the QR
+                better?</a>
+        {% else %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
+                <button class="btn btn-success btn-block" name="checkin">Check In</button>
+            </form>
+        {% endif %}
     </div>
 {% endblock %}

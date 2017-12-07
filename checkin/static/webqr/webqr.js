@@ -10,7 +10,7 @@ var webkit = false;
 var moz = false;
 var v = null;
 
-var vidhtml = '<video id="v" width="90%" autoplay></video>';
+var vidhtml = '<video id="v" width="100%" autoplay></video>';
 
 
 function initCanvas(w, h) {
