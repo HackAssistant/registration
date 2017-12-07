@@ -203,3 +203,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Maximum file upload size for forms
 MAX_UPLOAD_SIZE = 5242880
+
+if not DEBUG:
+    SEESSION_COOKIE_DOMAIN = '.hackcu.org'
