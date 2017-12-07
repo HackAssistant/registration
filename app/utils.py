@@ -156,3 +156,13 @@ def validate_url(data, query):
 @keep_lazy_text
 def lazy_format(s, f):
     return format(s, f)
+
+
+def hacker_tabs(user):
+    l = [('Application', reverse('dashboard'),
+          'Invited' if getattr(user, 'application', None) and user.application.needs_action() else False), ]
+    if getattr(user, 'reimbursement', None):
+        l += [('Reimbursement', reverse('reimbursement_dashboard'),
+               'Pending' if user.reimbursement.needs_action() else False), ]
+
+    return l

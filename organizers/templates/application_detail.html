@@ -1,181 +1,113 @@
-{% extends "base.html" %}
+{% extends "base_tabs.html" %}
 {% load humanize %}
 {% load bootstrap3 %}
 {% load static %}
 {% block head_title %}{% if vote %}Review applications{% else %}{{ app.user.name }}'s application{% endif %}
 {% endblock %}
-{% block head %}
+{% block extra_head %}
     <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
     <link rel="stylesheet" href="{% static 'css/vote.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
 {% endblock %}
-{% block body %}
-    <div class="row margin-top">
-        {% bootstrap_messages %}
-        {% if app %}
-            <div class="col-md-8">
+{% block panel %}
+    {% if app %}
+        <div class="col-md-8 margin-right">
+            <h2>{% if vote %}Review applications{% else %}{{ app.user.name }}'s application{% endif %}</h2>
+            <a target="_blank" style="color:black; text-decoration: none;" class="pull-right fa fa-link"
+               href="{% url 'app_detail' app.uuid_str %}">
+            </a>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        {# We set the title as lennyface, in out efforts to anonimize the data.. Okay, maybe no #}
-                        <h4 class="text-center">{{ app.lennyface }}
-                            <a target="_blank" style="color:black; text-decoration: none;" class="pull-right fa fa-link"
-                               href="{% url 'app_detail' app.uuid_str %}">
-                                {#                            <i class=" pull-right fa fa-link" aria-hidden="true"></i>#}
-                            </a>
-                        </h4>
-                    </div>
-                    <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>
+                <h3>Personal</h3>
+                </dt>
+                <dd></dd>
+                {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
+                {% include 'include/field.html' with desc='Name' value=app.user.name %}
+                {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
+                {% include 'include/field.html' with desc='Country' value=app.origin_country %}
+                {% if not vote %}
+                    {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+                    {% include 'include/field.html' with desc='Email' value=app.user.email %}
+                    {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
+                    {% include 'include/field.html' with desc='Money assigned' value=reimbursment.money_assigned %}
+                {% endif %}
+                {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
+                {% if app.resume %}
+                    {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
+                {% endif %}
+                <hr>
+                <dt>
+                <h3>Academic</h3>
+                </dt>
+                <dd></dd>
+                {% include 'include/field.html' with desc='University' value=app.university %}
+                {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
+                {% include 'include/field.html' with desc='Degree' value=app.degree %}
+                <hr>
+                <dt>
+                <h3>Background</h3>
+                </dt>
+                <dd></dd>
+                {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
+                {% include 'include/field.html' with desc='Why excited?' value=app.description|safe|urlize %}
+                {% include 'include/field.html' with desc='Projects' value=app.projects|safe|urlize %}
+                {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
+                {% include 'include/field.html' with desc='Excited about' value=app.excited %}
+            </dl>
+            {% if app.github or app.linkedin or app.site or app.devpost %}
+                <h4 class="text-center">Social</h4>
 
-                        <h4 class="text-center">Personal</h4>
-                        <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='Name' value=app.user.name %}
-                            {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
-                            {% include 'include/field.html' with desc='Country' value=app.origin_country %}
-                            {% if not vote %}
-                                {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
-                                {% include 'include/field.html' with desc='Email' value=app.user.email %}
-                                {% include 'include/field.html' with desc='Travel reimbursement?' value=app.scholarship|yesno:'Yes,No,Maybe' %}
-                                {% include 'include/field.html' with desc='Money assigned' value=reimbursment.money_assigned %}
-                            {% endif %}
-                            {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
-                            {% if app.resume %}
-                                {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
-                            {% endif %}
-                        </dl>
-                        <h4 class="text-center">Academic</h4>
-                        <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='University' value=app.university %}
-                            {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
-                            {% include 'include/field.html' with desc='Degree' value=app.degree %}
-                        </dl>
-                        <h4 class="text-center">Background</h4>
-                        <dl class="dl-horizontal">
-                            {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
-                            {% include 'include/field.html' with desc='Why excited?' value=app.description|safe|urlize %}
-                            {% include 'include/field.html' with desc='Projects' value=app.projects|safe|urlize %}
-                            {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
-                            {% include 'include/field.html' with desc='Excited about' value=app.excited %}
-                        </dl>
-                        <h4 class="text-center">Social</h4>
-
-                        <p class="text-center">
-                            {% if app.github and not app.github == 'http://' %}
-                                <a target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
-                            {% endif %}
-                            {% if app.linkedin and not app.linkedin == 'http://' %}
-                                <a target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
-                            {% endif %}
-                            {% if app.site and not app.site == 'http://' %}
-                                <a target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
-                            {% endif %}
-                            {% if app.devpost and not app.devpost == 'http://' %}
-                                <a target="_blank" href="{{ app.devpost }}" class="icon">
-                                    <img class="icon" src="{% static 'img/devpost.svg' %}"/>
-                                </a>
-                            {% endif %}
-                        </p>
-
-                    </div>
-                    {% if vote %}
-                        <div class="panel-footer">
-
-                            <form action="" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                                <h4 class="text-center">Score</h4>
-                                <dl class="dl-horizontal">
-                                    <dt>Technical Skills</dt>
-                                    <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
-                                    <dt>Personal Skills</dt>
-                                    <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
-                                </dl>
-                                <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
-                                <button name="skip" class="btn btn-default btn-block" value="skip">Skip
-                                    application
-                                </button>
-                            </form>
-                        </div>
-                    {% elif user.is_director %}
-                        <div class="panel-footer">
-
-                            <form action="" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                                {% if  app.is_pending %}
-                                    <button name="waitlist" class="btn btn-danger btn-block" value="waitlis">Wait list
-                                    </button>
-                                {% endif %}
-                                {% if not app.answered_invite or app.is_cancelled %}
-                                    <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
-                                    </button>
-                                {% endif %}
-                                {% if app.can_be_cancelled %}
-                                    <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
-                                        ticket
-                                    </button>
-                                    {% if slack_enabled %}
-                                        <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
-                                            invite
-                                        </button>
-                                    {% endif %}
-                                    <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
-                                    </button>
-                                {% endif %}
-                            </form>
-                        </div>
-
+                <p class="text-center">
+                    {% if app.github %}
+                        <a target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
                     {% endif %}
+                    {% if app.linkedin %}
+                        <a target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
+                    {% endif %}
+                    {% if app.site %}
+                        <a target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
+                    {% endif %}
+                    {% if app.devpost %}
+                        <a target="_blank" href="{{ app.devpost }}" class="icon">
+                            <img class="icon" src="{% static 'img/devpost.svg' %}"/>
+                        </a>
+                    {% endif %}
+                </p>
+            {% endif %}
 
-                </div>
-
-            </div>
-
-            <div class="col-md-4">
-            <div class="panel panel-default border-less">
-                <div class="panel-heading">
-                    <h4 class="text-center">Comments</h4>
-                </div>
-                <div class="panel-body no-padding">
-                    <ul class="list-group">
-                        {% for comment in comments %}
-                            <li class="list-group-item">
-                                <h4>{{ comment.text }}</h4>
-
-                                <p style="color:gray;">by {{ comment.author.get_full_name }}
-                                    <small class="pull-right">{{ comment.created_at|timesince }} ago</small>
-                                </p>
-                            </li>
-                        {% endfor %}
-
-                    </ul>
-                    <div class="panel-footer">
-                        <form action="" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                            <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
-                                      rows="3"
-                                      required></textarea>
-                            <button name="add_comment" class="btn btn-success btn-block" value="comment">Add comment
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-        {% else %}
-            <div class="col-md-6 col-md-offset-3">
-
-                <div class="panel panel-success border-less">
-                    <div class="panel-heading">
-                        <h4 class="text-center">No applications left to be voted.<br> Good job! Enjoy the
-                            sun outside!</h4>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
         </div>
-    </div>
+
+
+        <div class="col-md-4 margin-left">
+            <h3>Comments</h3>
+            <hr>
+            {% for comment in comments %}
+                <h4>{{ comment.text }}</h4>
+
+                <p style="color:gray;">by {{ comment.author.get_full_name }}
+                    <small class="pull-right">{{ comment.created_at|timesince }} ago</small>
+                </p>
+                <hr>
+            {% endfor %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
+                          rows="3"
+                          required></textarea>
+                <button name="add_comment" class="btn btn-block btn-default" value="comment">Add comment
+                </button>
+            </form>
+        </div>
+
+
+
+    {% else %}
+        <h4 class="text-center">No applications left to be voted.<br> Good job! Enjoy the
+            sun outside!</h4>
+
+    {% endif %}
     {% if vote %}
         <script src="{% static 'lib/barrating.min.js' %}"></script>
         <script type="text/javascript">
@@ -189,3 +121,59 @@
         </script>
     {% endif %}
 {% endblock %}
+
+{% block out_panel %}
+    {% if vote and app %}
+    <div class="panel-footer">
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+            <h4 class="text-center">Score</h4>
+            <dl class="dl-horizontal">
+                <dt>Technical Skills</dt>
+                <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                <dt>Personal Skills</dt>
+                <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+            </dl>
+            <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+            <button name="skip" class="btn btn-default btn-block" value="skip">Skip
+                application
+            </button>
+        </form>
+    </div>
+{% elif app and user.is_director %}
+    <div class="panel-footer">
+
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+            {% if  app.is_pending %}
+                <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">Wait list
+                </button>
+            {% endif %}
+            {% if not app.answered_invite or app.is_cancelled %}
+                <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
+                </button>
+            {% endif %}
+            {% if app.can_be_cancelled %}
+                <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
+                    ticket
+                </button>
+                {% if slack_enabled %}
+                    <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
+                        invite
+                    </button>
+                {% endif %}
+                <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
+                </button>
+            {% endif %}
+        </form>
+    </div>
+
+{% endif %}
+{% endblock %}
+
+
+
+

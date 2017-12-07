@@ -1,34 +1,16 @@
-{% extends "base.html" %}
+{% extends "base_tabs.html" %}
 {% load static %}
-{% block head %}
+{% block extra_head %}
     <script type="text/javascript" src="{% static 'webqr/llqrcode.js' %}"></script>
     <script type="text/javascript" src="{% static 'webqr/webqr.js' %}"></script>
 {% endblock %}
 {% block head_title %}QR scanner {% endblock %}
-{% block body %}
-    <div class="row margin-top">
-        <div class="col-md-10 col-md-offset-1">
-            <div style="text-align: center;">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="text-center">{% block panel_title %}QR Reader{% endblock %}</h4>
-                    </div>
-                    <div class="panel-body">
-                        <div id="outdiv">
-                        </div>
-                        <canvas style="display: none" id="qr-canvas" width="800" height="600"></canvas>
-
-                        <script type="text/javascript">load();</script>
-                        <div id="error"></div>
-
-
-                    </div>
-                    <div class="panel-footer">
-                        <a class="btn btn-info btn-block" href="{% url 'check_in_list' %}">Manual Check-in</a>
-
-                    </div>
-                </div>
-            </div>
-        </div>
+{% block panel %}
+    <h4 class="text-center">{% block panel_title %}QR Reader{% endblock %}</h4>
+    <div id="outdiv">
     </div>
+    <canvas style="display: none" id="qr-canvas" width="100%" height="600"></canvas>
+
+    <script type="text/javascript">load();</script>
+    <div id="error"></div>
 {% endblock %}

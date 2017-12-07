@@ -102,6 +102,27 @@ class ApplicationForm(BetterModelForm):
         validate_url(data, 'linkedin.com')
         return data
 
+    def clean_projects(self):
+        data = self.cleaned_data['projects']
+        first_timer = self.cleaned_data['first_timer']
+        if not first_timer and not data:
+            raise forms.ValidationError("Please fill this in order for us to know you a bit better")
+        return data
+
+    def clean_reimb_amount(self):
+        data = self.cleaned_data['reimb_amount']
+        reimb = self.cleaned_data['reimb']
+        if reimb and not data:
+            raise forms.ValidationError("To apply for reimbursement please set a valid amount")
+        return data
+
+    def clean_other_diet(self):
+        data = self.cleaned_data['other_diet']
+        diet = self.cleaned_data['diet']
+        if diet == 'Others' and not data:
+            raise forms.ValidationError("Please fill your specific diet requirements")
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -117,8 +138,8 @@ class ApplicationForm(BetterModelForm):
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
-            ('Where are you joining us from?',
-             {'fields': ('origin_city', 'origin_country', 'reimb', 'reimb_amount'), }),
+            ('Travel reimbursement',
+             {'fields': ('origin', 'reimb', 'reimb_amount'), }),
             ('Team', {'fields': ('team', 'teammates',), }),
         ]
         # Fields that we only need the first time the hacker fills the application
@@ -145,7 +166,7 @@ class ApplicationForm(BetterModelForm):
         }
 
         widgets = {
-            'origin_country': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
             'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
@@ -158,8 +179,7 @@ class ApplicationForm(BetterModelForm):
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
-            'origin_city': 'City',
-            'origin_country': 'Country',
+            'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
