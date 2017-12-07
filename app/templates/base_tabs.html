@@ -17,7 +17,7 @@
                             <a {% if request.get_full_path != url %}href="{{ url }}"{% endif %}>
                                 {{ title }}
                                 {% if needs_action %}
-                                    <span class="label label-success">{{ needs_action }}</span>
+                                    <span class="label label-warning">{{ needs_action }}</span>
                                 {% endif %}
                             </a>
 
