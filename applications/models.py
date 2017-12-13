@@ -254,12 +254,5 @@ class Application(models.Model):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
 
 
-def generate_team_id():
-    s = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    passlen = 13
-    return "".join(random.sample(s, passlen))
 
-
-# class Teams(models.Model):
-#     team_id = models.CharField(default=generate_team_id, max_length=13, primary_key=True)
 

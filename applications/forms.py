@@ -130,7 +130,7 @@ class ApplicationForm(BetterModelForm):
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
-            ('Travel reimbursement',
+            ('Traveling',
              {'fields': ('origin', 'reimb', 'reimb_amount'), }),
         ]
         # Fields that we only need the first time the hacker fills the application

@@ -1,0 +1,45 @@
+{% extends 'base_tabs.html' %}
+
+{% load bootstrap3 %}
+{% block head_title %}Team{% endblock %}
+
+{% block panel %}
+    {% if team %}
+        <h3>Team code</h3>
+        <p class="lead">{{ team.team_code }}</p>
+        <p>Send this to whoever you want to join this team. Remember that teams have a maximum size of {{ h_max_team }}
+            hackers</p>
+        <hr>
+        <h3>Teammates ({{ teammates|length }}/{{ h_max_team }})</h3>
+        <ul>
+            {% for hacker in teammates %}
+                {% if hacker.app %}
+                    <li>{{ hacker.name }} ({{ hacker.email }})</li>
+                {% else %}
+                    <li>Somebody (has not finished application yet!)</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <hr>
+        <form action="" method="post" class="form">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-block" name="leave" value="leave" type="submit">Leave team
+            </button>
+        </form>
+    {% elif application.answered_invite or application.is_invited %}
+
+
+    {% elif not h_app_closed and not team %}
+        <form action="" method="post" class="form ">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="col-md-6 no-padding">
+                <button class="btn btn-success btn-block" type="submit">Join team</button>
+            </div>
+            <div class="col-md-6 no-padding">
+                <button class="btn btn-primary btn-block" name="create" value="create" type="submit">Create team
+                </button>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
