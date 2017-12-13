@@ -1,6 +1,6 @@
 <br>
 <p align="center">
-  <img alt="HackCU" src="https://github.com/HackCU/splash-page/blob/master/img/hackcu_black.png" width="200"/>
+  <img alt="HackAssistant" src="https://avatars2.githubusercontent.com/u/33712329?s=200&v=4" width="200"/>
 </p>
 <br>
 
@@ -8,9 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
 
-
-📝 Registration for hackathons. Forked from [HackAssistant/registration](HackAssistant/registration)
-
+📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu)
 
 ## Features
 
@@ -245,7 +243,7 @@ If you need extra labels for your hackathon, you can change the model and add yo
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
 
-By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackcu.org and appropriate action will be taken against the offender after investigation.
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to report@gerard.space and appropriate action will be taken against the offender after investigation.
 
 # License
 
