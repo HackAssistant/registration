@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import random
 import uuid as uuid
 
 from django.core.exceptions import ValidationError
@@ -21,7 +22,7 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 
 STATUS = [
-    (APP_PENDING, 'Pending'),
+    (APP_PENDING, 'Under review'),
     (APP_REJECTED, 'Wait listed'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
@@ -127,10 +128,6 @@ class Application(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
-
-    # Team
-    team = models.BooleanField()
-    teammates = models.CharField(max_length=300, blank=True, null=True)
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -255,3 +252,14 @@ class Application(models.Model):
 
     def can_confirm(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
+
+def generate_team_id():
+    s = "abcdefghijklmnopqrstuvwxyz01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    passlen = 13
+    return "".join(random.sample(s, passlen))
+
+
+# class Teams(models.Model):
+#     team_id = models.CharField(default=generate_team_id, max_length=13, primary_key=True)
+

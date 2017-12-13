@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views import View
 
@@ -102,22 +102,14 @@ def get_deadline(application):
     return deadline
 
 
-def get_current_phase(phases):
-    try:
-        current = [p for p in phases if not p['finished']][0]
-    except IndexError:
-        current = [p for p in phases if p['finished']][-1]
-    return current
-
-
-class HackerApplication(LoginRequiredMixin, TabsView):
-    template_name = 'hacker_application.html'
+class HackerDashboard(LoginRequiredMixin, TabsView):
+    template_name = 'dashboard.html'
 
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
 
     def get_context_data(self, **kwargs):
-        context = super(HackerApplication, self).get_context_data(**kwargs)
+        context = super(HackerDashboard, self).get_context_data(**kwargs)
         form = forms.ApplicationForm()
         context.update({'form': form})
         try:
@@ -147,6 +139,38 @@ class HackerApplication(LoginRequiredMixin, TabsView):
                                  'Processing your application will take some time, so please be patient.')
             else:
                 messages.success(request, 'Application changes saved successfully!')
+
+            return HttpResponseRedirect(reverse('root'))
+        else:
+            c = self.get_context_data()
+            c.update({'form': form})
+            return render(request, self.template_name, c)
+
+
+class HackerApplication(LoginRequiredMixin, TabsView):
+    template_name = 'application.html'
+
+    def get_current_tabs(self):
+        return hacker_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(HackerApplication, self).get_context_data(**kwargs)
+        application = get_object_or_404(models.Application,user=self.request.user)
+        deadline = get_deadline(application)
+        context.update({'invite_timeleft': deadline - timezone.now(),'form': forms.ApplicationForm(instance=application)})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        try:
+            form = forms.ApplicationForm(request.POST, request.FILES, instance=request.user.application)
+        except:
+            form = forms.ApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+
+            messages.success(request, 'Application changes saved successfully!')
 
             return HttpResponseRedirect(reverse('root'))
         else:

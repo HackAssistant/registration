@@ -57,14 +57,6 @@ class ApplicationForm(BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    team = forms.TypedChoiceField(
-        required=True,
-        label='Are you applying as a team?',
-        coerce=lambda x: x == 'True',
-        choices=((False, 'No'), (True, 'Yes')),
-        widget=forms.RadioSelect
-    )
-
     code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
                                             '<a href="/code_conduct" target="_blank">%s Code of conduct</a>' % (
@@ -140,7 +132,6 @@ class ApplicationForm(BetterModelForm):
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
             ('Travel reimbursement',
              {'fields': ('origin', 'reimb', 'reimb_amount'), }),
-            ('Team', {'fields': ('team', 'teammates',), }),
         ]
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -156,7 +147,6 @@ class ApplicationForm(BetterModelForm):
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
             'degree': 'What\'s your major?',
-            'teammatess': 'Add each teammate in a new line.',
             'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
@@ -183,7 +173,6 @@ class ApplicationForm(BetterModelForm):
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
-            'teammates': 'What are your teammates\'s full names?',
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
                 settings.CURRENCY, settings.HACKATHON_NAME),
 

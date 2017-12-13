@@ -1,7 +1,7 @@
 {% extends 'base_tabs.html' %}
 
 {% load bootstrap3 %}
-{% block head_title %}Hacker application{% endblock %}
+{% block head_title %}Dashboard{% endblock %}
 
 {% block panel %}
     <div class="row">
@@ -114,6 +114,11 @@
                 {% include 'include/status.html' %}
                 <p> When decisions are released, you'll be able to see your results on this page.</p>
                 <p>If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}</p>
+             <div class="col-md-6 no-padding"><a href="{% url 'application'%}"
+                                                    class="btn  btn-success btn-block">{% if application.can_be_edit %}View/Edit{% else %}View{% endif %} application</a>
+                </div>
+                <div class="col-md-6 no-padding"><a href="{% url 'application' %}"
+                                                    class="btn  btn-info btn-block">Team</a></div>
             </div>
         {% endif %}
     </div>
