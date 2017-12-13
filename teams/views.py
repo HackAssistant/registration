@@ -39,7 +39,7 @@ class HackerTeam(LoginRequiredMixin, TabsView):
             team.save()
             return HttpResponseRedirect(reverse('teams'))
         if request.POST.get('leave', None):
-            team = getattr(request.user,'team',None)
+            team = getattr(request.user, 'team', None)
             if team:
                 team.delete()
             return HttpResponseRedirect(reverse('teams'))

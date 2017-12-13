@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import random
 import uuid as uuid
 
 from django.core.exceptions import ValidationError
@@ -252,7 +251,3 @@ class Application(models.Model):
 
     def can_confirm(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
-
-
-
-

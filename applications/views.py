@@ -155,9 +155,10 @@ class HackerApplication(LoginRequiredMixin, TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(HackerApplication, self).get_context_data(**kwargs)
-        application = get_object_or_404(models.Application,user=self.request.user)
+        application = get_object_or_404(models.Application, user=self.request.user)
         deadline = get_deadline(application)
-        context.update({'invite_timeleft': deadline - timezone.now(),'form': forms.ApplicationForm(instance=application)})
+        context.update(
+            {'invite_timeleft': deadline - timezone.now(), 'form': forms.ApplicationForm(instance=application)})
         return context
 
     def post(self, request, *args, **kwargs):
