@@ -37,7 +37,7 @@ def login(request):
     c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
     if c_domain and c_key:
         try:
-            resp.set_cookie(c_key, 'LOGGED_IN', domain=c_domain)
+            resp.set_cookie(c_key, 'LOGGED_IN', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
         except:
             # We don't care if this is not set, we are being cool here!
             pass
