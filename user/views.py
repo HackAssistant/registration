@@ -25,23 +25,23 @@ def login(request):
             user = auth.authenticate(email=email, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(next_)
+                resp = HttpResponseRedirect(next_)
+                c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', getattr(settings, 'HACKATHON_DOMAIN', None))
+                c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
+                if c_domain and c_key:
+                    try:
+                        resp.set_cookie(c_key, 'biene', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
+                    except:
+                        # We don't care if this is not set, we are being cool here!
+                        pass
+                return resp
             else:
                 form.add_error(None, 'Wrong Username or Password. Please try again.')
 
     else:
         form = forms.LoginForm()
 
-    resp = render(request, 'login.html', {'form': form})
-    c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
-    c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
-    if c_domain and c_key:
-        try:
-            resp.set_cookie(c_key, 'LOGGED_IN', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
-        except:
-            # We don't care if this is not set, we are being cool here!
-            pass
-    return resp
+    return render(request, 'login.html', {'form': form})
 
 
 def signup(request):
@@ -76,7 +76,7 @@ def logout(request):
         try:
             resp.delete_cookie(c_key, domain=c_domain)
         except:
-            # We don't care if this is not set, we are being cool here!
+            # We don't care if this is not deleted, we are being cool here!
             pass
     return resp
 
