@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -24,7 +25,16 @@ def login(request):
             user = auth.authenticate(email=email, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(next_)
+                resp = HttpResponseRedirect(next_)
+                c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', getattr(settings, 'HACKATHON_DOMAIN', None))
+                c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
+                if c_domain and c_key:
+                    try:
+                        resp.set_cookie(c_key, 'biene', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
+                    except:
+                        # We don't care if this is not set, we are being cool here!
+                        pass
+                return resp
             else:
                 form.add_error(None, 'Wrong Username or Password. Please try again.')
 
@@ -59,7 +69,16 @@ def signup(request):
 def logout(request):
     auth.logout(request)
     messages.success(request, 'Successfully logged out!')
-    return HttpResponseRedirect(reverse('account_login'))
+    resp = HttpResponseRedirect(reverse('account_login'))
+    c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
+    c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
+    if c_domain and c_key:
+        try:
+            resp.delete_cookie(c_key, domain=c_domain)
+        except:
+            # We don't care if this is not deleted, we are being cool here!
+            pass
+    return resp
 
 
 def activate(request, uid, token):
