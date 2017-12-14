@@ -45,7 +45,7 @@ HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:0
 # HACKATHON_LIVE_PAGE = 'https://gerard.space/live'
 
 # (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
--REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackcu\.org$'		
+REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackcu\.org$'		
 # (OPTIONAL) Send 500 errors to email while on production mode
 HACKATHON_DEV_EMAILS = ['devs@hackcu.org', ]
 
