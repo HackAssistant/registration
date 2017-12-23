@@ -157,6 +157,10 @@ img.icon {
     left: 50%;
 }
 
+.no-padding {
+    padding: 0;
+}
+
 .orderable {
     background: url(../img/sort_both.png) no-repeat center right;
 }

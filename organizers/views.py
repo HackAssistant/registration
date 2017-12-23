@@ -1,4 +1,5 @@
 # Create your views here.
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -18,6 +19,7 @@ from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable
+from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
 
@@ -123,6 +125,9 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         context['app'] = application
         context['vote'] = self.can_vote()
         context['comments'] = models.ApplicationComment.objects.filter(application=application)
+        if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
+            context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \
+                .values('user__name', 'user__email')
         return context
 
     def can_vote(self):
