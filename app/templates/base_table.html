@@ -22,3 +22,10 @@
         {% endblock %}
     </form>
 {% endblock %}
+{% block extra_scripts %}
+    <script>
+        $('thead input[type=checkbox]').on('click', function () {
+            $('tbody input[type=checkbox]').prop('checked', this.checked)
+        });
+    </script>
+{% endblock %}
