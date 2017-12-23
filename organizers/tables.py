@@ -50,3 +50,15 @@ class RankingListTable(tables.Table):
         fields = ['email', 'vote_count', ]
         empty_text = 'No organizers voted yet... Why? :\'('
         order_by = '-vote_count'
+
+
+class AdminTeamListTable(tables.Table):
+    selected = tables.CheckBoxColumn(accessor="team", verbose_name='Select')
+
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['selected', 'team', 'vote_avg', 'members']
+        empty_text = 'No pending teams'
+        order_by = '-vote_avg'
