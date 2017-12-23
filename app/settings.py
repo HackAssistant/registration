@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'organizers',
     'checkin',
     'user',
-    'applications'
+    'applications',
+    'teams'
 ]
 
 if REIMBURSEMENT_ENABLED:

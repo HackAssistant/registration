@@ -7,5 +7,6 @@ urlpatterns = [
         name='confirm_app'),
     url(r'^applications/(?P<id>[\w-]+)/cancel$', views.CancelApplication.as_view(),
         name='cancel_app'),
-    url(r'^dashboard/$', views.HackerApplication.as_view(), name='dashboard'),
+    url(r'^dashboard/$', views.HackerDashboard.as_view(), name='dashboard'),
+    url(r'^application/$', views.HackerApplication.as_view(), name='application'),
 ]

@@ -21,7 +21,7 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 
 STATUS = [
-    (APP_PENDING, 'Pending'),
+    (APP_PENDING, 'Under review'),
     (APP_REJECTED, 'Wait listed'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
@@ -127,10 +127,6 @@ class Application(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
-
-    # Team
-    team = models.BooleanField()
-    teammates = models.CharField(max_length=300, blank=True, null=True)
 
     @classmethod
     def annotate_vote(cls, qs):

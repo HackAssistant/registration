@@ -1,7 +1,7 @@
 {% extends 'base_tabs.html' %}
 
 {% load bootstrap3 %}
-{% block head_title %}Hacker application{% endblock %}
+{% block head_title %}Dashboard{% endblock %}
 
 {% block panel %}
     <div class="row">
@@ -11,9 +11,10 @@
             </div>
         {% elif not user.email_verified %}
             <div class="col-md-12">
-                Please check your inbox to verify that <b>{{ user.email }}</b> is your email. Check your SPAM folder. If
-                you
-                haven't received an email, you can ask to send it again.
+                <p>
+                    Please check your inbox to verify that <b>{{ user.email }}</b> is your email.
+                    Check your SPAM folder. If you haven't received an email, you can ask to send it again.
+                </p>
                 <a href="{% url 'send_email_verification' %}" class="btn  btn-success btn-block">Send verification email
                     again</a>
             </div>
@@ -103,10 +104,10 @@
                     <p>{{ h_leave }}</p>
                 {% endif %}
 
-                <div class="col-md-6 no-padding"><a href="{% url 'confirm_app' application.uuid_str %}"
+                <div class="col-md-5  no-padding"><a href="{% url 'confirm_app' application.uuid_str %}"
                                                     class="btn  btn-success btn-block">Confirm</a>
                 </div>
-                <div class="col-md-6 no-padding"><a href="{% url 'cancel_app' application.uuid_str %}"
+                <div class="col-md-offset-2 col-md-5 no-padding"><a href="{% url 'cancel_app' application.uuid_str %}"
                                                     class="btn  btn-danger btn-block">Cancel</a></div>
             </div>
         {% else %}
@@ -114,6 +115,20 @@
                 {% include 'include/status.html' %}
                 <p> When decisions are released, you'll be able to see your results on this page.</p>
                 <p>If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}</p>
+                 <div class="col-md-5 no-padding">
+                    <a href="{% url 'application' %}" class="btn  btn-success btn-block">
+                        View{% if application.can_be_edit %}/Edit{% endif %} application
+                    </a>
+                </div>
+                <div class="col-md-offset-2 col-md-5 no-padding">
+                    <a href="{% url 'teams' %}" class="btn  btn-info btn-block">
+                        {% if user.team %}
+                            View
+                        {% else %}
+                            Join/Create
+                        {% endif %} team
+                    </a>
+                </div>
             </div>
         {% endif %}
     </div>

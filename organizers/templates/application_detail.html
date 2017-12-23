@@ -55,6 +55,15 @@
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                 {% include 'include/field.html' with desc='Excited about' value=app.excited %}
             </dl>
+            {% if not vote and teammates %}
+                <h3>Teammates</h3>
+                <ul>
+                    {% for mate in teammates %}
+                        <li>{{ mate.user__name }} ({{ mate.user__email }})</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
             {% if app.github or app.linkedin or app.site or app.devpost %}
                 <h4 class="text-center">Social</h4>
 
@@ -124,54 +133,54 @@
 
 {% block out_panel %}
     {% if vote and app %}
-    <div class="panel-footer">
+        <div class="panel-footer">
 
-        <form action="" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-            <h4 class="text-center">Score</h4>
-            <dl class="dl-horizontal">
-                <dt>Technical Skills</dt>
-                <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
-                <dt>Personal Skills</dt>
-                <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
-            </dl>
-            <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
-            <button name="skip" class="btn btn-default btn-block" value="skip">Skip
-                application
-            </button>
-        </form>
-    </div>
-{% elif app and user.is_director %}
-    <div class="panel-footer">
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                <h4 class="text-center">Score</h4>
+                <dl class="dl-horizontal">
+                    <dt>Technical Skills</dt>
+                    <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                    <dt>Personal Skills</dt>
+                    <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+                </dl>
+                <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+                <button name="skip" class="btn btn-default btn-block" value="skip">Skip
+                    application
+                </button>
+            </form>
+        </div>
+    {% elif app and user.is_director %}
+        <div class="panel-footer">
 
-        <form action="" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-            {% if  app.is_pending %}
-                <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">Wait list
-                </button>
-            {% endif %}
-            {% if not app.answered_invite or app.is_cancelled %}
-                <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
-                </button>
-            {% endif %}
-            {% if app.can_be_cancelled %}
-                <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
-                    ticket
-                </button>
-                {% if slack_enabled %}
-                    <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
-                        invite
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                {% if  app.is_pending %}
+                    <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">Wait list
                     </button>
                 {% endif %}
-                <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
-                </button>
-            {% endif %}
-        </form>
-    </div>
+                {% if not app.answered_invite or app.is_cancelled %}
+                    <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
+                    </button>
+                {% endif %}
+                {% if app.can_be_cancelled %}
+                    <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
+                        ticket
+                    </button>
+                    {% if slack_enabled %}
+                        <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
+                            invite
+                        </button>
+                    {% endif %}
+                    <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
+                    </button>
+                {% endif %}
+            </form>
+        </div>
 
-{% endif %}
+    {% endif %}
 {% endblock %}
 
 
