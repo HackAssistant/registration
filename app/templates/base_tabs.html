@@ -12,9 +12,9 @@
                 <ul class="nav nav-tabs">
                     {% for title,url,needs_action in tabs %}
 
-                        <li role="presentation" {% if request.get_full_path == url %}class="active action"{% endif %}>
+                        <li role="presentation" {% if url in request.get_full_path %}class="active action"{% endif %}>
 
-                            <a {% if request.get_full_path != url %}href="{{ url }}"{% endif %}>
+                            <a {% if url not in request.get_full_path %}href="{{ url }}"{% endif %}>
                                 {{ title }}
                                 {% if needs_action %}
                                     <span class="label label-warning">{{ needs_action }}</span>
@@ -31,10 +31,6 @@
                         {% if back %}
                             <p><a href="{{ back }}" class="btn btn-default"> < Back </a>
                             </p>
-                        {% endif %}
-
-                        {% if messages %}
-                            {% bootstrap_messages %}
                         {% endif %}
 
                         {% block panel %}

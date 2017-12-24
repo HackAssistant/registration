@@ -56,6 +56,10 @@ CURRENCY = '$'
 REIMBURSEMENT_EXPIRACY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
 
+# (OPTIONAL) Max team members. Defaults to 4
+TEAMS_ENABLED = True
+HACKATHON_MAX_TEAMMATES = 4
+
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from
 SLACK = {

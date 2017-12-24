@@ -1,8 +1,9 @@
 # Create your views here.
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, Avg, F
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -17,7 +18,9 @@ from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
-from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable
+from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
+    AdminTeamListTable
+from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
 
@@ -123,6 +126,9 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         context['app'] = application
         context['vote'] = self.can_vote()
         context['comments'] = models.ApplicationComment.objects.filter(application=application)
+        if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
+            context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \
+                .values('user__name', 'user__email')
         return context
 
     def can_vote(self):
@@ -243,3 +249,42 @@ class ReviewApplicationView(ApplicationDetailView):
 
     def can_vote(self):
         return True
+
+
+class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, TemplateView):
+    template_name = 'invite_list.html'
+    table_class = AdminTeamListTable
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.objects.filter(status=APP_PENDING).values(
+            'user__team__team_code').annotate(vote_avg=Avg('vote__calculated_vote'), team=F('user__team__team_code'),
+                                              members=Count('user__team__team_code'))
+
+    def get_context_data(self, **kwargs):
+        c = super(InviteTeamListView, self).get_context_data(**kwargs)
+        c.update({'teams': True})
+        return c
+
+    def post(self, request, *args, **kwargs):
+        ids = request.POST.getlist('selected')
+        apps = models.Application.objects.filter(user__team__team_code__in=ids).all()
+        mails = []
+        errors = 0
+        for app in apps:
+            try:
+                app.invite(request.user)
+                m = emails.create_invite_email(app, request)
+                mails.append(m)
+            except ValidationError:
+                errors += 1
+        if mails:
+            send_batch_emails(mails)
+            messages.success(request, "%s applications invited" % len(mails))
+        else:
+            messages.error(request, "%s applications not invited" % errors)
+
+        return HttpResponseRedirect(reverse('invite_teams_list'))

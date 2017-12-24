@@ -27,7 +27,7 @@ def organizer_tabs(user):
 
 
 class ReimbursementHacker(LoginRequiredMixin, TabsView):
-    template_name = 'submit_receipt.html'
+    template_name = 'reimbursement_hacker.html'
 
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
