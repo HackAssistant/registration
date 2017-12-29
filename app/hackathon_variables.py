@@ -47,7 +47,6 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@gerard\.space$'
 
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
-DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '$'
 REIMBURSEMENT_EXPIRACY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
