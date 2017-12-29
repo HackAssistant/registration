@@ -112,6 +112,8 @@ def password_reset(request):
             msg = tokens.generate_pw_reset_email(user, request)
             msg.send()
             return HttpResponseRedirect(reverse('password_reset_done'))
+        else:
+            return TemplateResponse(request, 'password_reset_form.html', {'form': form})
     else:
         form = PasswordResetForm()
     context = {

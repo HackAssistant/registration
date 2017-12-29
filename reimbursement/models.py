@@ -11,7 +11,6 @@ from django.utils import timezone
 from reimbursement import emails
 from user.models import User
 
-DEFAULT_REIMBURSEMENT_AMOUNT = settings.DEFAULT_REIMBURSEMENT_AMOUNT
 DEFAULT_EXPIRACY_DAYS = settings.REIMBURSEMENT_EXPIRACY_DAYS
 
 RE_DRAFT = 'D'
@@ -112,7 +111,7 @@ class Reimbursement(models.Model):
         if self.status != RE_DRAFT:
             return
         self.origin = application.origin
-        self.assigned_money = min(DEFAULT_REIMBURSEMENT_AMOUNT, application.reimb_amount)
+        self.assigned_money = application.reimb_amount
         self.hacker = application.user
         self.reimbursement_money = None
         self.save()
