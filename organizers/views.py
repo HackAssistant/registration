@@ -261,8 +261,9 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
 
     def get_queryset(self):
         return models.Application.objects.filter(status=APP_PENDING).values(
-            'user__team__team_code').annotate(vote_avg=Avg('vote__calculated_vote'), team=F('user__team__team_code'),
-                                              members=Count('user__team__team_code'))
+            'user__team__team_code').order_by().annotate(vote_avg=Avg('vote__calculated_vote'),
+                                                         team=F('user__team__team_code'),
+                                                         members=Count('user__team__team_code'))
 
     def get_context_data(self, **kwargs):
         c = super(InviteTeamListView, self).get_context_data(**kwargs)
