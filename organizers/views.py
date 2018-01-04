@@ -19,7 +19,7 @@ from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable
+    AdminTeamListTable, InviteFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
@@ -84,7 +84,7 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
 class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
     template_name = 'invite_list.html'
     table_class = AdminApplicationsListTable
-    filterset_class = ApplicationFilter
+    filterset_class = InviteFilter
     table_pagination = {'per_page': 100}
 
     def get_current_tabs(self):
