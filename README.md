@@ -50,10 +50,7 @@ _Coming soon_
 You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/).
 - **PROD_MODE**(optional): Disables Django debug mode. 
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
-- **PG_PWD**(optional): Postgres password. Also enables Postgres as the default database with the default values specified below.
-- **PG_NAME**(optional): Postgres database name. Default: backend
-- **PG_USER**(optional): Postgres user. Default: backenduser
-- **PG_HOST**(optional): Postgres host. Default: localhost
+- **DATABASE_URL**(optional): URL to connect to the database. If not sets, defaults to django default SQLite database. See schema for different databases [here](https://github.com/kennethreitz/dj-database-url#url-schema).
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
@@ -137,6 +134,12 @@ ALTER ROLE backenduser SET timezone TO 'UTC';
 - Exit PSQL console: `\q`
 
 Other SQL engines may be used, we recommend PostgreSQL for it's robustness. To use other please check [this documentation](https://docs.djangoproject.com/en/1.11/ref/databases/) for more information on SQL engines in Django.
+
+##### Automatic Dropbox backup
+
+Hackers data is really important. To ensure that you don't lose any data we encourage you to set up automatic backups. One option that is free and reliable is using the PostgresSQLDropboxBackup script. 
+
+Find the script and usage instructions [here](https://github.com/casassg/PostgreSQL-Dropbox-Backup)
 
 #### Set up nginx
 
