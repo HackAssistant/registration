@@ -9,7 +9,8 @@ from user.models import User
 
 class ApplicationFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
-    status = django_filters.MultipleChoiceFilter('status', label='Status', choices=STATUS, widget=forms.CheckboxSelectMultiple)
+    status = django_filters.MultipleChoiceFilter('status', label='Status', choices=STATUS,
+                                                 widget=forms.CheckboxSelectMultiple)
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |

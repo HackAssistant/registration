@@ -31,7 +31,6 @@ class ReimbursementTable(tables.Table):
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['hacker.name', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin', ]
-
         empty_text = 'No reimbursement match criteria'
 
 
