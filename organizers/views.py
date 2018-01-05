@@ -176,7 +176,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             slack.send_slack_invite(application.user.email)
             messages.success(self.request, "Slack invite sent to %s" % application.user.email)
         except SlackInvitationException as e:
-            messages.error(self.request, "Slack error: %s" % e.message)
+            messages.error(self.request, "Slack error: %s" % str(e))
 
     def cancel_application(self, application):
         try:
