@@ -206,7 +206,9 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.status_update_date = timezone.now()
             self.save()
-            self.user.reimbursement.delete()
+            reimb = getattr(self.user, 'reimbursement', None)
+            if reimb:
+                reimb.delete()
 
     def check_in(self):
         self.status = APP_ATTENDED
