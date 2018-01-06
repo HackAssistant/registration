@@ -6,9 +6,20 @@
 {% block panel %}
 
     {% if filter %}
-        <form action="" method="get" class="form form-inline text-left filter">
-            {% bootstrap_form filter.form size='small' %}
-            <button type="submit" class="btn btn-info">Search</button>
+        <style>
+            #id_status > div {
+                display: inline-block;
+                padding-right: 20px;
+                margin-bottom: 0;
+                margin-top: 0;
+                font-weight: 400;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+        </style>
+        <form action="" method="get" class="form text-left filter">
+            {% bootstrap_form filter.form %}
+            <button type="submit" class="btn btn-info">Filter</button>
         </form>
     {% endif %}
     {% block extra_panel %}

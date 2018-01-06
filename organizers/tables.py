@@ -1,18 +1,36 @@
 import django_filters
 import django_tables2 as tables
+from django import forms
+from django.db.models import Q
 
-from applications.models import Application
+from applications.models import Application, STATUS
 from user.models import User
 
 
 class ApplicationFilter(django_filters.FilterSet):
-    user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
-    user__name = django_filters.CharFilter('user__name', label='Name', lookup_expr='icontains')
-    university = django_filters.CharFilter('university', label='University', lookup_expr='icontains')
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+    status = django_filters.MultipleChoiceFilter('status', label='Status', choices=STATUS,
+                                                 widget=forms.CheckboxSelectMultiple)
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+                               Q(university__icontains=value) | Q(origin__icontains=value))
 
     class Meta:
         model = Application
-        fields = ['user__email', 'user__name', 'status', 'first_timer', 'university']
+        fields = ['search', 'status']
+
+
+class InviteFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+                               Q(university__icontains=value) | Q(origin__icontains=value))
+
+    class Meta:
+        model = Application
+        fields = ['search', 'first_timer', 'reimb']
 
 
 class ApplicationsListTable(tables.Table):
@@ -25,19 +43,22 @@ class ApplicationsListTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'vote_avg', 'user.email', 'status', 'university', 'origin']
+        fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
 
-class AdminApplicationsListTable(ApplicationsListTable):
+class AdminApplicationsListTable(tables.Table):
     selected = tables.CheckBoxColumn(accessor="pk", verbose_name='Select')
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
 
     class Meta:
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'user.name', 'vote_avg', 'user.email', 'status']
+        fields = ['selected', 'user.name', 'vote_avg', 'reimb_amount', 'university', 'origin']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
