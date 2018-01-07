@@ -24,7 +24,7 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
-    table_pagination = {'per_page': 100}
+    table_pagination = {'per_page': 50}
 
     def get_current_tabs(self):
         return user_tabs(self.request.user)
