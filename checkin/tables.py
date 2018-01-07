@@ -1,17 +1,20 @@
 import django_filters
 import django_tables2 as tables
+from django.db.models import Q
 
 from applications.models import Application
 from user.models import User
 
 
 class ApplicationCheckinFilter(django_filters.FilterSet):
-    user__email = django_filters.CharFilter('user__email', label='Email', lookup_expr='icontains')
-    user__name = django_filters.CharFilter('user__name', label='Preferred name', lookup_expr='icontains')
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value))
 
     class Meta:
         model = Application
-        fields = ['user__email', 'user__name']
+        fields = ['search',]
 
 
 class ApplicationsCheckInTable(tables.Table):
