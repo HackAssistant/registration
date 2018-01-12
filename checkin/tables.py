@@ -14,7 +14,7 @@ class ApplicationCheckinFilter(django_filters.FilterSet):
 
     class Meta:
         model = Application
-        fields = ['search',]
+        fields = ['search', ]
 
 
 class ApplicationsCheckInTable(tables.Table):
