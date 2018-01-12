@@ -15,6 +15,8 @@ from user.tokens import account_activation_token, password_reset_token
 
 
 def login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
@@ -45,6 +47,8 @@ def login(request):
 
 
 def signup(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST)
@@ -85,11 +89,11 @@ def activate(request, uid, token):
     try:
         uid = force_text(urlsafe_base64_decode(uid))
         user = User.objects.get(pk=uid)
-        if request.user != user:
-            messages.warning(request, "User email can be verified")
+        if request.user.is_authenticated and request.user != user:
+            messages.warning(request, "Trying to verify wrong user. Log out please!")
             return redirect('root')
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        messages.warning(request, "User email can be verified")
+        messages.warning(request, "This user no longer exists. Please sign up again!")
         return redirect('root')
 
     if account_activation_token.check_token(user, token):
@@ -99,7 +103,7 @@ def activate(request, uid, token):
         user.save()
         auth.login(request, user)
     else:
-        messages.error(request, "This email verification url has expired")
+        messages.error(request, "Email verification url has expired. Log in so we can send it again!")
     return redirect('root')
 
 
@@ -158,6 +162,7 @@ def password_reset_done(request):
 @login_required
 def verify_email_required(request):
     if request.user.email_verified:
+        messages.warning(request, "Your email has already been verified")
         return HttpResponseRedirect(reverse('root'))
     return TemplateResponse(request, 'verify_email_required.html', None)
 
@@ -165,6 +170,7 @@ def verify_email_required(request):
 @login_required
 def send_email_verification(request):
     if request.user.email_verified:
+        messages.warning(request, "Your email has already been verified")
         return HttpResponseRedirect(reverse('root'))
     msg = tokens.generate_verify_email(request.user)
     msg.send()
