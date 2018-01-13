@@ -15,11 +15,11 @@ class UserAdmin(admin.ModelAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ('email', 'name', 'is_organizer', 'is_volunteer', 'is_director')
-    list_filter = ('is_volunteer', 'is_director', 'is_organizer', 'email_verified')
+    list_filter = ('is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('name',)}),
-        ('Permissions', {'fields': ('is_volunteer', 'is_director', 'is_organizer', 'email_verified')}),
+        ('Permissions', {'fields': ('is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified')}),
         ('Important dates', {'fields': ('last_login',)}),
     )
     add_fieldsets = (
