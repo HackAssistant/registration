@@ -40,9 +40,6 @@
             <button class="btn btn-danger btn-block" name="leave" value="leave" type="submit">Leave team
             </button>
         </form>
-    {% elif application.answered_invite or application.is_invited %}
-
-
     {% elif not h_app_closed and not team %}
         <p>Do you have a team already? Join it below. Otherwise you can create a new team. </p>
         <form action="" method="post" class="form ">

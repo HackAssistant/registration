@@ -52,7 +52,7 @@ HACKATHON_DEV_EMAILS = ['devs@hackcu.org', ]
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
 CURRENCY = '$'
-REIMBURSEMENT_EXPIRACY_DAYS = 7
+REIMBURSEMENT_EXPIRACY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
 
 # (OPTIONAL) Max team members. Defaults to 4

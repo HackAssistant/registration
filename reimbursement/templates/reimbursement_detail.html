@@ -40,7 +40,7 @@
                 {% endif %}
                 {% include 'include/field.html' with desc='Multiple hackers covered' value=reimb.multiple_hackers|yesno %}
                 {% include 'include/field.html' with desc='Other hackers covered' value=reimb.friend_emails %}
-                {% include 'include/field.html' with desc='Maximum assignable' value=reimb.max_assignable_money %}
+                {% include 'include/field.html' with desc='Maximum assignable' value=reimb.max_assignable_money|floatformat:2 %}
 
                 {% if reimb.is_accepted %}
                     <hr>
@@ -48,7 +48,7 @@
                     <h3>Sending the monies</h3>
                     </dt>
                     <dd></dd>
-                    {% include 'include/field.html' with desc='Reimbursement money' value=reimb.reimbursement_money %}
+                    {% include 'include/field.html' with desc='Reimbursement money' value=reimb.reimbursement_money|floatformat:2 %}
                     {% include 'include/field.html' with desc='PayPal email' value=reimb.paypal_email %}
                     {% include 'include/field.html' with desc='Venmo user' value=reimb.venmo_user %}
                 {% endif %}
