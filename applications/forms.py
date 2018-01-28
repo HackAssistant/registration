@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
+from django.utils import timezone
 from form_utils.forms import BetterModelForm
 
 from app.utils import validate_url
@@ -41,10 +42,11 @@ class ApplicationForm(BetterModelForm):
     )
 
     reimb = forms.TypedChoiceField(
-        required=True,
+        required=False,
         label='Do you need travel reimbursement to attend?',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
+        initial=False,
         widget=forms.RadioSelect
     )
 
@@ -133,7 +135,7 @@ class ApplicationForm(BetterModelForm):
 
     def clean_reimb_amount(self):
         data = self.cleaned_data['reimb_amount']
-        reimb = self.cleaned_data['reimb']
+        reimb = self.cleaned_data.get('reimb', False)
         if reimb and not data:
             raise forms.ValidationError("To apply for reimbursement please set a valid amount")
         return data
@@ -160,9 +162,14 @@ class ApplicationForm(BetterModelForm):
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
-            ('Traveling',
-             {'fields': ('origin', 'reimb', 'reimb_amount'), }),
         ]
+        deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
+        if deadline and deadline <= timezone.now() and not self.instance.pk:
+            self._fieldsets.append(('Traveling', {'fields': ('origin',)}))
+        else:
+            self._fieldsets.append(('Traveling',
+                                    {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
+
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:

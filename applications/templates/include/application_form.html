@@ -13,10 +13,6 @@
         cursor: pointer;
     }
 
-{#    label[for=id_projects] {#}
-{#        content: ' *';#}
-{#        color: red;#}
-{#    }#}
 </style>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
@@ -89,6 +85,8 @@
             conditional_field(reimb_amout, no_reimb, function () {
                 return needs_reimb.prop("checked");
             });
+            $('#id_reimb').parent().addClass('required');
+
 
             var is_firsttime = $('input[name="first_timer"][value="True"]');
             var experienced = $('input[name="first_timer"][value="False"]');
