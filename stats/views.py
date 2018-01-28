@@ -27,18 +27,18 @@ def reimb_stats_api(request):
     status_count = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), status_count)
 
     total_apps = Application.objects.count()
-    no_reimb_apps = Application.objects.filter(reimb__isnull=True).count()
+    reimb_count = Reimbursement.objects.count()
 
-    amounts =Reimbursement.objects.all().exclude(status=RE_DRAFT).values('assigned_money', 'reimbursement_money', 'status') \
+    amounts = Reimbursement.objects.all().exclude(status=RE_DRAFT).values('assigned_money', 'reimbursement_money',
+                                                                          'status') \
         .annotate(final_amount=Sum('reimbursement_money'), max_amount=Sum('assigned_money'))
     amounts = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), amounts)
-
 
     return JsonResponse(
         {
             'update_time': timezone.now(),
-            'reimb_count': Reimbursement.objects.count(),
-            'reimb_apps': {'Reimbursement needed': total_apps - no_reimb_apps, 'No reimbursement': no_reimb_apps},
+            'reimb_count': reimb_count,
+            'reimb_apps': {'Reimbursement needed': reimb_count, 'No reimbursement': total_apps - reimb_count},
             'status': list(status_count),
             'amounts': list(amounts),
         }

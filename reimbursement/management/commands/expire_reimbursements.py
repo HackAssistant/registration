@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-
 from reimbursement import models
 
 
@@ -15,4 +14,3 @@ class Command(BaseCommand):
         self.stdout.write('Checking expired reimbursements...%s found' % reimbs.count())
         for reimb in reimbs:
             reimb.expire()
-
