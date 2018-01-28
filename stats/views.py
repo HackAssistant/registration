@@ -27,7 +27,7 @@ def reimb_stats_api(request):
     status_count = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), status_count)
 
     total_apps = Application.objects.count()
-    no_reimb_apps = Application.objects.filter(reimb__isnull=True).count()
+    no_reimb_apps = Application.objects.filter(reimb=False).count()
 
     amounts =Reimbursement.objects.all().exclude(status=RE_DRAFT).values('assigned_money', 'reimbursement_money', 'status') \
         .annotate(final_amount=Sum('reimbursement_money'), max_amount=Sum('assigned_money'))
