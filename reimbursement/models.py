@@ -18,6 +18,7 @@ RE_WAITLISTED = 'W'
 RE_PEND_TICKET = 'PT'
 RE_PEND_APPROVAL = 'PA'
 RE_APPROVED = 'A'
+RE_EXPIRED = 'X'
 RE_FRIEND_SUBMISSION = 'FS'
 
 RE_STATUS = [
@@ -26,6 +27,7 @@ RE_STATUS = [
     (RE_PEND_TICKET, 'Pending receipt submission'),
     (RE_PEND_APPROVAL, 'Pending receipt approval'),
     (RE_APPROVED, 'Receipt approved'),
+    (RE_EXPIRED, 'Expired'),
     (RE_FRIEND_SUBMISSION, 'Friend submission'),
 ]
 
@@ -105,7 +107,7 @@ class Reimbursement(models.Model):
 
     @property
     def expired(self):
-        return timezone.now() > self.expiration_time and self.status == RE_PEND_TICKET
+        return self.status == RE_EXPIRED
 
     def generate_draft(self, application):
         if self.status != RE_DRAFT:
@@ -114,6 +116,10 @@ class Reimbursement(models.Model):
         self.assigned_money = application.reimb_amount
         self.hacker = application.user
         self.reimbursement_money = None
+        self.save()
+
+    def expire(self):
+        self.status = RE_EXPIRED
         self.save()
 
     def send(self, user):

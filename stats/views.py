@@ -1,14 +1,48 @@
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.http import JsonResponse
+from django.urls import reverse
 from django.utils import timezone
 
 from app.views import TabsView
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
+from reimbursement.models import Reimbursement, RE_STATUS, RE_DRAFT
 from user.mixins import is_organizer, IsOrganizerMixin
 
 STATUS_DICT = dict(STATUS)
+RE_STATUS_DICT = dict(RE_STATUS)
 GENDER_DICT = dict(GENDERS)
+
+
+def stats_tabs():
+    return [('Applications', reverse('app_stats'), False),
+            ('Reimbursements', reverse('reimb_stats'), False)]
+
+
+@is_organizer
+def reimb_stats_api(request):
+    # Status analysis
+    status_count = Reimbursement.objects.all().values('status') \
+        .annotate(reimbursements=Count('status'))
+    status_count = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), status_count)
+
+    total_apps = Application.objects.count()
+    no_reimb_apps = Application.objects.filter(reimb__isnull=True).count()
+
+    amounts =Reimbursement.objects.all().exclude(status=RE_DRAFT).values('assigned_money', 'reimbursement_money', 'status') \
+        .annotate(final_amount=Sum('reimbursement_money'), max_amount=Sum('assigned_money'))
+    amounts = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), amounts)
+
+
+    return JsonResponse(
+        {
+            'update_time': timezone.now(),
+            'reimb_count': Reimbursement.objects.count(),
+            'reimb_apps': {'Reimbursement needed': total_apps - no_reimb_apps, 'No reimbursement': no_reimb_apps},
+            'status': list(status_count),
+            'amounts': list(amounts),
+        }
+    )
 
 
 @is_organizer
@@ -31,13 +65,14 @@ def app_stats_api(request):
         .annotate(applications=Count('diet'))
     diet_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('diet') \
         .annotate(applications=Count('diet'))
-    other_diets = Application.objects.values('other_diet')
+    other_diets = Application.objects.filter(status=APP_CONFIRMED).values('other_diet')
 
     timeseries = Application.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
     return JsonResponse(
         {
             'update_time': timezone.now(),
+            'app_count': Application.objects.count(),
             'status': list(status_count),
             'shirt_count': list(shirt_count),
             'shirt_count_confirmed': list(shirt_count_confirmed),
@@ -45,7 +80,7 @@ def app_stats_api(request):
             'gender': list(gender_count),
             'diet': list(diet_count),
             'diet_confirmed': list(diet_count_confirmed),
-            'other_diet': ';'.join([el['other_diet'] for el in other_diets if el['other_diet']])
+            'other_diet': '<br>'.join([el['other_diet'] for el in other_diets if el['other_diet']])
         }
     )
 
@@ -53,5 +88,12 @@ def app_stats_api(request):
 class AppStats(IsOrganizerMixin, TabsView):
     template_name = 'application_stats.html'
 
-    def get_context_data(self, **kwargs):
-        return {}
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class ReimbStats(IsOrganizerMixin, TabsView):
+    template_name = 'reimbursement_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
