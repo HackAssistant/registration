@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^favicon.ico', RedirectView.as_view(url=static('favicon.ico'))),
     url(r'^checkin/', include('checkin.urls')),
     url(r'^teams/', include('teams.urls')),
+    url(r'^stats/', include('stats.urls')),
     url(r'code_conduct/$', views.code_conduct, name='code_conduct'),
 
 ]
