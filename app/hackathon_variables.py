@@ -33,7 +33,7 @@ HACKATHON_FACEBOOK_PAGE = 'hackcu'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackcu/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 23, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 23, 20, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = 'Registration opens at 8:00 AM and closes at 10:00 AM on Saturday February 24th, ' \
                    'the opening ceremony will be at 11:00 pm.'
@@ -54,7 +54,7 @@ REIMBURSEMENT_ENABLED = True
 CURRENCY = '$'
 REIMBURSEMENT_EXPIRACY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 1, 28, 0, 1, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
