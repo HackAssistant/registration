@@ -37,7 +37,7 @@ def reimb_stats_api(request):
     return JsonResponse(
         {
             'update_time': timezone.now(),
-            'reimb_count': Reimbursement.objects.count(),
+            'reimb_count': reimb_count,
             'reimb_apps': {'Reimbursement needed': reimb_count, 'No reimbursement': total_apps - reimb_count},
             'status': list(status_count),
             'amounts': list(amounts),
