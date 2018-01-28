@@ -95,12 +95,14 @@
                         {% endif %}
                         {% if request.user.email_verified %}
                             {% if request.user.is_organizer %}
+                                <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
+                                        href="{% url 'app_stats' %}">Stats</a></li>
                                 <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
                                         href="{% url 'app_list' %}">Applications</a></li>
+
                                 {% if h_r_enabled %}
                                     <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
-                                        <a
-                                                href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
+                                        <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
                                 {% endif %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer %}

@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'checkin',
     'user',
     'applications',
-    'teams'
+    'teams',
+    'stats',
 ]
 
 if REIMBURSEMENT_ENABLED:
@@ -193,6 +194,20 @@ BOOTSTRAP3 = {
     'set_placeholder': False,
     'required_css_class': 'required',
 }
+
+if DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': os.path.join(BASE_DIR, 'cache'),
+        }
+    }
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
