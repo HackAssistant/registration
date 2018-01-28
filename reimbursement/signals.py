@@ -23,6 +23,6 @@ def reimbursement_create(sender, instance, created, *args, **kwargs):
 
 @receiver(post_save, sender=Reimbursement)
 def reimbursement_unexpire(sender, instance, created, *args, **kwargs):
-    if instance.status == RE_EXPIRED and instance.expiration_time > timezone.now():
+    if instance.status == RE_EXPIRED and instance.expiration_time and instance.expiration_time > timezone.now():
         instance.status = RE_PEND_TICKET
         instance.save()
