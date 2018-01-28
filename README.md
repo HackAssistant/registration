@@ -72,7 +72,7 @@ You can deploy this project into heroku for free. You will need to verify your a
 - Create super user by running `python manage.py createsuperuser` once the heroku app is deployed
 - Add scheduler addon: https://elements.heroku.com/addons/scheduler
 - Open scheduler dashboard: https://scheduler.heroku.com/dashboard (make sure it opens the just created heroku app)
-- Add daily job `python manage.py expire_applications`
+- Add daily job `python manage.py expire_applications && python manage.py expire_reimbursements`
 
 ### Production environment
 
