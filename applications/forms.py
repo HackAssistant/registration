@@ -135,7 +135,11 @@ class ApplicationForm(BetterModelForm):
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         if deadline and deadline <= timezone.now() and not self.instance.pk:
-            self._fieldsets.append(('Traveling', {'fields': ('origin',)}))
+            self._fieldsets.append(('Traveling',
+                                    {'fields': ('origin',),
+                                     'description': 'Reimbursement applications are now closed. '
+                                                    'Sorry for the inconvenience.',
+                                     }))
         else:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
