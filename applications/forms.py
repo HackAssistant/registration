@@ -108,7 +108,17 @@ class ApplicationForm(BetterModelForm):
         reimb = self.cleaned_data.get('reimb', False)
         if reimb and not data:
             raise forms.ValidationError("To apply for reimbursement please set a valid amount")
+        deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
+        if data and deadline and deadline <= timezone.now():
+            raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
         return data
+
+    def clean_reimb(self):
+        reimb = self.cleaned_data.get('reimb', False)
+        deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
+        if reimb and deadline and deadline <= timezone.now():
+            raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
+        return reimb
 
     def clean_other_diet(self):
         data = self.cleaned_data['other_diet']
@@ -139,6 +149,13 @@ class ApplicationForm(BetterModelForm):
                                     {'fields': ('origin',),
                                      'description': 'Reimbursement applications are now closed. '
                                                     'Sorry for the inconvenience.',
+                                     }))
+        elif self.instance.pk:
+            self._fieldsets.append(('Traveling',
+                                    {'fields': ('origin',),
+                                     'description': 'If you applied for reimbursement see it on the Travel tab. '
+                                                    'Email us at %s for any change needed on reimbursements.' %
+                                                    settings.HACKATHON_CONTACT_EMAIL,
                                      }))
         else:
             self._fieldsets.append(('Traveling',
