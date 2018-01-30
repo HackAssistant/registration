@@ -1,7 +1,13 @@
+@font-face {
+    font-family: "Biko";
+    src: url("fonts/Biko_Regular.otf") format("opentype"),
+}
+
+
 body {
-    background: #2B546B; /*linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;*/
+    background: #22292c; /*linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;*/
     background-size: cover;
-    font-family: 'Roboto', Helvetica, sans-serif;
+    font-family: 'Biko', sans-serif;
     font-size: 15px;
 }
 
@@ -13,6 +19,15 @@ html {
 body {
     /* Margin bottom by footer height */
     margin-bottom: 105px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #1a8a58;
 }
 
 .footer {

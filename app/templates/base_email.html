@@ -1,216 +1,271 @@
-{% load static %}
-{# Based on https://github.com/leemunroe/responsive-html-email-template #}
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta name="viewport" content="width=device-width">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>{{ subject }}</title>
-    <style type="text/css">
-        @media only screen and (max-width: 620px) {
-            table[class=body] h1 {
-                font-size: 28px !important;
-                margin-bottom: 10px !important;
-            }
+    <meta charset="utf-8"> <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+    <meta name="x-apple-disable-message-reformatting">  <!-- Disable auto-scale in iOS 10 Mail entirely -->
+    <title></title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
-            table[class=body] p,
-            table[class=body] ul,
-            table[class=body] ol,
-            table[class=body] td,
-            table[class=body] span,
-            table[class=body] a {
-                font-size: 16px !important;
-            }
+    <!-- Web Font / @font-face : BEGIN -->
+    <!-- NOTE: If web fonts are not required, lines 10 - 27 can be safely removed. -->
 
-            table[class=body] .wrapper,
-            table[class=body] .article {
-                padding: 10px !important;
+    <!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+    <!--[if mso]>
+        <style>
+            * {
+                font-family: sans-serif !important;
             }
+        </style>
+    <![endif]-->
 
-            table[class=body] .content {
-                padding: 0 !important;
-            }
+    <!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ -->
+    <!--[if !mso]><!-->
+    <!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> -->
+    <!--<![endif]-->
 
-            table[class=body] .container {
-                padding: 0 !important;
-                width: 100% !important;
-            }
+    <!-- Web Font / @font-face : END -->
 
-            table[class=body] .main {
-                border-left-width: 0 !important;
-                border-radius: 0 !important;
-                border-right-width: 0 !important;
-            }
+    <!-- CSS Reset : BEGIN -->
+    <style>
 
-            table[class=body] .btn table {
-                width: 100% !important;
-            }
+        /* What it does: Remove spaces around the email design added by some email clients. */
+        /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+        html,
+        body {
+            margin: 0 auto !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+        }
 
-            table[class=body] .btn a {
-                width: 100% !important;
-            }
+        /* What it does: Stops email clients resizing small text. */
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
 
-            table[class=body] .img-responsive {
-                height: auto !important;
-                max-width: 100% !important;
-                width: auto !important;
+        /* What it does: Centers email on Android 4.4 */
+        div[style*="margin: 16px 0"] {
+            margin: 0 !important;
+        }
+
+        /* What it does: Stops Outlook from adding extra spacing to tables. */
+        table,
+        td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+
+        /* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin: 0 auto !important;
+        }
+
+        table table table {
+            table-layout: auto;
+        }
+
+        /* What it does: Uses a better rendering method when resizing images in IE. */
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+
+        /* What it does: A work-around for email clients meddling in triggered links. */
+        *[x-apple-data-detectors], /* iOS */
+        .x-gmail-data-detectors, /* Gmail */
+        .x-gmail-data-detectors *,
+        .aBn {
+            border-bottom: 0 !important;
+            cursor: default !important;
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        /* What it does: Prevents Gmail from displaying an download button on large, non-linked images. */
+        .a6S {
+            display: none !important;
+            opacity: 0.01 !important;
+        }
+
+        /* If the above doesn't work, add a .g-img class to any image in question. */
+        img.g-img + div {
+            display: none !important;
+        }
+
+        /* What it does: Prevents underlining the button text in Windows 10 */
+        .button-link {
+            text-decoration: none !important;
+        }
+
+        /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+        /* Create one of these media queries for each additional viewport size you'd like to fix */
+        /* Thanks to Eric Lepetit (@ericlepetitsf) for help troubleshooting */
+        @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+            /* iPhone 6 and 6+ */
+            .email-container {
+                min-width: 375px !important;
             }
         }
 
-        p {
-            font-family: sans-serif;
-            font-size: 14px;
-            font-weight: normal;
-            margin: 0;
-            Margin-bottom: 15px;
-        }
-
-        @media all {
-            .ExternalClass {
-                width: 100%;
-            }
-
-            .ExternalClass,
-            .ExternalClass p,
-            .ExternalClass span,
-            .ExternalClass font,
-            .ExternalClass td,
-            .ExternalClass div {
-                line-height: 100%;
-            }
-
-            .apple-link a {
-                color: inherit !important;
-                font-family: inherit !important;
-                font-size: inherit !important;
-                font-weight: inherit !important;
-                line-height: inherit !important;
-                text-decoration: none !important;
-            }
-
-            .btn-primary table td:hover {
-                background-color: #34495e !important;
-            }
-
-            .btn-primary a:hover {
-                background-color: #34495e !important;
-                border-color: #34495e !important;
+        @media screen and (max-width: 480px) {
+            /* What it does: Forces Gmail app to display email full width */
+            u ~ div .email-container {
+                min-width: 100vw;
             }
         }
+
     </style>
-</head>
-<body class=""
-      style="background-color:#f6f6f6;font-family:sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4;margin:0;padding:0;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;">
-<table border="0" cellpadding="0" cellspacing="0" class="body"
-       style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background-color:#f6f6f6;width:100%;">
-    <tr>
-        <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">&nbsp;</td>
-        <td class="container"
-            style="font-family:sans-serif;font-size:14px;vertical-align:top;display:block;max-width:580px;padding:10px;width:580px;Margin:0 auto !important;">
-            <div class="content"
-                 style="box-sizing:border-box;display:block;margin:0 auto;max-width:580px;padding:10px;">
-                <img class="max-width"
-                     src="{{ h_logo }}"
-                     alt="" border="0"
-                     style="display: block; color: #000; margin: 0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-height:170px !important; max-width: 70% !important; width: auto !important; height: auto !important; "/>
-                <!-- START CENTERED WHITE CONTAINER -->
-                <span class="preheader"
-                      style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">
-                    {% block preheader %}
-                        New {{ h_name }} email for you!
-                    {% endblock %}</span>
-                {% block main %}
-                    <table class="main"
-                           style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;background:#fff;border-radius:3px;width:100%;">
-                        <!-- START MAIN CONTENT AREA -->
-                        <tr>
-                            <td class="wrapper"
-                                style="font-family:sans-serif;font-size:14px;vertical-align:top;box-sizing:border-box;padding:20px;">
+    <!-- CSS Reset : END -->
 
-                                <table border="0" cellpadding="0" cellspacing="0"
-                                       style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%;">
-                                    <tr>
-                                        <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">
-                                            {% block content %}
-                                                <p>
-                                                    Hi there
-                                                    {% if user.is_authenticated %}
-                                                        {{ user.username }}
-                                                    {% endif %},</p>
-                                                <p>This is just a sample text. Replace it with what you need. Sometimes
-                                                    you just want to send a simple HTML email with a simple design and
-                                                    clear call to action. This is it.</p>
-                                                {% include 'mails/include/email_button.html' with url='https://gerard.space' text='Call to action!' %}
-                                                <p>This is a really simple email template. Its sole purpose is to get
-                                                    the recipient to click the button with no distractions.</p>
-                                                <p>Good luck! Hope it works.</p>
-                                            {% endblock %}
-                                        </td>
-                                    </tr>
-                                </table>
+    <!-- Progressive Enhancements : BEGIN -->
+    <style>
+
+        /* What it does: Hover styles for buttons */
+        .button-td,
+        .button-a {
+            transition: all 100ms ease-in;
+        }
+
+        .button-td:hover,
+        .button-a:hover {
+            background: #32d88e !important;
+            border-color: #32d88e !important;
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 600px) {
+
+            /* What it does: Adjust typography on small screens to improve readability */
+            .email-container p {
+                font-size: 17px !important;
+            }
+
+        }
+
+    </style>
+    <!-- Progressive Enhancements : END -->
+
+    <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
+
+</head>
+<body width="100%" bgcolor="#22292c" style="margin: 0; mso-line-height-rule: exactly;">
+<center style="width: 100%; background: #22292c;; text-align: left;">
+
+    <!-- Visually Hidden Preheader Text : BEGIN -->
+    <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+        {% block preheader %}
+            New {{ h_name }} email for you!
+        {% endblock %}
+    </div>
+    <!-- Visually Hidden Preheader Text : END -->
+
+    <!--
+        Set the email width. Defined in two places:
+        1. max-width for all clients except Desktop Windows Outlook, allowing the email to squish on narrow but never go wider than 600px.
+        2. MSO tags for Desktop Windows Outlook enforce a 600px width.
+    -->
+    <div style="max-width: 600px; margin: auto;" class="email-container">
+        <!--[if mso]>
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+            <tr>
+            <td>
+            <![endif]-->
+
+        <!-- Email Header : BEGIN -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%"
+               style="max-width: 600px;">
+            <tr>
+                <td style="padding: 20px 0; text-align: center">
+                    <img src="{{ h_logo }}"
+                         width="200" height="50" alt="alt_text" border="0"
+                         style="height: auto;  font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                </td>
+            </tr>
+        </table>
+        <!-- Email Header : END -->
+
+        <!-- Email Body : BEGIN -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%"
+               style="max-width: 600px;">
+
+
+            <!-- 1 Column Text + Button : BEGIN -->
+            <tr>
+                <td bgcolor="#ffffff">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                        <tr>
+                            <td style="padding: 40px; font-family: sans-serif; font-size: 15px; line-height: 140%; color: #555555;">
+                                {% block content %}
+                                {% endblock %}
                             </td>
                         </tr>
-                        <!-- END MAIN CONTENT AREA -->
                     </table>
-                {% endblock %}
-                {% block footer %}
-                    <!-- START FOOTER -->
-                    <div class="footer" style="clear:both;padding-top:10px;text-align:center;width:100%;">
-                        <table border="0" cellpadding="0" cellspacing="0"
-                               style="border-collapse:separate;mso-table-lspace:0pt;mso-table-rspace:0pt;width:100%;">
-                            <tr>
-                                <td class="content-block"
-                                    style="font-family:sans-serif;font-size:14px;vertical-align:top;color:#999999;font-size:12px;text-align:center;">
+                </td>
+            </tr>
+            <!-- 1 Column Text + Button : END -->
 
-                                    <span class="apple-link" style="color:#999999;font-size:12px;text-align:center;">You are receiving this because you applied to {{ h_name }}.</span><br>
-                                    <span class="apple-link" style="color:#999999;font-size:12px;text-align:center;"> If you think this is a mistake, please send us an email
-                                           at {{ h_contact_email|urlize }}</span>
-                                    <table style="padding-top: 20px" cellpadding="0" cellspacing="0" border="0"
-                                           align="center">
-                                        <tr>
-                                            {% if h_fb %}
-                                                <td style="padding: 0px 5px;">
-                                                    <a role="social-icon-link"
-                                                       href="http://www.facebook.com/{{ h_fb }}"
-                                                       target="_blank" border="0" alt="Facebook" title="Facebook"
-                                                       style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
-                                                        <img role="social-icon" alt="Facebook" title="Facebook"
-                                                             border="0"
-                                                             height="20" width="20"
-                                                             style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
-                                                             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAABdFBMVEUAAABmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmYD9CBcAAAAe3RSTlMAAQIDBAUGBwgKCwwNDhARFBUXGBocHR4gISIkJiorLDAxMjM0NTg6PD1AQkNFSktMT1JVVltcXV5iY2RmaW1vcHN0dXh5e35/goaIiYuOkZSVl5udnqOmqLC0tbe5vL7AwcPIzM/T19rc3uDi5Obo6evt7/Hz9ff5+/2euCMlAAADKUlEQVR42u3d2VITURhF4dMNkhAhDIpGjYKI4MygQUERRwQnFAcUUNAoKoqIQMD8L++Nt1blNKWQs9d6gFT2113VF+lTcW73FWfaTgzcnZqeK37+WS5vbW6sry5/WfzwbvbVs8mJm1cvXehpz7VkaiMXYHHr2ftLVmFrC09H+9qb42DWt1x5bwnqDmJ8dPDGd0tWCACpwqolrvoBWh/adqp2gP1vzIQB6ifNhAFqrpVNGeDAVzNhgGjITBkg89akAY6UTBrglJk0QMG0AcZMG+COaQMUTBvgjGkDHDVtgMymNkA0b9oAw6YN0GbaAPGSOMCgaQOktsQBxk0boMnEAV6IA+w1cYARcYB4Qxygx8QBiuIAjSYO0KsOMCcOsMfEAbrUAR6rA6yIA6S2MXBzbuzyuc72/KG/lKoGgMMJx5cmuupdCA0kml/sCOY12KkE89dOunD64b9/Ph3Q/th//0JNQPtdxv/+D+n6J/lB6HhQ+12n7/7ZsPa7fl+AXGAAtzz3fwxsv3viCdAfGsBLT4DG0ABm/PavhLbfeZ4GexQcwKIfQG9wAMt+APngADxfjc8GB+D5EKhTB4jUAZw4QFkdYB0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYJeVrSzPYyJZjxp2dH+t7Xgz6gDj6gAX1QE61QH2qQOk1QEicYBPThzguTrAdXWA8+oAeXWAJnWAWnGAkhMHmFcHeKAOMKgO0K0O0KYOkFEHiMQBvjlxgGl1gNvqAH3qAMfUAZrVAerEAX45cYCiOsCkOsCwOsBpdYCcOkCDOkAsDrDqxAFeqwPcUwcYUAfoUAdoVQdIqwO4XVC6svyGbVT2oVXxxwp/8gPgwAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/vBGvhv7nV/sNQELl4AHMIOQAAAAASUVORK5CYII="
-                                                        />
-                                                    </a>
-                                                </td>
-                                            {% endif %}
-                                            {% if h_tw %}
-                                                <td style="padding: 0px 5px;"><a role="social-icon-link"
-                                                                                 href="http://www.twitter.com/{{ h_tw }}"
-                                                                                 target="_blank" border="0"
-                                                                                 alt="Twitter"
-                                                                                 title="Twitter"
-                                                                                 style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
-                                                    <img role="social-icon" alt="Twitter" title="Twitter" border="0"
-                                                         height="20" width="20"
-                                                         style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
-                                                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAACPVBMVEUAAABmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZYEymWAAAAvnRSTlMAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdJSktMTU5PUFFSVFVXWFlbXF1eX2FiY2RmZ2hpa2xtb3Bxc3R1d3h5e3x+f4CCg4WGiImLjI6PkZKUlZeYmpudnqCio6WmqKqrra+wsrS1t7m6vL7AwcPFx8jKzM7P0dPV19na3N7g4uTm6Onr7e/x8/X3+fv9yS4V9wAACOFJREFUGBntwYlDFPUCB/Dvb2Z32eVaCRQ0tJ5KXqlPMx/6eiKvy6O01ErNLFNLU4sS7fAojVCpXnkEohl4i6AkwrIru9+/7VVmci4z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"
-                                                    />
-                                                </a>
-                                                </td>
-                                            {% endif %}
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                {% endblock %}
-                <!-- END FOOTER -->
-                <!-- END CENTERED WHITE CONTAINER -->
-            </div>
-        </td>
-        <td style="font-family:sans-serif;font-size:14px;vertical-align:top;">&nbsp;</td>
-    </tr>
-</table>
+
+        </table>
+        <!-- Email Body : END -->
+
+        <!-- Email Footer : BEGIN -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%"
+               style="max-width: 680px; font-family: sans-serif; color: white; font-size: 12px; line-height: 140%;">
+            <tr style="text-align:center; padding: 10px 0px;">
+                <td style="padding-top: 20px;">
+                    <a role="social-icon-link" href="http://www.facebook.com/hackcu" target="_blank" border="0"
+                       alt="Facebook" title="Facebook"
+                       style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                        <img role="social-icon" alt="Facebook" title="Facebook" border="0" height="20" width="20"
+                             style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
+                             src="https://marketing-image-production.s3.amazonaws.com/uploads/1c567851b23f369387f8195e8c045e143a10dafe68c86a49c10100d59c5e8a8a9974d03c7da233b36a6af9d2789f30f5f91c439551b324cb512891a494460f28.png"/>
+                    </a>
+                    <a role="social-icon-link" href="http://www.twitter.com/hackcu" target="_blank" border="0"
+                       alt="Twitter" title="Twitter"
+                       style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;  padding-left: 20px;">
+                        <img role="social-icon" alt="Twitter" title="Twitter" border="0" height="20" width="20"
+                             style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
+                             src="https://marketing-image-production.s3.amazonaws.com/uploads/96a584ffd3b9a8f9f849b1de919e43e38b8520e663f256b61eb558a7a63a801142aa287f22fc5f518c412f188afc98938a1fa93432794ff9caaf3980fac849ad.png"/></a>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 40px 10px; width: 100%; font-family: sans-serif; font-size: 12px; line-height: 140%; text-align: center; color: white;"
+                    class="x-gmail-data-detectors">
+                    You are receiving this email because you applied to {{ h_name }}
+                    <br><br>
+                    If you think this is a mistake, please send us an email at {{ h_contact_email|urlize }}
+                    <br><br>
+
+
+                </td>
+            </tr>
+        </table>
+        <!-- Email Footer : END -->
+
+        <!--[if mso]>
+            </td>
+            </tr>
+            </table>
+            <![endif]-->
+    </div>
+
+
+</center>
 </body>
 </html>

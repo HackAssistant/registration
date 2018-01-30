@@ -13,7 +13,7 @@
         <dl>
             <dt>Amount</dt>
             <dd>
-                {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}{{ h_currency }}
+                {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money|floatformat:2 }}{{ h_currency }}
             </dd>
             {% if reimbursement.public_comment %}
                 <dt>Comment</dt>
@@ -22,15 +22,18 @@
                 </dd>
             {% endif %}
         </dl>
+
         <p>If you are submitting a reimbursement for multiple hackers, we will allow you to submit up
             until the sum of all assigned
             amounts between you and your friends. Make sure they have also a valid reimbursement. If you
-            have any doubts please send us a message {{ h_email|urlize }}</p>
+            have any doubts please send us a message to {{ h_contact_email|urlize }}.</p>
+
+        <p>Before doing any travel arrangements please read our <a href="https://pages.hackcu.org/policies/travel/"
+                                                                   target="_blank">travel guide</a>.</p>
         {% include "include/reimbursement_form.html" %}
-        </div>
-        <div class="panel-footer">
-            Expires
-            in {% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}
+        <hr>
+        Expires in
+        {% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}
         </div>
     {% else %}
         {% if reimbursement.waitlisted %}
@@ -57,7 +60,7 @@
                 {% if not reimbursement.is_draft  and not reimbursement.waitlisted %}
                     <dt>Amount</dt>
                     <dd>
-                        {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}{{ h_currency }}</dd>
+                        {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money|floatformat:2 }}{{ h_currency }}</dd>
                     {% if reimbursement.multiple_hackers %}
                         <dt>Other hackers covered</dt>
                         <dd>{{ reimbursement.friend_emails }}</dd>

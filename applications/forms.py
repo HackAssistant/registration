@@ -64,6 +64,18 @@ class ApplicationForm(BetterModelForm):
                                             '<a href="/code_conduct" target="_blank">%s Code of conduct</a>' % (
                                                 settings.HACKATHON_NAME), )
 
+    mlh_code_conduct = forms.BooleanField(required=False,
+                                          label='I will at all times abide by and conform to the Major League Hacking '
+                                                '<a href="https://mlh.io/code-of-conduct">Code of Conduct</a> while at'
+                                                ' the event.')
+    mlh_data_sharing = forms.BooleanField(required=False,
+                                          label='I agree to the terms of both the '
+                                                '<a href="http://bit.ly/mlh_t_c">MLH Contest Terms and Conditions</a>'
+                                                ' and the <a href="https://mlh.io/privacy">MLH Privacy Policy</a>. '
+                                                'Please note that you may receive pre and post-event informational '
+                                                'e-mails and occasional messages about hackathons from MLH as per the '
+                                                'MLH Privacy Policy.')
+
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
@@ -79,6 +91,24 @@ class ApplicationForm(BetterModelForm):
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
             raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
+        return cc
+
+    def clean_mlh_code_conduct(self):
+        cc = self.cleaned_data.get('mlh_code_conduct', False)
+        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError("In order to apply and attend you have to accept MLH Code of Conduct")
+        return cc
+
+    def clean_mlh_data_sharing(self):
+        cc = self.cleaned_data.get('mlh_data_sharing', False)
+        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError("In order to apply and attend you have to accept MLH data sharing policy")
         return cc
 
     def clean_github(self):
@@ -164,7 +194,8 @@ class ApplicationForm(BetterModelForm):
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(
+                ('Code of Conduct', {'fields': ('code_conduct', 'mlh_data_sharing', 'mlh_code_conduct')}))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
