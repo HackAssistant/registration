@@ -109,7 +109,10 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
             send_batch_emails(mails)
             messages.success(request, "%s applications invited" % len(mails))
         else:
-            messages.error(request, "%s applications not invited" % errors)
+            errorMsg = "No applications invited"
+            if errors != 0:
+                errorMsg = "%s applications not invited" % errors
+            messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_list'))
 
@@ -286,6 +289,9 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             send_batch_emails(mails)
             messages.success(request, "%s applications invited" % len(mails))
         else:
-            messages.error(request, "%s applications not invited" % errors)
+            errorMsg = "No applications invited"
+            if errors != 0:
+                errorMsg = "%s applications not invited" % errors
+            messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_teams_list'))
