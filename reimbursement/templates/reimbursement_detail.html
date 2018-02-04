@@ -26,7 +26,7 @@
                 <dd></dd>
                 {% include 'include/field.html' with desc='Full name' value=reimb.hacker.name %}
                 {% include 'include/field.html' with desc='Email' value=reimb.hacker.email %}
-                {% include 'include/field.html' with desc='Last update' value=reimb.update_time|naturaltime %}
+                {% include 'include/field.html' with desc='Deadline' value=reimb.expiration_time|naturaltime %}
                 {% include 'include/field.html' with desc='Status' value=reimb.get_status_display %}
                 {% include 'include/field.html' with desc='Country' value=reimb.origin_country %}
                 {% include 'include/field.html' with desc='City' value=reimb.origin %}
@@ -108,6 +108,7 @@
     <script src="{% static 'js/form_modifiers.js' %}"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
     <script>
 
