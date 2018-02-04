@@ -42,8 +42,9 @@ HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:0
 
 # (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@gerard\.space$'
-# (OPTIONAL) Send 500 errors to email while on production mode
-# HACKATHON_DEV_EMAILS = ['contact@gerard.space', ]
+
+# (OPTIONAL) Sends 500 errors to email whilst in production mode.
+HACKATHON_DEV_EMAILS = []
 
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
