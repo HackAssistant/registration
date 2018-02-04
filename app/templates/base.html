@@ -61,12 +61,12 @@
 {% if messages %}
     <script>
         $(function () {
-            {% for message in messages %}
+            // {% for message in messages %}
                 $.snackbar({
                     content: "{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}{{ message }}",
                     timeout: 3000
                 });
-            {% endfor %}
+            // {% endfor %}
         })
 
     </script>
