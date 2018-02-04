@@ -45,14 +45,14 @@
 
     {% elif not h_app_closed and not team %}
         <p>Do you have a team already? Join it below. Otherwise you can create a new team. </p>
-        <form action="" method="post" class="form ">
+        <form action="" method="post" class="form">
             {% csrf_token %}
             {% bootstrap_form form %}
             <div class="col-md-5 no-padding">
                 <button class="btn btn-success btn-block" type="submit">Join team</button>
             </div>
             <div class="col-md-5 col-md-offset-2 no-padding">
-                <button class="btn btn-primary btn-block" name="create" value="create" type="submit">Create team
+                <button class="btn btn-primary btn-block" name="create" value="create" type="submit" formnovalidate>Create team
                 </button>
             </div>
         </form>
