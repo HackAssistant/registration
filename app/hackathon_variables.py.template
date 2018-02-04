@@ -46,7 +46,7 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 # Reimbursement configuration
 DEFAULT_REIMBURSEMENT = 100
 DEFAULT_CURRENCY = '$'
-DEFAULT_EXPIRACY_DAYS = 5
+DEFAULT_EXPIRY_DAYS = 5
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from
