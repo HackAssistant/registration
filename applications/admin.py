@@ -18,6 +18,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     search_fields = ('user__name', 'user__email',
                      'description',)
     ordering = ('submission_date',)
+    date_hierarchy = 'submission_date'
 
     def name(self, obj):
         return obj.user.get_full_name() + ' (' + obj.user.email + ')'

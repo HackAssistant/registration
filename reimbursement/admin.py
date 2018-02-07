@@ -15,11 +15,12 @@ class ReimbursementAdmin(admin.ModelAdmin):
     list_filter = ('status', 'origin',
                    'reimbursed_by', 'hacker__application__status')
 
-    search_fields = ['application__user__name', 'application__user__lastname', 'application__user__email',
+    search_fields = ['hacker__name', 'hacker__email',
                      'origin']
     list_per_page = 200
 
     ordering = ('creation_time',)
+    date_hierarchy = 'creation_time'
     actions = ['send', ]
 
     def money(self, obj):

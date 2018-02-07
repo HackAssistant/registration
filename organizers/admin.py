@@ -8,10 +8,11 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('application', 'author', 'text')
     list_per_page = 200
     actions = ['delete_selected', ]
+    date_hierarchy = 'created_at'
 
 
 class VoteAdmin(admin.ModelAdmin):
-    list_display = ('application', 'user', 'tech', 'personal')
+    list_display = ('application', 'user', 'tech', 'personal', 'calculated_vote')
     list_per_page = 200
     list_filter = ('user', 'application')
     search_fields = ('user', 'application')

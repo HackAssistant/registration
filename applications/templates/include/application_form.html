@@ -3,7 +3,7 @@
 {% load form_utils %}
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
-    #id_scholarship > div,  #id_reimb > div {
+    #id_scholarship > div, #id_reimb > div {
         display: inline-block;
         padding-right: 20px;
         margin-bottom: 0;
@@ -12,6 +12,7 @@
         vertical-align: middle;
         cursor: pointer;
     }
+
 </style>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
@@ -84,6 +85,8 @@
             conditional_field(reimb_amout, no_reimb, function () {
                 return needs_reimb.prop("checked");
             });
+            $('#id_reimb').parent().addClass('required');
+            reimb_amout.parent().addClass('required');
 
             var is_firsttime = $('input[name="first_timer"][value="True"]');
             var experienced = $('input[name="first_timer"][value="False"]');
@@ -94,6 +97,8 @@
             conditional_field(projects, experienced, function () {
                 return experienced.prop("checked");
             });
+            // Making projects look like required
+            projects.parent().addClass('required');
         }
     )
 

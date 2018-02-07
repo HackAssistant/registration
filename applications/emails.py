@@ -32,10 +32,10 @@ def create_lastreminder_email(application):
     c = {
         'name': application.user.get_full_name,
         # We need to make sure to redirect HTTP to HTTPS in production
-        'confirm_url': 'http://%s%s' % (settings.EVENT_DOMAIN,
-                                        reverse('confirm_app')),
-        'cancel_url': 'http://%s%s' % (settings.EVENT_DOMAIN,
-                                       reverse('cancel_app')),
+        'confirm_url': 'http://%s%s' % (settings.HACKATHON_DOMAIN,
+                                        reverse('confirm_app', kwargs={'id': application.uuid_str})),
+        'cancel_url': 'http://%s%s' % (settings.HACKATHON_DOMAIN,
+                                       reverse('cancel_app', kwargs={'id': application.uuid_str})),
     }
     return emails.render_mail('mails/last_reminder',
                               application.user.email, c)

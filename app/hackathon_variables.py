@@ -42,14 +42,16 @@ HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:0
 
 # (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@gerard\.space$'
-# (OPTIONAL) Send 500 errors to email while on production mode
-# HACKATHON_DEV_EMAILS = ['contact@gerard.space', ]
+
+# (OPTIONAL) Sends 500 errors to email whilst in production mode.
+HACKATHON_DEV_EMAILS = []
 
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
 CURRENCY = '$'
-REIMBURSEMENT_EXPIRACY_DAYS = 5
+REIMBURSEMENT_EXPIRY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
+REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True

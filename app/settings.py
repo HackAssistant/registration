@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not os.environ.get('PROD_MODE', None)
+DEBUG = os.environ.get('PROD_MODE', "false").lower() == "false"
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'checkin',
     'user',
     'applications',
-    'teams'
+    'teams',
+    'stats',
 ]
 
 if REIMBURSEMENT_ENABLED:
@@ -166,6 +167,7 @@ STATIC_ROOT = BASE_DIR + '/staticfiles'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 #  File upload configuration
 MEDIA_ROOT = 'files'
@@ -193,6 +195,20 @@ BOOTSTRAP3 = {
     'set_placeholder': False,
     'required_css_class': 'required',
 }
+
+if DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': os.path.join(BASE_DIR, 'cache'),
+        }
+    }
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)

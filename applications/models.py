@@ -59,10 +59,10 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
+TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(size), size) for size in ('2016 2017 2018 2019 2020 2021 2022'.split(' '))]
+YEARS = [(int(size), size) for size in ('2017 2018 2019 2020 2021 2022 2023'.split(' '))]
 DEFAULT_YEAR = 2017
 
 
@@ -102,7 +102,7 @@ class Application(models.Model):
     projects = models.TextField(max_length=500, blank=True, null=True)
 
     # Reimbursement
-    reimb = models.BooleanField()
+    reimb = models.BooleanField(default=False)
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
