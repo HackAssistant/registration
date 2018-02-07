@@ -114,8 +114,7 @@ class Reimbursement(models.Model):
         if self.status != RE_DRAFT:
             return
         self.origin = application.origin
-        if application.reimb_amount and not self.assigned_money:
-            self.assigned_money = application.reimb_amount
+        self.assigned_money = application.reimb_amount
         self.hacker = application.user
         self.save()
 
