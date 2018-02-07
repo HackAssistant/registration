@@ -116,7 +116,6 @@ class Reimbursement(models.Model):
         self.origin = application.origin
         self.assigned_money = application.reimb_amount
         self.hacker = application.user
-        self.reimbursement_money = None
         self.save()
 
     def expire(self):
