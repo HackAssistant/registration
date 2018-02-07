@@ -5,20 +5,20 @@ import sys
 
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Permission
 from django.core.management.base import BaseCommand
 
-EXPORT_CSV_FIELDS = ['username', 'email', 'password', ]
 
 User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Shows applications filtered by state as CSV'
+    """
+    Format CSV: name,email,password
+    """
+    help = 'Creates volunteers accounts'
 
     def add_arguments(self, parser):
-        parser.add_argument('-f',
-                            dest='csv_filename',
+        parser.add_argument('csv_filename',
                             default=False,
                             help='csv filename')
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
         with open(options['csv_filename']) as csv_f:
             for row in csv.reader(csv_f):
-                username = row[0]
+                name = row[0]
                 email = row[1]
                 password = row[2]
                 try:
@@ -34,15 +34,13 @@ class Command(BaseCommand):
 
                     if not user:
                         print('Creating user {0}.'.format(email))
-                        user = User.objects.create_user(username=username, email=email)
+                        user = User.objects.create_user(name=name, email=email)
                         user.set_password(password)
                     else:
                         print('Updating permissions for user {0}.'.format(email))
-
-                    checkin_perm = Permission.objects.get(codename='check_in')
-                    user.user_permissions.add(checkin_perm)
+                    user.is_volunteer = True
                     user.save()
-                    assert authenticate(username=username, password=password)
+                    assert authenticate(email=email, password=password)
 
                     print('User {0} successfully created.'.format(email))
 
