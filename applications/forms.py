@@ -9,7 +9,7 @@ from app.utils import validate_url
 from applications import models
 
 
-class ApplicationForm(OverwriteOnlyModelFormMixin,BetterModelForm):
+class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control',
                'placeholder': 'https://github.com/johnBiene'}))
