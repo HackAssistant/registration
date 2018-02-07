@@ -114,9 +114,9 @@ class Reimbursement(models.Model):
         if self.status != RE_DRAFT:
             return
         self.origin = application.origin
-        self.assigned_money = application.reimb_amount
+        if application.reimb_amount and not self.assigned_money:
+            self.assigned_money = application.reimb_amount
         self.hacker = application.user
-        self.reimbursement_money = None
         self.save()
 
     def expire(self):
