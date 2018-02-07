@@ -135,6 +135,15 @@ class Reimbursement(models.Model):
             self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRY_DAYS)
             self.save()
 
+    def no_reimb(self, user):
+        if self.status == RE_DRAFT:
+            self.status = RE_WAITLISTED
+            self.status_update_date = timezone.now()
+            self.reimbursed_by = user
+            self.reimbursement_money = 0
+            self.assigned_money = 0
+            self.save()
+
     def is_sent(self):
         return self.status in [RE_PEND_APPROVAL, RE_PEND_TICKET, ]
 

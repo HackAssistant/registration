@@ -170,22 +170,32 @@ class SendReimbursementListView(IsDirectorMixin, TabsViewMixin, SingleTableMixin
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
+        no_reimb = request.POST.get('no_reimb', False)
         reimbs = models.Reimbursement.objects.filter(pk__in=ids).all()
         mails = []
         errors = 0
         for reimb in reimbs:
             try:
-                assigned_money = request.POST.get('am_' + str(reimb.pk))
-                reimb.assigned_money = assigned_money
-                reimb.send(request.user)
-                m = emails.create_reimbursement_email(reimb, request)
+
+                if not no_reimb:
+                    assigned_money = request.POST.get('am_' + str(reimb.pk))
+                    reimb.assigned_money = assigned_money
+                    reimb.send(request.user)
+                    m = emails.create_reimbursement_email(reimb, request)
+                else:
+                    reimb.no_reimb(request.user)
+                    m = emails.create_no_reimbursement_email(reimb, request)
                 mails.append(m)
             except ValidationError:
                 errors += 1
 
         if mails:
             send_batch_emails(mails)
-            messages.success(request, "%s reimbursements sent" % len(mails))
+            if no_reimb:
+                msg = "%s no reimbursements message sent"
+            else:
+                msg = "%s reimbursements sent"
+            messages.success(request, msg % len(mails))
         else:
             messages.error(request, "%s reimbursements not sent" % errors)
 
