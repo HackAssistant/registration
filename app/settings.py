@@ -173,13 +173,24 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesSto
 MEDIA_ROOT = 'files'
 MEDIA_URL = '/files/'
 
+# Sendgrid API key
 SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
+
+# SMTP
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+
 # Load filebased email backend if no Sendgrid credentials and debug mode
-if not SENDGRID_API_KEY and DEBUG:
+if not SENDGRID_API_KEY and not EMAIL_HOST and DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = 'tmp/email-messages/'
 else:
-    EMAIL_BACKEND = "sgbackend.SendGridBackend"
+    if SENDGRID_API_KEY:
+        EMAIL_BACKEND = "sgbackend.SendGridBackend"
+    else:
+        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # Jet configs
 JET_SIDE_MENU_COMPACT = True
