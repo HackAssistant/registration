@@ -137,7 +137,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'university', 'degree', 'phone_number',
+             {'fields': ('university', 'degree', 'gender', 'phone_number',
                          'graduation_year', 'tshirt_size', 'diet', 'other_diet',
                          'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
