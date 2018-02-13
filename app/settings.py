@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'applications',
     'teams',
     'stats',
+    'storages',
 ]
 
 if REIMBURSEMENT_ENABLED:
@@ -172,6 +173,12 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesSto
 #  File upload configuration
 MEDIA_ROOT = 'files'
 MEDIA_URL = '/files/'
+
+if os.environ.get('DROPBOX_OAUTH2_TOKEN', False):
+    DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+    DROPBOX_OAUTH2_TOKEN = os.environ.get('DROPBOX_OAUTH2_TOKEN', False)
+    assert DROPBOX_OAUTH2_TOKEN, 'Set DropBox oauth2 token'
+    DROPBOX_ROOT_PATH = 'hackassistant'
 
 SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
 # Load filebased email backend if no Sendgrid credentials and debug mode
