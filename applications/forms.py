@@ -4,11 +4,12 @@ from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
 from form_utils.forms import BetterModelForm
 
+from app.mixins import OverwriteOnlyModelFormMixin
 from app.utils import validate_url
 from applications import models
 
 
-class ApplicationForm(BetterModelForm):
+class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control',
                'placeholder': 'https://github.com/johnBiene'}))

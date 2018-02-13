@@ -173,7 +173,7 @@ class HackerApplication(LoginRequiredMixin, TabsView):
 
             messages.success(request, 'Application changes saved successfully!')
 
-            return HttpResponseRedirect(reverse('root'))
+            return HttpResponseRedirect(reverse('application'))
         else:
             c = self.get_context_data()
             c.update({'form': form})
