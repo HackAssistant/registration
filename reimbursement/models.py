@@ -116,7 +116,6 @@ class Reimbursement(models.Model):
         self.origin = application.origin
         self.assigned_money = application.reimb_amount
         self.hacker = application.user
-        self.reimbursement_money = None
         self.save()
 
     def expire(self):
@@ -133,6 +132,15 @@ class Reimbursement(models.Model):
             self.reimbursed_by = user
             self.reimbursement_money = None
             self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRY_DAYS)
+            self.save()
+
+    def no_reimb(self, user):
+        if self.status == RE_DRAFT:
+            self.status = RE_WAITLISTED
+            self.status_update_date = timezone.now()
+            self.reimbursed_by = user
+            self.reimbursement_money = 0
+            self.assigned_money = 0
             self.save()
 
     def is_sent(self):
