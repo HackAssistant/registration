@@ -156,10 +156,10 @@ class ApplicationForm(BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'university', 'degree', 'phone_number',
-                         'graduation_year', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
+             {'fields': ('university', 'degree','graduation_year', 'phone_number', 
+                          'tshirt_size', 'diet', 'other_diet',
+                          'gender', 'under_age'),
+              'description': 'Hey there, before we begin we would like to know a little more about you. Some of our sponsors will use this information to potentially recruit you, so please include as much as you can.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
         ]
