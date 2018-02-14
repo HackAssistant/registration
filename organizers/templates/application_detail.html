@@ -59,7 +59,15 @@
                 <h3>Teammates</h3>
                 <ul>
                     {% for mate in teammates %}
-                        <li>{{ mate.user__name }} ({{ mate.user__email }})</li>
+                        <li>
+                            {% if mate.app_uuid_str %}<a href="{% url 'app_detail' mate.app_uuid_str %}">{% endif %}
+                            {% if mate.is_me %}<span style="font-style: italic;">{% endif %}
+
+                            {{ mate.user__name }} ({{ mate.user__email }})
+
+                            {% if mate.is_me %}</span>{% endif %}
+                            {% if mate.app_uuid_str %}</a>{% endif %}
+                        </li>
                     {% endfor %}
                 </ul>
             {% endif %}
