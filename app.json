@@ -14,7 +14,8 @@
       "description": "Sendgrid Key. Get it here: https://app.sendgrid.com/settings/api_keys"
     },
     "DROPBOX_OAUTH2_TOKEN": {
-      "description": "DropBox Oauth2 token. Get it here: https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/"
+      "description": "DropBox Oauth2 token. Get it here: https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/",
+      "required": false
     },
     "SL_TOKEN": {
       "description": "Slack token to invite hackers automatically on confirmation. https://api.slack.com/custom-integrations/legacy-tokens",
