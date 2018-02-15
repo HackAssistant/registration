@@ -137,12 +137,15 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'university', 'degree', 'phone_number',
-                         'graduation_year', 'tshirt_size', 'diet', 'other_diet',
+             {'fields': ('university', 'degree', 'graduation_year', 'gender',
+                         'phone_number', 'tshirt_size', 'diet', 'other_diet',
                          'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Show us what you\'ve built', {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'), }),
+            ('Show us what you\'ve built',
+             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
+              'description': 'Some of our sponsors will use this information to potentially recruit you,'
+              'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         if deadline and deadline <= timezone.now() and not self.instance.pk:
