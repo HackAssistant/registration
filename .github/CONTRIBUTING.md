@@ -4,6 +4,10 @@ Want to contribute to this repo? Great! We  :heart:  contributions. Just make su
 Read both the [general guidelines](#general-guidelines) and the [coding style guidelines](#coding-style-guidelines).
 By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## How to contribute
+
+This platform is being used by several hackathons at the same time. To avoid conflicts between personalizations avoid editing constomizable fields like the stylesheet, hackathon_variables, form ordering or similar. Any Pull Request that could affect other hackathons will be deeply reviewed and could be rejected to avoid conflicts.
+
 ## General Guidelines
 
 ### New Feature or a Bug Fix?
