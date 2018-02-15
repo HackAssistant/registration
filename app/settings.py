@@ -177,7 +177,6 @@ MEDIA_URL = '/files/'
 if os.environ.get('DROPBOX_OAUTH2_TOKEN', False):
     DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
     DROPBOX_OAUTH2_TOKEN = os.environ.get('DROPBOX_OAUTH2_TOKEN', False)
-    assert DROPBOX_OAUTH2_TOKEN, 'Set DropBox oauth2 token'
     DROPBOX_ROOT_PATH = HACKATHON_DOMAIN.replace('.', '_')
 
 # Sendgrid API key
