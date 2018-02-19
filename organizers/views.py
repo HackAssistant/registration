@@ -131,7 +131,17 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         context['comments'] = models.ApplicationComment.objects.filter(application=application)
         if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
             context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \
-                .values('user__name', 'user__email')
+                .values('user__name', 'user__email', 'user')
+
+            for mate in context['teammates']:
+                if application.user.id == mate['user']:
+                    mate['is_me'] = True
+                    continue
+
+                mate_app = models.Application.objects.filter(user=mate['user']).first()
+                if mate_app:
+                    mate['app_uuid_str'] = mate_app.uuid_str
+
         return context
 
     def can_vote(self):
