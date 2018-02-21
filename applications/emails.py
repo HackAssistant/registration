@@ -38,7 +38,7 @@ def create_lastreminder_email(application):
                                        reverse('cancel_app', kwargs={'id': application.uuid_str})),
     }
     return emails.render_mail('mails/last_reminder',
-                              application.user.email, c)
+                              application.user.email, c, action_required=True)
 
 
 def send_batch_emails(emails):
