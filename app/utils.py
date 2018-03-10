@@ -80,7 +80,7 @@ def get_substitutions_templates():
             'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
             'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
             'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
-            'h_currency': getattr(settings, 'DEFAULT_CURRENCY', '$'),
+            'h_currency': getattr(settings, 'CURRENCY', '$'),
             'h_r_requirements': getattr(settings, 'REIMBURSEMENT_REQUIREMENTS', None),
             'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRY_DAYS', None),
             'h_r_enabled': getattr(settings, 'REIMBURSEMENT_ENABLED', False),

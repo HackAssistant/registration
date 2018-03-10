@@ -13,7 +13,7 @@
         <dl>
             <dt>Amount</dt>
             <dd>
-                {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}{{ h_currency }}
+                {{ h_currency }}{{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}
             </dd>
             {% if reimbursement.public_comment %}
                 <dt>Comment</dt>
