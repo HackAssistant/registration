@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'applications',
     'teams',
     'stats',
+    'storages',
 ]
 
 if REIMBURSEMENT_ENABLED:
@@ -172,6 +173,11 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesSto
 #  File upload configuration
 MEDIA_ROOT = 'files'
 MEDIA_URL = '/files/'
+
+if os.environ.get('DROPBOX_OAUTH2_TOKEN', False):
+    DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+    DROPBOX_OAUTH2_TOKEN = os.environ.get('DROPBOX_OAUTH2_TOKEN', False)
+    DROPBOX_ROOT_PATH = HACKATHON_DOMAIN.replace('.', '_')
 
 # Sendgrid API key
 SENDGRID_API_KEY = os.environ.get('SG_KEY', None)

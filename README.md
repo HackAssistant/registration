@@ -54,6 +54,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
+- **DROPBOX_OAUTH2_TOKEN**(optional): Enables DropBox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
 
 
 ## Server
@@ -140,6 +141,14 @@ Other SQL engines may be used, we recommend PostgreSQL for it's robustness. To u
 Hackers data is really important. To ensure that you don't lose any data we encourage you to set up automatic backups. One option that is free and reliable is using the PostgresSQLDropboxBackup script. 
 
 Find the script and usage instructions [here](https://github.com/casassg/PostgreSQL-Dropbox-Backup)
+
+#### Set up Dropbox storage for uploaded files
+
+This will need to be used for Heroku or some Docker deployments. File uploads sometimes don't work properly on containerized systems. 
+
+1. Create [new DropBox app](https://www.dropbox.com/developers/apps)
+2. Generate Access token [here](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/)
+3. Set token as environment variable **DROPBOX_OAUTH2_TOKEN**
 
 #### Set up nginx
 
