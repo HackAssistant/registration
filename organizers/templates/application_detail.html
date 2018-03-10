@@ -50,8 +50,8 @@
                 </dt>
                 <dd></dd>
                 {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
-                {% include 'include/field.html' with desc='Why excited?' value=app.description|safe|urlize %}
-                {% include 'include/field.html' with desc='Projects' value=app.projects|safe|urlize %}
+                {% include 'include/field.html' with desc='Why excited?' showlength="true" value=app.description|safe|urlize %}
+                {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects|safe|urlize %}
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                 {% include 'include/field.html' with desc='Excited about' value=app.excited %}
             </dl>
