@@ -2,12 +2,10 @@
 {% load django_tables2 %}
 {% block head_title %}All application{% endblock %}
 
-{% block table_title %}All applications{% endblock %}
 {% block table_footer %}
     {% if user.is_director %}
         <div class="panel-footer">
-            <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Invite applications</a>
-            <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Download
+            <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Export
                 CSV</a>
         </div>
     {% endif %}

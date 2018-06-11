@@ -1,49 +1,55 @@
 import django_filters
 import django_tables2 as tables
+from django import forms
+from django.db.models import Q
 
-from reimbursement.models import Reimbursement
+from reimbursement.models import Reimbursement, RE_STATUS
 
 
 class ReimbursementFilter(django_filters.FilterSet):
-    hacker__email = django_filters.CharFilter('hacker__email', label='Email', lookup_expr='icontains')
-    hacker__name = django_filters.CharFilter('hacker__name', label='Name', lookup_expr='icontains')
-    origin_city = django_filters.CharFilter('origin_city', label='City', lookup_expr='icontains')
-    origin_country = django_filters.CharFilter('origin_country', label='Country', lookup_expr='icontains')
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+    status = django_filters.MultipleChoiceFilter('status', label='Status', choices=RE_STATUS,
+                                                 widget=forms.CheckboxSelectMultiple)
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(hacker__email__icontains=value) | Q(hacker__name__icontains=value) | Q(origin__icontains=value)
+        )
 
     class Meta:
         model = Reimbursement
-        fields = ['hacker__email', 'hacker__name', 'origin_country', 'origin_city', 'status']
+        fields = ['search', 'status']
 
 
 class ReimbursementTable(tables.Table):
     detail = tables.TemplateColumn(
-        "<a href='{% url 'reimbursement_detail' record.pk %}' class='btn btn-default'>Detail</a> ",
+        "<a href='{% url 'reimbursement_detail' record.pk %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
 
     class Meta:
         model = Reimbursement
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['hacker.name', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin_city',
-                  'origin_country', ]
-
+        fields = ['hacker.name', 'hacker.email', 'assigned_money', 'reimbursement_money', 'status', 'origin', ]
         empty_text = 'No reimbursement match criteria'
 
 
 class SendReimbursementFilter(django_filters.FilterSet):
-    hacker__email = django_filters.CharFilter('hacker__email', label='Email', lookup_expr='icontains')
-    hacker__name = django_filters.CharFilter('hacker__name', label='Name', lookup_expr='icontains')
-    origin_city = django_filters.CharFilter('origin_city', label='City', lookup_expr='icontains')
-    origin_country = django_filters.CharFilter('origin_country', label='Country', lookup_expr='icontains')
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q(hacker__email__icontains=value) | Q(hacker__name__icontains=value) | Q(origin__icontains=value)
+        )
 
     class Meta:
         model = Reimbursement
-        fields = ['hacker__email', 'hacker__name', 'origin_country', 'origin_city', ]
+        fields = ['search', ]
 
 
 class SendReimbursementTable(tables.Table):
     detail = tables.TemplateColumn(
-        "<a href='{% url 'reimbursement_detail' record.pk %}' target='_blank' class='btn btn-default'>Open</a> ",
+        "<a href='{% url 'reimbursement_detail' record.pk %}' target='_blank'>Open</a> ",
         verbose_name='Actions', orderable=False)
 
     selected = tables.CheckBoxColumn(accessor="pk", verbose_name='Select')
@@ -55,7 +61,6 @@ class SendReimbursementTable(tables.Table):
         model = Reimbursement
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'assigned_money', 'hacker.email', 'origin_city',
-                  'origin_country', ]
+        fields = ['selected', 'assigned_money', 'hacker.email', 'origin', ]
 
         empty_text = 'No reimbursement match criteria'

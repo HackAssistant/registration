@@ -1,38 +1,42 @@
-{% extends "base.html" %}
+{% extends "base_tabs.html" %}
 {% load humanize %}
 {% load django_tables2 %}
 {% load bootstrap3 %}
 {% load static %}
-{% block head_title %}Invite applications {% endblock %}
-{% block head %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-{% endblock %}
-{% block body %}
-    <div class="row margin-top">
-        {% bootstrap_messages %}
-        <div class="col-md-12">
-            <div style="text-align: center;">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="text-center">{% block table_title %}{% endblock %}</h4>
-                    </div>
-                    <div class="panel-body">
-                        {% if filter %}
-                            <form action="" method="get" class="form form-inline text-left filter">
-                                {% bootstrap_form filter.form size='small' %}
-                                <button type="submit" class="btn btn-block btn-info">Search</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        {% render_table table 'django_tables2/bootstrap-responsive.html' %}
-                        {% block table_footer %}
-                        {% endblock %}
-                    </form>
+{% block panel %}
 
-                </div>
-            </div>
-        </div>
-    </div>
+    {% if filter %}
+        <style>
+            #id_status > div {
+                display: inline-block;
+                padding-right: 20px;
+                margin-bottom: 0;
+                margin-top: 0;
+                font-weight: 400;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+        </style>
+        <form action="" method="get" class="form text-left filter">
+            {% bootstrap_form filter.form %}
+            <button type="submit" class="btn btn-info">Filter</button>
+        </form>
+    {% endif %}
+    {% block extra_panel %}
+    {% endblock %}
+{% endblock %}
+{% block out_panel %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {% render_table table 'django_tables2/bootstrap-responsive.html' %}
+        {% block table_footer %}
+        {% endblock %}
+    </form>
+{% endblock %}
+{% block extra_scripts %}
+    <script>
+        $('thead input[type=checkbox]').on('click', function () {
+            $('tbody input[type=checkbox]').prop('checked', this.checked)
+        });
+    </script>
 {% endblock %}

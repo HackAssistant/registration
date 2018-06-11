@@ -9,14 +9,14 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views import View
-from django.views.generic import TemplateView
 
 from app import slack
 from app.slack import SlackInvitationException
-from app.utils import reverse
+from app.utils import reverse, hacker_tabs
+from app.views import TabsView
 from applications import models, emails, forms
 
 
@@ -55,12 +55,15 @@ class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
         return http.HttpResponseRedirect(reverse('dashboard'))
 
 
-class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TabsView):
     template_name = 'cancel.html'
 
     def test_func(self):
         check_application_exists(self.request.user, self.kwargs.get('id', None))
         return True
+
+    def get_back_url(self):
+        return reverse('dashboard')
 
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
@@ -90,17 +93,6 @@ class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return http.HttpResponseRedirect(reverse('dashboard'))
 
 
-def create_phase(phase_key, title, finished_func, user):
-    is_finished = False
-    try:
-        is_finished = bool(finished_func(user))
-    except:
-        pass
-
-    return {'template': 'phases/' + phase_key + '.html',
-            'finished': is_finished, 'title': title, 'key': phase_key}
-
-
 def get_deadline(application):
     last_updated = application.status_update_date
     if application.status == models.APP_INVITED:
@@ -110,29 +102,18 @@ def get_deadline(application):
     return deadline
 
 
-def get_current_phase(phases):
-    try:
-        current = [p for p in phases if not p['finished']][0]
-    except IndexError:
-        current = [p for p in phases if p['finished']][-1]
-    return current
-
-
-class HackerDashboard(LoginRequiredMixin, TemplateView):
+class HackerDashboard(LoginRequiredMixin, TabsView):
     template_name = 'dashboard.html'
+
+    def get_current_tabs(self):
+        return hacker_tabs(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
-        phases = self.get_phases()
-        current = get_current_phase(phases)
-        active = self.get_active_phase(current, phases)
         form = forms.ApplicationForm()
-        context.update({'phases': phases, 'current': current,
-                        'active': active, 'form': form})
+        context.update({'form': form})
         try:
-            application = self.get_current_app(self.request.user)
-            form = forms.ApplicationForm(instance=application)
-            context.update({'form': form})
+            application = models.Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
             context.update({'invite_timeleft': deadline - timezone.now()})
         except:
@@ -140,43 +121,6 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
             pass
 
         return context
-
-    def get_active_phase(self, current, phases):
-        active_key = self.request.GET.get('phase', None)
-        active = current
-        if active_key:
-            try:
-                active = [p for p in phases if p['key'] == active_key][0]
-            except:
-                pass
-        return active
-
-    def get_phases(self):
-        user = self.request.user
-        phases = [
-            create_phase('verify', "Email verification",
-                         lambda x: x.email_verified, user),
-            create_phase('general', "General",
-                         lambda x: x.application, user),
-            create_phase('application', "Application status", lambda x: x.application.answered_invite(),
-                         self.request.user)
-        ]
-
-        # Try/Except caused by application not existing
-        try:
-            current_app = self.get_current_app(user)
-            if current_app.status == models.APP_ATTENDED:
-                phases.append(
-                    create_phase('live', "Live", lambda x: True,
-                                 self.request.user)
-                )
-        except:
-            pass
-
-        return phases
-
-    def get_current_app(self, user):
-        return models.Application.objects.get(user=user)
 
     def post(self, request, *args, **kwargs):
         new_application = True
@@ -203,5 +147,34 @@ class HackerDashboard(LoginRequiredMixin, TemplateView):
             return render(request, self.template_name, c)
 
 
-def code_conduct(request):
-    return render(request, 'code_conduct.html')
+class HackerApplication(LoginRequiredMixin, TabsView):
+    template_name = 'application.html'
+
+    def get_current_tabs(self):
+        return hacker_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(HackerApplication, self).get_context_data(**kwargs)
+        application = get_object_or_404(models.Application, user=self.request.user)
+        deadline = get_deadline(application)
+        context.update(
+            {'invite_timeleft': deadline - timezone.now(), 'form': forms.ApplicationForm(instance=application)})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        try:
+            form = forms.ApplicationForm(request.POST, request.FILES, instance=request.user.application)
+        except:
+            form = forms.ApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+
+            messages.success(request, 'Application changes saved successfully!')
+
+            return HttpResponseRedirect(reverse('application'))
+        else:
+            c = self.get_context_data()
+            c.update({'form': form})
+            return render(request, self.template_name, c)

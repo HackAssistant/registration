@@ -5,36 +5,46 @@ from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
+from app.mixins import TabsViewMixin
+from app.utils import reverse
+from app.views import TabsView
 from applications import models
 from checkin.models import CheckIn
-from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter
-from user.mixins import IsVolunteerMixin
+from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
+from user.mixins import IsVolunteerMixin, IsOrganizerMixin
 from user.models import User
 
 
-class CheckInList(IsVolunteerMixin, SingleTableMixin, FilterView):
+def user_tabs(user):
+    return [('List', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False),
+            ('Ranking', reverse('check_in_ranking'), False)]
+
+
+class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
-    table_pagination = {'per_page': 100}
+    table_pagination = {'per_page': 50}
 
-    def get_queryset(self):
-        return models.Application.objects.filter(status=models.APP_CONFIRMED)
-
-
-class CheckInAllList(CheckInList):
-    template_name = 'checkin/list_all.html'
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
 
     def get_queryset(self):
         return models.Application.objects.exclude(status=models.APP_ATTENDED)
 
 
-class QRView(IsVolunteerMixin, TemplateView):
+class QRView(IsVolunteerMixin, TabsView):
     template_name = 'checkin/qr.html'
 
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
 
-class CheckInHackerView(IsVolunteerMixin, TemplateView):
+
+class CheckInHackerView(IsVolunteerMixin, TabsView):
     template_name = 'checkin/hacker.html'
+
+    def get_back_url(self):
+        return 'javascript:history.back()'
 
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
@@ -66,13 +76,13 @@ class CheckInHackerView(IsVolunteerMixin, TemplateView):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-class CheckinRankingView(IsVolunteerMixin, TemplateView):
+class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'checkin/ranking.html'
+    table_class = RankingListTable
 
-    def get_context_data(self, **kwargs):
-        context = super(CheckinRankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(
-            checkin_count=Count('checkin__application')) \
-            .order_by('-checkin_count').exclude(checkin_count=0).values('checkin_count',
-                                                                        'email')
-        return context
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
+
+    def get_queryset(self):
+        return User.objects.annotate(
+            checkin_count=Count('checkin__application')).exclude(checkin_count=0)

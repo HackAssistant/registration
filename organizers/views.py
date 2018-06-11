@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, Avg, F
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -12,12 +12,15 @@ from django_tables2 import SingleTableMixin
 from django_tables2.export import ExportMixin
 
 from app import slack
+from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
-from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable
+from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
+    AdminTeamListTable, InviteFilter
+from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
 
@@ -41,19 +44,29 @@ def add_comment(application, user, text):
     return comment
 
 
-class RankingView(IsOrganizerMixin, TemplateView):
+def organizer_tabs(user):
+    t = [('Applications', reverse('app_list'), False),
+         ('Review', reverse('review'),
+          'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
+         ('Ranking', reverse('ranking'), False)]
+    if user.is_director:
+        t.append(('Invite', reverse('invite_list'), False))
+    return t
+
+
+class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'ranking.html'
+    table_class = RankingListTable
 
-    def get_context_data(self, **kwargs):
-        context = super(RankingView, self).get_context_data(**kwargs)
-        context['ranking'] = User.objects.annotate(
-            vote_count=Count('vote__calculated_vote')) \
-            .order_by('-vote_count').exclude(vote_count=0).values('vote_count',
-                                                                  'email')
-        return context
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return User.objects.annotate(
+            vote_count=Count('vote__calculated_vote')).exclude(vote_count=0)
 
 
-class ApplicationsListView(IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
     table_class = ApplicationsListTable
     filterset_class = ApplicationFilter
@@ -61,15 +74,21 @@ class ApplicationsListView(IsOrganizerMixin, ExportMixin, SingleTableMixin, Filt
     exclude_columns = ('detail', 'status', 'vote_avg')
     export_name = 'applications'
 
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.all())
 
 
-class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
+class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
     template_name = 'invite_list.html'
     table_class = AdminApplicationsListTable
-    filterset_class = ApplicationFilter
+    filterset_class = InviteFilter
     table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
 
     def get_queryset(self):
         return models.Application.annotate_vote(models.Application.objects.filter(status=APP_PENDING))
@@ -90,13 +109,19 @@ class InviteListView(IsDirectorMixin, SingleTableMixin, FilterView):
             send_batch_emails(mails)
             messages.success(request, "%s applications invited" % len(mails))
         else:
-            messages.error(request, "%s applications not invited" % errors)
+            errorMsg = "No applications invited"
+            if errors != 0:
+                errorMsg = "%s applications not invited" % errors
+            messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_list'))
 
 
-class ApplicationDetailView(IsOrganizerMixin, TemplateView):
+class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
     template_name = 'application_detail.html'
+
+    def get_back_url(self):
+        return reverse('app_list')
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationDetailView, self).get_context_data(**kwargs)
@@ -104,6 +129,19 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
         context['app'] = application
         context['vote'] = self.can_vote()
         context['comments'] = models.ApplicationComment.objects.filter(application=application)
+        if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
+            context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \
+                .values('user__name', 'user__email', 'user')
+
+            for mate in context['teammates']:
+                if application.user.id == mate['user']:
+                    mate['is_me'] = True
+                    continue
+
+                mate_app = models.Application.objects.filter(user=mate['user']).first()
+                if mate_app:
+                    mate['app_uuid_str'] = mate_app.uuid_str
+
         return context
 
     def can_vote(self):
@@ -151,7 +189,7 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
             slack.send_slack_invite(application.user.email)
             messages.success(self.request, "Slack invite sent to %s" % application.user.email)
         except SlackInvitationException as e:
-            messages.error(self.request, "Slack error: %s" % e.message)
+            messages.error(self.request, "Slack error: %s" % str(e))
 
     def cancel_application(self, application):
         try:
@@ -180,6 +218,12 @@ class ApplicationDetailView(IsOrganizerMixin, TemplateView):
 
 
 class ReviewApplicationView(ApplicationDetailView):
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_back_url(self):
+        return None
+
     def get_application(self, kwargs):
         """
         Django model to the rescue. This is transformed to an SQL sentence
@@ -196,8 +240,6 @@ class ReviewApplicationView(ApplicationDetailView):
 
     def get(self, request, *args, **kwargs):
         r = super(ReviewApplicationView, self).get(request, *args, **kwargs)
-        if not self.get_application(kwargs) and settings.REIMBURSEMENT_ENABLED:
-            return HttpResponseRedirect(reverse('receipt_review'))
         return r
 
     def post(self, request, *args, **kwargs):
@@ -220,3 +262,46 @@ class ReviewApplicationView(ApplicationDetailView):
 
     def can_vote(self):
         return True
+
+
+class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, TemplateView):
+    template_name = 'invite_list.html'
+    table_class = AdminTeamListTable
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.objects.filter(status=APP_PENDING).exclude(user__team__team_code__isnull=True) \
+            .values('user__team__team_code').order_by().annotate(vote_avg=Avg('vote__calculated_vote'),
+                                                                 team=F('user__team__team_code'),
+                                                                 members=Count('user', distinct=True))
+
+    def get_context_data(self, **kwargs):
+        c = super(InviteTeamListView, self).get_context_data(**kwargs)
+        c.update({'teams': True})
+        return c
+
+    def post(self, request, *args, **kwargs):
+        ids = request.POST.getlist('selected')
+        apps = models.Application.objects.filter(user__team__team_code__in=ids).all()
+        mails = []
+        errors = 0
+        for app in apps:
+            try:
+                app.invite(request.user)
+                m = emails.create_invite_email(app, request)
+                mails.append(m)
+            except ValidationError:
+                errors += 1
+        if mails:
+            send_batch_emails(mails)
+            messages.success(request, "%s applications invited" % len(mails))
+        else:
+            errorMsg = "No applications invited"
+            if errors != 0:
+                errorMsg = "%s applications not invited" % errors
+            messages.error(request, errorMsg)
+
+        return HttpResponseRedirect(reverse('invite_teams_list'))

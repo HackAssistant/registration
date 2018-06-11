@@ -30,8 +30,8 @@ HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 # (OPTIONAL) Applications deadline
 # HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
-# HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
-#                    'the opening ceremony will be at 7:00 pm.'
+HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
+                   'the opening ceremony will be at 7:00 pm.'
 
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
@@ -41,6 +41,7 @@ HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
 
 # (OPTIONAL) Regex to automatically match organizers emails and set them as organizers when signing up
 REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
+
 # (OPTIONAL) Send 500 errors to email while on production mode
 HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
@@ -50,6 +51,11 @@ DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRACY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
+REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+
+# (OPTIONAL) Max team members. Defaults to 4
+TEAMS_ENABLED = True
+HACKATHON_MAX_TEAMMATES = 4
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from
@@ -58,3 +64,8 @@ SLACK = {
     # Get it here: https://api.slack.com/custom-integrations/legacy-tokens
     'token': os.environ.get('SL_TOKEN', None)
 }
+
+# (OPTIONAL) Logged in cookie
+# This allows to store an extra cookie in the browser to be shared with other application on the same domain
+# LOGGED_IN_COOKIE_DOMAIN = '.gerard.space'
+# LOGGED_IN_COOKIE_KEY = 'hackassistant_logged_in'

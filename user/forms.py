@@ -27,7 +27,7 @@ class UserChangeForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.CharField(label='Email', max_length=100)
+    email = forms.EmailField(label='Email', max_length=100)
     password = forms.CharField(widget=forms.PasswordInput, label='Password', max_length=100)
 
 
@@ -50,6 +50,12 @@ class RegisterForm(LoginForm):
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=254)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError("There's no user with this email. Don't you want to register first?")
+        return email
 
 
 class SetPasswordForm(forms.Form):

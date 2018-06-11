@@ -1,1 +1,1 @@
-Invite for {{ h_name }} expires in 24h
+Confirm your attendance at {{h_name}}!

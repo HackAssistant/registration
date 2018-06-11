@@ -1,0 +1,6 @@
+{% if reimbursement %}
+    <div class="alert alert-{% if reimbursement.expired %}danger{% elif reimbursement.is_accepted or reimbursement.has_friend_submitted %}success{% else %}warning{% endif %} lead">
+        Status: <b>{{ reimbursement.get_status_display }}</b>
+    </div>
+    <hr>
+{% endif %}

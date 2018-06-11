@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+import dj_database_url
+
 from .hackathon_variables import *
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not os.environ.get('PROD_MODE', None)
+DEBUG = os.environ.get('PROD_MODE', "false").lower() == "false"
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
@@ -43,7 +45,10 @@ INSTALLED_APPS = [
     'organizers',
     'checkin',
     'user',
-    'applications'
+    'applications',
+    'teams',
+    'stats',
+    'storages',
 ]
 
 if REIMBURSEMENT_ENABLED:
@@ -95,6 +100,9 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+if os.environ.get('DATABASE_URL', None):
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 if os.environ.get('PG_PWD', None):
     DATABASES = {
@@ -160,18 +168,35 @@ STATIC_ROOT = BASE_DIR + '/staticfiles'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 #  File upload configuration
 MEDIA_ROOT = 'files'
 MEDIA_URL = '/files/'
 
+if os.environ.get('DROPBOX_OAUTH2_TOKEN', False):
+    DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+    DROPBOX_OAUTH2_TOKEN = os.environ.get('DROPBOX_OAUTH2_TOKEN', False)
+    DROPBOX_ROOT_PATH = HACKATHON_DOMAIN.replace('.', '_')
+
+# Sendgrid API key
 SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
+
+# SMTP
+EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
+EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+
 # Load filebased email backend if no Sendgrid credentials and debug mode
-if not SENDGRID_API_KEY and DEBUG:
+if not SENDGRID_API_KEY and not EMAIL_HOST and DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = 'tmp/email-messages/'
 else:
-    EMAIL_BACKEND = "sgbackend.SendGridBackend"
+    if SENDGRID_API_KEY:
+        EMAIL_BACKEND = "sgbackend.SendGridBackend"
+    else:
+        EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # Jet configs
 JET_SIDE_MENU_COMPACT = True
@@ -187,6 +212,20 @@ BOOTSTRAP3 = {
     'set_placeholder': False,
     'required_css_class': 'required',
 }
+
+if DEBUG:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': os.path.join(BASE_DIR, 'cache'),
+        }
+    }
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)

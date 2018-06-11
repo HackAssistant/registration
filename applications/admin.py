@@ -13,11 +13,12 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'votes', 'reimb', 'status',
                     'status_last_updated', 'diet')
     list_filter = ('status', 'first_timer', 'reimb', 'graduation_year',
-                   'university', 'origin_country', 'under_age', 'diet')
+                   'university', 'origin', 'under_age', 'diet')
     list_per_page = 200
     search_fields = ('user__name', 'user__email',
                      'description',)
     ordering = ('submission_date',)
+    date_hierarchy = 'submission_date'
 
     def name(self, obj):
         return obj.user.get_full_name() + ' (' + obj.user.email + ')'

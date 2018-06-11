@@ -1,0 +1,60 @@
+{% extends 'base_tabs.html' %}
+
+{% load bootstrap3 %}
+{% block head_title %}Team{% endblock %}
+
+{% block panel %}
+    {% if team %}
+        <h3>Team code</h3>
+        <p class="lead">{{ team.team_code }}</p>
+        <p>Send this to whoever you want to join this team. Remember that teams have a maximum size of {{ h_max_team }}
+            hackers</p>
+        <hr>
+        <h3>Teammates ({{ teammates|length }}/{{ h_max_team }})</h3>
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th><b>Name</b></th>
+                    <th><b>Email</b></th>
+                    <th><b>Finished application?</b></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for hacker in teammates %}
+                    <tr>
+                        <td>{{ hacker.name }} </td>
+                        <td>{{ hacker.email }} </td>
+                        <td><i class="fa {% if hacker.app %}fa-check text-success{% else %}fa-times text-danger{% endif %}"
+                               aria-hidden="true"></i>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tbody>
+            </table>
+        </div>
+        <hr>
+        <form action="" method="post" class="form">
+            {% csrf_token %}
+            <button class="btn btn-danger btn-block" name="leave" value="leave" type="submit">Leave team
+            </button>
+        </form>
+    {% elif application.answered_invite or application.is_invited %}
+
+
+    {% elif not h_app_closed and not team %}
+        <p>Do you have a team already? Join it below. Otherwise you can create a new team. </p>
+        <form action="" method="post" class="form">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="col-md-5 no-padding">
+                <button class="btn btn-success btn-block" type="submit">Join team</button>
+            </div>
+            <div class="col-md-5 col-md-offset-2 no-padding">
+                <button class="btn btn-primary btn-block" name="create" value="create" type="submit" formnovalidate>Create team
+                </button>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
