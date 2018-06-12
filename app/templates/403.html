@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block head_title %}Forbidden {% endblock %}
+
+{% block body %}
+    <style>
+        .text-white {
+            color: white;
+        }
+    </style>
+    <div class="text-white">
+        <h1 class="text-center margin-top">YOU SHALL NOT PASS!</h1>
+        <h2 class="text-center">403 Access Forbidden</h2>
+        <p class="text-center">Please <a href="{% url 'account_login' %}">log in</a> with a more <b>powerful</b> account to access this page</p>
+    </div>
+{% endblock %}

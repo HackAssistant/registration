@@ -1,0 +1,85 @@
+{% extends "base_tabs.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% block head_title %}Reimbursement{% endblock %}
+
+{% block panel %}
+
+
+    {% if reimbursement.can_submit_receipt %}
+        {% include 'include/r_status.html' %}
+        <h3>Reimbursement information</h3>
+        <dl>
+            <dt>Amount</dt>
+            <dd>
+                {{ h_currency }}{{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}
+            </dd>
+            {% if reimbursement.public_comment %}
+                <dt>Comment</dt>
+                <dd>{{ reimbursement.public_comment }} -
+                    <small>comment by {{ reimbursement.reimbursed_by.email|urlize }}</small>
+                </dd>
+            {% endif %}
+        </dl>
+        <p>If you are submitting a reimbursement for multiple hackers, we will allow you to submit up
+            until the sum of all assigned
+            amounts between you and your friends. Make sure they have also a valid reimbursement. If you
+            have any doubts please send us a message {{ h_email|urlize }}</p>
+        {% include "include/reimbursement_form.html" %}
+        </div>
+        <div class="panel-footer">
+            Expires
+            in {% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}
+        </div>
+    {% else %}
+        {% if reimbursement.waitlisted %}
+            {% include 'include/r_status.html' %}
+            {% include 'include/waitlisted_reimbursement.html' %}
+        {% elif reimbursement.expired %}
+            {% include 'include/r_status.html' %}
+            Unfortunately your travel reimbursement has expired. We sent your travel reimbursement
+            {{ reimbursement.update_time|timesince }} ago but you haven't uploaded a valid ticket. Send us an email to
+            {{ h_contact_email|urlize }} if you
+            think this is an error.
+        {% elif reimbursement.has_friend_submitted %}
+            {% include 'include/r_status.html' %}
+            <p>Your friend {{ reimbursement.friend_submission.hacker.get_full_name }}
+                ({{ reimbursement.friend_submission.hacker.email }}) already uploaded a receipt that covered
+                your travel. Let us know if you think this is an error.</p>
+        {% else %}
+            {% include 'include/r_status.html' %}
+
+            <dl>
+                <dt>Origin</dt>
+                <dd>{{ reimbursement.origin }}</dd>
+
+                {% if not reimbursement.is_draft  and not reimbursement.waitlisted %}
+                    <dt>Amount</dt>
+                    <dd>
+                        {{ reimbursement.reimbursement_money|default:reimbursement.assigned_money }}{{ h_currency }}</dd>
+                    {% if reimbursement.multiple_hackers %}
+                        <dt>Other hackers covered</dt>
+                        <dd>{{ reimbursement.friend_emails }}</dd>
+                    {% endif %}
+                {% endif %}
+                {% if reimbursement.can_submit_receipt %}
+                    <dt>Expiration countdown</dt>
+                    <dd>{% include 'include/deadline_countdown.html' with timeleft=reimbursement.timeleft_expiration id='expiration_reimb_count' %}</dd>
+                {% endif %}
+                {% if reimbursement.public_comment %}
+                    <dt>Reason</dt>
+                    <dd>{{ reimbursement.public_comment }} -
+                        <small>comment by {{ reimbursement.reimbursed_by.email|urlize }}</small>
+                    </dd>
+                {% endif %}
+            </dl>
+
+
+
+            {% if h_r_requirements %}<p><span class="text-warning">WARNING:</span> {{ h_r_requirements }}</p>{% endif %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+

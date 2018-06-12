@@ -12,14 +12,15 @@ from reimbursement import models, emails
 class ReimbursementAdmin(admin.ModelAdmin):
     list_display = ('hacker', 'money', 'origin', 'status',
                     'timeleft_expiration', 'application_status',)
-    list_filter = ('status', 'origin_country',
+    list_filter = ('status', 'origin',
                    'reimbursed_by', 'hacker__application__status')
 
-    search_fields = ['application__user__name', 'application__user__lastname', 'application__user__email',
-                     'origin_city']
+    search_fields = ['hacker__name', 'hacker__email',
+                     'origin']
     list_per_page = 200
 
     ordering = ('creation_time',)
+    date_hierarchy = 'creation_time'
     actions = ['send', ]
 
     def money(self, obj):
@@ -36,11 +37,6 @@ class ReimbursementAdmin(admin.ModelAdmin):
         return obj.hacker.application.get_status_display()
 
     application_status.admin_order_field = 'hacker__application__status'  # Allows column order sorting
-
-    def origin(self, obj):
-        return obj.origin_city + ' (' + obj.origin_country + ')'
-
-    origin.admin_order_field = 'origin_city'  # Allows column order sorting
 
     def status_last_updated(self, app):
         if not app.status_update_date:

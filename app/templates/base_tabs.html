@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/tabs.css' %}">
+    {% block extra_head %}{% endblock %}
+{% endblock %}
+{% block body %}
+    <div class="row margin-top">
+        <div class="{% block cols-panel %}col-md-12{% endblock %}">
+            <div>
+                <ul class="nav nav-tabs">
+                    {% for title,url,needs_action in tabs %}
+
+                        <li role="presentation" {% if url in request.get_full_path %}class="active action"{% endif %}>
+
+                            <a {% if url not in request.get_full_path %}href="{{ url }}"{% endif %}>
+                                {{ title }}
+                                {% if needs_action %}
+                                    <span class="label label-warning">{{ needs_action }}</span>
+                                {% endif %}
+                            </a>
+
+                        </li>
+
+                    {% endfor %}
+                </ul>
+                <div class="panel panel-default">
+
+                    <div class="panel-body">
+                        {% if back %}
+                            <p><a href="{{ back }}" class="btn btn-default"> < Back </a>
+                            </p>
+                        {% endif %}
+
+                        {% block panel %}
+
+                        {% endblock %}
+                    </div>
+                    {% block out_panel %}{% endblock %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

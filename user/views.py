@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -14,6 +15,8 @@ from user.tokens import account_activation_token, password_reset_token
 
 
 def login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
@@ -24,7 +27,16 @@ def login(request):
             user = auth.authenticate(email=email, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                return HttpResponseRedirect(next_)
+                resp = HttpResponseRedirect(next_)
+                c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', getattr(settings, 'HACKATHON_DOMAIN', None))
+                c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
+                if c_domain and c_key:
+                    try:
+                        resp.set_cookie(c_key, 'biene', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
+                    except:
+                        # We don't care if this is not set, we are being cool here!
+                        pass
+                return resp
             else:
                 form.add_error(None, 'Wrong Username or Password. Please try again.')
 
@@ -35,6 +47,8 @@ def login(request):
 
 
 def signup(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST)
@@ -59,18 +73,27 @@ def signup(request):
 def logout(request):
     auth.logout(request)
     messages.success(request, 'Successfully logged out!')
-    return HttpResponseRedirect(reverse('account_login'))
+    resp = HttpResponseRedirect(reverse('account_login'))
+    c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
+    c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
+    if c_domain and c_key:
+        try:
+            resp.delete_cookie(c_key, domain=c_domain)
+        except:
+            # We don't care if this is not deleted, we are being cool here!
+            pass
+    return resp
 
 
 def activate(request, uid, token):
     try:
         uid = force_text(urlsafe_base64_decode(uid))
         user = User.objects.get(pk=uid)
-        if request.user != user:
-            messages.warning(request, "User email can be verified")
+        if request.user.is_authenticated and request.user != user:
+            messages.warning(request, "Trying to verify wrong user. Log out please!")
             return redirect('root')
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        messages.warning(request, "User email can be verified")
+        messages.warning(request, "This user no longer exists. Please sign up again!")
         return redirect('root')
 
     if account_activation_token.check_token(user, token):
@@ -80,7 +103,7 @@ def activate(request, uid, token):
         user.save()
         auth.login(request, user)
     else:
-        messages.error(request, "This email verification url has expired")
+        messages.error(request, "Email verification url has expired. Log in so we can send it again!")
     return redirect('root')
 
 
@@ -93,6 +116,8 @@ def password_reset(request):
             msg = tokens.generate_pw_reset_email(user, request)
             msg.send()
             return HttpResponseRedirect(reverse('password_reset_done'))
+        else:
+            return TemplateResponse(request, 'password_reset_form.html', {'form': form})
     else:
         form = PasswordResetForm()
     context = {
@@ -137,6 +162,7 @@ def password_reset_done(request):
 @login_required
 def verify_email_required(request):
     if request.user.email_verified:
+        messages.warning(request, "Your email has already been verified")
         return HttpResponseRedirect(reverse('root'))
     return TemplateResponse(request, 'verify_email_required.html', None)
 
@@ -144,7 +170,9 @@ def verify_email_required(request):
 @login_required
 def send_email_verification(request):
     if request.user.email_verified:
+        messages.warning(request, "Your email has already been verified")
         return HttpResponseRedirect(reverse('root'))
     msg = tokens.generate_verify_email(request.user)
     msg.send()
+    messages.success(request, "Verification email successfully sent")
     return HttpResponseRedirect(reverse('root'))

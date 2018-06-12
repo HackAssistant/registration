@@ -2,7 +2,8 @@ from datetime import timedelta
 
 from django.core import mail
 from django.core.management.base import BaseCommand
-from django.utils.datetime_safe import datetime
+from django.utils import timezone
+
 
 from applications import models, emails
 
@@ -11,7 +12,7 @@ class Command(BaseCommand):
     help = 'Checks invites that have expired and sends reminders 24 before'
 
     def handle(self, *args, **options):
-        fourdaysago = datetime.today() - timedelta(days=4)
+        fourdaysago = timezone.now() - timedelta(days=4)
         self.stdout.write('Checking reminders...')
         reminders = models.Application.objects.filter(
             status_update_date__lte=fourdaysago, status=models.APP_INVITED)
@@ -27,7 +28,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             'Sending reminders... Successfully sent %s reminders' % len(msgs)))
 
-        onedayago = datetime.today() - timedelta(days=1)
+        onedayago = timezone.now() - timedelta(days=1)
         self.stdout.write('Checking expired...')
         expired = models.Application.objects.filter(
             status_update_date__lte=onedayago, status=models.APP_LAST_REMIDER)

@@ -17,12 +17,12 @@
 - Hackathon registration form 📝
 - Check-in interface with QR scanner 📱
 - Review applications interface for organizers (includes vote) ⚖️
-- Email verification
-- Forgot password
-- Internal user role management: Hacker, Organizer, Volunteer, Director and Admin
-- Automatic control of confirmation, expiration and cancellation flows
-- Django Admin dashboard to manually edit applications, reimbursement and users
-- Flexible email backend (SendGrid is the default and recommended supported backend)
+- Email verification 📨
+- Forgot password 🤔
+- Internal user role management: Hacker, Organizer, Volunteer, Director and Admin ☕️
+- Automatic control of confirmation, expiration and cancellation flows 🔄
+- Django Admin dashboard to manually edit applications, reimbursement and users 👓
+- Flexible email backend (SendGrid is the default and recommended supported backend) 📮
 - (Optional) Automated slack invites on confirm 
 
 
@@ -47,16 +47,14 @@ _Coming soon_
 ## Available enviroment variables
 
 - **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
-You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/). Also enables Sendgrid lists integration.
+You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/).
 - **PROD_MODE**(optional): Disables Django debug mode. 
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
-- **PG_PWD**(optional): Postgres password. Also enables Postgres as the default database with the default values specified below.
-- **PG_NAME**(optional): Postgres database name. Default: backend
-- **PG_USER**(optional): Postgres user. Default: backenduser
-- **PG_HOST**(optional): Postgres host. Default: localhost
+- **DATABASE_URL**(optional): URL to connect to the database. If not sets, defaults to django default SQLite database. See schema for different databases [here](https://github.com/kennethreitz/dj-database-url#url-schema).
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
+- **DROPBOX_OAUTH2_TOKEN**(optional): Enables DropBox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
 
 
 ## Server
@@ -67,12 +65,22 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - `python manage.py runserver`
 - Sit back, relax and enjoy. That's it!
 
+### Heroku deploy
+
+You can deploy this project into heroku for free. You will need to verify your account to use the scheduler for automatic application expirations emails. See "Use in your hackathon" for more details on using in your hackathon.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+- Create super user by running `python manage.py createsuperuser` once the heroku app is deployed
+- Add scheduler addon: https://elements.heroku.com/addons/scheduler
+- Open scheduler dashboard: https://scheduler.heroku.com/dashboard (make sure it opens the just created heroku app)
+- Add daily job `python manage.py expire_applications && python manage.py expire_reimbursements`
+
 ### Production environment
 
 Inspired on this [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04) to understand and set it up as in our server.
 
 - Set up (see above)
-- `pip install -r requirements/prod.txt`
 - Create server.sh from template: `cp server.sh.template server.sh`
 - `chmod +x server.sh`
 - Edit variables to match your environment and add extra if required (see environment variables available above)
@@ -127,6 +135,20 @@ ALTER ROLE backenduser SET timezone TO 'UTC';
 - Exit PSQL console: `\q`
 
 Other SQL engines may be used, we recommend PostgreSQL for it's robustness. To use other please check [this documentation](https://docs.djangoproject.com/en/1.11/ref/databases/) for more information on SQL engines in Django.
+
+##### Automatic Dropbox backup
+
+Hackers data is really important. To ensure that you don't lose any data we encourage you to set up automatic backups. One option that is free and reliable is using the PostgresSQLDropboxBackup script. 
+
+Find the script and usage instructions [here](https://github.com/casassg/PostgreSQL-Dropbox-Backup)
+
+#### Set up Dropbox storage for uploaded files
+
+This will need to be used for Heroku or some Docker deployments. File uploads sometimes don't work properly on containerized systems. 
+
+1. Create [new DropBox app](https://www.dropbox.com/developers/apps)
+2. Generate Access token [here](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/)
+3. Set token as environment variable **DROPBOX_OAUTH2_TOKEN**
 
 #### Set up nginx
 
@@ -195,10 +217,9 @@ server {
 You can use this for your own hackathon. How?
 
 - Fork this repo
-- Update [app/hackathon_variable.py](app/hackathon_variable.py)
+- Update [app/hackathon_variable.py](app/hackathon_variables.py)
 - Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
-- Update favicon [app/static/](app/static/)
-- Deploy into your server!
+- Deploy into your server or in Heroku (see above)!
 
 ## Personalization
 

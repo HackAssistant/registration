@@ -9,7 +9,7 @@ FROM_EMAIL = settings.HACKATHON_NAME + ' Team <' + settings.HACKATHON_CONTACT_EM
 
 
 def render_mail(template_prefix, recipient_email, substitutions,
-                from_email=FROM_EMAIL):
+                from_email=FROM_EMAIL, action_required=False):
     """
     Renders an e-mail to `email`.  `template_prefix` identifies the
     e-mail that is to be sent, e.g. "account/email/email_confirmation"
@@ -20,6 +20,8 @@ def render_mail(template_prefix, recipient_email, substitutions,
     # remove superfluous line breaks
     subject = " ".join(subject.splitlines()).strip()
     prefix = '[' + settings.HACKATHON_NAME + ']'
+    if action_required:
+        prefix = '[ACTION REQUIRED]'
     subject = prefix + ' ' + subject
     substitutions.update({'subject': subject})
 

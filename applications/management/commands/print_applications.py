@@ -2,11 +2,9 @@ from django.core.management.base import BaseCommand
 
 from applications import models
 
-EXPORT_CSV_FIELDS = ['name', 'university', 'country', 'email']
-
 
 class Command(BaseCommand):
-    help = 'Shows applications filtered by state as CSV'
+    help = 'Prints applications filtered by state as CSV'
 
     def add_arguments(self, parser):
         parser.add_argument('-s',
@@ -20,7 +18,7 @@ class Command(BaseCommand):
         if options['state']:
             applications = applications.filter(status=options['state'])
 
-        self.stdout.write(','.join(EXPORT_CSV_FIELDS))
+        self.stdout.write(','.join(['name', 'university', 'origin', 'email']))
         for app in applications:
-            res = [app.user.name, app.university, app.origin_country, app.user.email]
+            res = [app.user.name, app.university, app.origin, app.user.email]
             self.stdout.write(','.join(res))

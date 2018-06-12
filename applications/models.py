@@ -21,7 +21,7 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 
 STATUS = [
-    (APP_PENDING, 'Pending'),
+    (APP_PENDING, 'Under review'),
     (APP_REJECTED, 'Wait listed'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
@@ -31,11 +31,13 @@ STATUS = [
     (APP_EXPIRED, 'Expired'),
 ]
 
+NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
 NON_BINARY = 'NB'
 
 GENDERS = [
+    (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
     (NON_BINARY, 'Non-binary'),
@@ -57,10 +59,10 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL'.split(' '))]
+TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(size), size) for size in ('2016 2017 2018 2019 2020 2021 2022'.split(' '))]
+YEARS = [(int(size), size) for size in ('2017 2018 2019 2020 2021 2022 2023'.split(' '))]
 DEFAULT_YEAR = 2017
 
 
@@ -80,8 +82,7 @@ class Application(models.Model):
 
     # ABOUT YOU
     # Population analysis, optional
-    gender = models.CharField(max_length=20, blank=True, null=True,
-                              choices=GENDERS)
+    gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
@@ -91,8 +92,7 @@ class Application(models.Model):
                                                                   '+#########'. Up to 15 digits allowed.")])
 
     # Where is this person coming from?
-    origin_city = models.CharField(max_length=300)
-    origin_country = models.CharField(max_length=300)
+    origin = models.CharField(max_length=300)
 
     # Is this your first hackathon?
     first_timer = models.BooleanField()
@@ -102,7 +102,7 @@ class Application(models.Model):
     projects = models.TextField(max_length=500, blank=True, null=True)
 
     # Reimbursement
-    reimb = models.BooleanField()
+    reimb = models.BooleanField(default=False)
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
@@ -127,10 +127,6 @@ class Application(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
-
-    # Team
-    team = models.BooleanField()
-    teammates = models.CharField(max_length=300, blank=True, null=True)
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -210,6 +206,9 @@ class Application(models.Model):
             self.status = APP_CANCELLED
             self.status_update_date = timezone.now()
             self.save()
+            reimb = getattr(self.user, 'reimbursement', None)
+            if reimb:
+                reimb.delete()
 
     def check_in(self):
         self.status = APP_ATTENDED
@@ -224,6 +223,9 @@ class Application(models.Model):
 
     def answered_invite(self):
         return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
+
+    def needs_action(self):
+        return self.status == APP_INVITED
 
     def is_pending(self):
         return self.status == APP_PENDING

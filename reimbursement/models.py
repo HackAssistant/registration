@@ -11,14 +11,14 @@ from django.utils import timezone
 from reimbursement import emails
 from user.models import User
 
-DEFAULT_REIMBURSEMENT_AMOUNT = settings.DEFAULT_REIMBURSEMENT_AMOUNT
-DEFAULT_EXPIRACY_DAYS = settings.REIMBURSEMENT_EXPIRACY_DAYS
+DEFAULT_EXPIRY_DAYS = settings.REIMBURSEMENT_EXPIRY_DAYS
 
 RE_DRAFT = 'D'
 RE_WAITLISTED = 'W'
 RE_PEND_TICKET = 'PT'
 RE_PEND_APPROVAL = 'PA'
 RE_APPROVED = 'A'
+RE_EXPIRED = 'X'
 RE_FRIEND_SUBMISSION = 'FS'
 
 RE_STATUS = [
@@ -27,6 +27,7 @@ RE_STATUS = [
     (RE_PEND_TICKET, 'Pending receipt submission'),
     (RE_PEND_APPROVAL, 'Pending receipt approval'),
     (RE_APPROVED, 'Receipt approved'),
+    (RE_EXPIRED, 'Expired'),
     (RE_FRIEND_SUBMISSION, 'Friend submission'),
 ]
 
@@ -65,12 +66,12 @@ class Reimbursement(models.Model):
 
     # User controlled
     paypal_email = models.EmailField(null=True, blank=True)
+    address = models.CharField(max_length=300, null=True, blank=True)
     venmo_user = models.CharField(max_length=40, null=True, blank=True)
     receipt = models.FileField(null=True, blank=True, upload_to='receipt', )
     multiple_hackers = models.BooleanField(default=False)
     friend_emails = models.CharField(null=True, blank=True, max_length=400)
-    origin_city = models.CharField(max_length=300)
-    origin_country = models.CharField(max_length=300)
+    origin = models.CharField(max_length=300)
 
     # If a friend submitted receipt
     friend_submission = models.ForeignKey('self', on_delete=models.SET_NULL, related_name='friend_submissions',
@@ -107,16 +108,18 @@ class Reimbursement(models.Model):
 
     @property
     def expired(self):
-        return timezone.now() > self.expiration_time and self.status == RE_PEND_TICKET
+        return self.status == RE_EXPIRED
 
     def generate_draft(self, application):
         if self.status != RE_DRAFT:
             return
-        self.origin_country = application.origin_country
-        self.origin_city = application.origin_city
-        self.assigned_money = min(DEFAULT_REIMBURSEMENT_AMOUNT, application.reimb_amount)
+        self.origin = application.origin
+        self.assigned_money = application.reimb_amount
         self.hacker = application.user
-        self.reimbursement_money = None
+        self.save()
+
+    def expire(self):
+        self.status = RE_EXPIRED
         self.save()
 
     def send(self, user):
@@ -128,7 +131,16 @@ class Reimbursement(models.Model):
             self.status_update_date = timezone.now()
             self.reimbursed_by = user
             self.reimbursement_money = None
-            self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
+            self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRY_DAYS)
+            self.save()
+
+    def no_reimb(self, user):
+        if self.status == RE_DRAFT:
+            self.status = RE_WAITLISTED
+            self.status_update_date = timezone.now()
+            self.reimbursed_by = user
+            self.reimbursement_money = 0
+            self.assigned_money = 0
             self.save()
 
     def is_sent(self):
@@ -146,11 +158,14 @@ class Reimbursement(models.Model):
     def waitlisted(self):
         return self.status == RE_WAITLISTED
 
+    def needs_action(self):
+        return self.can_submit_receipt()
+
     def can_submit_receipt(self):
         return self.status == RE_PEND_TICKET and not self.expired and not self.hacker.application.is_rejected()
 
     def reject_receipt(self, user, request):
-        self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
+        self.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRY_DAYS)
         self.status = RE_PEND_TICKET
         self.reimbursed_by = user
         self.reimbursement_money = None
@@ -159,7 +174,7 @@ class Reimbursement(models.Model):
             for reimb in self.friend_submissions.all():
                 reimb.friend_submission = None
                 reimb.reimbursement_money = None
-                reimb.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRACY_DAYS)
+                reimb.expiration_time = timezone.now() + timedelta(days=DEFAULT_EXPIRY_DAYS)
                 reimb.public_comment = 'Your friend %s submission has not been accepted' % self.hacker.get_full_name()
                 reimb.status = RE_PEND_TICKET
                 reimb.save()
