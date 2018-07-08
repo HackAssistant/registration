@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^teams/', include('teams.urls')),
     url(r'^stats/', include('stats.urls')),
     url(r'code_conduct/$', views.code_conduct, name='code_conduct'),
-
+    url(r'terms_and_conditions/$', views.terms_and_conditions, name='terms_and_conditions')
 ]
 
 if settings.REIMBURSEMENT_ENABLED:

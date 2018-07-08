@@ -19,10 +19,11 @@ def root_view(request):
         return HttpResponseRedirect(reverse('check_in_list'))
     return HttpResponseRedirect(reverse('dashboard'))
 
-
 def code_conduct(request):
     return render(request, 'code_conduct.html')
-
+  
+def terms_and_conditions(request):
+    return render(request, 'terms_and_conditions.html')
 
 class TabsView(mixins.TabsViewMixin, TemplateView):
     pass
