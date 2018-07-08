@@ -1,5 +1,5 @@
 body {
-    background: #2B546B; /*linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;*/
+    background: linear-gradient(#26ADB5 0%, #1DA3AD 33%, #1597A3 67%, #0E8C99 100%) no-repeat center center fixed;
     background-size: cover;
     font-family: 'Roboto', Helvetica, sans-serif;
     font-size: 15px;
@@ -18,7 +18,8 @@ body {
 .footer {
     position: absolute;
     bottom: 0;
-    padding-top: 2em;
+    padding-top: 1em;
+    padding-bottom: 1em;
 
     width: 100%;
     /* Set the fixed height of the footer here */
@@ -31,57 +32,56 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
-/*.btn {*/
-    /*background: #2B2B2B;*/
-    /*box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);*/
-    /*-webkit-border-radius: 0;*/
-    /*-moz-border-radius: 0;*/
-    /*border-radius: 0;*/
-    /*color: white;*/
-    /*border: 0;*/
-    /*overflow-y: hidden;*/
-    /*font-size: 17px;*/
-    /*-webkit-transition: all .1s linear;*/
-    /*-moz-transition: all .1s linear;*/
-    /*-o-transition: all .1s linear;*/
-    /*transition: all .1s linear;*/
-    /*padding-left: 20px;*/
-    /*padding-right: 20px;*/
-/*}*/
+.btn {
+    background: #E22B57;
+    color: white;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    border: 0;
+    /*
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+    overflow-y: hidden;
+    font-size: 17px;
+    -webkit-transition: all .1s linear;
+    -moz-transition: all .1s linear;
+    -o-transition: all .1s linear;
+    transition: all .1s linear;
+    padding-left: 20px;
+    padding-right: 20px;*/
+}
 
-/*.btn:hover, .btn:active, .btn:focus {*/
-    /*background: #4b4b4b !important;*/
-    /*color: white;*/
-/*}*/
+.btn:hover, .btn:active, .btn:focus {
+    background: #aa002d !important;
+    color: white;
+}
 
-/*.btn-reverse {*/
-    /*background: #4c0300;*/
-    /*color: white;*/
-/*}*/
+.btn-reverse {
+    background: #4c0300;
+    color: white;
+}
 
-/*.btn-reverse:hover, .btn-reverse:active, .btn-reverse:focus {*/
-    /*background: #810500 !important;*/
-    /*color: white;*/
+.btn-reverse:hover, .btn-reverse:active, .btn-reverse:focus {
+    background: #810500 !important;
+    color: white;
 
-/*}*/
+}
 
 footer p, footer small {
     color: #777;
-    opacity: 0.5;
 }
 
 footer p > a {
-    color: #4b4b4b;
-    opacity: 1;
+    color: #E22B57;
 }
 
 footer .row {
-    margin-bottom: 10px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 footer a, footer a:focus, footer a:active {
-    opacity: 0.5;
-    color: #777;
+    color: #E22B57;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
     -o-transition: all .1s linear;
@@ -89,13 +89,12 @@ footer a, footer a:focus, footer a:active {
 }
 
 footer a:hover {
-    opacity: 0.9;
-    color: #4b4b4b;
+    color: #aa002d;
 }
 
 .social-icons > a {
     text-decoration: none;
-    padding: 10px;
+    padding: 0.5em;
     font-size: 100%;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
@@ -104,15 +103,15 @@ footer a:hover {
 }
 
 nav.navbar {
-    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 div.panel {
-    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
@@ -125,11 +124,13 @@ div.panel {
 }
 
 .margin-top {
-    margin-top: 90px;
+    margin-top: 6em;
+    margin-bottom: 1.5em;
 }
 
 .margin-top-adjusted {
-    margin-top: 50px;
+    margin-top: 3.3em;
+    margin-bottom: 0.1em;
 }
 
 a.icon {
