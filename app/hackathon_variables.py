@@ -25,7 +25,7 @@ HACKATHON_TWITTER_ACCOUNT = 'hackupc'
 # (OPTIONAL) Hackathon Facebook page
 HACKATHON_FACEBOOK_PAGE = 'hackupc'
 # (OPTIONAL) Hackathon YouTube channel
-HACKATHON_FACEBOOK_PAGE = 'UCiiRorGg59Xd5Sjj9bjIt-g'
+HACKATHON_YOUTUBE_PAGE = 'UCiiRorGg59Xd5Sjj9bjIt-g'
 # (OPTIONAL) Hackathon Instagram user
 HACKATHON_INSTAGRAM_ACCOUNT = 'hackupc'
 # (OPTIONAL) Hackathon Medium user
