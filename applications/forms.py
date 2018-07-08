@@ -139,7 +139,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Personal Info',
              {'fields': ('university', 'degree', 'graduation_year', 'gender',
                          'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
+                         'under_age', 'lennyface', 'hardware'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -180,8 +180,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                'you graduate',
             'degree': 'What\'s your major?',
             'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
-            'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
-                         ' http://textsmili.es/</a>',
+            'lennyface': 'You can chose one from <a href="https://lenny-face-generator.textsmilies.com/?cr=bW91dGh%2Bdy5udy5pZV9leWVzfncubzEuNHdfZWFyc34xNC0xNQ%3D%3D" target="_blank">'
+                         'here</a>!',
+            'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, but at least we\'ll try!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
@@ -201,6 +202,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
+            'hardware': 'Hardware you would like us to have',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
