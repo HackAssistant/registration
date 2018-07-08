@@ -1,9 +1,6 @@
-<br>
 <p align="center">
-  <img alt="HackUPC Fall 2016" src="https://github.com/hackupc/frontend/raw/master/src/images/hackupc-header.png" width="620"/>
+  <img alt="HackUPC Fall 2016" src="app/static/img/hackupc-ogimage@2x.png" width="100%"/>
 </p>
-<br>
-
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
