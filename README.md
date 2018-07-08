@@ -22,6 +22,8 @@
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
 - (Optional) Automated slack invites on confirm 
 
+
+
 ## Setup
 
 Needs: Python 3.X, virtualenv
@@ -33,6 +35,7 @@ Needs: Python 3.X, virtualenv
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
 - `python manage.py migrate`
 - `python manage.py createsuperuser` (creates super user to manage all the app)
+
 
 ### Dummy data
 
@@ -49,6 +52,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
 - **DROPBOX_OAUTH2_TOKEN**(optional): Enables DropBox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
+
 
 ## Server
 
@@ -182,6 +186,8 @@ server {
 - `./restart.sh`
 - `sudo service backend restart`
 
+
+
 ## Management
 
 ### Automated expiration
@@ -201,6 +207,8 @@ server {
 - **is_director**: Allows user to send invites to hackers as well as send reimbursement.
 - **is_admin**: Allows user to enter Django Admin interface
 
+
+
 ## Use in your hackathon
 
 You can use this for your own hackathon. How?
@@ -218,6 +226,7 @@ You can use this for your own hackathon. How?
 - Navbar & content/disposition: [app/templates/base.html](app/templates/base.html)
 - Email base template: [app/templates/base_email.html](app/templates/base_email.html)
 - Update favicon [app/static/](app/static/)
+
 
 ### Content
 
@@ -249,4 +258,4 @@ By making a contribution, in any form (including, but not limited to, Issues and
 
 # License
 
-MIT � Hackers@UPC
+MIT © Hackers@UPC
