@@ -235,7 +235,7 @@ You can use this for your own hackathon. How?
 You can update emails related to 
 - Applications (application invite, event ticket, last reminder) at [applications/templates/mails/](applications/templates/mails/)
 - Reimbursements (reimbursement email, reject receipt) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
-- User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+- User registration (email verification, password reset) at [user/templates/mails/](user/templates/mails/)
 
 #### Update hackathon variables
 Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). 

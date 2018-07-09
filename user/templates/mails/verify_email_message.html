@@ -3,7 +3,7 @@
 
 {% block content %}
     <p> Hey {{ user.get_full_name }},</p>
-    <p>You have 5 days to verify your email address for your account at {{ h_name }}</p>
+    <p>You have 5 days to verify your email address for your account at {{ h_name }}.</p>
     {% include 'mails/include/email_button.html' with text='Verify' url=activate_url %}
 
     {% include 'mails/include/closing.html' %}
