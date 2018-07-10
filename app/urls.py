@@ -19,6 +19,8 @@ urlpatterns = [
     url(r'^teams/', include('teams.urls')),
     url(r'^stats/', include('stats.urls')),
     url(r'code_conduct/$', views.code_conduct, name='code_conduct'),
+    url(r'legal_notice/$', views.legal_notice, name='legal_notice'),
+    url(r'privacy_and_cookies/$', views.privacy_and_cookies, name='privacy_and_cookies'),
     url(r'terms_and_conditions/$', views.terms_and_conditions, name='terms_and_conditions')
 ]
 
