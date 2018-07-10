@@ -9,7 +9,7 @@ HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 5th-7th.'
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 29th-21st.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
