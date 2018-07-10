@@ -86,7 +86,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         if not cc and not self.instance.pk:
             raise forms.ValidationError("In order to apply and attend you have to accept our Code of Conduct.")
         return cc
-      
+
     def clean_terms_and_conditions(self):
         cc = self.cleaned_data.get('terms_and_conditions', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
@@ -212,7 +212,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         }
 
         labels = {
-            'gender': 'What gender do you associate with?',
+            'gender': 'What gender do you identify as?',
             'graduation_year': 'What year are you graduating?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
