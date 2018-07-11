@@ -74,7 +74,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                       label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share my CV with the Sponsors of this specific event: '
                                       'HackUPC 2018.<span style="color: red; font-weight: bold;"> *</span>')
 
-    diet_notice = forms.BooleanField(required=False, label='Dietary requirements notice here')
+    diet_notice = forms.BooleanField(required=False, label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to use my personal data related to my food '
+                                                     'allergies and intolerances only in order to manage the catering service.')
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
