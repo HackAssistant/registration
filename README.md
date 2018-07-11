@@ -28,7 +28,7 @@
 
 Needs: Python 3.X, virtualenv
 
-- `git clone https://github.com/hackassistant/registration && cd registration`
+- `git clone https://github.com/hackupc/registration && cd registration`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
