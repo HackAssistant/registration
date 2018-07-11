@@ -65,6 +65,10 @@
             conditional_field(other_diet, diet, function () {
                 return diet.val() === 'Others';
             });
+            var diet_notice = $('#id_diet_notice');
+            conditional_field(diet_notice, diet, function () {
+                return diet.val() !== 'No requirements';
+            });
 
             var has_team = $('input[name="team"][value="True"]');
             var no_team = $('input[name="team"][value="False"]');
