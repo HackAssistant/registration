@@ -85,8 +85,6 @@
                 <a class="navbar-brand white-text" href="/"><img src="{% static 'img/logo.png' %}" /></a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-
                 <ul class="nav navbar-nav navbar-right ">
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_admin %}
@@ -194,6 +192,10 @@
                 {# OH NO YOU FOUND ME! This is just an internal joke that appeared at the first edition of HackUPC. #}
                 {# You can remove it, but if you dont care, please keep it. I'm a sentimental - Gerard Casas contact@gerard.space #}
                 <span style="display: none">BIENE {{ h_name }}</span>
+                <br><br>
+                <a href="../legal_notice/">Legal notice</a> | 
+                <a href="../terms_and_conditions/">Terms and conditions</a> | 
+                <a href="../privacy_and_cookies/">Privacy and cookies</a>
             </div>
         </div>
     </div>
