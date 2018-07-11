@@ -277,3 +277,31 @@ img {
         height: 145px;
     }
 }
+
+/* cookie notice */
+#cookie-notice{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    padding: 0.5em 1em;
+    text-align: center;
+    transition: bottom 1s;
+    background-color:#E22B57;
+    z-index:1031; /*footer was set to 1030*/
+    box-shadow: 0px 15px 15px 15px black;
+    color:white;
+}
+
+#cookie-notice div{
+    width: 100px;
+    padding: 5px 10px;
+    margin: 0.5em auto;
+    background-color:#202326;
+    cursor: pointer;
+
+}
+
+#cookies-a {
+    color: #FFF;
+    text-decoration: underline !important;
+}
