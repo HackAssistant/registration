@@ -70,6 +70,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                             '<a href="/terms_and_conditions" target="_blank">%s Terms and Conditions</a>.' % (
                                                 settings.HACKATHON_NAME), )
 
+    diet_notice = forms.BooleanField(required=False, label='Dietary requirements notice here')
+
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
@@ -95,6 +97,16 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         if not cc and not self.instance.pk:
             raise forms.ValidationError("In order to apply and attend you have to accept our Terms and Conditions.")
         return cc
+
+    def clean_diet_notice(self):
+        diet = self.cleaned_data['diet']
+        diet_notice = self.cleaned_data.get('diet_notice', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if diet != 'No requirements' and not diet_notice and not self.instance.pk:
+            raise forms.ValidationError("In order to apply and attend you have to accept our dietary notice.")
+        return diet_notice
 
     def clean_github(self):
         data = self.cleaned_data['github']
@@ -184,6 +196,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         if not self.instance.pk:
             self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
             self._fieldsets.append(('Terms and Conditions', {'fields': ('terms_and_conditions',)}))
+            self._fieldsets.append(('Allergies', {'fields': ('diet_notice',)}))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
