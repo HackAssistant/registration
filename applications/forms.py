@@ -30,7 +30,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
     degree = forms.CharField(required=True, label='What\'s your Major?',
-                             help_text='Current or most recent degree you\'ve received',
+                             help_text='Current or most recent degree you\'ve received.',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
@@ -62,14 +62,19 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
-                                            '<a href="/code_conduct" target="_blank">%s Code of conduct</a>' % (
+                                            '<a href="/code_conduct" target="_blank">%s Code of conduct</a>.' % (
+                                                settings.HACKATHON_NAME), )
+
+    terms_and_conditions = forms.BooleanField(required=False,
+                                      label='I have read and accept '
+                                            '<a href="/terms_and_conditions" target="_blank">%s Terms and Conditions</a>.' % (
                                                 settings.HACKATHON_NAME), )
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
         if size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError("Please keep resume size under %s. Current filesize %s" % (
+            raise forms.ValidationError("Please keep resume size under %s. Current filesize %s!" % (
                 filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         return resume
 
@@ -79,7 +84,16 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
+            raise forms.ValidationError("In order to apply and attend you have to accept our Code of Conduct.")
+        return cc
+
+    def clean_terms_and_conditions(self):
+        cc = self.cleaned_data.get('terms_and_conditions', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError("In order to apply and attend you have to accept our Terms and Conditions.")
         return cc
 
     def clean_github(self):
@@ -101,14 +115,14 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         data = self.cleaned_data['projects']
         first_timer = self.cleaned_data['first_timer']
         if not first_timer and not data:
-            raise forms.ValidationError("Please fill this in order for us to know you a bit better")
+            raise forms.ValidationError("Please fill this in order for us to know you a bit better.")
         return data
 
     def clean_reimb_amount(self):
         data = self.cleaned_data['reimb_amount']
         reimb = self.cleaned_data.get('reimb', False)
         if reimb and not data:
-            raise forms.ValidationError("To apply for reimbursement please set a valid amount")
+            raise forms.ValidationError("To apply for reimbursement please set a valid amount.")
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         if data and deadline and deadline <= timezone.now():
             raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
@@ -125,7 +139,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         data = self.cleaned_data['other_diet']
         diet = self.cleaned_data['diet']
         if diet == 'Others' and not data:
-            raise forms.ValidationError("Please fill your specific diet requirements")
+            raise forms.ValidationError("Please fill your specific diet requirements.")
         return data
 
     def __getitem__(self, name):
@@ -139,7 +153,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Personal Info',
              {'fields': ('university', 'degree', 'graduation_year', 'gender',
                          'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
+                         'under_age', 'lennyface', 'hardware'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -169,22 +183,24 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(('Terms and Conditions', {'fields': ('terms_and_conditions',)}))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
         model = models.Application
         help_texts = {
             'gender': 'This is for demographic purposes. You can skip this '
-                      'question if you want',
+                      'question if you want.',
             'graduation_year': 'What year have you graduated on or when will '
-                               'you graduate',
+                               'you graduate.',
             'degree': 'What\'s your major?',
             'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
-            'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
-                         ' http://textsmili.es/</a>',
+            'lennyface': 'You can chose one from <a href="https://lenny-face-generator.textsmilies.com/?cr=bW91dGh%2Bdy5udy5pZV9leWVzfncubzEuNHdfZWFyc34xNC0xNQ%3D%3D" target="_blank">'
+                         'here</a>!',
+            'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, but at least we\'ll try!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
-            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
+            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited.'
         }
 
         widgets = {
@@ -196,11 +212,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         }
 
         labels = {
-            'gender': 'What gender do you associate with?',
+            'gender': 'What gender do you identify as?',
             'graduation_year': 'What year are you graduating?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
+            'hardware': 'Hardware you would like us to have',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',

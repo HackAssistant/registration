@@ -9,7 +9,7 @@ HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 13th-15th.'
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 29th-21st.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
@@ -17,25 +17,31 @@ HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
 # Hackathon logo url, will be used on all emails
 HACKATHON_LOGO_URL = 'https://my.hackupc.com/static/logo.png'
 
-HACKATHON_OG_IMAGE = 'https://hackcu.org/img/hackcu_ogimage870x442.png'
+HACKATHON_OG_IMAGE = 'https://hackupc.com/assets/img/hackupc-ogimage@2x.png?v=2018'
 # (OPTIONAL) Track visits on your website
 HACKATHON_GOOGLE_ANALYTICS = 'UA-69542332-2'
-# (OPTIONAL) Hackathon twitter user
+# (OPTIONAL) Hackathon Twitter user
 HACKATHON_TWITTER_ACCOUNT = 'hackupc'
 # (OPTIONAL) Hackathon Facebook page
 HACKATHON_FACEBOOK_PAGE = 'hackupc'
+# (OPTIONAL) Hackathon YouTube channel
+HACKATHON_YOUTUBE_PAGE = 'UCiiRorGg59Xd5Sjj9bjIt-g'
+# (OPTIONAL) Hackathon Instagram user
+HACKATHON_INSTAGRAM_ACCOUNT = 'hackupc'
+# (OPTIONAL) Hackathon Medium user
+HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 # (OPTIONAL) Github Repo for this project (so meta)
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
 # HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Friday October 13th, ' \
-                   'the opening ceremony will be at 7:00 pm.'
+HACKATHON_ARRIVE = 'Registration opens at 3:00PM and closes at 6:00PM on Friday October 5th, ' \
+                   'the opening ceremony will be at 7:00PM.'
 
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
-                  'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
+HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 7th from 3:00PM to 5:00PM. ' \
+                  'However the projects demo fair will be held in the morning from 10:30AM to 1:00PM.'
 # (OPTIONAL) Hackathon live page
 HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
 

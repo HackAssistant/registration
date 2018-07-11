@@ -7,6 +7,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>{{ subject }}</title>
     <style type="text/css">
+	a {
+	    color: #E22B57;
+	    text-decoration: none;
+	    -webkit-transition: all .1s linear;
+	    -moz-transition: all .1s linear;
+	    -o-transition: all .1s linear;
+	    transition: all .1s linear;
+	}
+
+	a:hover, a:active, a:focus {
+	    color: #aa002d;
+	    text-decoration: none;
+	}
+    
         @media only screen and (max-width: 620px) {
             table[class=body] h1 {
                 font-size: 28px !important;
@@ -112,7 +126,7 @@
                 <img class="max-width"
                      src="{{ h_logo }}"
                      alt="" border="0"
-                     style="display: block; color: #000; margin: 0 auto; padding-bottom:20px; padding-top:20px;text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px;  max-height:170px !important; max-width: 70% !important; width: auto !important; height: auto !important; "/>
+                     style="display: block; color: #000; margin: 0 auto; text-decoration: none; font-family: Helvetica, arial, sans-serif; font-size: 16px; margin-top: 20px; width: 100% !important; height: auto !important; "/>
                 <!-- START CENTERED WHITE CONTAINER -->
                 <span class="preheader"
                       style="color:transparent;display:none;height:0;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;width:0;">
@@ -164,10 +178,40 @@
 
                                     <span class="apple-link" style="color:#999999;font-size:12px;text-align:center;">You are receiving this because you applied to {{ h_name }}.</span><br>
                                     <span class="apple-link" style="color:#999999;font-size:12px;text-align:center;"> If you think this is a mistake, please send us an email
-                                           at {{ h_contact_email|urlize }}</span>
+                                           at {{ h_contact_email|urlize }}.</span>
                                     <table style="padding-top: 20px" cellpadding="0" cellspacing="0" border="0"
                                            align="center">
                                         <tr>
+                                            {% if h_me %}
+                                                <td style="padding: 0px 5px;">
+                                                    <a role="social-icon-link"
+                                                       href="https://medium.com/@{{ h_me }}"
+                                                       target="_blank" border="0" alt="Medium" title="Medium"
+                                                       style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                        <img role="social-icon" alt="Medium" title="Medium"
+                                                             border="0"
+                                                             height="20" width="20"
+                                                             style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
+                                                             src="https://i.imgur.com/tSZmX7E.png"
+                                                        />
+                                                    </a>
+                                                </td>
+                                            {% endif %}
+                                            {% if h_ig %}
+                                                <td style="padding: 0px 5px;">
+                                                    <a role="social-icon-link"
+                                                       href="https://instagram.com/{{ h_ig }}"
+                                                       target="_blank" border="0" alt="Instagram" title="Instagram"
+                                                       style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                        <img role="social-icon" alt="Instagram" title="Instagram"
+                                                             border="0"
+                                                             height="20" width="20"
+                                                             style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
+                                                             src="https://i.imgur.com/0QEoQ66.png"
+                                                        />
+                                                    </a>
+                                                </td>
+                                            {% endif %}
                                             {% if h_fb %}
                                                 <td style="padding: 0px 5px;">
                                                     <a role="social-icon-link"
@@ -179,6 +223,21 @@
                                                              height="20" width="20"
                                                              style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
                                                              src="https://i.imgur.com/aYCS2kb.png"
+                                                        />
+                                                    </a>
+                                                </td>
+                                            {% endif %}
+                                            {% if h_yt %}
+                                                <td style="padding: 0px 5px;">
+                                                    <a role="social-icon-link"
+                                                       href="https://youtube.com/channel/{{ h_yt }}"
+                                                       target="_blank" border="0" alt="YouTube" title="YouTube"
+                                                       style="border-radius: 5px; -webkit-border-radius:5px; -moz-border-radius:5px; -ms-border-radius:5px; -o-border-radius:5px; color: white; display: inline-block; outline: none; text-decoration:none; border: none; font-family: Helvetica, arial, sans-serif;">
+                                                        <img role="social-icon" alt="YouTube" title="YouTube"
+                                                             border="0"
+                                                             height="20" width="20"
+                                                             style="height: 20px; width: 20px; border:none; font-family: Helvetica, arial, sans-serif;"
+                                                             src="https://imgur.com/4hzPSg1.png"
                                                         />
                                                     </a>
                                                 </td>
