@@ -11,10 +11,13 @@ function make_field_typeahead(field_id, path_to_json) {
 }
 
 
-function conditional_field(field_to_hide, field_to_track, f_eval_to_show) {
-    var parent = field_to_hide.parent('div');
+function conditional_field(field_to_hide, field_to_track, f_eval_to_show, parent_num) {
+    var parent = field_to_hide;
+    for(i=0; i<parent_num; i++){
+	parent = parent.parent();
+    }
     field_to_track.on('change', function () {
-        if (f_eval_to_show()) {
+	if (f_eval_to_show()) {
             parent.fadeIn();
         } else {
             parent.fadeOut();
@@ -24,6 +27,4 @@ function conditional_field(field_to_hide, field_to_track, f_eval_to_show) {
     if (!f_eval_to_show()) {
         parent.hide()
     }
-
-
 }

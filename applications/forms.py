@@ -119,7 +119,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if diet != 'No requirements' and not diet_notice and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept our dietary notice.")
+            raise forms.ValidationError("In order to apply and attend you have to accept us to use your personal data related to your food "
+                                        "allergies and intolerances only in order to manage the catering service.")
         return diet_notice
 
     def clean_github(self):
@@ -213,7 +214,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                          'margin-bottom: 1em;line-height: 1.25em;">ASSOCIACIÓ HACKERS AT UPC is the data '
                                                          'controller of your data, including images and videos of yourself, in order to '
                                                          'handle and process requests received from you and also to send commercial '
-                                                         'communications about activities, services or products offered by ASSOCIACIÓ'
+                                                         'communications about activities, services or products offered by ASSOCIACIÓ '
                                                          'HACKERS AT UPC that are of a similar nature to those previously requested by '
                                                          'you, among other purposes. For more information on the processing of your personal '
                                                          'data and on how to exercise your rights of access, rectification, suppression, '
