@@ -118,7 +118,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Check that if it's the first submission hackers checks terms and conditions checkbox
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        if diet != 'No requirements' and not diet_notice and not self.instance.pk:
+        if diet != 'None' and not diet_notice and not self.instance.pk:
             raise forms.ValidationError("In order to apply and attend you have to accept us to use your personal data related to your food "
                                         "allergies and intolerances only in order to manage the catering service.")
         return diet_notice
