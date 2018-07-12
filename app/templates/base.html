@@ -201,6 +201,30 @@
     </div>
 </footer>
 
+<!--cookies-->
+<div id="cookie-notice" style="display:none">
+        <p>This website uses cookies of its own and of third parties to improve your browsing experience and show you personalized content based on your interests. If you continue browsing, we consider that you accept its use. You can obtain more information in our <a id="cookies-a" href="{% url 'privacy_and_cookies' %}" target="_blank">Privacy and Cookies Policy</a>.</p>
+        <div id="cookie-notice-button">
+            OK!
+        </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        if(window.localStorage.getItem("cookies"))
+            return
+        var cne = document.getElementById("cookie-notice")
+        cne.style.display = "block"
+        document.getElementById("cookie-notice-button").addEventListener("click", ()=>{
+            window.localStorage.setItem("cookies", "1")
+            cne.style.bottom = "-250px"
+            setTimeout(()=>{
+                cne.parentNode.removeChild(cne)
+            }, 1010)
+        })
+    })
+</script>
+<!--/cookies-->
+
 {% block extra_scripts %}
 {% endblock %}
 {% if h_ga %}
