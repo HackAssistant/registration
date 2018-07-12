@@ -37,10 +37,8 @@ class RegisterForm(LoginForm):
     name = forms.CharField(label='Full name', max_length=225, help_text='How do you want us to call you?')
 	
     terms_and_conditions = forms.BooleanField(
-        label='I’ve read, understand and accept <a href="/terms_and_conditions" target="_blank">HackUPC '
-              'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">HackUPC '
+        label='I’ve read, understand and accept <a href="/privacy_and_cookies" target="_blank">HackUPC '
               'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>')
-    )
 
     field_order = ['name', 'email', 'password', 'password2', 'terms_and_conditions']
 
