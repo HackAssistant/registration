@@ -71,16 +71,16 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     cvs_edition = forms.BooleanField(
         required=False,
-        label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share my CV with the Sponsors of this specific event:'
-              ' HackUPC 2018.'
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2018 Sponsors.'
     )
 
     diet_notice = forms.BooleanField(
         required=False,
-        label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to use my personal data related to my food '
-              'allergies and intolerances only in order to manage the catering service.'
-              '<span style="color: red; font-weight: bold;"> *</span>'
+        label='I authorize "Hackers at UPC" to use my food allergies and intolerances information to '
+              'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
     )
+
+    resume = models.FileField(required=True, upload_to='resumes', null=True, blank=True)
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
@@ -212,14 +212,16 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             self._fieldsets.append(('HackUPC Policies', {
                 'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
                 'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
-                               'margin-bottom: 1em;line-height: 1.25em;">ASSOCIACIÓ HACKERS AT UPC is the data '
-                               'controller of your data, including images and videos of yourself, in order to '
-                               'handle and process requests received from you and also to send commercial '
-                               'communications about activities, services or products offered by ASSOCIACIÓ '
-                               'HACKERS AT UPC that are of a similar nature to those previously requested by '
-                               'you, among other purposes. For more information on the processing of your personal '
-                               'data and on how to exercise your rights of access, rectification, suppression, '
-                               'limitation, portability and opposition please visit our Privacy and Cookies Policy.</p>'
+                               'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
+                               'process your information to organize an awesome hackaton. It '
+                               'will also include images and videos of yourself during the event. '
+                               'Your data will be used for admissions mainly. We may also reach '
+                               'out to you (sending you an e-mail) about other events that we are '
+                               'organizing and that are of a similar nature to those previously '
+                               'requested by you. For more information on the processing of your '
+                               'personal data and on how to exercise your rights of access, '
+                               'rectification, suppression, limitation, portability and opposition '
+                               'please visit our Privacy and Cookies Policy.</p>'
             }))
         return super(ApplicationForm, self).fieldsets
 
