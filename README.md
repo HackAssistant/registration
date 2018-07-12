@@ -1,9 +1,6 @@
-<br>
 <p align="center">
-  <img alt="HackUPC Fall 2016" src="https://github.com/hackupc/frontend/raw/master/src/images/hackupc-header.png" width="620"/>
+  <img alt="HackUPC Fall 2016" src="app/static/img/hackupc-ogimage@2x.png" width="100%"/>
 </p>
-<br>
-
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
@@ -31,7 +28,7 @@
 
 Needs: Python 3.X, virtualenv
 
-- `git clone https://github.com/hackassistant/registration && cd registration`
+- `git clone https://github.com/hackupc/registration && cd registration`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
@@ -238,7 +235,7 @@ You can use this for your own hackathon. How?
 You can update emails related to 
 - Applications (application invite, event ticket, last reminder) at [applications/templates/mails/](applications/templates/mails/)
 - Reimbursements (reimbursement email, reject receipt) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
-- User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+- User registration (email verification, password reset) at [user/templates/mails/](user/templates/mails/)
 
 #### Update hackathon variables
 Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). 
