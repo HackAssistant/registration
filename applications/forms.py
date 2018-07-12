@@ -79,6 +79,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         required=False,
         label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to use my personal data related to my food '
               'allergies and intolerances only in order to manage the catering service.'
+              '<span style="color: red; font-weight: bold;"> *</span>'
     )
 
     def clean_resume(self):
