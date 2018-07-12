@@ -55,7 +55,6 @@ a:hover, a:active, a:focus {
 
     width: 100%;
     /* Set the fixed height of the footer here */
-    height: 105px;
     background-color: #f8f8f8;
     border-color: #e7e7e7;
 
@@ -158,7 +157,7 @@ div.panel form {
 
 .content {
   margin-top: 6em;
-  margin-bottom: 8.5em;
+  margin-bottom: 12.5em;
 }
 
 .margin-top {
@@ -272,8 +271,8 @@ img {
         /* Margin bottom by footer height */
         margin-bottom: 145px;
     }
-
-    .footer {
-        height: 145px;
+    
+    .content {
+        margin-bottom: 16em !important;
     }
 }
