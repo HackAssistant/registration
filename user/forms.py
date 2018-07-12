@@ -36,7 +36,11 @@ class RegisterForm(LoginForm):
                                 help_text=' '.join(password_validators_help_texts()))
     name = forms.CharField(label='Full name', max_length=225, help_text='How do you want us to call you?')
 
-    field_order = ['name', 'email', 'password', 'password2']
+    terms_and_conditions = forms.BooleanField(
+        label='I\'ve read, understand and accept <a href="/privacy_and_cookies" target="_blank">HackUPC '
+              'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>')
+
+    field_order = ['name', 'email', 'password', 'password2', 'terms_and_conditions']
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -46,6 +50,18 @@ class RegisterForm(LoginForm):
             raise forms.ValidationError("Passwords don't match")
         validate_password(password)
         return password2
+
+    def clean_terms_and_conditions(self):
+        cc = self.cleaned_data.get('terms_and_conditions', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept our Terms & Conditions and"
+                " our Privacy and Cookies Policy."
+            )
+        return cc
 
 
 class PasswordResetForm(forms.Form):
