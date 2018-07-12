@@ -88,6 +88,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         if size > settings.MAX_UPLOAD_SIZE:
             raise forms.ValidationError("Please keep resume size under %s. Current filesize %s!" % (
                 filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
+        if not resume and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to provide a resume."
+            )
         return resume
 
     def clean_terms_and_conditions(self):
