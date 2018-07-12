@@ -60,13 +60,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    images_and_videos = forms.BooleanField(
-        required=False,
-        label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share the images '
-              'and videos of myself with the Sponsors of this specific event.'
-              '<span style="color: red; font-weight: bold;"> *</span>'
-    )
-
     terms_and_conditions = forms.BooleanField(
         required=False,
         label='I’ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
@@ -95,17 +88,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please keep resume size under %s. Current filesize %s!" % (
                 filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
         return resume
-
-    def clean_images_and_videos(self):
-        cc = self.cleaned_data.get('images_and_videos', False)
-        # Check that if it's the first submission hackers checks code of conduct checkbox
-        # self.instance.pk is None if there's no Application existing before
-        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        if not cc and not self.instance.pk:
-            raise forms.ValidationError(
-                "In order to apply and attend you have to accept to share the images and videos with the Sponsors."
-            )
-        return cc
 
     def clean_terms_and_conditions(self):
         cc = self.cleaned_data.get('terms_and_conditions', False)
@@ -230,7 +212,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
-                'fields': ('terms_and_conditions', 'diet_notice', 'images_and_videos', 'cvs_edition'),
+                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
                 'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">ASSOCIACIÓ HACKERS AT UPC is the data '
                                'controller of your data, including images and videos of yourself, in order to '
