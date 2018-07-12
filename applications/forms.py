@@ -72,7 +72,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     cvs_edition = forms.BooleanField(
         required=False,
         label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share my CV with the Sponsors of this specific event:'
-              ' HackUPC 2018.<span style="color: red; font-weight: bold;"> *</span>'
+              ' HackUPC 2018.'
     )
 
     diet_notice = forms.BooleanField(
@@ -103,13 +103,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     def clean_cvs_edition(self):
         cc = self.cleaned_data.get('cvs_edition', False)
-        # Check that if it's the first submission hackers checks terms and conditions checkbox
-        # self.instance.pk is None if there's no Application existing before
-        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        if not cc and not self.instance.pk:
-            raise forms.ValidationError(
-                "In order to apply and attend you have to accept to share your CV with the Sponsors."
-            )
         return cc
 
     def clean_diet_notice(self):
