@@ -128,6 +128,9 @@ class Application(models.Model):
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
+    # Info for hardware
+    hardware = models.CharField(max_length=300, null=True, blank=True)
+
     @classmethod
     def annotate_vote(cls, qs):
         return qs.annotate(vote_avg=Avg('vote__calculated_vote'))

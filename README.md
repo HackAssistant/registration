@@ -1,14 +1,11 @@
-<br>
 <p align="center">
-  <img alt="HackAssistant" src="https://avatars2.githubusercontent.com/u/33712329?s=200&v=4" width="200"/>
+  <img alt="HackUPC Fall 2016" src="app/static/img/hackupc-ogimage@2x.png" width="100%"/>
 </p>
-<br>
-
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
 
-📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu)
+📝 Registration for hackathons. Forked from [HackAssistant/registration](https://github.com/HackAssistant/registration). Previously known as hackupc/backend.
 
 ## Features
 
@@ -25,13 +22,13 @@
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
 - (Optional) Automated slack invites on confirm 
 
-**Demo**: http://registration.gerard.space (updated from master automatically. Running on Heroku free dyno)
+
 
 ## Setup
 
 Needs: Python 3.X, virtualenv
 
-- `git clone https://github.com/hackassistant/registration && cd registration`
+- `git clone https://github.com/hackupc/registration && cd registration`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
@@ -217,7 +214,7 @@ server {
 You can use this for your own hackathon. How?
 
 - Fork this repo
-- Update [app/hackathon_variable.py](app/hackathon_variable.py)
+- Update [app/hackathon_variable.py](app/hackathon_variables.py)
 - Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
 - Deploy into your server or in Heroku (see above)!
 
@@ -228,6 +225,8 @@ You can use this for your own hackathon. How?
 - Colors and presentation: [app/static/css/main.css](app/static/css/main.css).
 - Navbar & content/disposition: [app/templates/base.html](app/templates/base.html)
 - Email base template: [app/templates/base_email.html](app/templates/base_email.html)
+- Update favicon [app/static/](app/static/)
+
 
 ### Content
 
@@ -236,7 +235,7 @@ You can use this for your own hackathon. How?
 You can update emails related to 
 - Applications (application invite, event ticket, last reminder) at [applications/templates/mails/](applications/templates/mails/)
 - Reimbursements (reimbursement email, reject receipt) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
-- User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+- User registration (email verification, password reset) at [user/templates/mails/](user/templates/mails/)
 
 #### Update hackathon variables
 Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). 
@@ -255,7 +254,7 @@ If you need extra labels for your hackathon, you can change the model and add yo
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
 
-By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to report@gerard.space and appropriate action will be taken against the offender after investigation.
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackupc.com and appropriate action will be taken against the offender after investigation.
 
 # License
 
