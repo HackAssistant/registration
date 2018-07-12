@@ -60,22 +60,33 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    images_and_videos = forms.BooleanField(required=False,
-                                      label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share the images and videos of myself with the Sponsors '
-                                      'of this specific event.<span style="color: red; font-weight: bold;"> *</span>')
+    images_and_videos = forms.BooleanField(
+        required=False,
+        label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share the images '
+              'and videos of myself with the Sponsors of this specific event.'
+              '<span style="color: red; font-weight: bold;"> *</span>'
+    )
 
-    terms_and_conditions = forms.BooleanField(required=False,
-                                      label='I’ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s Terms & Conditions</a> '
-                                      'and <a href="/privacy_and_cookies" target="_blank">%s Privacy and Cookies Policy</a>.<span style="color: red; '
-                                      'font-weight: bold;"> *</span>' % (
-                                                settings.HACKATHON_NAME, settings.HACKATHON_NAME) )
+    terms_and_conditions = forms.BooleanField(
+        required=False,
+        label='I’ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
+              'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
+              'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
+                  settings.HACKATHON_NAME, settings.HACKATHON_NAME
+              )
+    )
 
-    cvs_edition = forms.BooleanField(required=False,
-                                      label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share my CV with the Sponsors of this specific event: '
-                                      'HackUPC 2018.<span style="color: red; font-weight: bold;"> *</span>')
+    cvs_edition = forms.BooleanField(
+        required=False,
+        label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to share my CV with the Sponsors of this specific event:'
+              ' HackUPC 2018.<span style="color: red; font-weight: bold;"> *</span>'
+    )
 
-    diet_notice = forms.BooleanField(required=False, label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to use my personal data related to my food '
-                                                     'allergies and intolerances only in order to manage the catering service.')
+    diet_notice = forms.BooleanField(
+        required=False,
+        label='I expressly authorize ASSOCIACIÓ HACKERS AT UPC to use my personal data related to my food '
+              'allergies and intolerances only in order to manage the catering service.'
+    )
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
@@ -91,7 +102,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept to share the images and videos with the Sponsors.")
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept to share the images and videos with the Sponsors."
+            )
         return cc
 
     def clean_terms_and_conditions(self):
@@ -100,7 +113,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept our Terms & Conditions and our Privacy and Cookies Policy.")
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept our Terms & Conditions and"
+                " our Privacy and Cookies Policy."
+            )
         return cc
 
     def clean_cvs_edition(self):
@@ -109,7 +125,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept to share your CV with the Sponsors.")
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept to share your CV with the Sponsors."
+            )
         return cc
 
     def clean_diet_notice(self):
@@ -119,8 +137,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if diet != 'None' and not diet_notice and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept us to use your personal data related to your food "
-                                        "allergies and intolerances only in order to manage the catering service.")
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept us to use your personal data related to your food "
+                "allergies and intolerances only in order to manage the catering service."
+            )
         return diet_notice
 
     def clean_github(self):
@@ -186,7 +206,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
               'description': 'Some of our sponsors will use this information to potentially recruit you,'
-              'so please include as much as you can.'}),
+                             'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         if deadline and deadline <= timezone.now() and not self.instance.pk:
@@ -209,16 +229,18 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('HackUPC Policies', {'fields': ('terms_and_conditions', 'diet_notice', 'images_and_videos', 'cvs_edition'),
-                                                         'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
-                                                         'margin-bottom: 1em;line-height: 1.25em;">ASSOCIACIÓ HACKERS AT UPC is the data '
-                                                         'controller of your data, including images and videos of yourself, in order to '
-                                                         'handle and process requests received from you and also to send commercial '
-                                                         'communications about activities, services or products offered by ASSOCIACIÓ '
-                                                         'HACKERS AT UPC that are of a similar nature to those previously requested by '
-                                                         'you, among other purposes. For more information on the processing of your personal '
-                                                         'data and on how to exercise your rights of access, rectification, suppression, '
-                                                         'limitation, portability and opposition please visit our Privacy and Cookies Policy.</p>'}))
+            self._fieldsets.append(('HackUPC Policies', {
+                'fields': ('terms_and_conditions', 'diet_notice', 'images_and_videos', 'cvs_edition'),
+                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                               'margin-bottom: 1em;line-height: 1.25em;">ASSOCIACIÓ HACKERS AT UPC is the data '
+                               'controller of your data, including images and videos of yourself, in order to '
+                               'handle and process requests received from you and also to send commercial '
+                               'communications about activities, services or products offered by ASSOCIACIÓ '
+                               'HACKERS AT UPC that are of a similar nature to those previously requested by '
+                               'you, among other purposes. For more information on the processing of your personal '
+                               'data and on how to exercise your rights of access, rectification, suppression, '
+                               'limitation, portability and opposition please visit our Privacy and Cookies Policy.</p>'
+            }))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
@@ -230,9 +252,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                'you graduate.',
             'degree': 'What\'s your major?',
             'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
-            'lennyface': 'You can chose one from <a href="https://lenny-face-generator.textsmilies.com/?cr=bW91dGh%2Bdy5udy5pZV9leWVzfncubzEuNHdfZWFyc34xNC0xNQ%3D%3D" target="_blank">'
-                         'here</a>!',
-            'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, but at least we\'ll try!',
+            'lennyface': 'You can chose one from '
+                         '<a href="https://lenny-face-generator.textsmilies.com/" target="_blank">here</a>!',
+            'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, '
+                        'but at least we\'ll try!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited.'
@@ -258,7 +281,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
-                settings.CURRENCY, settings.HACKATHON_NAME),
+                settings.CURRENCY, settings.HACKATHON_NAME
+            ),
 
         }
 
