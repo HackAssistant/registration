@@ -80,7 +80,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
               'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
     )
 
-    resume = models.FileField(required=True, upload_to='resumes', null=True, blank=True)
+    resume = forms.FileField(required=True, upload_to='resumes', null=True, blank=True)
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
