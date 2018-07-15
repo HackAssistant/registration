@@ -111,6 +111,7 @@ class Application(models.Model):
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes', null=True, blank=True)
+    cvs_edition = models.BooleanField(default=False)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
