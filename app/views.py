@@ -2,6 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.http import HttpResponse
+from applications.models import Application
 
 from app import utils, mixins
 
@@ -34,6 +36,18 @@ def privacy_and_cookies(request):
 
 def terms_and_conditions(request):
     return render(request, 'terms_and_conditions.html')
+  
+  
+
+def protectedMedia(request):
+    current_resume = request.path.split("/",1)[1].split("/",1)[1]
+    resume_owner = Application.objects.filter(resume=current_resume).first()
+    if request.user.is_authenticated() and (request.user.is_organizer or (current_resume and (resume_owner.user_id == request.user.id))):
+        response = HttpResponse('')
+        response['Content-Type'] = ''
+        response['X-Accel-Redirect'] = request.path
+        return response
+    return HttpResponseRedirect(reverse('account_login'))
 
 
 class TabsView(mixins.TabsViewMixin, TemplateView):
