@@ -2,6 +2,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.http import FileResponse
+from applications.models import Application
+from django.shortcuts import get_object_or_404
+import os
 
 from app import utils, mixins
 
@@ -34,6 +38,18 @@ def privacy_and_cookies(request):
 
 def terms_and_conditions(request):
     return render(request, 'terms_and_conditions.html')
+
+
+def protectedMedia(request, file):
+    document = get_object_or_404(Application, resume=file)
+    path, file_name = os.path.split(file)
+    if request.user.is_authenticated() and (request.user.is_organizer or
+                                            (document and (document.user_id == request.user.id))):
+        response = FileResponse(document.resume)
+        response["Content-Type"] = ""
+        response["Content-Disposition"] = "attachment; filename=" + file_name
+        return response
+    return HttpResponseRedirect(reverse('account_login'))
 
 
 class TabsView(mixins.TabsViewMixin, TemplateView):

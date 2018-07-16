@@ -174,6 +174,7 @@ server {
     location / {
         include proxy_params;
         proxy_pass http://unix:/home/user/project_folder/backend.sock;
+        client_max_body_size 5MB;
     }
 
 
