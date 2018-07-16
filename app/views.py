@@ -7,7 +7,6 @@ from applications.models import Application
 
 from app import utils, mixins
 
-
 def root_view(request):
     if not request.user.is_authenticated() and not utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_signup'))
@@ -36,14 +35,13 @@ def privacy_and_cookies(request):
 
 def terms_and_conditions(request):
     return render(request, 'terms_and_conditions.html')
-  
-  
+
 
 def protectedMedia(request):
     current_resume = request.path.split("/",1)[1].split("/",1)[1]
     resume_owner = Application.objects.filter(resume=current_resume).first()
-    if request.user.is_authenticated() and (request.user.is_organizer or (current_resume and (resume_owner.user_id == request.user.id))):
-        response = HttpResponse('')
+    if request.user.is_authenticated() and (request.user.is_organizer or (resume_owner and (resume_owner.user_id == request.user.id))):
+        response = HttpResponse()
         response['Content-Type'] = ''
         response['X-Accel-Redirect'] = request.path
         return response
