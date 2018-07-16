@@ -2,12 +2,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
-from django.http import HttpResponse, FileResponse
+from django.http import FileResponse
 from applications.models import Application
 from django.shortcuts import get_object_or_404
 import os
 
 from app import utils, mixins
+
 
 def root_view(request):
     if not request.user.is_authenticated() and not utils.is_app_closed():
@@ -40,9 +41,10 @@ def terms_and_conditions(request):
 
 
 def protectedMedia(request, file):
-    document = get_object_or_404(Application, resume = file)
+    document = get_object_or_404(Application, resume=file)
     path, file_name = os.path.split(file)
-    if request.user.is_authenticated() and (request.user.is_organizer or (document and (document.user_id == request.user.id))):
+    if request.user.is_authenticated() and (request.user.is_organizer or
+            (document and (document.user_id == request.user.id))):
         response = FileResponse(document.resume)
         response["Content-Type"] = ""
         response["Content-Disposition"] = "attachment; filename=" + file_name

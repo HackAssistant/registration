@@ -53,6 +53,7 @@ def organizer_tabs(user):
         t.append(('Invite', reverse('invite_list'), False))
     return t
 
+
 class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'ranking.html'
     table_class = RankingListTable
