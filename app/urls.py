@@ -22,11 +22,8 @@ urlpatterns = [
     url(r'legal_notice/$', views.legal_notice, name='legal_notice'),
     url(r'privacy_and_cookies/$', views.privacy_and_cookies, name='privacy_and_cookies'),
     url(r'terms_and_conditions/$', views.terms_and_conditions, name='terms_and_conditions'),
-    url(r'^files/(?P<file>.*)$', views.protectedMedia, name="protect_media")
+    url(r'^files/(?P<file_>.*)$', views.protectedMedia, name="protect_media")
 ]
 
 if settings.REIMBURSEMENT_ENABLED:
     urlpatterns.append(url(r'^reimbursement/', include('reimbursement.urls')))
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
