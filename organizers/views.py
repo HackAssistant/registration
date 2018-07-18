@@ -62,8 +62,7 @@ class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateVie
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return User.objects.annotate(
-            vote_count=Count('vote__calculated_vote')).exclude(vote_count=0)
+        return User.objects.annotate(vote_count=Count('vote__calculated_vote')).annotate(skip_count=Count('vote')-Count('vote__calculated_vote')).annotate(total_count=Count('vote')).exclude(total_count=0)
 
 
 class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):

@@ -68,7 +68,7 @@ class RankingListTable(tables.Table):
         model = User
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['email', 'vote_count', ]
+        fields = ['email', 'vote_count', 'skip_count', 'total_count']
         empty_text = 'No organizers voted yet... Why? :\'('
         order_by = '-vote_count'
 
