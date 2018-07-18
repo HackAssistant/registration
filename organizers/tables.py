@@ -6,6 +6,8 @@ from django.db.models import Q
 from applications.models import Application, STATUS
 from user.models import User
 
+import itertools
+
 
 class ApplicationFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
@@ -64,13 +66,19 @@ class AdminApplicationsListTable(tables.Table):
 
 
 class RankingListTable(tables.Table):
+    counter = tables.Column(empty_values=(), orderable=False, verbose_name='Position')
+
     class Meta:
         model = User
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['email', 'vote_count', 'skip_count', 'total_count']
+        fields = ['counter', 'email', 'vote_count', 'skip_count', 'total_count']
         empty_text = 'No organizers voted yet... Why? :\'('
         order_by = '-total_count'
+
+    def render_counter(self):
+        self.row_counter = getattr(self, 'row_counter', itertools.count(start=1))
+        return next(self.row_counter)
 
 
 class AdminTeamListTable(tables.Table):
