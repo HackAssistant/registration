@@ -66,8 +66,7 @@ class AdminApplicationsListTable(tables.Table):
 
 
 class RankingListTable(tables.Table):
-    counter = tables.Column(empty_values=(), orderable=False, verbose_name='Position')
-
+    counter = tables.TemplateColumn('{{ row_counter|add:1 }}', verbose_name='Position')
     class Meta:
         model = User
         attrs = {'class': 'table table-hover'}
@@ -75,10 +74,6 @@ class RankingListTable(tables.Table):
         fields = ['counter', 'email', 'vote_count', 'skip_count', 'total_count']
         empty_text = 'No organizers voted yet... Why? :\'('
         order_by = '-total_count'
-
-    def render_counter(self):
-        self.row_counter = getattr(self, 'row_counter', itertools.count(start=1))
-        return next(self.row_counter)
 
 
 class AdminTeamListTable(tables.Table):
