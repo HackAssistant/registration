@@ -6,8 +6,6 @@ from django.db.models import Q
 from applications.models import Application, STATUS
 from user.models import User
 
-import itertools
-
 
 class ApplicationFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
@@ -67,6 +65,7 @@ class AdminApplicationsListTable(tables.Table):
 
 class RankingListTable(tables.Table):
     counter = tables.TemplateColumn('{{ row_counter|add:1 }}', verbose_name='Position')
+
     class Meta:
         model = User
         attrs = {'class': 'table table-hover'}
