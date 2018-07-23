@@ -304,3 +304,12 @@ img {
     color: #FFF;
     text-decoration: underline !important;
 }
+
+.team-info {
+    color: #e22b57;
+    font-size: 18px;
+}
+
+.team-info-margin {
+    margin-bottom: 1.5em;
+}
