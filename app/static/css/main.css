@@ -7,8 +7,8 @@ body {
     background-image: url("../img/background.png");
     background-position: center top;
     background-attachment: fixed;
-    /*background: linear-gradient(#26ADB5 0%, #1DA3AD 33%, #1597A3 67%, #0E8C99 100%) no-repeat center center fixed;
-    background-size: cover;*/
+    /*background: linear-gradient(#26ADB5 0%, #1DA3AD 33%, #1597A3 67%, #0E8C99 100%) no-repeat center center fixed;*/
+    background-size: cover;
     font-family: ProximaNovaRegular, 'Roboto', sans-serif;
     font-size: 15px;
     color: #202326;
