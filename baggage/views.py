@@ -3,12 +3,13 @@ from app.mixins import TabsViewMixin
 from django.views.generic import TemplateView
 from baggage.tables import BaggageListTable
 from baggage.models import Item
+from django_tables2 import SingleTableMixin
 
 def organizer_tabs(user):
     t = [('Check-in', reverse('baggage_list'), False)]
     return t
 
-class BaggageList(TabsViewMixin, TemplateView):
+class BaggageList(TabsViewMixin, SingleTableMixin, TemplateView):
     template_name = 'baggage_list.html'
     table_class = BaggageListTable
     table_pagination = {'per_page': 100}
@@ -18,9 +19,3 @@ class BaggageList(TabsViewMixin, TemplateView):
     
     def get_queryset(self):
         return Item.objects.all()
-      
-    def get(self, request, *args, **kwargs):
-         data = Item.objects.all()
-         context = self.get_context_data(**kwargs)
-         context['baggage_list'] = data
-         return self.render_to_response(context)
