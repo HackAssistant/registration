@@ -88,3 +88,5 @@ class Movement(models.Model):
     type = models.CharField(max_length=3, null=False)
     # Additional comments on the movement
     comment = models.TextField(max_length=1023, null=True, blank=True)
+    # Reflects if a receipt was printed
+    receipt = models.BooleanField(default=False)
