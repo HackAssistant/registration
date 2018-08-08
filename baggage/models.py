@@ -1,7 +1,7 @@
 from django.db import models
 from user.models import User
 
-class Item(models.Model):
+class Bag(models.Model):
     """Represents a baggage item"""
     
     TYPES = (
@@ -59,13 +59,16 @@ class Position(models.Model):
     # Column identifier
     column = models.PositiveSmallIntegerField(null=False)
     # Current item occupying this position
-    content = models.ForeignKey(Item, null=True, on_delete=models.SET_NULL)
+    content = models.ForeignKey(Bag, null=True, on_delete=models.SET_NULL)
+    
+    def __str__(self):
+        return self.building + '-' + self.row + str(self.column)
     
     class Meta:
         unique_together = (('building', 'row', 'column'))
 
 
-class Movement(models.Model):
+class Move(models.Model):
     """Represents a movement of an item in a position"""
     
     TYPES = (
@@ -77,7 +80,7 @@ class Movement(models.Model):
     # Movement identifier
     id = models.AutoField(primary_key=True)
     # Item from which the move is related to
-    item = models.ForeignKey(Item, on_delete=models.PROTECT)
+    item = models.ForeignKey(Bag, on_delete=models.PROTECT)
     # Position where the item is/was
     position = models.ForeignKey(Position, on_delete=models.PROTECT)
     # Time for when the movement was made
@@ -85,7 +88,7 @@ class Movement(models.Model):
     # User that created the movement
     manager = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     # Type of the movement
-    type = models.CharField(max_length=3, null=False)
+    type = models.CharField(max_length=3, null=False, choices=TYPES)
     # Additional comments on the movement
     comment = models.TextField(max_length=1023, null=True, blank=True)
     # Reflects if a receipt was printed
