@@ -3,7 +3,10 @@ from baggage import models
 
 class BaggageListAdmin(admin.ModelAdmin):
     list_display = (
-        'owner', 'active', 'type', 'color', 'description', 'special'
+        'owner', 'status', 'type', 'color', 'description', 'special'
+    )
+    readonly_fields = (
+        'time', 'updated'
     )
     search_fields = list_display
 
@@ -11,9 +14,9 @@ class BaggageListAdmin(admin.ModelAdmin):
         return []
 
 
-class BaggageMoveAdmin(admin.ModelAdmin):
+class BaggageCommentAdmin(admin.ModelAdmin):
     list_display = (
-        'item', 'time', 'type'
+        'item', 'time', 'user', 'comment'
     )
     search_fields = list_display
 
@@ -22,4 +25,4 @@ class BaggageMoveAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Bag, admin_class=BaggageListAdmin)
-admin.site.register(models.Move, admin_class=BaggageMoveAdmin)
+admin.site.register(models.Comment, admin_class=BaggageCommentAdmin)
