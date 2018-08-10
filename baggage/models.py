@@ -7,6 +7,8 @@ BAG_REMOVED = 'R'
 class Position(models.Model):
     """Represents a position where a baggage can be"""
     
+    # Position identifier
+    id = models.AutoField(primary_key=True)
     # Building identifier
     building = models.CharField(max_length=63, null=False)
     # Row identifier
@@ -81,6 +83,9 @@ class Bag(models.Model):
     time = models.DateTimeField(auto_now=False, auto_now_add=True)
     # Time for when the time was updted
     updated = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return str(self.id)
 
 
 class Comment(models.Model):
@@ -89,10 +94,13 @@ class Comment(models.Model):
     # Movement identifier
     id = models.AutoField(primary_key=True)
     # Item from which the move is related to
-    item = models.ForeignKey(Bag, on_delete=models.PROTECT)
+    item = models.ForeignKey(Bag, on_delete=models.CASCADE)
     # Time for when the comment was made
     time = models.DateTimeField(auto_now=False, auto_now_add=True)
     # User that created the movement
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     # Additional comments on the movement
     comment = models.TextField(max_length=1023, null=True, blank=True)
+    
+    def __str__(self):
+        return str(self.id)

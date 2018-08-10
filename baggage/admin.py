@@ -3,12 +3,17 @@ from baggage import models
 
 class BaggageListAdmin(admin.ModelAdmin):
     list_display = (
-        'owner', 'status', 'type', 'color', 'description', 'special'
+        'id', 'owner', 'status', 'type', 'color', 'description', 'special'
     )
     readonly_fields = (
         'time', 'updated'
     )
-    search_fields = list_display
+    search_fields = (
+        'owner__email', 'owner__name', 'status', 'type', 'color', 'description'
+    )
+    list_filter = (
+        'status', 'type', 'color', 'special'
+    )
 
     def get_actions(self, request):
         return []
@@ -16,9 +21,14 @@ class BaggageListAdmin(admin.ModelAdmin):
 
 class BaggageCommentAdmin(admin.ModelAdmin):
     list_display = (
-        'item', 'time', 'user', 'comment'
+        'id', 'item', 'time', 'user', 'comment'
     )
-    search_fields = list_display
+    readonly_fields = (
+        'time',
+    )
+    search_fields = (
+        'item__owner__email', 'item__owner__name', 'user__email', 'user__name', 'comment'
+    )
 
     def get_actions(self, request):
         return []

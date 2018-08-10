@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from app.mixins import TabsViewMixin
 from baggage.tables import BaggageListTable, BaggageListFilter
-from baggage.models import Bag
+from baggage.models import Bag, BAG_ADDED
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 
@@ -19,4 +19,4 @@ class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
     
     def get_queryset(self):
-        return Bag.objects.filter(active=True)
+        return Bag.objects.filter(status=BAG_ADDED)
