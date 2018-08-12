@@ -60,7 +60,8 @@ class AdminApplicationsListTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'counter', 'user.name', 'vote_avg', 'review_count', 'reimb_amount', 'university', 'origin']
+        fields = ['selected', 'counter', 'user.name', 'vote_avg',
+                  'review_count', 'reimb_amount', 'university', 'origin']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
