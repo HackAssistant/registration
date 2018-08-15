@@ -4,6 +4,11 @@ from user.models import User
 BAG_ADDED = 'A'
 BAG_REMOVED = 'R'
 
+BAG_STATUS = (
+    (BAG_ADDED, 'Added'),
+    (BAG_REMOVED, 'Removed')
+)
+
 class Position(models.Model):
     """Represents a position where a baggage can be"""
     
@@ -58,17 +63,12 @@ class Bag(models.Model):
         ('YE', 'Yellow')
     )
     
-    STATUS = (
-        (BAG_ADDED, 'Added'),
-        (BAG_REMOVED, 'Removed')
-    )
-    
     # Item identifier
     id = models.AutoField(primary_key=True)
     # User owner of the item
     owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     # Reflects the status of the item
-    status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=STATUS)
+    status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=BAG_STATUS)
     # Reflects the position where the item is/was
     position = models.ForeignKey(Position, null=False, on_delete=models.PROTECT)
     # Type of item
