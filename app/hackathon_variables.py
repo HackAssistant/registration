@@ -37,11 +37,11 @@ HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 # (OPTIONAL) Applications deadline
 # HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_ARRIVE = 'Registration opens at 3:00PM and closes at 6:00PM on Friday October 5th, ' \
+HACKATHON_ARRIVE = 'Registration opens at 3:00PM and closes at 6:00PM on Friday October 19th, ' \
                    'the opening ceremony will be at 7:00PM.'
 
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 7th from 3:00PM to 5:00PM. ' \
+HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 21st from 3:00PM to 5:00PM. ' \
                   'However the projects demo fair will be held in the morning from 10:30AM to 1:00PM.'
 # (OPTIONAL) Hackathon live page
 HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
