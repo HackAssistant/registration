@@ -9,13 +9,18 @@ BAG_STATUS = (
     (BAG_REMOVED, 'Removed')
 )
 
+BAG_BUILDINGS = (
+    ('A5E01', 'A5E01'),
+    ('A5E02', 'A5E02')
+)
+
 class Position(models.Model):
     """Represents a position where a baggage can be"""
     
     # Position identifier
     id = models.AutoField(primary_key=True)
     # Building identifier
-    building = models.CharField(max_length=63, null=False)
+    building = models.CharField(max_length=63, null=False, choices=BAG_BUILDINGS)
     # Row identifier
     row = models.CharField(max_length=63, null=False)
     # Column identifier
@@ -34,8 +39,10 @@ class Bag(models.Model):
     """Represents a baggage item"""
     
     TYPES = (
-        ('LAPTOP', 'Laptop'),
-        ('OTHER', 'Other')
+        ('BAC', 'Backpack'),
+        ('HAR', 'Hardware'),
+        ('CLO', 'Clothes'),
+        ('OTH', 'Other')
     )
     
     COLORS = (

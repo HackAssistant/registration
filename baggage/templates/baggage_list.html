@@ -1,2 +1,22 @@
 {% extends "base_table.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+
 {% block head_title %}Baggage check-in{% endblock %}
+
+<style>
+    .field-left, .field-right{
+        width: 48%;
+    }
+    .field-left{
+        float: left;
+    }
+    .field-right{
+        float: right;
+    }
+</style>
+
+<script src="{% static 'js/form_modifiers.js' %}"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
