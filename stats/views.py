@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncDate
 from django.http import JsonResponse
@@ -6,21 +7,23 @@ from django.utils import timezone
 
 from app.views import TabsView
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
-from reimbursement.models import Reimbursement, RE_STATUS, RE_DRAFT
 from user.mixins import is_organizer, IsOrganizerMixin
 
 STATUS_DICT = dict(STATUS)
-RE_STATUS_DICT = dict(RE_STATUS)
 GENDER_DICT = dict(GENDERS)
 
 
 def stats_tabs():
-    return [('Applications', reverse('app_stats'), False),
-            ('Reimbursements', reverse('reimb_stats'), False)]
+    tabs = [('Applications', reverse('app_stats'), False),]
+    if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
+        tabs.append(('Reimbursements', reverse('reimb_stats'), False))
+    return tabs
 
 
 @is_organizer
 def reimb_stats_api(request):
+    from reimbursement.models import Reimbursement, RE_STATUS, RE_DRAFT
+    RE_STATUS_DICT = dict(RE_STATUS)
     # Status analysis
     status_count = Reimbursement.objects.all().values('status') \
         .annotate(reimbursements=Count('status'))
