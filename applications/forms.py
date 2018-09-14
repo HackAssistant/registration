@@ -148,19 +148,23 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
               'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
-        if deadline and deadline <= timezone.now() and not self.instance.pk:
+        r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
+        if r_enabled and deadline and deadline <= timezone.now() and not self.instance.pk:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin',),
                                      'description': 'Reimbursement applications are now closed. '
                                                     'Sorry for the inconvenience.',
                                      }))
-        elif self.instance.pk:
+        elif self.instance.pk and r_enabled:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin',),
                                      'description': 'If you applied for reimbursement see it on the Travel tab. '
                                                     'Email us at %s for any change needed on reimbursements.' %
                                                     settings.HACKATHON_CONTACT_EMAIL,
                                      }))
+        elif not r_enabled:
+            self._fieldsets.append(('Traveling',
+                                    {'fields': ('origin',)}), )
         else:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
@@ -206,7 +210,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
-                settings.CURRENCY, settings.HACKATHON_NAME),
+                getattr(settings, 'CURRENCY', '$'), settings.HACKATHON_NAME),
 
         }
 
