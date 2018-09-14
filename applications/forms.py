@@ -164,7 +164,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                      }))
         elif not r_enabled:
             self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',) }), )
+                                    {'fields': ('origin',)}), )
         else:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
