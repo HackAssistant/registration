@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'teams',
     'stats',
     'storages',
+    'judging'
 ]
 
 if REIMBURSEMENT_ENABLED:
