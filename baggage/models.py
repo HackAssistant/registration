@@ -4,7 +4,6 @@ from user.models import User
 BAG_ADDED = 'A'
 BAG_REMOVED = 'R'
 
-<<<<<<< HEAD
 BAG_STATUS = (
     (BAG_ADDED, 'Added'),
     (BAG_REMOVED, 'Removed')
@@ -15,19 +14,13 @@ BAG_BUILDINGS = (
     ('A5E02', 'A5E02')
 )
 
-=======
->>>>>>> 84d2bc9222f1a05e83403b71594fd431c861f98e
 class Position(models.Model):
     """Represents a position where a baggage can be"""
     
     # Position identifier
     id = models.AutoField(primary_key=True)
     # Building identifier
-<<<<<<< HEAD
     building = models.CharField(max_length=63, null=False, choices=BAG_BUILDINGS)
-=======
-    building = models.CharField(max_length=63, null=False)
->>>>>>> 84d2bc9222f1a05e83403b71594fd431c861f98e
     # Row identifier
     row = models.CharField(max_length=63, null=False)
     # Column identifier
@@ -46,15 +39,10 @@ class Bag(models.Model):
     """Represents a baggage item"""
     
     TYPES = (
-<<<<<<< HEAD
         ('BAC', 'Backpack'),
         ('HAR', 'Hardware'),
         ('CLO', 'Clothes'),
         ('OTH', 'Other')
-=======
-        ('LAPTOP', 'Laptop'),
-        ('OTHER', 'Other')
->>>>>>> 84d2bc9222f1a05e83403b71594fd431c861f98e
     )
     
     COLORS = (
@@ -82,24 +70,17 @@ class Bag(models.Model):
         ('YE', 'Yellow')
     )
     
-<<<<<<< HEAD
-=======
     STATUS = (
         (BAG_ADDED, 'Added'),
         (BAG_REMOVED, 'Removed')
     )
     
->>>>>>> 84d2bc9222f1a05e83403b71594fd431c861f98e
     # Item identifier
     id = models.AutoField(primary_key=True)
     # User owner of the item
     owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     # Reflects the status of the item
-<<<<<<< HEAD
     status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=BAG_STATUS)
-=======
-    status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=STATUS)
->>>>>>> 84d2bc9222f1a05e83403b71594fd431c861f98e
     # Reflects the position where the item is/was
     position = models.ForeignKey(Position, null=False, on_delete=models.PROTECT)
     # Type of item
