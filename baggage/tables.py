@@ -28,6 +28,10 @@ class BaggageListFilter(django_filters.FilterSet):
         fields = ['search']
 
 class BaggageListTable(tables.Table):
+    checkout = tables.TemplateColumn(
+        "<a href=''>Check-out</a> ",
+        verbose_name='Action', orderable=False)
+    
     class Meta:
         model = Bag
         attrs = {'class': 'table table-hover'}
