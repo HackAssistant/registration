@@ -1,5 +1,6 @@
 from django.db import models
 from user.models import User
+from django.utils.datetime_safe import datetime
 
 BAG_ADDED = 'A'
 BAG_REMOVED = 'R'
@@ -26,7 +27,7 @@ class Position(models.Model):
     # Column identifier
     column = models.PositiveSmallIntegerField(null=False)
     # Reflects if an item is occupying this position or not
-    occupied = models.BooleanField(default=False)
+    #occupied = models.BooleanField(default=False)
     
     def __str__(self):
         return self.building + '-' + self.row + str(self.column)
@@ -97,7 +98,13 @@ class Bag(models.Model):
     updated = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return str(self.id)
+        return str(self.id)    
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        self.update_time = datetime.now()
+        super(Bag, self).save(force_insert, force_update, using,
+                                  update_fields)
 
 
 class Comment(models.Model):

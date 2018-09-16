@@ -29,8 +29,8 @@ class BaggageListFilter(django_filters.FilterSet):
 
 class BaggageListTable(tables.Table):
     checkout = tables.TemplateColumn(
-        "<a href=''>Check-out</a> ",
-        verbose_name='Action', orderable=False)
+        "<a href='{% url 'baggage_detail' record.id %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
     
     class Meta:
         model = Bag

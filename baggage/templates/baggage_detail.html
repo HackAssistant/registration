@@ -1,0 +1,23 @@
+{% extends "base_tabs.html" %}
+{% block head_title %}Check-out bag {{ bag.id }}{% endblock %}
+{% block panel %}
+    <dl class="dl-horizontal">
+        {% include 'include/field.html' with desc='Owner' value=bag.owner__email %}
+    </dl>
+{% endblock %}
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+{% block out_panel %}
+    <div class="panel-footer">
+        {% if checkedout %}
+            <h4>Iep! Bag already checked out!</h4>
+            <a class="btn btn-default btn-block" href="{% url 'baggage_add' %}">Check-in</a>
+            <a class="btn btn-default btn-block" href="{% url 'baggage_list' %}">Check-out</a>
+        {% else %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="bag_id" value="{{ bag.id }}"/>
+                <button class="btn btn-success btn-block" name="checkout">Check-out</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
