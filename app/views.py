@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from applications.models import Application
+from reimbursement.models import Reimbursement
 from django.shortcuts import get_object_or_404
 from urllib.parse import quote
 from django.http import StreamingHttpResponse
@@ -42,11 +43,20 @@ def terms_and_conditions(request):
 
 
 def protectedMedia(request, file_):
-    application = get_object_or_404(Application, resume=file_)
     path, file_name = os.path.split(file_)
-    if request.user.is_authenticated() and (request.user.is_organizer or
-                                            (application and (application.user_id == request.user.id))):
-        response = StreamingHttpResponse(open(application.resume.path, 'rb'))
+    downloadable_path = None
+    if path == "resumes":
+        app = get_object_or_404(Application, resume=file_)
+        if request.user.is_authenticated() and (request.user.is_organizer or
+                                                (app and (app.user_id == request.user.id))):
+            downloadable_path = app.resume.path
+    elif path == "receipt":
+        app = get_object_or_404(Reimbursement, receipt=file_)
+        if request.user.is_authenticated() and (request.user.is_organizer or
+                                                (app and (app.hacker_id == request.user.id))):
+            downloadable_path = app.receipt.path
+    if downloadable_path:
+        response = StreamingHttpResponse(open(downloadable_path, 'rb'))
         response['Content-Type'] = ''
         response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % quote(file_name)
         response['Content-Transfer-Encoding'] = 'binary'
