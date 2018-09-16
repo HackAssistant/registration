@@ -82,7 +82,7 @@ class Bag(models.Model):
     # Reflects the room where the item is/was
     room = models.ForeignKey(Room, null=False, on_delete=models.PROTECT)
     # Reflects the row where the item is/was
-    row = models.PositiveIntegerField(null=False)
+    row = models.CharField(max_length=15, null=False)
     # Reflects the column where the item is/was
     col = models.PositiveIntegerField(null=False)
     # Type of item
@@ -110,7 +110,7 @@ class Bag(models.Model):
                                   update_fields)
 
     def position(self):
-        return str(chr(self.row+65)) + str(self.col)
+        return str(self.row) + str(self.col)
 
     def full_position(self):
         return room + position(self)

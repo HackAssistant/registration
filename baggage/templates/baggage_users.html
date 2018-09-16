@@ -1,0 +1,11 @@
+{% extends "base_table.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+
+{% block head_title %}Baggage check-in{% endblock %}
+
+{% block extra_panel %}
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
+{% endblock %}

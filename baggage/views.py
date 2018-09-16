@@ -1,7 +1,8 @@
 from django.core.urlresolvers import reverse
 from app.mixins import TabsViewMixin
-from baggage.tables import BaggageListTable, BaggageListFilter
-from baggage.models import Bag, BAG_ADDED, BAG_REMOVED
+from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable
+from baggage.models import Bag, BAG_ADDED, BAG_REMOVED, Room
+from user.models import User
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 from app.views import TabsView
@@ -26,34 +27,73 @@ class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
     def get_queryset(self):
         return Bag.objects.filter(status=BAG_ADDED)
 
-class BaggageAdd(TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'baggage_add.html'
-    table_class = BaggageListTable
-    filterset_class = BaggageListFilter
+class BaggageUsers(SingleTableMixin, TabsView):
+    template_name = 'baggage_users.html'
+    table_class = BaggageUsersTable
+    #filterset_class = BaggageUsersFilter
     table_pagination = {'per_page': 100}
   
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
     
     def get_queryset(self):
-        return Bag.objects.filter(status=BAG_ADDED)
+        return User.objects.filter(email_verified=True)
 
-class BaggageDetail(TabsView):
-    template_name = 'baggage_detail.html'
+class BaggageAdd(TabsView):
+    template_name = 'baggage_add.html'
 
     def get_back_url(self):
         return 'javascript:history.back()'
 
     def get_context_data(self, **kwargs):
+        context = super(BaggageAdd, self).get_context_data(**kwargs)
+        userid = kwargs['new_id']
+        user = User.objects.filter(id=userid).first()
+        if not user:
+            raise Http404
+        context.update({
+            'user': user
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        bagtype = request.POST.get('bag_type')
+        bagcolor = request.POST.get('bag_color')
+        bagdesc = request.POST.get('bag_description')
+        bagspe = request.POST.get('bag_special')
+        userid = request.POST.get('user_id')
+        bag = Bag()
+        bag.owner = User.objects.filter(id=userid).first()
+        bag.type = bagtype
+        bag.color = bagcolor
+        bag.description = bagdesc
+        bag.special = (bagspe == 'special')
+        bag.room = Room.objects.all().first()
+        bag.row = 'A'
+        bag.col = 0
+        bag.save()
+        messages.success(self.request, 'Bag checked-in!')
+        return redirect('baggage_detail', id=(str(bag.id,)), first='first/')
+
+class BaggageDetail(TabsView):
+    template_name = 'baggage_detail.html'
+
+    def get_back_url(self):
+        if self.kwargs['first'] != 'first/':
+            return 'javascript:history.back()'
+
+    def get_context_data(self, **kwargs):
         context = super(BaggageDetail, self).get_context_data(**kwargs)
         bagid = kwargs['id']
+        bagfirst = kwargs['first']
         bag = Bag.objects.filter(id=bagid).first()
         if not bag:
             raise Http404
         context.update({
             'bag': bag,
             'position': bag.position(),
-            'checkedout': bag.status == BAG_REMOVED
+            'checkedout': bag.status == BAG_REMOVED,
+            'first' : bagfirst
         })
         return context
 

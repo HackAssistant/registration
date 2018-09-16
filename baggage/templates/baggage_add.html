@@ -1,50 +1,38 @@
-{% extends "base_table.html" %}
+{% extends "base_tabs.html" %}
 
 {% load static %}
 {% load bootstrap3 %}
 
 {% block head_title %}Baggage check-in{% endblock %}
 
-{% block extra_head %}
-  <style>
-  </style>
+{% block panel %}
+    <dl class="dl-horizontal" style="margin-bottom: 0;">
+	{% include 'include/field.html' with desc='Name' value=user.name %}
+	{% include 'include/field.html' with desc='Email' value=user.email %}
+    </dl>
 {% endblock %}
 
-{% block extra_panel %}
-    <script src="{% static 'lib/typeahead.min.js' %}"></script>
-    <script src="{% static 'js/form_modifiers.js' %}"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
 
-    <script>
-
-        $(document).ready(function () {
-                var exp_time = $('input[name="time_from"]');
-                exp_time.daterangepicker({
-                    timePicker: true,
-                    singleDatePicker: true,
-                    timePicker24Hour: true,
-                    timePickerIncrement: 5,
-                    startDate: moment(exp_time.val()),
-                    locale: {
-                        firstDay: 1,
-                        format: 'YYYY-MM-DD H:mm:ss'
-                    }
-                });
-                var exp_time2 = $('input[name="time_to"]');
-                exp_time2.daterangepicker({
-                    timePicker: true,
-                    singleDatePicker: true,
-                    timePicker24Hour: true,
-                    timePickerIncrement: 5,
-                    startDate: moment(exp_time2.val()),
-                    locale: {
-                        firstDay: 1,
-                        format: 'YYYY-MM-DD H:mm:ss'
-                    }
-                });
-            }
-        );
-    </script>
+{% block out_panel %}
+    <form action="" method="post">
+	{% csrf_token %}
+	<div class="form-group">
+	    <label class="control-label" for="bag_type">Type</label>
+	    <input type="text" class="form-control" name="bag_type" />
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="bag_color">Color</label>
+	    <input type="text" class="form-control" name="bag_color" />
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="bag_description">Description</label>
+	    <textarea rows="4" cols="50" class="form-control" name="bag_description"></textarea>
+	</div>
+	<div class="form-group">
+	    <input type="checkbox" name="bag_special" value="special"> Special
+	</div>
+        <input type="hidden" name="user_id" value="{{ user.id }}"/>
+	<button class="btn btn-success" name="checkin">Bag check-in</button>
+    </form>
 {% endblock %}
