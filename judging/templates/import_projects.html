@@ -1,7 +1,12 @@
 {% extends "base_tabs.html" %}
+
+{% load i18n %}
 {% load bootstrap3 %}
 {% load static %}
 {% load form_utils %}
+{% block head_title %}Import devpost projects{% endblock %}
+
+{%  block panel %}
 
 <form class="import" enctype="multipart/form-data" id="import_form" method="post" action="">
     {% csrf_token %}
@@ -20,5 +25,11 @@
     {% endfor %}
     <small><span style="color: red">*</span>Indicates required field</small>
 
-    <button class="btn btn-success btn-block" type="submit">Submit receipt</button>
+    <button class="btn btn-success btn-block" type="submit">Submit devpost projects</button>
 </form>
+
+
+<script src="{% static 'lib/typeahead.min.js' %}"></script>
+<script src="{% static 'js/form_modifiers.js' %}"></script>
+
+{% endblock %}

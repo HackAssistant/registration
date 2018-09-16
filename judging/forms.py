@@ -5,11 +5,13 @@ from form_utils.forms import BetterForm
 
 
 class ProjectImportForm(BetterForm):
+    projects_file = forms.FileField(required=True)
+
     def __init__(self, *args, **kwargs):
         super(ProjectImportForm, self).__init__(*args, **kwargs)
-        # self.fields['projects_file'].required = True
+        self.fields['projects_file'].required = True
 
-    def clean_data(self):
+    def clean_projects_file(self):
         projects_file = self.cleaned_data['projects_file']
         size = getattr(projects_file, '_size', 0)
         if size > settings.MAX_UPLOAD_SIZE:
