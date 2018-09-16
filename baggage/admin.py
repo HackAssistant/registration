@@ -1,6 +1,17 @@
 from django.contrib import admin
 from baggage import models
 
+class BaggageRoomAdmin(admin.ModelAdmin):
+    list_display = (
+        'room', 'row', 'col', 'door_row', 'door_col'
+    )
+    search_fields = (
+        'room',
+    )
+
+    def get_actions(self, request):
+        return []
+
 class BaggageListAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'owner', 'status', 'type', 'color', 'description', 'special', 'time', 'updated'
@@ -28,5 +39,6 @@ class BaggageCommentAdmin(admin.ModelAdmin):
         return []
 
 
+admin.site.register(models.Room, admin_class=BaggageRoomAdmin)
 admin.site.register(models.Bag, admin_class=BaggageListAdmin)
 admin.site.register(models.Comment, admin_class=BaggageCommentAdmin)

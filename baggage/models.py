@@ -11,29 +11,26 @@ BAG_STATUS = (
 )
 
 BAG_BUILDINGS = (
-    ('A5E01', 'A5E01'),
-    ('A5E02', 'A5E02')
+    ('E01', 'E01'),
+    ('E02', 'E02')
 )
 
-class Position(models.Model):
-    """Represents a position where a baggage can be"""
+class Room(models.Model):
+    """Represents a room where a position can be"""
     
-    # Position identifier
-    id = models.AutoField(primary_key=True)
     # Building identifier
-    building = models.CharField(max_length=63, null=False, choices=BAG_BUILDINGS)
-    # Row identifier
-    row = models.CharField(max_length=63, null=False)
-    # Column identifier
-    column = models.PositiveSmallIntegerField(null=False)
-    # Reflects if an item is occupying this position or not
-    #occupied = models.BooleanField(default=False)
+    room = models.CharField(primary_key=True, max_length=63, null=False, choices=BAG_BUILDINGS)
+    # Number of rows
+    row = models.PositiveIntegerField(null=False, default=0)
+    # Number of columns
+    col = models.PositiveIntegerField(null=False, default=0)
+    # Nearest row to the door
+    door_row = models.PositiveIntegerField(null=False, default=0)
+    # Nearest col to the door
+    door_col = models.PositiveIntegerField(null=False, default=0)
     
     def __str__(self):
-        return self.building + '-' + self.row + str(self.column)
-    
-    class Meta:
-        unique_together = (('building', 'row', 'column'))
+        return self.room
 
 
 class Bag(models.Model):
@@ -82,8 +79,12 @@ class Bag(models.Model):
     owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     # Reflects the status of the item
     status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=BAG_STATUS)
-    # Reflects the position where the item is/was
-    position = models.ForeignKey(Position, null=False, on_delete=models.PROTECT)
+    # Reflects the room where the item is/was
+    room = models.ForeignKey(Room, null=False, on_delete=models.PROTECT)
+    # Reflects the row where the item is/was
+    row = models.PositiveIntegerField(null=False)
+    # Reflects the column where the item is/was
+    col = models.PositiveIntegerField(null=False)
     # Type of item
     type = models.CharField(max_length=10, null=False, choices=TYPES)
     # Primary color of the item
@@ -96,6 +97,8 @@ class Bag(models.Model):
     time = models.DateTimeField(auto_now=False, auto_now_add=True)
     # Time for when the time was updted
     updated = models.DateTimeField(auto_now=True)
+    # Image of the bag object
+    image = models.FileField(upload_to='baggage', null=True, blank=True)
     
     def __str__(self):
         return str(self.id)    
@@ -106,6 +109,11 @@ class Bag(models.Model):
         super(Bag, self).save(force_insert, force_update, using,
                                   update_fields)
 
+    def position(self):
+        return str(chr(self.row+65)) + str(self.col)
+
+    def full_position(self):
+        return room + position(self)
 
 class Comment(models.Model):
     """Represents a comment on an item for when it was updated"""

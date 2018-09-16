@@ -2,7 +2,15 @@
 {% block head_title %}Check-out bag {{ bag.id }}{% endblock %}
 {% block panel %}
     <dl class="dl-horizontal">
-        {% include 'include/field.html' with desc='Owner' value=bag.owner__email %}
+        {% include 'include/field.html' with desc='Bag id' value=bag.id %}
+        {% include 'include/field.html' with desc='Room' value=bag.room %}
+        {% include 'include/field.html' with desc='Position' value=position %}
+        {% include 'include/field.html' with desc='Type' value=bag.type %}
+        {% include 'include/field.html' with desc='Color' value=bag.color %}
+        {% include 'include/field.html' with desc='Description' value=bag.description %}
+        {% include 'include/field.html' with desc='Time added' value=bag.time %}
+        {% include 'include/field.html' with desc='Time updated' value=bag.updated %}
+        {% include 'include/image.html' with desc='Image' value=bag.image %}
     </dl>
 {% endblock %}
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}

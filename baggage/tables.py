@@ -9,7 +9,7 @@ class BaggageListFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
     status = django_filters.ChoiceFilter('status', label='Status', choices=BAG_STATUS,
                                                  widget=forms.RadioSelect, empty_label='Any', initial=BAG_ADDED)
-    position__building = django_filters.ChoiceFilter(label='Building', choices=BAG_BUILDINGS, empty_label='Any')
+    position__building = django_filters.ChoiceFilter(label='Room', choices=BAG_BUILDINGS, empty_label='Any')
     time_from = django_filters.DateTimeFilter(method='search_time', label='Time from', widget=forms.DateTimeInput(attrs={'class': 'field-left'}), initial=datetime.now()-timedelta(1))
     time_to = django_filters.DateTimeFilter(method='search_time', label='Time to', widget=forms.DateTimeInput(attrs={'class': 'field-right'}), initial=datetime.now())
 
@@ -32,9 +32,11 @@ class BaggageListTable(tables.Table):
         "<a href='{% url 'baggage_detail' record.id %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
     
+    position = tables.Column(accessor='position', verbose_name='Position')
+    
     class Meta:
         model = Bag
         attrs = {'class': 'table table-hover'}
         template = 'templates/baggage_list.html'
-        fields = ['id', 'position.building', 'position.row', 'position.column', 'owner', 'type', 'description', 'special']
+        fields = ['id', 'room', 'position', 'owner', 'type', 'description', 'special']
         empty_text = 'No baggage items checked-in'

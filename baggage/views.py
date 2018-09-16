@@ -27,7 +27,7 @@ class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
         return Bag.objects.filter(status=BAG_ADDED)
 
 class BaggageAdd(TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'baggage_list.html'
+    template_name = 'baggage_add.html'
     table_class = BaggageListTable
     filterset_class = BaggageListFilter
     table_pagination = {'per_page': 100}
@@ -52,6 +52,7 @@ class BaggageDetail(TabsView):
             raise Http404
         context.update({
             'bag': bag,
+            'position': bag.position(),
             'checkedout': bag.status == BAG_REMOVED
         })
         return context
