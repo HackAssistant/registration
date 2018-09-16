@@ -8,6 +8,7 @@ from django.shortcuts import render
 from app.utils import reverse
 from app.views import TabsView
 from judging import forms
+from judging.models import Project
 from user.mixins import IsDirectorMixin
 
 
@@ -23,12 +24,28 @@ def handle_uploaded_projects(file):
     # TODO: write the file somewhere to store it?
     io_file = io.TextIOWrapper(file)
     reader = csv.DictReader(io_file)
-    print(reader.fieldnames)
+
+    fieldnames_to_csv_cols = {
+        'title': 'Submission Title',
+        'url': 'Submission Url',
+        'description': 'Plain Description',
+        'video': 'Video',
+        'website': 'Website',
+        'file_url': 'File Url',
+        'desired_prizes': 'Desired Prizes',
+        'built_with': 'Built With',
+        'submitter_screen_name': 'Submitter Screen Name',
+        'submitter_first_name': 'Submitter First Name',
+        'submitter_last_name': 'Submitter Last Name',
+        'submitter_email': 'Submitter Email',
+        'university': 'College/Universities Of Team Members',
+        'additional_team_member_count': 'Additional Team Member Count'
+    }
 
     for row in reader:
         # Create project instance
-        # p = Project.objects.create(row)
-        pass
+        data = {target: row[original] for target, original in fieldnames_to_csv_cols.items()}
+        Project.objects.create(**data)
 
 
 class ImportProjectsView(IsDirectorMixin, TabsView):
@@ -46,8 +63,8 @@ class ImportProjectsView(IsDirectorMixin, TabsView):
     def post(self, request, *args, **kwargs):
         form = forms.ProjectImportForm(request.POST, request.FILES)
         if form.is_valid():
-            messages.success(self.request, 'Your project file was successfully uploaded.')
             handle_uploaded_projects(request.FILES['projects_file'].file)
+            messages.success(self.request, 'Your project file was successfully uploaded.')
         else:
             c = self.get_context_data()
             c.update({'form': form})
