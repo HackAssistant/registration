@@ -62,7 +62,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
-                                            '<a href="/code_conduct" target="_blank">%s Code of conduct</a>' % (
+                                            '<a href="%s" target="_blank">%s Code of conduct</a>' % (
+                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 settings.HACKATHON_NAME), )
 
     def clean_resume(self):
