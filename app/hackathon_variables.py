@@ -57,6 +57,9 @@ REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.p
 TEAMS_ENABLED = True
 HACKATHON_MAX_TEAMMATES = 4
 
+# (OPTIONAL) Code of conduct link
+# CODE_CONDUCT_LINK = https://pages.hackcu.org/code_conduct/
+
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from
 SLACK = {
