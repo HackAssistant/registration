@@ -16,3 +16,17 @@ class Project(models.Model):
     submitter_email = models.CharField(blank=True, null=True, max_length=200)
     university = models.CharField(blank=True, null=True, max_length=300)
     additional_team_member_count = models.IntegerField(default=0)
+
+
+class Challenge(models.Model):
+    name = models.CharField(max_length=25)
+
+
+class Room(models.Model):
+    name = models.CharField(max_length=15)
+    challenge = models.ForeignKey(Challenge, on_delete=None)
+
+
+class Presentation(models.Model):
+    project = models.ForeignKey(Project, on_delete=None)
+    room = models.ForeignKey(Room, on_delete=None)
