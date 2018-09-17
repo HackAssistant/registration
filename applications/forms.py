@@ -1,7 +1,6 @@
 from django import forms
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
-from django.urls import reverse
 from django.utils import timezone
 from form_utils.forms import BetterModelForm
 
@@ -64,7 +63,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
                                             '<a href="%s" target="_blank">%s Code of conduct</a>' % (
-                                                getattr(settings, 'CODE_CONDUCT_LINK', reverse('code_conduct')),
+                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 settings.HACKATHON_NAME), )
 
     def clean_resume(self):
