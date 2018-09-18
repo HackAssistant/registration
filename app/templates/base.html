@@ -105,6 +105,9 @@
                                         <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
                                 {% endif %}
                             {% endif %}
+                            {% if h_hw_enabled %}
+                                {% include 'include/hardware_tab.html' %}
+                            {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer %}
                                 <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
