@@ -48,6 +48,7 @@ class IsHardwareAdminMixin(UserPassesTestMixin):
             return False
         return self.request.user.is_hardware_admin or self.request.user.is_organizer
 
+
 def is_organizer(f, raise_exception=True):
     """
     Decorator for views that checks whether a user is an organizer or not
