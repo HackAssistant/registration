@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from app.mixins import TabsViewMixin
-from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable
+from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable, BaggageUsersFilter
 from baggage.models import Bag, BAG_ADDED, BAG_REMOVED, Room
 from user.models import User
 from django_tables2 import SingleTableMixin
@@ -9,10 +9,12 @@ from app.views import TabsView
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
+import math
+import itertools
 
 def organizer_tabs(user):
-    t = [('Check-in', reverse('baggage_add'), False),
-         ('Check-out', reverse('baggage_list'), False)]
+    t = [('Search', reverse('baggage_search'), False),
+         ('List', reverse('baggage_list'), False)]
     return t
 
 class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
@@ -20,17 +22,32 @@ class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
     table_class = BaggageListTable
     filterset_class = BaggageListFilter
     table_pagination = {'per_page': 100}
+    
+    def calculate_distance(self, ini_x, ini_y, end_x, end_y):
+        return ((end_x, end_y), math.sqrt(pow(abs(end_x-ini_x), 2)+pow(abs(end_y-ini_y), 2)))
+
+    def nearest_available(x, y):
+        rooms = Room.objects.all()
+        positions = []
+        for room in rooms:
+            positions.insert(list(0, room.row))
+        print(str(positions))
   
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
     
     def get_queryset(self):
+        rooms = Room.objects.all()
+        positions = list(itertools.product(list(map(str, range(0, 10))), list(map(str, range(0, 13)))))
+        positions_dist = list(map(lambda x : calculate_distance(0, 0, int(x[0]), int(x[1])), positions))
+        positions_sort = sorted(positions_dist, key=(lambda x : x[1]))
+        print(positions)
         return Bag.objects.filter(status=BAG_ADDED)
 
-class BaggageUsers(SingleTableMixin, TabsView):
+class BaggageUsers(TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'baggage_users.html'
     table_class = BaggageUsersTable
-    #filterset_class = BaggageUsersFilter
+    filterset_class = BaggageUsersFilter
     table_pagination = {'per_page': 100}
   
     def get_current_tabs(self):

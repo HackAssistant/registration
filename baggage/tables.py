@@ -30,6 +30,16 @@ class BaggageListFilter(django_filters.FilterSet):
         model = Bag
         fields = ['search']
 
+class BaggageUsersFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+    
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(email__icontains=value) | Q(name__icontains=value)) #TODO: Comprar si aplicació vàlida en cas de hacker
+
+    class Meta:
+        model = User
+        fields = ['search']
+
 class BaggageListTable(tables.Table):
     checkout = tables.TemplateColumn(
         "<a href='{% url 'baggage_detail' record.id %}'>Detail</a> ",
@@ -45,9 +55,12 @@ class BaggageListTable(tables.Table):
         empty_text = 'No baggage items checked-in'
 
 class BaggageUsersTable(tables.Table):
-    checkout = tables.TemplateColumn(
+    checkin = tables.TemplateColumn(
         "<a href='{% url 'baggage_new' record.id %}'>Baggage check-in</a> ",
-        verbose_name='Actions', orderable=False)
+        verbose_name='Check-in', orderable=False)
+    checkout = tables.TemplateColumn(
+        "<a href='{% url 'baggage_list' %}'>Baggage check-out</a> ",
+        verbose_name='Check-out', orderable=False)
     
     class Meta:
         model = User
