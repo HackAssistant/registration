@@ -10,6 +10,9 @@ from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect
 from baggage import utils
+import base64
+from django.core.files.base import ContentFile
+import time
 
 def organizer_tabs(user):
     t = [('Search', reverse('baggage_search'), False),
@@ -64,6 +67,7 @@ class BaggageAdd(TabsView):
         bagdesc = request.POST.get('bag_description')
         bagspe = request.POST.get('bag_special')
         userid = request.POST.get('user_id')
+        bagimage = request.POST.get('bag_image')
 
         bag = Bag()
         bag.owner = User.objects.filter(id=userid).first()
@@ -71,6 +75,11 @@ class BaggageAdd(TabsView):
         bag.color = bagcolor
         bag.description = bagdesc
         bag.special = (bagspe == 'special')
+        
+        if bagimage:
+            bagimageformat, bagimagefile = bagimage.split(';base64,')
+            bagimageext = bagimageformat.split('/')[-1] 
+            bag.image = ContentFile(base64.b64decode(bagimagefile), name= str(time.time()).split('.')[0] + '-' + userid + '.png')
         
         position = utils.get_position(bag.special)
         

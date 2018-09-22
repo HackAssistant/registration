@@ -42,6 +42,19 @@
     margin: 0 auto;
 }
 
+.baggage-inside-scan {
+    width: 100%;
+}
+
+.baggage-inside-scan select {
+    margin-bottom: 15px;
+}
+
+.baggage-inside-scan video {
+    width: 100%;
+    margin: 0 auto;
+}
+
 .veil {
     position: absolute;
     top: 0;

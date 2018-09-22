@@ -51,8 +51,9 @@ class BaggageListTable(tables.Table):
         model = Bag
         attrs = {'class': 'table table-hover'}
         template = 'templates/baggage_list.html'
-        fields = ['id', 'room', 'position', 'owner', 'type', 'description', 'special']
+        fields = ['id', 'room', 'position', 'owner', 'type', 'color', 'special']
         empty_text = 'No baggage items checked-in'
+        order_by = '-id'
 
 class BaggageUsersTable(tables.Table):
     checkin = tables.TemplateColumn(
