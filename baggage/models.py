@@ -15,9 +15,10 @@ BAG_BUILDINGS = (
     ('E02', 'E02')
 )
 
+
 class Room(models.Model):
     """Represents a room where a position can be"""
-    
+
     # Building identifier
     room = models.CharField(primary_key=True, max_length=63, null=False, choices=BAG_BUILDINGS)
     # Number of rows
@@ -28,21 +29,21 @@ class Room(models.Model):
     door_row = models.PositiveIntegerField(null=False, default=0)
     # Nearest col to the door
     door_col = models.PositiveIntegerField(null=False, default=0)
-    
+
     def __str__(self):
         return self.room
 
 
 class Bag(models.Model):
     """Represents a baggage item"""
-    
+
     TYPES = (
         ('BAC', 'Backpack'),
         ('HAR', 'Hardware'),
         ('CLO', 'Clothes'),
         ('OTH', 'Other')
     )
-    
+
     COLORS = (
         ('BE', 'Beige'),
         ('BK', 'Black'),
@@ -67,12 +68,12 @@ class Bag(models.Model):
         ('WH', 'White'),
         ('YE', 'Yellow')
     )
-    
+
     STATUS = (
         (BAG_ADDED, 'Added'),
         (BAG_REMOVED, 'Removed')
     )
-    
+
     # Item identifier
     id = models.AutoField(primary_key=True)
     # User owner of the item
@@ -99,25 +100,25 @@ class Bag(models.Model):
     updated = models.DateTimeField(auto_now=True)
     # Image of the bag object
     image = models.FileField(upload_to='baggage', null=True, blank=True)
-    
+
     def __str__(self):
-        return str(self.id)    
+        return str(self.id)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         self.update_time = datetime.now()
-        super(Bag, self).save(force_insert, force_update, using,
-                                  update_fields)
+        super(Bag, self).save(force_insert, force_update, using, update_fields)
 
     def position(self):
         return str(self.row) + str(self.col)
 
     def full_position(self):
-        return room + position(self)
+        return self.room + self.position(self)
+
 
 class Comment(models.Model):
     """Represents a comment on an item for when it was updated"""
-    
+
     # Movement identifier
     id = models.AutoField(primary_key=True)
     # Item from which the move is related to
@@ -128,6 +129,6 @@ class Comment(models.Model):
     user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
     # Additional comments on the movement
     comment = models.TextField(max_length=1023, null=True, blank=True)
-    
+
     def __str__(self):
         return str(self.id)

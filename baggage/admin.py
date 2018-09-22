@@ -1,6 +1,7 @@
 from django.contrib import admin
 from baggage import models
 
+
 class BaggageRoomAdmin(admin.ModelAdmin):
     list_display = (
         'room', 'row', 'col', 'door_row', 'door_col'
@@ -11,6 +12,7 @@ class BaggageRoomAdmin(admin.ModelAdmin):
 
     def get_actions(self, request):
         return []
+
 
 class BaggageListAdmin(admin.ModelAdmin):
     list_display = (

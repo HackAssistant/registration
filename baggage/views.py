@@ -14,35 +14,38 @@ import base64
 from django.core.files.base import ContentFile
 import time
 
+
 def organizer_tabs(user):
     t = [('Search', reverse('baggage_search'), False),
          ('List', reverse('baggage_list'), False)]
     return t
+
 
 class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'baggage_list.html'
     table_class = BaggageListTable
     filterset_class = BaggageListFilter
     table_pagination = {'per_page': 100}
-  
+
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
-    
+
     def get_queryset(self):
-        rooms = Room.objects.all()
         return Bag.objects.filter(status=BAG_ADDED)
+
 
 class BaggageUsers(TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'baggage_users.html'
     table_class = BaggageUsersTable
     filterset_class = BaggageUsersFilter
     table_pagination = {'per_page': 100}
-  
+
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
-    
+
     def get_queryset(self):
         return User.objects.filter(email_verified=True)
+
 
 class BaggageAdd(TabsView):
     template_name = 'baggage_add.html'
@@ -60,7 +63,7 @@ class BaggageAdd(TabsView):
             'user': user
         })
         return context
-  
+
     def post(self, request, *args, **kwargs):
         bagtype = request.POST.get('bag_type')
         bagcolor = request.POST.get('bag_color')
@@ -75,14 +78,15 @@ class BaggageAdd(TabsView):
         bag.color = bagcolor
         bag.description = bagdesc
         bag.special = (bagspe == 'special')
-        
+
         if bagimage:
             bagimageformat, bagimagefile = bagimage.split(';base64,')
-            bagimageext = bagimageformat.split('/')[-1] 
-            bag.image = ContentFile(base64.b64decode(bagimagefile), name= str(time.time()).split('.')[0] + '-' + userid + '.png')
-        
+            bagimageext = bagimageformat.split('/')[-1]
+            bag.image = ContentFile(base64.b64decode(bagimagefile),
+                                    name=(str(time.time()).split('.')[0] + '-' + userid + '.' + bagimageext))
+
         position = utils.get_position(bag.special)
-        
+
         if position[0] != 0:
             bag.room = Room.objects.filter(room=position[1]).first()
             bag.row = position[2]
@@ -92,6 +96,7 @@ class BaggageAdd(TabsView):
             return redirect('baggage_detail', id=(str(bag.id,)), first='first/')
         messages.success(self.request, 'Error! Couldn\'t add the bag!')
         return redirect('baggage_list')
+
 
 class BaggageDetail(TabsView):
     template_name = 'baggage_detail.html'
@@ -111,7 +116,7 @@ class BaggageDetail(TabsView):
             'bag': bag,
             'position': bag.position(),
             'checkedout': bag.status == BAG_REMOVED,
-            'first' : bagfirst
+            'first': bagfirst
         })
         return context
 
