@@ -3,6 +3,14 @@
 {% load static %}
 {% load bootstrap3 %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
+    <script src="{% static 'lib/instascan.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
+{% endblock %}
+
 {% block head_title %}Baggage check-in{% endblock %}
 
 {% block panel %}
@@ -10,6 +18,14 @@
 	{% include 'include/field.html' with desc='Name' value=user.name %}
 	{% include 'include/field.html' with desc='Email' value=user.email %}
     </dl>
+    
+    
+    <script>
+        $(document).ready(function(){
+            make_field_typeahead('bag_type', '{% static 'types.json' %}');
+            make_field_typeahead('bag_color', '{% static 'colors.json' %}');
+        })
+    </script>
 {% endblock %}
 
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
@@ -19,11 +35,11 @@
 	{% csrf_token %}
 	<div class="form-group">
 	    <label class="control-label" for="bag_type">Type</label>
-	    <input type="text" class="form-control" name="bag_type" />
+	    <input type="text" id="id_bag_type" class="form-control" name="bag_type" />
 	</div>
 	<div class="form-group">
 	    <label class="control-label" for="bag_color">Color</label>
-	    <input type="text" class="form-control" name="bag_color" />
+	    <input type="text" id="id_bag_color" class="form-control" name="bag_color" />
 	</div>
 	<div class="form-group">
 	    <label class="control-label" for="bag_description">Description</label>

@@ -80,15 +80,15 @@ class Bag(models.Model):
     # Reflects the status of the item
     status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=BAG_STATUS)
     # Reflects the room where the item is/was
-    room = models.ForeignKey(Room, null=False, on_delete=models.PROTECT)
+    room = models.ForeignKey(Room, null=True, on_delete=models.PROTECT)
     # Reflects the row where the item is/was
     row = models.CharField(max_length=15, null=False)
     # Reflects the column where the item is/was
     col = models.PositiveIntegerField(null=False)
     # Type of item
-    type = models.CharField(max_length=10, null=False, choices=TYPES)
+    type = models.CharField(max_length=10, null=False)
     # Primary color of the item
-    color = models.CharField(max_length=2, null=False, choices=COLORS)
+    color = models.CharField(max_length=2, null=False)
     # Description of the item
     description = models.TextField(max_length=1023, null=True, blank=True)
     # Reflects if the item is special (different behaviour then) or not
