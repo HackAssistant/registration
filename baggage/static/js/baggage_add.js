@@ -18,7 +18,7 @@ let baggage_webcam = (()=>{
     
     obj.initListeners = ()=>{
         $(window).on("load", function(){
-            obj.imageScan()
+	    obj.imageScan()
         })
         $("#baggage-form").on("submit", (ev)=>{
             obj.capture()
@@ -79,6 +79,12 @@ let baggage_webcam = (()=>{
 })()
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    baggage_webcam.initScanner()
+    if (Instascan.Camera == null){
+	var t = setInterval(obj.initListeners(), 1000)
+    }
+    else{
+	clearInterval(t)
+	baggage_webcam.initScanner()
+    }
     baggage_webcam.initListeners()
 })

@@ -1,6 +1,11 @@
 import math
 import itertools
 from baggage.models import Room, Bag, BAG_ADDED
+from escpos.printer import Usb
+from escpos.escpos import EscposIO
+from django.contrib.staticfiles import finders
+import time
+import datetime
 
 
 def calculate_distance(name, ini_x, ini_y, end_x, end_y):
@@ -42,3 +47,40 @@ def get_position(special):
             return (2, extra, 'EXTRA', i)
         i += 1
     return (0, '', 'ERROR', 0)
+
+
+def print_receipt(hacker, email, building, position, obj_type, color, desc, bag_id, time_ins, message):
+    try:
+        sp = datetime.datetime.fromtimestamp(time.time()).strftime('%d/%m/%Y %H:%M:%S')
+        si = datetime.datetime.fromtimestamp(time_ins).strftime('%d/%m/%Y %H:%M:%S')
+        p = Usb(0x0416, 0x5011)
+        p2 = EscposIO(p)
+        p.text("\n")
+        p.image(finders.find("img/printer/header.gif"))
+        p.text("\n")
+        p.text("\n")
+        p.image(finders.find("img/printer/title.gif"))
+        p.text("\n")
+        p2.writelines("Printed on: " + str(sp), align='center', font='b')
+        p.text("\n")
+        p.text("\n")
+        p2.writelines("Location", align='center', font='a', text_type='bold', width=1)
+        p2.writelines(building + "-" + position, align='center', font='a', text_type='bold', width=2, height=2)
+        p.text("\n")
+        p.text("\n")
+        p2.writelines("Name: " + hacker, align='center', font='a', text_type='bold')
+        p2.writelines("Email: " + email, align='center', font='a', text_type='bold')
+        if obj_type:
+            p2.writelines("Type: " + obj_type, align='center', font='a', text_type='bold')
+        if color:
+            p2.writelines("Color: " + color, align='center', font='a', text_type='bold')
+        p.text("\n")
+        p.text("\n")
+        p2.writelines("Time: " + str(si), align='center', font='a')
+        p.text("\n")
+        p.text("\n")
+        p.image(finders.find("img/printer/footer.gif"))
+        p.cut()
+    except:
+        return 'Error! Couldn\'t print the receipt!'
+    return 'Printing receipt...'

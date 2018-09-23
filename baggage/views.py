@@ -80,10 +80,13 @@ class BaggageAdd(TabsView):
         bag.special = (bagspe == 'special')
 
         if bagimage:
-            bagimageformat, bagimagefile = bagimage.split(';base64,')
-            bagimageext = bagimageformat.split('/')[-1]
-            bag.image = ContentFile(base64.b64decode(bagimagefile),
-                                    name=(str(time.time()).split('.')[0] + '-' + userid + '.' + bagimageext))
+            try:
+                bagimageformat, bagimagefile = bagimage.split(';base64,')
+                bagimageext = bagimageformat.split('/')[-1]
+                bag.image = ContentFile(base64.b64decode(bagimagefile),
+                                        name=(str(time.time()).split('.')[0] + '-' + userid + '.' + bagimageext))
+            except:
+                pass
 
         position = utils.get_position(bag.special)
 
@@ -92,6 +95,9 @@ class BaggageAdd(TabsView):
             bag.row = position[2]
             bag.col = position[3]
             bag.save()
+            # receipt = utils.print_receipt(bag.owner.name, bag.owner.email, position[1], position[2]+str(position[3]),
+            #                               bag.type, bag.color, bag.description, bag.id, time.time(), '')
+            # messages.success(self.request, receipt)
             messages.success(self.request, 'Bag checked-in!')
             return redirect('baggage_detail', id=(str(bag.id,)), first='first/')
         messages.success(self.request, 'Error! Couldn\'t add the bag!')
