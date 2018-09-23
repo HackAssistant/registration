@@ -31,7 +31,26 @@ class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
+        if 'user_id' in self.kwargs:
+            id_ = self.kwargs['user_id']
+            user = User.objects.filter(id=id_)
+            return Bag.objects.filter(status=BAG_ADDED, owner=user)
         return Bag.objects.filter(status=BAG_ADDED)
+
+
+class BaggageHacker(TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'baggage_hacker.html'
+    table_class = BaggageListTable
+    filterset_class = BaggageListFilter
+    table_pagination = {'per_page': 100}
+
+    def get_back_url(self):
+        return 'javascript:history.back()'
+
+    def get_queryset(self):
+        id_ = self.kwargs['user_id']
+        user = User.objects.filter(id=id_)
+        return Bag.objects.filter(status=BAG_ADDED, owner=user)
 
 
 class BaggageUsers(TabsViewMixin, SingleTableMixin, FilterView):

@@ -68,7 +68,7 @@ class BaggageUsersTable(tables.Table):
         "<a href='{% url 'baggage_new' record.id %}'>Baggage check-in</a> ",
         verbose_name='Check-in', orderable=False)
     checkout = tables.TemplateColumn(
-        "<a href='{% url 'baggage_list' %}'>Baggage check-out</a> ",
+        "<a href='{% url 'baggage_hacker' record.id %}'>Baggage check-out</a> ",
         verbose_name='Check-out', orderable=False)
 
     class Meta:
