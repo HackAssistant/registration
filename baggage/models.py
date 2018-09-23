@@ -31,7 +31,7 @@ class Room(models.Model):
     door_col = models.PositiveIntegerField(null=False, default=0)
 
     def __str__(self):
-        return self.room
+        return str(self.room)
 
 
 class Bag(models.Model):
@@ -110,10 +110,9 @@ class Bag(models.Model):
         super(Bag, self).save(force_insert, force_update, using, update_fields)
 
     def position(self):
+        if self.special:
+            return '@' + str(self.col)
         return str(self.row) + str(self.col)
-
-    def full_position(self):
-        return self.room + self.position(self)
 
 
 class Comment(models.Model):
