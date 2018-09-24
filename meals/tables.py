@@ -1,7 +1,6 @@
 import django_filters
 import django_tables2 as tables
 from meals.models import Meal, MEAL_TYPE
-from user.models import User
 from django.db.models import Q
 
 

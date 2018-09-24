@@ -1,7 +1,6 @@
 from django.core.urlresolvers import reverse
 from meals.models import Meal, Eaten
 from meals.tables import MealsListTable, MealsListFilter
-from app.views import TabsView
 from app.mixins import TabsViewMixin
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -17,7 +16,7 @@ token = 'felix'
 
 
 def organizer_tabs(user):
-    t = [('List', reverse('meals_list'), False),]
+    t = [('List', reverse('meals_list'), False), ]
     return t
 
 
@@ -42,7 +41,7 @@ class MealsApi(APIView):
         if var_token != token:
             return HttpResponse('{"code": 1, "message": "Invalid token"}', content_type='application/json')
         var_object = request.GET.get('object')
-        if not var_object in ['meal']:
+        if var_object not in ['meal']:
             return HttpResponse('{"code": 1, "message": "Invalid object"}', content_type='application/json')
 
         meals = Meal.objects.filter(ends__gt=datetime.datetime.now()).order_by('starts')
@@ -57,10 +56,9 @@ class MealsApi(APIView):
         if var_token != token:
             return HttpResponse('{"code": 1, "message": "Invalid token"}', content_type='application/json')
         var_object = request.GET.get('object')
-        if not var_object in ['user', 'meal']:
+        if var_object not in ['user', 'meal']:
             return HttpResponse('{"code": 1, "message": "Invalid object"}', content_type='application/json')
-        
-        
+
         var_meal = request.GET.get('meal')
         obj_meal = Meal.objects.filter(id=var_meal).first()
         if obj_meal is None:
@@ -83,7 +81,8 @@ class MealsApi(APIView):
             obj_eaten.meal = obj_meal
             obj_eaten.user = obj_user
             obj_eaten.save()
-            return HttpResponse('{"code": 0, "content": {"name": ' + var_name +', "diet": ' + var_diet + '}}', content_type='application/json')
+            return HttpResponse('{"code": 0, "content": {"name": ' + var_name + ', "diet": ' + var_diet + '}}',
+                                content_type='application/json')
         var_repetitions = request.GET.get('times')
         obj_meal.times = var_repetitions
         obj_meal.save()

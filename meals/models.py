@@ -1,6 +1,5 @@
 from django.db import models
 from user.models import User
-from django.utils.datetime_safe import datetime
 
 MEAL_TYPE = (
     ('B', 'Breakfast'),
