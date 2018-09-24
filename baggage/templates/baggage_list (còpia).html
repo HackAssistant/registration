@@ -1,0 +1,60 @@
+{% extends "base_table.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+
+{% block head_title %}Baggage check-out{% endblock %}
+
+{% block panel %}
+    <dl class="dl-horizontal" style="margin-bottom: 0;">
+	{% include 'include/field.html' with desc='Name' value=user.name %}
+	{% include 'include/field.html' with desc='Email' value=user.email %}
+    </dl>
+    
+    
+    <script>
+        $(document).ready(function(){
+            make_field_typeahead('bag_type', '{% static 'types.json' %}');
+            make_field_typeahead('bag_color', '{% static 'colors.json' %}');
+        })
+    </script>
+{% endblock %}
+
+{% block extra_panel %}
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <script>
+
+        $(document).ready(function () {
+                var exp_time = $('input[name="time_from"]');
+                exp_time.daterangepicker({
+                    timePicker: true,
+                    singleDatePicker: true,
+                    timePicker24Hour: true,
+                    timePickerIncrement: 5,
+                    startDate: moment(exp_time.val()),
+                    locale: {
+                        firstDay: 1,
+                        format: 'YYYY-MM-DD H:mm:ss'
+                    }
+                });
+                var exp_time2 = $('input[name="time_to"]');
+                exp_time2.daterangepicker({
+                    timePicker: true,
+                    singleDatePicker: true,
+                    timePicker24Hour: true,
+                    timePickerIncrement: 5,
+                    startDate: moment(exp_time2.val()),
+                    locale: {
+                        firstDay: 1,
+                        format: 'YYYY-MM-DD H:mm:ss'
+                    }
+                });
+            }
+        );
+    </script>
+{% endblock %}
