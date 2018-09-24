@@ -8,15 +8,15 @@ from django.shortcuts import render
 from app.utils import reverse
 from app.views import TabsView
 from judging import forms
-from judging.models import Project
+from judging.models import Project, Presentation
 from user.mixins import IsDirectorMixin
 
 
 def organizer_tabs(user):
-    t = [('Projects', reverse('import_projects'), False), ]
-#    t = [('Projects', reverse('project_list')), ]
+    t = [('Import', reverse('import_projects'), False), ]
+    #    t = [('Projects', reverse('project_list')), ]
     if user.is_director:
-        t.append(('Import', reverse('import_projects'), False))
+        t.append(('Projects', reverse('reimbursement_list'), False))
     return t
 
 
@@ -42,10 +42,14 @@ def handle_uploaded_projects(file):
         'additional_team_member_count': 'Additional Team Member Count'
     }
 
+    # TODO: don't add repeated projects, make something unique in the model
     for row in reader:
         # Create project instance
         data = {target: row[original] for target, original in fieldnames_to_csv_cols.items()}
         Project.objects.create(**data)
+
+    projects = Project.objects.all()
+    Presentation.objects.create_from_projects(projects)
 
 
 class ImportProjectsView(IsDirectorMixin, TabsView):

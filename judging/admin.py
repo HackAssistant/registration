@@ -20,6 +20,11 @@ class RoomAdmin(admin.ModelAdmin):
     search_fields = ['name', 'challenge']
 
 
+class PresentationAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(models.Project, admin_class=ProjectAdmin)
 admin.site.register(models.Challenge, admin_class=ChallengeAdmin)
 admin.site.register(models.Room, admin_class=RoomAdmin)
+admin.site.register(models.Presentation, admin_class=PresentationAdmin)
