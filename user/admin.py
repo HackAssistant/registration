@@ -18,7 +18,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name',)}),
+        ('Personal info', {'fields': ('name', 'qr_identifier')}),
         ('Permissions', {'fields': ('is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified')}),
         ('Important dates', {'fields': ('last_login',)}),
     )
