@@ -1,6 +1,6 @@
 from django.core.urlresolvers import reverse
 from meals.models import Meal, Eaten, MEAL_TYPE
-from meals.tables import MealsListTable, MealsListFilter
+from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
 from app.mixins import TabsViewMixin
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -9,18 +9,19 @@ from django.http import HttpResponse
 from user.models import User
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
-import datetime
 from applications.models import Application
 from app.views import TabsView
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.http import Http404
 
 token = 'felix'
 
 
 def organizer_tabs(user):
-    t = [('List', reverse('meals_list'), False), ]
+    t = [('Meals', reverse('meals_list'), False),
+         ('Users', reverse('meals_users'), False)]
     return t
 
 
@@ -35,6 +36,19 @@ class MealsList(TabsViewMixin, SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return Meal.objects.filter()
+
+
+class MealsUsers(TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'meals_users.html'
+    table_class = MealsUsersTable
+    filterset_class = MealsUsersFilter
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return Eaten.objects.filter()
 
 
 class MealDetail(TabsView):
@@ -154,7 +168,7 @@ class MealsApi(APIView):
             obj_user = User.objects.filter(id=var_user).first()
             if obj_user is None:
                 return HttpResponse('{"code": 1, "message": "Invalid user"}', content_type='application/json')
-            var_name = obj_user.name
+            # var_name = obj_user.name
             obj_application = Application.objects.filter(user=obj_user).first()
             if obj_application is None:
                 return HttpResponse('{"code": 1, "message": "No application found"}', content_type='application/json')
