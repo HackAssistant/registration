@@ -27,6 +27,9 @@ class Meal(models.Model):
     def __str__(self):
         return str(self.name)
 
+    def eaten(self):
+        return Eaten.objects.filter(meal=self).count()
+
 
 class Eaten(models.Model):
     """Represents when a hacker has eatean a meal"""

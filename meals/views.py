@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse
-from meals.models import Meal, Eaten
+from meals.models import Meal, Eaten, MEAL_TYPE
 from meals.tables import MealsListTable, MealsListFilter
 from app.mixins import TabsViewMixin
 from django_tables2 import SingleTableMixin
@@ -11,6 +11,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 import datetime
 from applications.models import Application
+from app.views import TabsView
+from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import redirect
 
 token = 'felix'
 
@@ -31,6 +35,87 @@ class MealsList(TabsViewMixin, SingleTableMixin, FilterView):
 
     def get_queryset(self):
         return Meal.objects.filter()
+
+
+class MealDetail(TabsView):
+    template_name = 'meal_detail.html'
+
+    def get_back_url(self):
+        return 'javascript:history.back()'
+
+    def get_context_data(self, **kwargs):
+        context = super(MealDetail, self).get_context_data(**kwargs)
+        mealid = kwargs['id']
+        meal = Meal.objects.filter(id=mealid).first()
+        if not meal:
+            raise Http404
+        context.update({
+            'meal': meal,
+            'types': MEAL_TYPE,
+            'starts': meal.starts.strftime("%Y-%m-%d %H:%M:%S"),
+            'ends': meal.ends.strftime("%Y-%m-%d %H:%M:%S"),
+            'eaten': meal.eaten()
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        mealid = request.POST.get('meal_id')
+        meal = Meal.objects.filter(id=mealid).first()
+        mealname = request.POST.get('meal_name')
+        if mealname:
+            meal.name = mealname
+        mealtype = request.POST.get('meal_type')
+        if mealtype:
+            meal.type = mealtype
+        mealstarts = request.POST.get('meal_starts')
+        if mealstarts:
+            meal.starts = mealstarts
+        mealends = request.POST.get('meal_ends')
+        if mealends:
+            meal.ends = mealends
+        mealtimes = request.POST.get('meal_times')
+        if mealtimes:
+            meal.times = mealtimes
+        meal.save()
+        messages.success(self.request, 'Meal updated!')
+        return redirect('meals_list')
+
+
+class MealAdd(TabsView):
+    template_name = 'meal_add.html'
+
+    def get_back_url(self):
+        return 'javascript:history.back()'
+
+    def get_context_data(self, **kwargs):
+        context = super(MealAdd, self).get_context_data(**kwargs)
+        context.update({
+            'types': MEAL_TYPE,
+            'time1': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'time2': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        meal = Meal()
+        mealname = request.POST.get('meal_name')
+        if mealname:
+            meal.name = mealname
+        mealtype = request.POST.get('meal_type')
+        if mealtype:
+            meal.type = mealtype
+        mealstarts = request.POST.get('meal_starts')
+        if mealstarts:
+            meal.starts = mealstarts
+        mealends = request.POST.get('meal_ends')
+        if mealends:
+            meal.ends = mealends
+        mealtimes = request.POST.get('meal_times')
+        if mealtimes:
+            meal.times = mealtimes
+        meal.save()
+        messages.success(self.request, 'Meal added!')
+        return redirect('meals_list')
 
 
 class MealsApi(APIView):
@@ -81,7 +166,7 @@ class MealsApi(APIView):
             obj_eaten.meal = obj_meal
             obj_eaten.user = obj_user
             obj_eaten.save()
-            return HttpResponse('{"code": 0, "content": {"name": ' + var_name + ', "diet": ' + var_diet + '}}',
+            return HttpResponse('{"code": 0, "content": {"diet": "' + var_diet + '"}}',
                                 content_type='application/json')
         var_repetitions = request.GET.get('times')
         obj_meal.times = var_repetitions

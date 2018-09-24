@@ -17,11 +17,18 @@ class MealsListFilter(django_filters.FilterSet):
 
 
 class MealsListTable(tables.Table):
+    details = tables.TemplateColumn(
+        "<a href='{% url 'meal_detail' record.id %}'>Users list</a> ",
+        verbose_name='Details', orderable=False)
+    change = tables.TemplateColumn(
+        "<a href='{% url 'meal_detail' record.id %}'>Modify meal</a> ",
+        verbose_name='Change', orderable=False)
+    eaten = tables.Column(accessor='eaten', verbose_name='Eaten')
 
     class Meta:
         model = Meal
         attrs = {'class': 'table table-hover'}
         template = 'templates/meals_list.html'
-        fields = ['id', 'name', 'starts', 'ends']
+        fields = ['id', 'name', 'type', 'times', 'starts', 'ends', 'eaten']
         empty_text = 'No meals available'
-        order_by = '-starts'
+        order_by = 'starts'
