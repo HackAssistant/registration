@@ -54,7 +54,9 @@ class PasswordResetForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data['email']
         if not User.objects.filter(email=email).exists():
-            raise forms.ValidationError("We couldn't find a user with that email address. Why not register an account?")
+            raise forms.ValidationError(
+                "We couldn't find a user with that email address. Why not register an account?"
+            )
         return email
 
 
