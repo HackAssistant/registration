@@ -107,6 +107,7 @@
                                 <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}
+                            {% include 'include/meals_tab.html' %}
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
 
