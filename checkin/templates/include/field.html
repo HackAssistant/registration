@@ -1,0 +1,4 @@
+{% if value %}
+    <dt>{{ desc }} {% if showlength %} ({{ value | length}}) {% endif %}</dt>
+    <dd>{{ value }}</dd>
+{% endif %}

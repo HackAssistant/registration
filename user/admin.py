@@ -30,7 +30,7 @@ class UserAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name',)}),
+        ('Personal info', {'fields': ('name', 'qr_identifier')}),
         ('Permissions', {'fields': permission_fields}),
         ('Important dates', {'fields': ('last_login',)}),
     )

@@ -13,10 +13,12 @@ from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
 from user.mixins import IsVolunteerMixin, IsOrganizerMixin
 from user.models import User
+from app import utils
+from django.shortcuts import redirect
 
 
 def user_tabs(user):
-    return [('List', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False),
+    return [('List', reverse('check_in_list'), False),
             ('Ranking', reverse('check_in_ranking'), False)]
 
 
@@ -31,13 +33,6 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
 
     def get_queryset(self):
         return models.Application.objects.exclude(status=models.APP_ATTENDED)
-
-
-class QRView(IsVolunteerMixin, TabsView):
-    template_name = 'checkin/qr.html'
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
 
 
 class CheckInHackerView(IsVolunteerMixin, TabsView):
@@ -65,6 +60,14 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
     def post(self, request, *args, **kwargs):
         appid = request.POST.get('app_id')
         app = models.Application.objects.filter(uuid=appid).first()
+        if utils.get_substitutions_templates()['qr_assignment_checkin']:
+            qrcode = request.POST.get('qr_code')
+            if qrcode is None or qrcode == "":
+                messages.success(self.request, 'The QR code is mandatory!')
+                return redirect('check_in_hacker', id=appid)
+            us = app.user
+            us.qr_identifier = qrcode
+            us.save()
         app.check_in()
         ci = CheckIn()
         ci.user = request.user

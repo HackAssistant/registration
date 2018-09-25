@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 from django.utils import timezone
+from app import utils
 
 
 class UserManager(BaseUserManager):
@@ -54,6 +55,9 @@ class User(AbstractBaseUser):
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
 
+    # QR identifier for wristband identification
+    qr_identifier = models.CharField(max_length=255, null=True)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -85,3 +89,8 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         return self.is_admin
+
+    def get_id(self):
+        if utils.get_substitutions_templates()['qr_assignment_checkin']:
+            return self.qr_identifier
+        return self.id

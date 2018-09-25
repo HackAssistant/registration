@@ -1,0 +1,13 @@
+<div class="form-group {% if request.GET.search %}has-success{% endif %}">
+    <label class="control-label" for="{{ id }}">{{ desc }}</label>
+    {% if type == 'qr' %}
+        <div>
+            <i id="{{ id }}-qr" class="button-qr fa fa-qrcode fa-2x {% if request.GET.search %}button-qr-success{% endif %}"></i>
+            <div class="input-qr">
+                <input class="form-control" id="{{ id }}" name="{{ name }}" value="{{ request.GET.search }}" type="text">
+            </div>
+        </div>
+    {% else %}
+        <input class="form-control" id="{{ id }}" name="{{ name }}" type="text">
+    {% endif %}
+</div>

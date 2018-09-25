@@ -75,5 +75,8 @@ LOGGED_IN_COOKIE_KEY = 'hackassistant_logged_in'
 
 # Hardware configuration
 HARDWARE_ENABLED = False
-#Hardware request time length (in minutes)
+# Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
+
+# QR assignment on check-in
+QR_ASSIGNMENT_CHECKIN = False

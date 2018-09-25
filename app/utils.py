@@ -86,6 +86,7 @@ def get_substitutions_templates():
             'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRY_DAYS', None),
             'h_r_enabled': getattr(settings, 'REIMBURSEMENT_ENABLED', False),
             'h_hw_enabled': getattr(settings, 'HARDWARE_ENABLED', False),
+            'qr_assignment_checkin': getattr(settings, 'QR_ASSIGNMENT_CHECKIN', False),
             }
 
 
