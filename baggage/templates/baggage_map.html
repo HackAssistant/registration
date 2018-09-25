@@ -33,15 +33,17 @@
             <div class="baggage-header">
                 <h3 class="baggage-title">Room {{ room }}</h3>
             </div>
-            <table class="baggage-table">
-                {% for i in "x"|ljust:room.row %}
-                    <tr class="baggage-table-tr">
-                        {% for j in "x"|ljust:room.col %}
-                            <th  class="baggage-table-th" id="baggage-cell-{{ room }}-{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}">{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}</th>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </table>
+            <div style="overflow-x: hidden;">
+                <table class="baggage-table">
+                    {% for i in "x"|ljust:room.row %}
+                        <tr class="baggage-table-tr baggage-table-tr-{{ room }}-{{ forloop.parentloop.counter0|itoa }} baggage-table-tr-{{ forloop.parentloop.counter0|itoa }}">
+                            {% for j in "x"|ljust:room.col %}
+                                <th  class="baggage-table-th baggage-table-th-{{ room }}-{{ forloop.counter0 }} baggage-table-th-{{ forloop.counter0 }}" id="baggage-cell-{{ room }}-{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}">{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}</th>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     {% endfor %}
     

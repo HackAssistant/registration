@@ -143,3 +143,8 @@
 .baggage-title {
     font-size: 29px;
 }
+
+/* Custom display */
+.baggage-table-th-6 {
+    border-right: 15px solid #FFF;
+}
