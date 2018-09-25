@@ -30,7 +30,7 @@ class Project(models.Model):
 
 
 class Room(models.Model):
-    name = models.CharField(max_length=15)
+    name = models.CharField(max_length=40, unique=True)
     challenge = models.ForeignKey(Challenge, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
@@ -49,19 +49,18 @@ class PresentationManager(models.Manager):
                     .filter(challenge=challenge) \
                     .annotate(queue_len=num_pending_presentations) \
                     .order_by('queue_len')
-                print(rooms)
                 room_to_assign = rooms.first()
 
                 if room_to_assign is None:
-                    print('no room found, creating one')
                     room_name = 'auto__' + challenge_name + '_00'
                     room_to_assign = Room.objects.create(name=room_name, challenge=challenge)
                     room_to_assign.queue_len = 0
 
-                print('assigning to a room with {} presentations'.format(room_to_assign.queue_len))
-
-                Presentation.objects.create(project=project, room=room_to_assign,
-                                            done=False, turn=room_to_assign.queue_len)
+                Presentation.objects.get_or_create(project=project, room=room_to_assign,
+                                                   defaults={
+                                                       'done': False,
+                                                       'turn': room_to_assign.queue_len
+                                                   })
         return None
 
 
@@ -75,3 +74,6 @@ class Presentation(models.Model):
 
     def __str__(self):
         return str(self.project) + ' @ ' + str(self.room)
+
+    class Meta:
+        unique_together = (('project', 'room'),)

@@ -2,6 +2,7 @@ import csv
 import io
 
 from django.contrib import messages
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -42,11 +43,13 @@ def handle_uploaded_projects(file):
         'additional_team_member_count': 'Additional Team Member Count'
     }
 
-    # TODO: don't add repeated projects, make something unique in the model
     for row in reader:
         # Create project instance
         data = {target: row[original] for target, original in fieldnames_to_csv_cols.items()}
-        Project.objects.create(**data)
+        try:
+            Project.objects.create(**data)
+        except IntegrityError:
+            pass
 
     projects = Project.objects.all()
     Presentation.objects.create_from_projects(projects)
