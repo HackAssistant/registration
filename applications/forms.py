@@ -80,7 +80,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
-            raise forms.ValidationError("You must accept our code of conduct")
+            raise forms.ValidationError(
+                "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
         return cc
 
     def clean_github(self):
