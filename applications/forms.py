@@ -24,12 +24,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     university = forms.CharField(required=True,
-                                 label='What university are you studying in?',
+                                 label='What university do you study at?',
                                  help_text='Current or most recent school you attended.',
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=True, label='What\'s your Major?',
+    degree = forms.CharField(required=True, label='What\'s your major/degree?',
                              help_text='Current or most recent degree you\'ve received',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
@@ -80,7 +80,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
-            raise forms.ValidationError("In order to apply and attend you have to accept our code of conduct")
+            raise forms.ValidationError(
+                "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
         return cc
 
     def clean_github(self):
@@ -126,7 +127,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         data = self.cleaned_data['other_diet']
         diet = self.cleaned_data['diet']
         if diet == 'Others' and not data:
-            raise forms.ValidationError("Please fill your specific diet requirements")
+            raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
 
     def __getitem__(self, name):
@@ -145,7 +146,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
-              'description': 'Some of our sponsors will use this information to potentially recruit you,'
+              'description': 'Some of our sponsors may use this information for recruitment purposes,'
               'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
@@ -159,7 +160,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         elif self.instance.pk and r_enabled:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin',),
-                                     'description': 'If you applied for reimbursement see it on the Travel tab. '
+                                     'description': 'If you applied for reimbursement, check out the Travel tab. '
                                                     'Email us at %s for any change needed on reimbursements.' %
                                                     settings.HACKATHON_CONTACT_EMAIL,
                                      }))
@@ -184,7 +185,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
             'degree': 'What\'s your major?',
-            'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
+            'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
@@ -201,8 +202,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         }
 
         labels = {
-            'gender': 'What gender do you associate with?',
-            'graduation_year': 'What year are you graduating?',
+            'gender': 'What gender do you identify as?',
+            'graduation_year': 'What year will you graduate?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
