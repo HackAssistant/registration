@@ -68,37 +68,23 @@
 
 .tab {
     overflow: hidden;
+    float: right;
 }
 
 .tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-    background-color: #f1f1f1;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
 }
 
 .tab button:hover {
-    background-color: #ddd;
+    background-color: #aa002d !important;
 }
 
 .tab button.active {
-    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1);
-    background-color: #c2bebe;
+    background-color: #aa002d !important;
 }
 
 .tabcontent {
     display: none;
-    padding: 1em;
-    border-top: none;
-    border-left: 1px solid #f1f1f1;
-    border-bottom: 1px solid #f1f1f1;
-    border-right: 1px solid #f1f1f1;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+    padding: 0;
 }
 
 .tabcontent {
@@ -108,4 +94,52 @@
 @keyframes fadeEffect {
     from {opacity: 0.5;}
     to {opacity: 1;}
+}
+
+.baggage-table {
+    width: 100%;
+}
+
+.baggage-table-tr {
+    
+}
+
+.baggage-table-th {
+    padding: 1em;
+    text-align: center;
+    vertical-align: center;
+    background-color: #e7e7e7;
+    border: 5px solid #FFF;
+}
+
+.baggage-table-th a {
+    color: #FFF;
+}
+
+.baggage-table tr:first-child th {
+    border-top: 0;
+}
+
+.baggage-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.baggage-table tr td:first-child,
+.baggage-table tr th:first-child {
+    border-left: 0;
+}
+
+.baggage-table tr td:last-child,
+.baggage-table tr th:last-child {
+    border-right: 0;
+}
+
+.baggage-header {
+    width: 100%;
+    display: block;
+    margin-bottom: 1.25em;
+}
+
+.baggage-title {
+    font-size: 29px;
 }

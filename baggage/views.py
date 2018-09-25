@@ -164,12 +164,9 @@ class BaggageMap(TabsView):
     def get_context_data(self, **kwargs):
         context = super(BaggageMap, self).get_context_data(**kwargs)
         rooms = Room.objects.all()
-        bags = Bag.objects.all()
+        bags = Bag.objects.filter(status=BAG_ADDED)
         context.update({
             'rooms': rooms,
             'bags': bags
         })
         return context
-
-    def get_queryset(self):
-        return Bag.objects.filter(status=BAG_ADDED)
