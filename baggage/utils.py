@@ -18,7 +18,7 @@ def nearest_available(x, y):
 
 def get_positions(size_x, size_y, door_x, door_y):
     return list(itertools.product(list(map(str, range(0, size_x))), list(map(str, range(0, size_y)))))
-  
+
 
 def get_positions_dist(size_x, size_y, door_x, door_y, name):
     positions = get_positions(size_x, size_y, door_x, door_y)
