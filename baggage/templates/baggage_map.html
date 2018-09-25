@@ -1,0 +1,54 @@
+{% extends "base_tabs.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load baggage_tags %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
+{% endblock %}
+
+{% block head_title %}Baggage map{% endblock %}
+
+{% block panel %}
+    <div class="tab">
+        {% for room in rooms %}
+            <button class="tablinks" onclick="openCity(event, '{{ room }}')">{{ room }}</button>
+        {% endfor %}
+    </div>
+
+    {% for room in rooms %}
+        <div id="{{ room }}" class="tabcontent">
+            <table style="width:100%">
+                {% for i in "x"|ljust:room.row %}
+                    <tr>
+                        {% for j in "x"|ljust:room.col %}
+                            <th>{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}</th>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endfor %}
+    
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        document.getElementsByClassName("tablinks")[0].click();
+    </script>
+{% endblock %}

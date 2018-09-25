@@ -65,3 +65,47 @@
     background-color: rgba(30,30,30,0.9);
     cursor: pointer;
 }
+
+.tab {
+    overflow: hidden;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    background-color: #f1f1f1;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05);
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1);
+    background-color: #c2bebe;
+}
+
+.tabcontent {
+    display: none;
+    padding: 1em;
+    border-top: none;
+    border-left: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+    border-right: 1px solid #f1f1f1;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tabcontent {
+    animation: fadeEffect 1s;
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0.5;}
+    to {opacity: 1;}
+}

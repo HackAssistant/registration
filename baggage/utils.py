@@ -16,10 +16,17 @@ def nearest_available(x, y):
     return ''
 
 
-def get_positions(size_x, size_y, door_x, door_y, name):
-    positions = list(itertools.product(list(map(str, range(0, size_x))), list(map(str, range(0, size_y)))))
-    positions_dist = list(map(lambda x: calculate_distance(name, door_x, door_y, int(x[0]), int(x[1])), positions))
-    return positions_dist
+def get_positions(size_x, size_y, door_x, door_y):
+    return list(itertools.product(list(map(str, range(0, size_x))), list(map(str, range(0, size_y)))))
+  
+
+def get_positions_dist(size_x, size_y, door_x, door_y, name):
+    positions = get_positions(size_x, size_y, door_x, door_y)
+    return list(map(lambda x: calculate_distance(name, door_x, door_y, int(x[0]), int(x[1])), positions))
+
+
+def get_all_positions(rooms):
+    return dict(map(lambda room: (room.room, get_positions(room.row, room.col, room.door_row, room.door_col)), rooms))
 
 
 def get_position(special):
@@ -28,7 +35,7 @@ def get_position(special):
         rooms = Room.objects.all()
         positions = []
         for room in rooms:
-            positions.extend(get_positions(room.row, room.col, room.door_row, room.door_col, room.room))
+            positions.extend(get_positions_dist(room.row, room.col, room.door_row, room.door_col, room.room))
         positions_sort = sorted(positions, key=(lambda x: x[1]))
         i = 0
         while i < len(positions_sort):
