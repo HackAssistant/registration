@@ -6,24 +6,38 @@
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
+    <style>
+        {% for bag in bags %}
+            #baggage-cell-{{ bag.room }}-{{ bag.position }}{
+                background: #E22B57;
+                color: #FFF;
+                cursor: pointer;
+            }
+        {% endfor %}
+    </style>
 {% endblock %}
 
 {% block head_title %}Baggage map{% endblock %}
 
 {% block panel %}
     <div class="tab">
-        {% for room in rooms %}
-            <button class="tablinks" onclick="openCity(event, '{{ room }}')">{{ room }}</button>
-        {% endfor %}
+        <div style="float: right;">
+            {% for room in rooms %}
+                <button class="tablinks btn btn-info" onclick="openCity(event, '{{ room }}')">{{ room }}</button>
+            {% endfor %}
+        </div>
     </div>
 
     {% for room in rooms %}
         <div id="{{ room }}" class="tabcontent">
-            <table style="width:100%">
+            <div class="baggage-header">
+                <h3 class="baggage-title">Room {{ room }}</h3>
+            </div>
+            <table class="baggage-table">
                 {% for i in "x"|ljust:room.row %}
-                    <tr>
+                    <tr class="baggage-table-tr">
                         {% for j in "x"|ljust:room.col %}
-                            <th>{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}</th>
+                            <th  class="baggage-table-th" id="baggage-cell-{{ room }}-{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}">{{ forloop.parentloop.counter0|itoa }}{{ forloop.counter0 }}</th>
                         {% endfor %}
                     </tr>
                 {% endfor %}
@@ -51,4 +65,12 @@
         
         document.getElementsByClassName("tablinks")[0].click();
     </script>
+    
+    {% for bag in bags %}
+        <script>
+            $(document).ready(function(){
+                document.getElementById('baggage-cell-{{ bag.room }}-{{ bag.position }}').innerHTML = "<a href=\"{% url 'baggage_detail' bag.id %}\">{{ bag.position }}</a>";
+            });
+        </script>
+    {% endfor %}
 {% endblock %}
