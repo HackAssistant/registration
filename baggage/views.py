@@ -116,7 +116,6 @@ class BaggageAdd(TabsView):
         position = ()
         if posmanual == 'manual' and bagspe != 'special' and bagroom and bagrow and bagcol:
             position = (3, bagroom, bagrow, bagcol)
-            posroom = Room.objects.filter(room=bagroom).first()
             posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol).count()
             if posempty > 0:
                 messages.success(self.request, 'Error! Position is already taken!')
