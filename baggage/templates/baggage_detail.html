@@ -19,7 +19,6 @@
     <div class="panel-footer">
         {% if checkedout or first %}
             <a class="btn btn-default btn-block" href="{% url 'baggage_search' %}">Search another user</a>
-            <a class="btn btn-default btn-block" href="{% url 'baggage_list' %}">List all baggage</a>
         {% else %}
             <form action="" method="post">
                 {% csrf_token %}

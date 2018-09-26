@@ -80,7 +80,8 @@ class BaggageAdd(TabsView):
         if not user:
             raise Http404
         context.update({
-            'user': user
+            'user': user,
+            'rooms': Room.objects.all()
         })
         return context
 
@@ -108,7 +109,14 @@ class BaggageAdd(TabsView):
             except:
                 pass
 
-        position = utils.get_position(bag.special)
+        bagroom = request.POST.get('pos_room')
+        bagrow = request.POST.get('pos_row')
+        bagcol = request.POST.get('pos_col')
+        position = ()
+        if bagroom and bagrow and bagcol:
+            position = (3, bagroom, bagrow, bagcol)
+        else:
+            position = utils.get_position(bag.special)
 
         if position[0] != 0:
             bag.room = Room.objects.filter(room=position[1]).first()
@@ -152,7 +160,7 @@ class BaggageDetail(TabsView):
         bag.status = BAG_REMOVED
         bag.save()
         messages.success(self.request, 'Bag checked-out!')
-        return redirect('baggage_list')
+        return redirect('baggage_search')
 
 
 class BaggageMap(TabsView):

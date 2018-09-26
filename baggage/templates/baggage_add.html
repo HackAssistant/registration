@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load bootstrap3 %}
+{% load baggage_tags %}
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
@@ -17,6 +18,7 @@
     <dl class="dl-horizontal" style="margin-bottom: 0;">
 	{% include 'include/field.html' with desc='Name' value=user.name %}
 	{% include 'include/field.html' with desc='Email' value=user.email %}
+	{% include 'include/field.html' with desc='Position' value=position %}
     </dl>
     
     
@@ -53,7 +55,55 @@
 	<div class="form-group">
 	    <input type="checkbox" name="bag_special" id="holita" value="special"> Special
 	</div>
+	{% if rooms|length > 0 %}
+	    <div class="form-group">
+		<label class="control-label" for="pos_room">Room</label>
+		<select class="form-control" id="baggage-rooms" name="pos_room">
+		{% for room in rooms %}
+		    <option value="{{ room.room }}">{{ room.room }}</option>
+		{% endfor %}
+		</select>
+	    </div>
+	    <div class="form-group">
+		<label class="control-label" for="pos_row">Row</label>
+		<select class="form-control" id="baggage-rows" name="pos_row">
+		{% for i in "x"|ljust:rooms.0.row %}
+		    <option value="{{ forloop.counter0|itoa }}" {% if forloop.counter0 == 0 %} selected {% endif %}>{{ forloop.counter0|itoa }}</option>
+		{% endfor %}
+		</select>
+	    </div>
+	    <div class="form-group">
+		<label class="control-label" for="pos_col">Column</label>
+		<select class="form-control" id="baggage-cols" name="pos_col">
+		{% for i in "x"|ljust:rooms.0.col %}
+		    <option value="{{ forloop.counter0 }}" {% if forloop.counter0 == 0 %} selected {% endif %}>{{ forloop.counter0 }}</option>
+		{% endfor %}
+		</select>
+	    </div>
+	{% endif %}
         <input type="hidden" name="user_id" value="{{ user.id }}"/>
 	<button class="btn btn-success" name="checkin">Bag check-in</button>
     </form>
+    
+    <script>
+        var room = document.getElementById("baggage-rooms");
+        room.addEventListener("change", function(){
+	    {% for room in rooms %}
+	        if(room.value == "{{ room.room }}"){
+		    var rows = document.getElementById("baggage-rows")
+		    rows_room = ""
+		    {% for i in "x"|ljust:room.row %}
+		        rows_room += "<option value=\"{{ forloop.counter0|itoa }}\">{{ forloop.counter0|itoa }}</option>"
+		    {% endfor %}
+		    rows.innerHTML = rows_room
+		    var cols = document.getElementById("baggage-cols")
+		    cols_room = ""
+		    {% for i in "x"|ljust:room.col %}
+		        cols_room += "<option value=\"{{ forloop.counter0 }}\">{{ forloop.counter0 }}</option>"
+		    {% endfor %}
+		    cols.innerHTML = cols_room
+	        }
+	    {% endfor %}
+	});
+    </script>
 {% endblock %}
