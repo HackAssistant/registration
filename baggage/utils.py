@@ -1,11 +1,11 @@
 import math
 import itertools
 from baggage.models import Room, Bag, BAG_ADDED
-from escpos.printer import Usb
-from escpos.escpos import EscposIO
-from django.contrib.staticfiles import finders
-import time
-import datetime
+# from escpos.printer import Usb
+# from escpos.escpos import EscposIO
+# from django.contrib.staticfiles import finders
+# import time
+# import datetime
 
 
 def calculate_distance(name, ini_x, ini_y, end_x, end_y):
@@ -56,6 +56,7 @@ def get_position(special):
     return (0, '', 'ERROR', 0)
 
 
+'''
 def print_receipt(hacker, email, building, position, obj_type, color, desc, bag_id, time_ins, message):
     try:
         sp = datetime.datetime.fromtimestamp(time.time()).strftime('%d/%m/%Y %H:%M:%S')
@@ -91,3 +92,4 @@ def print_receipt(hacker, email, building, position, obj_type, color, desc, bag_
     except:
         return 'Error! Couldn\'t print the receipt!'
     return 'Printing receipt...'
+ '''

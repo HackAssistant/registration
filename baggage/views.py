@@ -18,7 +18,8 @@ import time
 def organizer_tabs(user):
     t = [('Search', reverse('baggage_search'), False),
          ('List', reverse('baggage_list'), False),
-         ('Map', reverse('baggage_map'), False)]
+         ('Map', reverse('baggage_map'), False),
+         ('History', reverse('baggage_history'), False)]
     return t
 
 
@@ -180,6 +181,21 @@ class BaggageMap(TabsView):
         bags = Bag.objects.filter(status=BAG_ADDED)
         context.update({
             'rooms': rooms,
+            'bags': bags
+        })
+        return context
+
+
+class BaggageHistory(TabsView):
+    template_name = 'baggage_history.html'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(BaggageHistory, self).get_context_data(**kwargs)
+        bags = Bag.objects.all().order_by('time', 'updated')
+        context.update({
             'bags': bags
         })
         return context

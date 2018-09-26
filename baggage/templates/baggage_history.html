@@ -1,0 +1,36 @@
+{% extends "base_tabs.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load baggage_tags %}
+
+{% block head_title %}Baggage history{% endblock %}
+
+{% block panel %}
+    <table class="table table-hover">
+        <thread>
+	    <tr>
+		<th>Id</th>
+		<th>Owner</th>
+		<th>Status</th>
+		<th>Time added</th>
+		<th>Time removed</th>
+	    </tr>
+        </thead>
+        <tbody>
+	    {% for bag in bags %}
+		<tr>
+			<td><a href="{% url 'baggage_detail' bag.id %}">{{ bag.id }}</a></td>
+			<td>{{ bag.owner }}</td>
+			<td>{{ bag.get_status_display }}</td>
+			<td>{{ bag.time|date:"d/m/Y" }} {{ bag.time|time:"H:i:s" }}</td>
+			{% if bag.status == "R" %}
+				<td>{{ bag.updated|date:"d/m/Y" }} {{ bag.updated|time:"H:i:s" }}</td>
+			{% else %}
+				<td></td>
+			{% endif %}
+		</tr>
+	    {% endfor %}
+	</tbody>
+    </table>
+{% endblock %}
