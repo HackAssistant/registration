@@ -143,7 +143,7 @@ class MealsApi(APIView):
         if var_object not in ['meal']:
             return HttpResponse('{"code": 1, "message": "Invalid object"}', content_type='application/json')
 
-        meals = Meal.objects.filter(ends__gt=datetime.datetime.now()).order_by('starts')
+        meals = Meal.objects.filter(ends__gt=datetime.now()).order_by('starts')
         var_all = request.GET.get('all')
         if var_all == '1':
             meals = Meal.objects.all().order_by('starts')
