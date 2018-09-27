@@ -16,8 +16,8 @@ class ChallengeAdmin(admin.ModelAdmin):
 
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('name', 'challenge')
-    search_fields = ['name', 'challenge']
+    list_display = ('name', 'challenge', 'main_judge')
+    search_fields = ['name', 'challenge', 'main_judge']
 
 
 class PresentationAdmin(admin.ModelAdmin):

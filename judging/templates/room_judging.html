@@ -1,0 +1,21 @@
+{% extends "base_tabs.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% load static %}
+{% load form_utils %}
+{% block head_title %}Judge projects{% endblock %}
+
+{%  block panel %}
+
+{% if room %}
+  Print you are judging Room {{ room.name }}.
+{% else %}
+  You are not the judge of any rooms.
+{% endif %}
+
+
+<script src="{% static 'lib/typeahead.min.js' %}"></script>
+<script src="{% static 'js/form_modifiers.js' %}"></script>
+
+{% endblock %}

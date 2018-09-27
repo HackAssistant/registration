@@ -10,14 +10,13 @@ from app.utils import reverse
 from app.views import TabsView
 from judging import forms
 from judging.models import Project, Presentation
-from user.mixins import IsDirectorMixin
+from user.mixins import IsDirectorMixin, IsOrganizerMixin
 
 
 def organizer_tabs(user):
-    t = [('Import', reverse('import_projects'), False), ]
-    #    t = [('Projects', reverse('project_list')), ]
+    t = [('Judge', reverse('judge_projects'), False), ]
     if user.is_director:
-        t.append(('Projects', reverse('reimbursement_list'), False))
+        t.append(('Import', reverse('import_projects'), False))
     return t
 
 
@@ -78,3 +77,18 @@ class ImportProjectsView(IsDirectorMixin, TabsView):
             return render(request, self.template_name, c)
 
         return HttpResponseRedirect(reverse('import_projects'))
+
+
+class RoomJudgingView(IsOrganizerMixin, TabsView):
+    template_name = 'room_judging.html'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        c = super(RoomJudgingView, self).get_context_data(**kwargs)
+        if hasattr(self.request.user, 'room'):
+            c.update({'room': self.request.user.room})
+        return c
+
+    pass

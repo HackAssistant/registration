@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Count, Q
 
+from user.models import User
+
 
 class Challenge(models.Model):
     name = models.CharField(max_length=25)
@@ -32,6 +34,12 @@ class Project(models.Model):
 class Room(models.Model):
     name = models.CharField(max_length=40, unique=True)
     challenge = models.ForeignKey(Challenge, null=True, on_delete=models.SET_NULL)
+    main_judge = models.OneToOneField(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        limit_choices_to={'is_organizer': True}
+    )
 
     def __str__(self):
         return self.name
