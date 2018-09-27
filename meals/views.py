@@ -15,6 +15,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.http import Http404
+from django.utils import timezone
 
 token = 'felix'
 
@@ -80,7 +81,7 @@ class MealDetail(TabsView):
             meal.name = mealname
         mealtype = request.POST.get('meal_type')
         if mealtype:
-            meal.type = mealtype
+            meal.kind = mealtype
         mealstarts = request.POST.get('meal_starts')
         if mealstarts:
             meal.starts = mealstarts
@@ -117,7 +118,7 @@ class MealAdd(TabsView):
             meal.name = mealname
         mealtype = request.POST.get('meal_type')
         if mealtype:
-            meal.type = mealtype
+            meal.kind = mealtype
         mealstarts = request.POST.get('meal_starts')
         if mealstarts:
             meal.starts = mealstarts

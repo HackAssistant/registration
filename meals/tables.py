@@ -6,21 +6,21 @@ from django.db.models import Q
 
 class MealsListFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
-    type = django_filters.ChoiceFilter(label='Type', choices=MEAL_TYPE, empty_label='Any')
+    type2 = django_filters.ChoiceFilter(label='Type', choices=MEAL_TYPE, empty_label='Any')
 
     def search_filter(self, queryset, name, value):
         return queryset.filter((Q(name__icontains=value) | Q(type__icontains=value)))
 
     class Meta:
         model = Meal
-        fields = ['search', 'type']
+        fields = ['search', 'type2']
 
 
 class MealsListTable(tables.Table):
     change = tables.TemplateColumn(
         "<a href='{% url 'meal_detail' record.id %}'>Modify</a> ",
         verbose_name='Actions', orderable=False)
-    starts2 = tables.DateTimeColumn(accessor='starts', verbose_name='Starts', format='d/m/Y G:i')
+    starts2 = tables.DateColumn(accessor='starts', verbose_name='Starts', format='d/m/Y G:i')
     ends2 = tables.DateTimeColumn(accessor='ends', verbose_name='Ends', format='d/m/Y G:i')
     eaten = tables.Column(accessor='eaten', verbose_name='Eaten')
 
@@ -28,7 +28,7 @@ class MealsListTable(tables.Table):
         model = Meal
         attrs = {'class': 'table table-hover'}
         template = 'templates/meals_list.html'
-        fields = ['id', 'name', 'type', 'times', 'starts2', 'ends2', 'eaten']
+        fields = ['id', 'name', 'kind', 'times', 'starts2', 'ends2', 'eaten']
         empty_text = 'No meals available'
         order_by = 'starts'
 

@@ -12,7 +12,7 @@
 	    <label class="control-label" for="meal_name">Type</label>
 	    <select class="form-control" name="meal_type">
 	    {% for type in types %}
-	        <option value="{{ type.0 }}" {% if type.0 == meal.type %}selected="selected"{% endif %}>{{ type.1 }}</option>
+	        <option value="{{ type.0 }}" {% if type.0 == meal.kind %}selected="selected"{% endif %}>{{ type.1 }}</option>
 	    {% endfor %}
 	    </select>
 	</div>

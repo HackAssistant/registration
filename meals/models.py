@@ -16,7 +16,7 @@ class Meal(models.Model):
     # Meal name
     name = models.CharField(max_length=63, null=False)
     # Meal type
-    type = models.CharField(max_length=63, null=False, choices=MEAL_TYPE)
+    kind = models.CharField(max_length=63, null=False, choices=MEAL_TYPE)
     # Starting time
     starts = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
     # Ending time
