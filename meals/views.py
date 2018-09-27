@@ -15,7 +15,6 @@ from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.http import Http404
-from django.utils import timezone
 import json
 
 token = 'felix'
@@ -169,15 +168,17 @@ class MealsApi(APIView):
             var_user = request.GET.get('user')
             obj_user = User.objects.filter(id=var_user).first()
             if obj_user is None:
-                return HttpResponsejson.dump({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
+                return HttpResponse(json.dump({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
             # var_name = obj_user.name
             obj_application = Application.objects.filter(user=obj_user).first()
             if obj_application is None:
-                return HttpResponse(json.dump({'code': 1, 'message': 'No application found'}), content_type='application/json')
+                return HttpResponse(json.dump({'code': 1, 'message': 'No application found'}),
+                                    content_type='application/json')
             var_diet = obj_application.diet
             var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
             if var_eatens >= var_repetitions:
-                return HttpResponse(json.dump({'code': 2, 'message': 'Hacker alreay ate'}), content_type='application/json')
+                return HttpResponse(json.dump({'code': 2, 'message': 'Hacker alreay ate'}),
+                                    content_type='application/json')
             obj_eaten = Eaten()
             obj_eaten.meal = obj_meal
             obj_eaten.user = obj_user
