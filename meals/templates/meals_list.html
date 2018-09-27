@@ -6,5 +6,11 @@
 {% block head_title %}Meals list{% endblock %}
 
 {% block extra_panel %}
-<a href="{% url 'meal_add' %}" class="btn btn-info" style="float: right;">Add new meal</a>
+
+{% endblock %}
+
+{% block table_footer %}
+    <div class="panel-footer">
+	<a href="{% url 'meal_add' %}" class="btn btn-success btn-block">Add new meal</a>
+    </div>
 {% endblock %}
