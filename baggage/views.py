@@ -96,6 +96,7 @@ class BaggageAdd(TabsView):
 
         bag = Bag()
         bag.owner = User.objects.filter(id=userid).first()
+        bag.inby = request.user
         bag.type = bagtype
         bag.color = bagcolor
         bag.description = bagdesc
@@ -164,6 +165,7 @@ class BaggageDetail(TabsView):
         bagid = request.POST.get('bag_id')
         bag = Bag.objects.filter(id=bagid).first()
         bag.status = BAG_REMOVED
+        bag.outby = request.user
         bag.save()
         messages.success(self.request, 'Bag checked-out!')
         return redirect('baggage_search')

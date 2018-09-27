@@ -77,7 +77,11 @@ class Bag(models.Model):
     # Item identifier
     id = models.AutoField(primary_key=True)
     # User owner of the item
-    owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='%(class)s_baggage_owner')
+    # User that checked-in the baggage
+    inby = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='%(class)s_baggage_in')
+    # User that checked-out the baggage
+    outby = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='%(class)s_requests_out')
     # Reflects the status of the item
     status = models.CharField(max_length=1, null=False, default=BAG_ADDED, choices=BAG_STATUS)
     # Reflects the room where the item is/was
