@@ -77,7 +77,7 @@ let baggage_qr = (()=>{
             let selectedCam = parseInt(this.value)
             localStorage.setItem("selectedCam", selectedCam)
             scanner.stop()
-            scanner.start(cams[seletedCam])
+            scanner.start(cams[selectedCam])
         })
         //Then we append the video preview
         popup.appendChild(videoElem)
