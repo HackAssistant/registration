@@ -148,3 +148,8 @@
 .baggage-table-th-6 {
     border-right: 15px solid #FFF;
 }
+
+.image-info {
+    color: #777;
+    font-size: 14px;
+}
