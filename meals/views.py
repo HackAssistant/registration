@@ -16,8 +16,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.http import Http404
 import json
-
-token = 'felix'
+from django.conf import settings
 
 
 def organizer_tabs(user):
@@ -138,54 +137,54 @@ class MealsApi(APIView):
 
     def get(self, request, format=None):
         var_token = request.GET.get('token')
-        if var_token != token:
+        if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
         var_object = request.GET.get('object')
         if var_object not in ['meal']:
-            return HttpResponse(json.dump({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
+            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
 
         meals = Meal.objects.filter(ends__gt=datetime.now()).order_by('starts')
         var_all = request.GET.get('all')
         if var_all == '1':
             meals = Meal.objects.all().order_by('starts')
         meals_data = serializers.serialize('json', meals)
-        return HttpResponse(json.dump({'code': 0, 'content': meals_data}), content_type='application/json')
+        return HttpResponse(json.dumps({'code': 0, 'content': meals_data}), content_type='application/json')
 
     def post(self, request, format=None):
         var_token = request.GET.get('token')
-        if var_token != token:
+        if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
         var_object = request.GET.get('object')
         if var_object not in ['user', 'meal']:
-            return HttpResponse(json.dump({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
+            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
 
         var_meal = request.GET.get('meal')
         obj_meal = Meal.objects.filter(id=var_meal).first()
         if obj_meal is None:
-            return HttpResponse(json.dump({'code': 1, 'message': 'Invalid meal'}), content_type='application/json')
+            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid meal'}), content_type='application/json')
         if var_object == 'user':
             var_repetitions = obj_meal.times
             var_user = request.GET.get('user')
             obj_user = User.objects.filter(id=var_user).first()
             if obj_user is None:
-                return HttpResponse(json.dump({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
+                return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
             # var_name = obj_user.name
             obj_application = Application.objects.filter(user=obj_user).first()
             if obj_application is None:
-                return HttpResponse(json.dump({'code': 1, 'message': 'No application found'}),
+                return HttpResponse(json.dumps({'code': 1, 'message': 'No application found'}),
                                     content_type='application/json')
             var_diet = obj_application.diet
             var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
             if var_eatens >= var_repetitions:
-                return HttpResponse(json.dump({'code': 2, 'message': 'Hacker alreay ate'}),
+                return HttpResponse(json.dumps({'code': 2, 'message': 'Hacker alreay ate'}),
                                     content_type='application/json')
             obj_eaten = Eaten()
             obj_eaten.meal = obj_meal
             obj_eaten.user = obj_user
             obj_eaten.save()
-            return HttpResponse(json.dump({'code': 0, 'content': {'diet': var_diet}}),
+            return HttpResponse(json.dumps({'code': 0, 'content': {'diet': var_diet}}),
                                 content_type='application/json')
         var_repetitions = request.GET.get('times')
         obj_meal.times = var_repetitions
         obj_meal.save()
-        return HttpResponse(json.dump({'code': 0, 'message': 'Times updated'}), content_type='application/json')
+        return HttpResponse(json.dumps({'code': 0, 'message': 'Times updated'}), content_type='application/json')
