@@ -193,7 +193,7 @@ class BaggageHistory(TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(BaggageHistory, self).get_context_data(**kwargs)
-        bags = Bag.objects.all().order_by('time', 'updated')
+        bags = Bag.objects.all().order_by('-time', '-updated')
         context.update({
             'bags': bags
         })
