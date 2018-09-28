@@ -22,7 +22,7 @@
         <tbody>
 	    {% for bag in bags %}
 		<tr>
-			<td><a href="{% url 'baggage_detail' bag.id %}">{{ bag.id }}</a></td>
+			<td><a href="{% url 'baggage_detail' bag.bid %}">{{ bag.bid }}</a></td>
 			<td>{{ bag.owner }}</td>
 			<td>{{ bag.get_status_display }}</td>
 			<td>{{ bag.time|date:"d/m/Y" }} {{ bag.time|time:"H:i:s" }}</td>

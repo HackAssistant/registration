@@ -75,7 +75,7 @@ class Bag(models.Model):
     )
 
     # Item identifier
-    id = models.AutoField(primary_key=True)
+    bid = models.AutoField(primary_key=True)
     # User owner of the item
     owner = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='%(class)s_baggage_owner')
     # User that checked-in the baggage
@@ -91,7 +91,7 @@ class Bag(models.Model):
     # Reflects the column where the item is/was
     col = models.PositiveIntegerField(null=False)
     # Type of item
-    type = models.CharField(max_length=10, null=False)
+    btype = models.CharField(max_length=10, null=False)
     # Primary color of the item
     color = models.CharField(max_length=2, null=False)
     # Description of the item
@@ -106,7 +106,7 @@ class Bag(models.Model):
     image = models.FileField(upload_to='baggage', null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.bid)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -123,7 +123,7 @@ class Comment(models.Model):
     """Represents a comment on an item for when it was updated"""
 
     # Movement identifier
-    id = models.AutoField(primary_key=True)
+    bid = models.AutoField(primary_key=True)
     # Item from which the move is related to
     item = models.ForeignKey(Bag, on_delete=models.CASCADE)
     # Time for when the comment was made
@@ -134,4 +134,4 @@ class Comment(models.Model):
     comment = models.TextField(max_length=1023, null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.bid)

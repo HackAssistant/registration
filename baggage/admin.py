@@ -16,13 +16,13 @@ class BaggageRoomAdmin(admin.ModelAdmin):
 
 class BaggageListAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'owner', 'status', 'type', 'color', 'description', 'special', 'time', 'updated'
+        'bid', 'owner', 'status', 'btype', 'color', 'description', 'special', 'time', 'updated'
     )
     search_fields = (
-        'owner__email', 'owner__name', 'status', 'type', 'color', 'description'
+        'owner__email', 'owner__name', 'status', 'btype', 'color', 'description'
     )
     list_filter = (
-        'status', 'type', 'color', 'special'
+        'status', 'btype', 'color', 'special'
     )
 
     def get_actions(self, request):
@@ -31,7 +31,7 @@ class BaggageListAdmin(admin.ModelAdmin):
 
 class BaggageCommentAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'item', 'time', 'user', 'comment', 'time'
+        'bid', 'item', 'time', 'user', 'comment', 'time'
     )
     search_fields = (
         'item__owner__email', 'item__owner__name', 'user__email', 'user__name', 'comment'

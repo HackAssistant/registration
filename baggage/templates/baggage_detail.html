@@ -1,12 +1,12 @@
 {% extends "base_tabs.html" %}
-{% block head_title %}Check-out bag {{ bag.id }}{% endblock %}
+{% block head_title %}Check-out bag {{ bag.bid }}{% endblock %}
 {% block panel %}
     <dl class="dl-horizontal" style="margin-bottom: 0;">
-        {% include 'include/field.html' with desc='Bag id' value=bag.id %}
+        {% include 'include/field.html' with desc='Bag id' value=bag.bid %}
         {% include 'include/field.html' with desc='Room' value=bag.room %}
         {% include 'include/field.html' with desc='Position' value=position %}
         {% include 'include/field.html' with desc='Owner' value=bag.owner %}
-        {% include 'include/field.html' with desc='Type' value=bag.get_type_display %}
+        {% include 'include/field.html' with desc='Type' value=bag.get_btype_display %}
         {% include 'include/field.html' with desc='Color' value=bag.get_color_display %}
         {% include 'include/field.html' with desc='Description' value=bag.description %}
         {% include 'include/field.html' with desc='Time added' value=bag.time %}
@@ -24,7 +24,7 @@
         {% else %}
             <form action="" method="post">
                 {% csrf_token %}
-                <input type="hidden" name="bag_id" value="{{ bag.id }}"/>
+                <input type="hidden" name="bag_id" value="{{ bag.bid }}"/>
                 <button class="btn btn-success btn-block" name="checkout">Check-out this bag</button>
             </form>
         {% endif %}

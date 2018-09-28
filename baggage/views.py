@@ -97,7 +97,7 @@ class BaggageAdd(TabsView):
         bag = Bag()
         bag.owner = User.objects.filter(id=userid).first()
         bag.inby = request.user
-        bag.type = bagtype
+        bag.btype = bagtype
         bag.color = bagcolor
         bag.description = bagdesc
         bag.special = (bagspe == 'special')
@@ -131,7 +131,7 @@ class BaggageAdd(TabsView):
             bag.col = position[3]
             bag.save()
             messages.success(self.request, 'Bag checked-in!')
-            return redirect('baggage_detail', id=(str(bag.id,)), first='first/')
+            return redirect('baggage_detail', id=(str(bag.bid,)), first='first/')
         messages.success(self.request, 'Error! Couldn\'t add the bag!')
         return redirect('baggage_list')
 
@@ -147,7 +147,7 @@ class BaggageDetail(TabsView):
         context = super(BaggageDetail, self).get_context_data(**kwargs)
         bagid = kwargs['id']
         bagfirst = (kwargs['first'] == 'first/')
-        bag = Bag.objects.filter(id=bagid).first()
+        bag = Bag.objects.filter(bid=bagid).first()
         if not bag:
             raise Http404
         context.update({
@@ -160,7 +160,7 @@ class BaggageDetail(TabsView):
 
     def post(self, request, *args, **kwargs):
         bagid = request.POST.get('bag_id')
-        bag = Bag.objects.filter(id=bagid).first()
+        bag = Bag.objects.filter(bid=bagid).first()
         bag.status = BAG_REMOVED
         bag.outby = request.user
         bag.save()
