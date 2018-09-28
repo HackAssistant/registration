@@ -54,6 +54,7 @@ HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
 # Baggage configuration
 BAGGAGE_ENABLED = True
+BAGGAGE_PICTURE = True
 
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True

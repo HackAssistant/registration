@@ -6,8 +6,10 @@
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
-    <script src="{% static 'lib/instascan.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
+    {% if h_b_picture %}
+        <script src="{% static 'lib/instascan.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
+    {% endif %}
     <script src="{% static 'lib/typeahead.min.js' %}"></script>
     <script src="{% static 'js/form_modifiers.js' %}"></script>
 {% endblock %}
@@ -43,11 +45,13 @@
 	    <label class="control-label" for="bag_color">Color</label>
 	    <input type="text" id="id_bag_color" class="form-control" name="bag_color" autocomplete="off" />
 	</div>
-	<div class="form-group">
-	    <label class="control-label" for="baggage-scan-image">Image</label>
-	    <div id="baggage-scan-image"></div>
-	    <input type="hidden" class="form-control" id="baggage-scan-file" name="bag_image" />
-	</div>
+	{% if h_b_picture %}
+	    <div class="form-group">
+	        <label class="control-label" for="baggage-scan-image">Image</label>
+	        <div id="baggage-scan-image"></div>
+	        <input type="hidden" class="form-control" id="baggage-scan-file" name="bag_image" />
+	    </div>
+	{% endif %}
 	<div class="form-group">
 	    <label class="control-label" for="bag_description">Description</label>
 	    <textarea rows="4" cols="50" class="form-control" name="bag_description"></textarea>

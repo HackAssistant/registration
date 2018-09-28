@@ -11,7 +11,9 @@
         {% include 'include/field.html' with desc='Description' value=bag.description %}
         {% include 'include/field.html' with desc='Time added' value=bag.time %}
         {% include 'include/field.html' with desc='Time updated' value=bag.updated %}
-        {% include 'include/image.html' with desc='Image' value=bag.image %}
+        {% if h_b_picture %}
+            {% include 'include/image.html' with desc='Image' value=bag.image %}
+        {% endif %}
     </dl>
 {% endblock %}
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
