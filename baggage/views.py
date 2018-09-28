@@ -130,9 +130,6 @@ class BaggageAdd(TabsView):
             bag.row = position[2]
             bag.col = position[3]
             bag.save()
-            # receipt = utils.print_receipt(bag.owner.name, bag.owner.email, position[1], position[2]+str(position[3]),
-            #                               bag.type, bag.color, bag.description, bag.id, time.time(), '')
-            # messages.success(self.request, receipt)
             messages.success(self.request, 'Bag checked-in!')
             return redirect('baggage_detail', id=(str(bag.id,)), first='first/')
         messages.success(self.request, 'Error! Couldn\'t add the bag!')
