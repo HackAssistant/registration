@@ -13,7 +13,6 @@ from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
 from user.mixins import IsVolunteerMixin, IsOrganizerMixin
 from user.models import User
-from django.shortcuts import redirect
 
 
 def user_tabs(user):
@@ -61,16 +60,14 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         qrcode = request.POST.get('qr_code')
         if qrcode is None or qrcode == "":
             messages.success(self.request, 'The QR code is mandatory!')
-            return redirect('check_in_hacker', id=appid)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         app = models.Application.objects.filter(uuid=appid).first()
         app.check_in()
         ci = CheckIn()
         ci.user = request.user
         ci.application = app
+        ci.qr_identifier = qrcode
         ci.save()
-        us = app.user
-        us.qr_identifier = qrcode
-        us.save()
         messages.success(self.request, 'Hacker checked-in! Good job! '
                                        'Nothing else to see here, '
                                        'you can move on :D')
