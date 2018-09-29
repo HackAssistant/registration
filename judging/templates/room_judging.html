@@ -9,11 +9,37 @@
 {%  block panel %}
 
 {% if room %}
-  Print you are judging Room {{ room.name }}.
+ <h3> Judging at Room {{ room.name }} </h3>
+  {% if project %}
+    <h2>{{ project.title }}</h2>
+    <dl class="dl-horizontal">
+      <dt>
+        <h3>Project info</h3>
+      </dt>
+      <dd></dd>
+
+      <dt>Devpost link</dt>
+      <dd><a href="{{ project.url }}">{{ project.url }}</a></dd>
+
+      <dt>Description</dt>
+      <dd>{{ project.description }}</dd>
+
+      <dt>Built with</dt>
+      <dd>{{ project.built_with }}</dd>
+
+      <dt>Project website</dt>
+      <dd><a href="{{ project.website }}">{{ project.website }}</a></dd>
+
+      <dt>Team size</dt>
+      <dd>{{ project.additional_team_member_count | add:"1" }}</dd>
+
+    </dl>
+  {% else %}
+    No project to judge.
+  {% endif %}
 {% else %}
   You are not the judge of any rooms.
 {% endif %}
-
 
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 <script src="{% static 'js/form_modifiers.js' %}"></script>

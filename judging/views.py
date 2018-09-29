@@ -88,7 +88,13 @@ class RoomJudgingView(IsOrganizerMixin, TabsView):
     def get_context_data(self, **kwargs):
         c = super(RoomJudgingView, self).get_context_data(**kwargs)
         if hasattr(self.request.user, 'room'):
-            c.update({'room': self.request.user.room})
+            presentation = Presentation.objects.filter(
+                room=self.request.user.room,
+                done=False
+            ).order_by('turn').first()
+            project = presentation.project if presentation else None
+            c.update({'room': self.request.user.room,
+                      'project': project})
         return c
 
     pass
