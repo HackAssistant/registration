@@ -41,6 +41,9 @@ class Room(models.Model):
         limit_choices_to={'is_organizer': True}
     )
 
+    def get_current_presentations(self):
+        return Presentation.objects.filter(done=False, room=self)
+
     def __str__(self):
         return self.name
 

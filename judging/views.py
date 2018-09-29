@@ -5,11 +5,13 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 from app.utils import reverse
 from app.views import TabsView
 from judging import forms
-from judging.models import Project, Presentation
+from judging.models import Project, Presentation, Room
 from user.mixins import IsDirectorMixin, IsOrganizerMixin
 
 
@@ -98,3 +100,16 @@ class RoomJudgingView(IsOrganizerMixin, TabsView):
         return c
 
     pass
+
+class RoomsView(LoginRequiredMixin, TemplateView):
+    template_name = 'rooms_presentations.html'
+
+    def get_context_data(self, **kwargs):
+        c = super(RoomsView, self).get_context_data(**kwargs)
+        c['rooms'] = Room.objects.all()
+        """
+        c['projects'] = {
+            x.name: x.objects.get_current_presentations() for x in c['rooms']
+        }
+        """
+        return c

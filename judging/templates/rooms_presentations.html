@@ -1,0 +1,25 @@
+{% extends "base_tabs.html" %}
+{% load static %}
+{% block extra_head %}
+	<link rel="stylesheet" href="{% static 'css/judging.css' %}">
+	<script>
+		document.addEventListener("DOMContentLoaded", ()=>{
+			let btns = document.getElementsByClassName("judging-close-button")
+			for(let i = 0; i < btns.length; i++)
+			{
+				btns[i].addEventListener("click", (ev)=>{
+					$(ev.target.parentNode).hide(200)
+				})
+			}
+		})
+	</script>
+{% endblock %}
+{% block body %}
+	{% for room in rooms %}
+		{% include 'include/room_presentations.html' %}
+	{% empty %}
+		<div class="empty">
+			<h1>The judging didn't start yet</h1>
+		</div>
+	{% endfor %}
+{% endblock %}

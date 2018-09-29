@@ -1,0 +1,12 @@
+<div>
+  <div class="judging-close-button">x</div>
+  <h1>{{ room.name }}</h1>
+  <h2>{{ room.challenge.name }}</h2>
+  <ul>
+    {% for presentation in room.get_current_presentations %}
+      <li><a href='{{presentation.project.url}}'>{{presentation.project.title}}</a></li>
+    {% empty %}
+      <li>No more presentations in this room</li>
+    {% endfor %}
+  </ul>
+</div>
