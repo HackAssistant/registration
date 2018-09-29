@@ -52,9 +52,6 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
 
-    # QR identifier for wristband identification
-    qr_identifier = models.CharField(max_length=255, null=True)
-
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
