@@ -7,7 +7,7 @@ from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 from app.views import TabsView
 from django.contrib import messages
-from django.http import Http404
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
 from baggage import utils
 import base64
@@ -121,7 +121,7 @@ class BaggageAdd(TabsView):
             posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol).count()
             if posempty > 0:
                 messages.success(self.request, 'Error! Position is already taken!')
-                return redirect('baggage_new', new_id=userid)
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         else:
             position = utils.get_position(bag.special)
 
