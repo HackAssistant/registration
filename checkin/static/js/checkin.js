@@ -33,7 +33,7 @@ let checkin_qr = (()=>{
         $("#id_search-qr").on("click", (ev)=>{
             obj.qrScan($("#id_search")[0])
         })
-        $("#assign-qr").on("click", (ev)=>{
+        $("#qr_code-qr").on("click", (ev)=>{
             obj.qrScan($("#qr_code")[0])
         })
     }
