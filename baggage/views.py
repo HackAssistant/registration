@@ -3,6 +3,7 @@ from app.mixins import TabsViewMixin
 from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable, BaggageUsersFilter
 from baggage.models import Bag, BAG_ADDED, BAG_REMOVED, Room
 from user.models import User
+from checkin.models import CheckIn
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 from app.views import TabsView
@@ -13,6 +14,7 @@ from baggage import utils
 import base64
 from django.core.files.base import ContentFile
 import time
+from user.mixins import IsVolunteerMixin
 
 
 def organizer_tabs(user):
@@ -23,7 +25,7 @@ def organizer_tabs(user):
     return t
 
 
-class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
+class BaggageList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'baggage_list.html'
     table_class = BaggageListTable
     filterset_class = BaggageListFilter
@@ -40,7 +42,7 @@ class BaggageList(TabsViewMixin, SingleTableMixin, FilterView):
         return Bag.objects.filter(status=BAG_ADDED)
 
 
-class BaggageHacker(TabsViewMixin, SingleTableMixin, FilterView):
+class BaggageHacker(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'baggage_hacker.html'
     table_class = BaggageListTable
     filterset_class = BaggageListFilter
@@ -55,7 +57,7 @@ class BaggageHacker(TabsViewMixin, SingleTableMixin, FilterView):
         return Bag.objects.filter(status=BAG_ADDED, owner=user)
 
 
-class BaggageUsers(TabsViewMixin, SingleTableMixin, FilterView):
+class BaggageUsers(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'baggage_users.html'
     table_class = BaggageUsersTable
     filterset_class = BaggageUsersFilter
@@ -65,10 +67,10 @@ class BaggageUsers(TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return User.objects.filter(email_verified=True)
+        return CheckIn.objects.all()
 
 
-class BaggageAdd(TabsView):
+class BaggageAdd(IsVolunteerMixin, TabsView):
     template_name = 'baggage_add.html'
 
     def get_back_url(self):
@@ -136,7 +138,7 @@ class BaggageAdd(TabsView):
         return redirect('baggage_list')
 
 
-class BaggageDetail(TabsView):
+class BaggageDetail(IsVolunteerMixin, TabsView):
     template_name = 'baggage_detail.html'
 
     def get_back_url(self):
@@ -168,7 +170,7 @@ class BaggageDetail(TabsView):
         return redirect('baggage_search')
 
 
-class BaggageMap(TabsView):
+class BaggageMap(IsVolunteerMixin, TabsView):
     template_name = 'baggage_map.html'
 
     def get_current_tabs(self):
@@ -185,7 +187,7 @@ class BaggageMap(TabsView):
         return context
 
 
-class BaggageHistory(TabsView):
+class BaggageHistory(IsVolunteerMixin, TabsView):
     template_name = 'baggage_history.html'
 
     def get_current_tabs(self):

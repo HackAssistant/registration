@@ -1,7 +1,7 @@
 import django_filters
 import django_tables2 as tables
 from baggage.models import Bag, BAG_BUILDINGS
-from user.models import User
+from checkin.models import CheckIn
 from django.db.models import Q
 from django import forms
 from datetime import datetime, timedelta
@@ -39,10 +39,12 @@ class BaggageUsersFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(Q(email__icontains=value) | Q(name__icontains=value))
+        return queryset.filter(Q(application__user__email__icontains=value) |
+                               Q(application__user__name__icontains=value) |
+                               Q(qr_identifier__icontains=value))
 
     class Meta:
-        model = User
+        model = CheckIn
         fields = ['search']
 
 
@@ -64,15 +66,17 @@ class BaggageListTable(tables.Table):
 
 class BaggageUsersTable(tables.Table):
     checkin = tables.TemplateColumn(
-        "<a href='{% url 'baggage_new' record.id %}'>Baggage check-in</a> ",
+        "<a href='{% url 'baggage_new' record.application.user.id %}'>Baggage check-in</a> ",
         verbose_name='Check-in', orderable=False)
     checkout = tables.TemplateColumn(
-        "<a href='{% url 'baggage_hacker' record.id %}'>Baggage check-out</a> ",
+        "<a href='{% url 'baggage_hacker' record.application.user.id %}'>Baggage check-out</a> ",
         verbose_name='Check-out', orderable=False)
+    name = tables.Column(accessor='application.user.name', verbose_name='Name')
+    email = tables.Column(accessor='application.user.email', verbose_name='Email')
 
     class Meta:
-        model = User
+        model = CheckIn
         attrs = {'class': 'table table-hover'}
         template = 'templates/baggage_users.html'
-        fields = ['name', 'email']
-        empty_text = 'No users'
+        fields = ['name', 'email', 'checkin', 'checkout']
+        empty_text = 'No users!'
