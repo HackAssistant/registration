@@ -147,7 +147,7 @@ class MealsApi(TabsView):
         if var_all == '1':
             meals = Meal.objects.all().order_by('starts')
         meals_data = serializers.serialize('json', meals)
-        return HttpResponse(json.dumps({'code': 0, 'content': meals_data}), content_type='application/json')
+        return HttpResponse(json.dumps({'code': 0, 'content': json.loads(meals_data)}), content_type='application/json')
 
     def post(self, request, format=None):
         var_token = request.GET.get('token')
