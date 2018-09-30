@@ -7,6 +7,7 @@ from django_filters.views import FilterView
 from django.core import serializers
 from django.http import HttpResponse
 from user.models import User
+from checkin.models import CheckIn
 from applications.models import Application
 from app.views import TabsView
 from datetime import datetime
@@ -163,11 +164,11 @@ class MealsApi(TabsView):
         if var_object == 'user':
             var_repetitions = obj_meal.times
             var_user = request.GET.get('user')
-            obj_user = User.objects.filter(id=var_user).first()
-            if obj_user is None:
+            obj_checkin = CheckIn.objects.filter(qr_identifier=var_user).first()
+            if obj_checkin is None:
                 return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
-            # var_name = obj_user.name
-            obj_application = Application.objects.filter(user=obj_user).first()
+            obj_application = obj_checkin.application
+            obj_user = obj_application.user
             if obj_application is None:
                 return HttpResponse(json.dumps({'code': 1, 'message': 'No application found'}),
                                     content_type='application/json')
