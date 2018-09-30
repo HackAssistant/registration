@@ -10,7 +10,8 @@ class ApplicationCheckinFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value))
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+                               Q(uuid__icontains=value.replace('-', '')))
 
     class Meta:
         model = Application
@@ -27,7 +28,7 @@ class ApplicationsCheckInTable(tables.Table):
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email']
-        empty_text = 'All hackers checked in! Yay!'
+        empty_text = 'No hacker found, are them all checked-in?'
 
 
 class RankingListTable(tables.Table):
