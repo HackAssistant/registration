@@ -71,6 +71,9 @@ class PresentationManager(models.Manager):
                                                    })
         return None
 
+    def get_last_turn(self, room):
+        return Presentation.objects.filter(room=room).order_by('turn').last().turn
+
 
 class Presentation(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -85,3 +88,35 @@ class Presentation(models.Model):
 
     class Meta:
         unique_together = (('project', 'room'),)
+
+
+JUDGE_ALIASES = [
+    ('A', 'A'),
+    ('B', 'B'),
+    ('C', 'C')
+]
+
+VOTES = (
+    (1, '1'),
+    (2, '2'),
+    (3, '3'),
+    (4, '4'),
+    (5, '5'),
+    (6, '6'),
+    (7, '7'),
+    (8, '8'),
+    (9, '9'),
+    (10, '10'),
+)
+
+
+class PresentationEvaluation(models.Model):
+    presentation = models.ForeignKey(Presentation, on_delete=models.CASCADE)
+    judge_alias = models.CharField(choices=JUDGE_ALIASES, max_length=1)
+    tech = models.IntegerField(choices=VOTES)
+    design = models.IntegerField(choices=VOTES)
+    completion = models.IntegerField(choices=VOTES)
+    learning = models.IntegerField(choices=VOTES)
+
+    class Meta:
+        unique_together = (('presentation', 'judge_alias'))

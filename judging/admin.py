@@ -24,7 +24,12 @@ class PresentationAdmin(admin.ModelAdmin):
     pass
 
 
+class PresentationEvaluationAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(models.Project, admin_class=ProjectAdmin)
 admin.site.register(models.Challenge, admin_class=ChallengeAdmin)
 admin.site.register(models.Room, admin_class=RoomAdmin)
 admin.site.register(models.Presentation, admin_class=PresentationAdmin)
+admin.site.register(models.PresentationEvaluation, admin_class=PresentationEvaluationAdmin)
