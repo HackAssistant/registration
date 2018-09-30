@@ -3,17 +3,13 @@ from __future__ import print_function
 import csv
 import sys
 
-from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from app import slack
 from app.slack import SlackInvitationException
 
 
-User = get_user_model()
-
-
-def slack_invite(self, email):
+def slack_invite(email):
     try:
         slack.send_slack_invite(email)
         print('Slack invite sent to ' + email + '.')
