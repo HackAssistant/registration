@@ -6,9 +6,7 @@ from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 from django.core import serializers
 from django.http import HttpResponse
-from user.models import User
 from checkin.models import CheckIn
-from applications.models import Application
 from app.views import TabsView
 from datetime import datetime
 from django.contrib import messages
@@ -17,6 +15,8 @@ from django.http import Http404
 import json
 from django.conf import settings
 from user.mixins import IsOrganizerMixin
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
 
 
 def organizer_tabs(user):
@@ -132,7 +132,8 @@ class MealAdd(IsOrganizerMixin, TabsView):
         return redirect('meals_list')
 
 
-class MealsApi(TabsView):
+class MealsApi(APIView):
+    permission_classes = (AllowAny,)
 
     def get(self, request, format=None):
         var_token = request.GET.get('token')
