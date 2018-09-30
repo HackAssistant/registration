@@ -1,3 +1,21 @@
 {% extends "base_table.html" %}
-{% block head_title %}Check In{% endblock %}
 
+{% load static %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/checkin.css' %}">
+    <script src="{% static 'lib/instascan.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/checkin.js' %}"></script>
+{% endblock %}
+
+{% block head_title %}Check-in{% endblock %}
+
+{% block panel %}
+    <div id="checkin-container">
+        <form id="checkin-search" action="" method="get" class="form text-left filter">
+            {% include 'include/input.html' with type='qr' desc='Search' name='search' id='id_search' %}
+            <button type="submit" class="btn btn-info">Filter</button>
+        </form>
+    </div>
+{% endblock %}
