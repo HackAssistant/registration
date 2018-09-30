@@ -5,43 +5,80 @@
 {% load static %}
 {% load form_utils %}
 {% block head_title %}Judge projects{% endblock %}
+{% block extra_head %}
+      <link rel="stylesheet" href="{% static 'css/judging.css' %}">
+{% endblock %}
+{% block panel %}
 
-{%  block panel %}
+  {% if room %}
+    <h3> Judging at Room {{ room.name }} </h3>
+    {% if project %}
+      <dl class="dl-horizontal">
+        <dt>
+          <h2>{{ project.title }}</h2>
+        </dt>
+        <dd></dd>
 
-{% if room %}
- <h3> Judging at Room {{ room.name }} </h3>
-  {% if project %}
-    <h2>{{ project.title }}</h2>
-    <dl class="dl-horizontal">
-      <dt>
-        <h3>Project info</h3>
-      </dt>
-      <dd></dd>
+        <dt>
+          <h3>Project info</h3>
+        </dt>
+        <dd></dd>
 
-      <dt>Devpost link</dt>
-      <dd><a href="{{ project.url }}">{{ project.url }}</a></dd>
+        <dt>Devpost link</dt>
+        <dd><a href="{{ project.url }}">{{ project.url }}</a></dd>
 
-      <dt>Description</dt>
-      <dd>{{ project.description }}</dd>
+        <dt>Description</dt>
+        <dd>{{ project.description }}</dd>
 
-      <dt>Built with</dt>
-      <dd>{{ project.built_with }}</dd>
+        <dt>Built with</dt>
+        <dd>{{ project.built_with }}</dd>
 
-      <dt>Project website</dt>
-      <dd><a href="{{ project.website }}">{{ project.website }}</a></dd>
+        <dt>Project website</dt>
+        <dd><a href="{{ project.website }}">{{ project.website }}</a></dd>
 
-      <dt>Team size</dt>
-      <dd>{{ project.additional_team_member_count | add:"1" }}</dd>
+        <dt>Team size</dt>
+        <dd>{{ project.additional_team_member_count | add:"1" }}</dd>
 
-    </dl>
+      </dl>
+
+      <form action="" method="post">
+
+        {% csrf_token %}
+        <input type="hidden" name="presentation_id" value="{{ presentation.pk }}"/>
+        <h4 class="text-center">Score</h4>
+        <div class="row criteria">
+            <div class="col-md-2 col-md-offset-4">Technology</div>
+            <div class="col-md-2">Design</div>
+            <div class="col-md-2">Completion</div>
+            <div class="col-md-2">Learning</div>
+        </div>
+
+        {% for judge in "ABC" %}
+        <dl class="dl-horizontal">
+          <div class="row">
+            <div class="col-md-2"><dt>Judge {{ judge }}</dt></div>
+            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="tech_score_"|add:judge %}</dd></div>
+            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="design_score_"|add:judge %}</dd></div>
+            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="completion_score_"|add:judge %}</dd></div>
+            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="learning_score_"|add:judge %}</dd></div>
+          </div>
+        </dl>
+        {% endfor %}
+
+        <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+        <button name="skip" class="btn btn-default btn-block" value="skip">Skip project
+        </button>
+      </form>
+
+
+    {% else %}
+      No project to judge.
+    {% endif %}
   {% else %}
-    No project to judge.
+    You are not the judge of any rooms.
   {% endif %}
-{% else %}
-  You are not the judge of any rooms.
-{% endif %}
 
-<script src="{% static 'lib/typeahead.min.js' %}"></script>
-<script src="{% static 'js/form_modifiers.js' %}"></script>
+  <script src="{% static 'lib/typeahead.min.js' %}"></script>
+  <script src="{% static 'js/form_modifiers.js' %}"></script>
 
 {% endblock %}

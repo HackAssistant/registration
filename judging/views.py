@@ -8,10 +8,11 @@ from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
+from app.mixins import TabsViewMixin
 from app.utils import reverse
 from app.views import TabsView
 from judging import forms
-from judging.models import Project, Presentation, Room
+from judging.models import Project, Presentation, Room, PresentationEvaluation
 from user.mixins import IsDirectorMixin, IsOrganizerMixin
 
 
@@ -81,7 +82,12 @@ class ImportProjectsView(IsDirectorMixin, TabsView):
         return HttpResponseRedirect(reverse('import_projects'))
 
 
-class RoomJudgingView(IsOrganizerMixin, TabsView):
+def skip_presentation(presentation):
+    presentation.turn = Presentation.objects.get_last_turn(presentation.room) + 1
+    presentation.save()
+
+
+class RoomJudgingView(IsOrganizerMixin, TabsViewMixin, TemplateView):
     template_name = 'room_judging.html'
 
     def get_current_tabs(self):
@@ -95,11 +101,44 @@ class RoomJudgingView(IsOrganizerMixin, TabsView):
                 done=False
             ).order_by('turn').first()
             project = presentation.project if presentation else None
-            c.update({'room': self.request.user.room,
+            c.update({'presentation': presentation,
+                      'room': self.request.user.room,
                       'project': project})
         return c
 
-    pass
+    def post(self, request, *args, **kwargs):
+        presentation_id = request.POST.get('presentation_id')
+        presentation = Presentation.objects.get(pk=presentation_id)
+
+        judge_aliases = ['A', 'B', 'C']
+        for judge in judge_aliases:
+            tech = int(request.POST.get('tech_score_{}'.format(judge), None))
+            design = int(request.POST.get('design_score_{}'.format(judge), None))
+            completion = int(request.POST.get('completion_score_{}'.format(judge), None))
+            learning = int(request.POST.get('learning_score_{}'.format(judge), None))
+
+            try:
+                if request.POST.get('skip'):
+                    skip_presentation(presentation)
+                elif request.POST.get('send'):
+                    print('creating evaluation')
+                    PresentationEvaluation.objects.get_or_create(
+                        presentation=presentation,
+                        judge_alias=judge,
+                        tech=tech,
+                        design=design,
+                        completion=completion,
+                        learning=learning
+                    )
+                    presentation.done = True
+                    presentation.save()
+
+        # If application has already been voted -> Skip and bring next
+        # application
+            except IntegrityError:
+                pass
+        return HttpResponseRedirect(reverse('judge_projects'))
+
 
 class RoomsView(LoginRequiredMixin, TemplateView):
     template_name = 'rooms_presentations.html'
