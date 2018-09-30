@@ -7,8 +7,6 @@ from django_filters.views import FilterView
 from django.core import serializers
 from django.http import HttpResponse
 from user.models import User
-from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
 from applications.models import Application
 from app.views import TabsView
 from datetime import datetime
@@ -17,6 +15,7 @@ from django.shortcuts import redirect
 from django.http import Http404
 import json
 from django.conf import settings
+from user.mixins import IsOrganizerMixin
 
 
 def organizer_tabs(user):
@@ -25,7 +24,7 @@ def organizer_tabs(user):
     return t
 
 
-class MealsList(TabsViewMixin, SingleTableMixin, FilterView):
+class MealsList(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'meals_list.html'
     table_class = MealsListTable
     filterset_class = MealsListFilter
@@ -38,7 +37,7 @@ class MealsList(TabsViewMixin, SingleTableMixin, FilterView):
         return Meal.objects.filter()
 
 
-class MealsUsers(TabsViewMixin, SingleTableMixin, FilterView):
+class MealsUsers(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'meals_users.html'
     table_class = MealsUsersTable
     filterset_class = MealsUsersFilter
@@ -51,7 +50,7 @@ class MealsUsers(TabsViewMixin, SingleTableMixin, FilterView):
         return Eaten.objects.filter()
 
 
-class MealDetail(TabsView):
+class MealDetail(IsOrganizerMixin, TabsView):
     template_name = 'meal_detail.html'
 
     def get_back_url(self):
@@ -95,7 +94,7 @@ class MealDetail(TabsView):
         return redirect('meals_list')
 
 
-class MealAdd(TabsView):
+class MealAdd(IsOrganizerMixin, TabsView):
     template_name = 'meal_add.html'
 
     def get_back_url(self):
@@ -132,8 +131,7 @@ class MealAdd(TabsView):
         return redirect('meals_list')
 
 
-class MealsApi(APIView):
-    permission_classes = (AllowAny,)
+class MealsApi(TabsView):
 
     def get(self, request, format=None):
         var_token = request.GET.get('token')

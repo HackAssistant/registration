@@ -33,4 +33,3 @@ flake8==3.4.1
 dropbox==8.7.1
 git+https://github.com/jschneier/django-storages.git#egg=django-storages
 requests==2.17.1
-djangorestframework==3.8.2
