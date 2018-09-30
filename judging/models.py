@@ -63,7 +63,7 @@ class PresentationManager(models.Manager):
                 room_to_assign = rooms.first()
 
                 if room_to_assign is None:
-                    room_name = 'auto__' + challenge_name + '_00'
+                    room_name = challenge_name + ' 00'
                     room_to_assign = Room.objects.create(name=room_name, challenge=challenge)
                     room_to_assign.queue_len = 0
 

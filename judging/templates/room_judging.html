@@ -14,11 +14,7 @@
     <h3> Judging at Room {{ room.name }} </h3>
     {% if project %}
          <h2>{{ project.title }}</h2>
-        <dt>
-          <h3>Project info</h3>
-        </dt>
-        <dd></dd>
-
+      <dl class="dl-horizontal">
         <dt>Devpost link</dt>
         <dd><a href="{{ project.url }}">{{ project.url }}</a></dd>
 
@@ -51,11 +47,11 @@
         {% for judge in "ABC" %}
         <dl class="dl-horizontal">
           <div class="row">
-            <div class="col-md-2"><dt>Judge {{ judge }}</dt></div>
-            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="tech_score_"|add:judge %}</dd></div>
-            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="design_score_"|add:judge %}</dd></div>
-            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="completion_score_"|add:judge %}</dd></div>
-            <div class="col-md-2"><dd>{% include 'include/number10.html' with name="learning_score_"|add:judge %}</dd></div>
+            <div class="col-md-2"><dt>Judge {{ judge }}</dt><dd></dd></div>
+            <div class="col-md-2 col-md-offset-2">{% include 'include/number10.html' with name="tech_score_"|add:judge %}</div>
+            <div class="col-md-2">{% include 'include/number10.html' with name="design_score_"|add:judge %}</div>
+            <div class="col-md-2">{% include 'include/number10.html' with name="completion_score_"|add:judge %}</div>
+            <div class="col-md-2">{% include 'include/number10.html' with name="learning_score_"|add:judge %}</div>
           </div>
         </dl>
         {% endfor %}

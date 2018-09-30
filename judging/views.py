@@ -17,7 +17,8 @@ from user.mixins import IsDirectorMixin, IsOrganizerMixin
 
 
 def organizer_tabs(user):
-    t = [('Judge', reverse('judge_projects'), False), ]
+    t = [('Rooms', reverse('project_list'), False),
+         ('Judge', reverse('judge_projects'), False), ]
     if user.is_director:
         t.append(('Import', reverse('import_projects'), False))
     return t
@@ -121,7 +122,6 @@ class RoomJudgingView(IsOrganizerMixin, TabsViewMixin, TemplateView):
                 if request.POST.get('skip'):
                     skip_presentation(presentation)
                 elif request.POST.get('send'):
-                    print('creating evaluation')
                     PresentationEvaluation.objects.get_or_create(
                         presentation=presentation,
                         judge_alias=judge,
