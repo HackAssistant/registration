@@ -120,6 +120,7 @@
                         View{% if application.can_be_edit %}/Edit{% endif %} application
                     </a>
                 </div>
+            {%  if h_team_enabled %}
                 <div class="col-md-offset-2 col-md-5 no-padding">
                     <a href="{% url 'teams' %}" class="btn  btn-info btn-block">
                         {% if user.team %}
@@ -129,6 +130,7 @@
                         {% endif %} team
                     </a>
                 </div>
+            {% endif %}
             </div>
         {% endif %}
     </div>

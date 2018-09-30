@@ -64,6 +64,9 @@ REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 10, 19, 3, 14, tzinfo=timezone.
 TEAMS_ENABLED = True
 HACKATHON_MAX_TEAMMATES = 4
 
+# (OPTIONAL) Code of conduct link
+# CODE_CONDUCT_LINK = "https://pages.hackcu.org/code_conduct/"
+
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from
 SLACK = {
@@ -76,3 +79,9 @@ SLACK = {
 # This allows to store an extra cookie in the browser to be shared with other application on the same domain
 # LOGGED_IN_COOKIE_DOMAIN = '.gerard.space'
 # LOGGED_IN_COOKIE_KEY = 'hackassistant_logged_in'
+
+# Hardware configuration
+HARDWARE_ENABLED = False
+#Hardware request time length (in minutes)
+HARDWARE_REQUEST_TIME = 15
+

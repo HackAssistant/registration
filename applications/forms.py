@@ -24,13 +24,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     university = forms.CharField(required=True,
-                                 label='What university are you studying in?',
+                                 label='What university do you study at?',
                                  help_text='Current or most recent school you attended.',
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=True, label='What\'s your Major?',
-                             help_text='Current or most recent degree you\'ve received.',
+    degree = forms.CharField(required=True, label='What\'s your major/degree?',
+                             help_text='Current or most recent degree you\'ve received',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
@@ -60,6 +60,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
+<<<<<<< HEAD
     terms_and_conditions = forms.BooleanField(
         required=False,
         label='I’ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
@@ -81,6 +82,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     )
 
     resume = forms.FileField(required=True)
+=======
+    code_conduct = forms.BooleanField(required=False,
+                                      label='I have read and accept '
+                                            '<a href="%s" target="_blank">%s Code of conduct</a>' % (
+                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
+                                                settings.HACKATHON_NAME), )
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
@@ -101,6 +109,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
             raise forms.ValidationError(
+<<<<<<< HEAD
                 "In order to apply and attend you have to accept our Terms & Conditions and"
                 " our Privacy and Cookies Policy."
             )
@@ -108,6 +117,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     def clean_cvs_edition(self):
         cc = self.cleaned_data.get('cvs_edition', False)
+=======
+                "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
         return cc
 
     def clean_diet_notice(self):
@@ -166,7 +178,11 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         data = self.cleaned_data['other_diet']
         diet = self.cleaned_data['diet']
         if diet == 'Others' and not data:
+<<<<<<< HEAD
             raise forms.ValidationError("Please fill your specific diet requirements.")
+=======
+            raise forms.ValidationError("Please tell us your specific dietary requirements")
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
         return data
 
     def __getitem__(self, name):
@@ -185,23 +201,32 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
+<<<<<<< HEAD
               'description': 'Some of our sponsors will use this information to potentially recruit you,'
                              'so please include as much as you can.'}),
+=======
+              'description': 'Some of our sponsors may use this information for recruitment purposes,'
+              'so please include as much as you can.'}),
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
-        if deadline and deadline <= timezone.now() and not self.instance.pk:
+        r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
+        if r_enabled and deadline and deadline <= timezone.now() and not self.instance.pk:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin',),
                                      'description': 'Reimbursement applications are now closed. '
                                                     'Sorry for the inconvenience.',
                                      }))
-        elif self.instance.pk:
+        elif self.instance.pk and r_enabled:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin',),
-                                     'description': 'If you applied for reimbursement see it on the Travel tab. '
+                                     'description': 'If you applied for reimbursement, check out the Travel tab. '
                                                     'Email us at %s for any change needed on reimbursements.' %
                                                     settings.HACKATHON_CONTACT_EMAIL,
                                      }))
+        elif not r_enabled:
+            self._fieldsets.append(('Traveling',
+                                    {'fields': ('origin',)}), )
         else:
             self._fieldsets.append(('Traveling',
                                     {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
@@ -233,11 +258,17 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate.',
             'degree': 'What\'s your major?',
+<<<<<<< HEAD
             'other_diet': 'Please fill here your dietary restrictions. We want to make sure we have food for you!',
             'lennyface': 'You can chose one from '
                          '<a href="https://lenny-face-generator.textsmilies.com/" target="_blank">here</a>!',
             'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, '
                         'but at least we\'ll try!',
+=======
+            'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
+            'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
+                         ' http://textsmili.es/</a>',
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited.'
@@ -253,7 +284,11 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
         labels = {
             'gender': 'What gender do you identify as?',
+<<<<<<< HEAD
             'graduation_year': 'What year are you graduating?',
+=======
+            'graduation_year': 'What year will you graduate?',
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
@@ -263,8 +298,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'What projects have you worked on?',
             'resume': 'Upload your resume',
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
+<<<<<<< HEAD
                 settings.CURRENCY, settings.HACKATHON_NAME
             ),
+=======
+                getattr(settings, 'CURRENCY', '$'), settings.HACKATHON_NAME),
+>>>>>>> 2ae8249cccda151f7cf5b63741d8d79e96358704
 
         }
 
