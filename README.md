@@ -217,7 +217,7 @@ server {
 You can use this for your own hackathon. How?
 
 - Fork this repo
-- Update [app/hackathon_variable.py](app/hackathon_variable.py)
+- Update [app/hackathon_variables.py](app/hackathon_variables.py)
 - Get SendGrid API Key (Sign up to [GitHub Student Pack](https://education.github.com/pack) to get 15K mails a months for being an student)
 - Deploy into your server or in Heroku (see above)!
 
@@ -239,8 +239,8 @@ You can update emails related to
 - User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
 
 #### Update hackathon variables
-Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). 
-You can set the ones that you prefer at [app/hackathon_variables.py](app/hackathon_variable.py)
+Check all available variables at [app/hackathon_variables.py](app/hackathon_variables.py) template. 
+You can set the ones that you prefer at [app/hackathon_variables.py](app/hackathon_variables.py)
 
 #### Update registration form
 You can change the form, titles, texts in [applications/forms.py](applications/forms.py)
