@@ -240,7 +240,7 @@ You can update emails related to
 
 #### Update hackathon variables
 Check all available variables at [app/hackathon_variable.py.template](app/hackathon_variable.py.template). 
-You can set the ones that you prefer at [app/hackathon_variable.py](app/hackathon_variable.py)
+You can set the ones that you prefer at [app/hackathon_variables.py](app/hackathon_variable.py)
 
 #### Update registration form
 You can change the form, titles, texts in [applications/forms.py](applications/forms.py)
