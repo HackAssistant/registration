@@ -239,7 +239,7 @@ You can update emails related to
 - User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
 
 #### Update hackathon variables
-Check all available variables at [app/hackathon_variables.py](app/hackathon_variables.py) template. 
+Check all available variables at [app/hackathon_variables.py.template](app/hackathon_variables.py.template). 
 You can set the ones that you prefer at [app/hackathon_variables.py](app/hackathon_variables.py)
 
 #### Update registration form
