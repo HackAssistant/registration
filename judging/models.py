@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Count, Q
 
+from app import settings
 from user.models import User
 
 
@@ -52,7 +53,9 @@ class PresentationManager(models.Manager):
 
     def create_from_projects(self, projects):
         for project in projects:
-            challenge_names = {d.strip() for d in project.desired_prizes.split(',')}
+            challenge_names = {d.strip() for d in project.desired_prizes.split(',') if d}
+            global_challenge_name = settings.HACKATHON_NAME
+            challenge_names.add(global_challenge_name)
             for challenge_name in challenge_names:
                 challenge, _ = Challenge.objects.get_or_create(name=challenge_name)
                 num_pending_presentations = Count('presentation', filter=Q(presentation__done=False))
@@ -63,7 +66,7 @@ class PresentationManager(models.Manager):
                 room_to_assign = rooms.first()
 
                 if room_to_assign is None:
-                    room_name = challenge_name + ' 00'
+                    room_name = challenge_name + ' auto room'
                     room_to_assign = Room.objects.create(name=room_name, challenge=challenge)
                     room_to_assign.queue_len = 0
 
