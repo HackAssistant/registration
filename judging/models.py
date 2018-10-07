@@ -42,7 +42,7 @@ class Room(models.Model):
     )
 
     def get_current_presentations(self):
-        return Presentation.objects.filter(done=False, room=self)
+        return Presentation.objects.filter(done=False, room=self).order_by('turn')
 
     def __str__(self):
         return self.name
