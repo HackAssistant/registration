@@ -70,8 +70,9 @@ class PresentationManager(models.Manager):
                     room_to_assign = Room.objects.create(name=room_name, challenge=challenge)
                     room_to_assign.queue_len = 0
 
-                Presentation.objects.get_or_create(project=project, room=room_to_assign,
+                Presentation.objects.get_or_create(project=project, room__challenge=challenge,
                                                    defaults={
+                                                       'room': room_to_assign,
                                                        'done': False,
                                                        'turn': room_to_assign.queue_len
                                                    })
