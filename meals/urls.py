@@ -7,5 +7,5 @@ urlpatterns = [
     url(r'^add/$', views.MealAdd.as_view(), name='meal_add'),
     url(r'^users/$', views.MealsUsers.as_view(), name='meals_users'),
     url(r'^(?P<id>[\w-]+)$', views.MealDetail.as_view(), name='meal_detail'),
-    url(r'^api/$', views.MealsApi.as_view(), name='meals_api')
+    url(r'^checkin/(?P<id>[\w-]+)$', views.MealsCheckin.as_view(), name='meal_checkin')
 ]

@@ -4,28 +4,22 @@ from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, Meals
 from app.mixins import TabsViewMixin
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
-from django.core import serializers
-from django.http import HttpResponse
-from checkin.models import CheckIn
 from app.views import TabsView
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.http import Http404
-import json
-from django.conf import settings
-from user.mixins import IsOrganizerMixin
-from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
+from user.mixins import IsOrganizerMixin, IsVolunteerMixin
 
 
 def organizer_tabs(user):
-    t = [('Meals', reverse('meals_list'), False),
-         ('Users', reverse('meals_users'), False)]
-    return t
+    if user.is_organizer:
+        return [('Meals', reverse('meals_list'), False),
+                ('Users', reverse('meals_users'), False)]
+    return [('Meals', reverse('meals_list'), False), ]
 
 
-class MealsList(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'meals_list.html'
     table_class = MealsListTable
     filterset_class = MealsListFilter
@@ -132,59 +126,11 @@ class MealAdd(IsOrganizerMixin, TabsView):
         return redirect('meals_list')
 
 
-class MealsApi(APIView):
-    permission_classes = (AllowAny,)
+class MealsCheckin(IsVolunteerMixin, TabsView):
+    template_name = 'meal_checkin.html'
 
-    def get(self, request, format=None):
-        var_token = request.GET.get('token')
-        if var_token != settings.MEALS_TOKEN:
-            return HttpResponse(status=500)
-        var_object = request.GET.get('object')
-        if var_object not in ['meal']:
-            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
+    def get_back_url(self):
+        return 'javascript:history.back()'
 
-        meals = Meal.objects.filter(ends__gt=datetime.now()).order_by('starts')
-        var_all = request.GET.get('all')
-        if var_all == '1':
-            meals = Meal.objects.all().order_by('starts')
-        meals_data = serializers.serialize('json', meals)
-        return HttpResponse(json.dumps({'code': 0, 'content': json.loads(meals_data)}), content_type='application/json')
-
-    def post(self, request, format=None):
-        var_token = request.GET.get('token')
-        if var_token != settings.MEALS_TOKEN:
-            return HttpResponse(status=500)
-        var_object = request.GET.get('object')
-        if var_object not in ['user', 'meal']:
-            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
-
-        var_meal = request.GET.get('meal')
-        obj_meal = Meal.objects.filter(id=var_meal).first()
-        if obj_meal is None:
-            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid meal'}), content_type='application/json')
-        if var_object == 'user':
-            var_repetitions = obj_meal.times
-            var_user = request.GET.get('user')
-            obj_checkin = CheckIn.objects.filter(qr_identifier=var_user).first()
-            if obj_checkin is None:
-                return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
-            obj_application = obj_checkin.application
-            obj_user = obj_application.user
-            if obj_application is None:
-                return HttpResponse(json.dumps({'code': 1, 'message': 'No application found'}),
-                                    content_type='application/json')
-            var_diet = obj_application.diet
-            var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
-            if var_eatens >= var_repetitions:
-                return HttpResponse(json.dumps({'code': 2, 'message': 'Hacker alreay ate'}),
-                                    content_type='application/json')
-            obj_eaten = Eaten()
-            obj_eaten.meal = obj_meal
-            obj_eaten.user = obj_user
-            obj_eaten.save()
-            return HttpResponse(json.dumps({'code': 0, 'content': {'diet': var_diet}}),
-                                content_type='application/json')
-        var_repetitions = request.GET.get('times')
-        obj_meal.times = var_repetitions
-        obj_meal.save()
-        return HttpResponse(json.dumps({'code': 0, 'message': 'Times updated'}), content_type='application/json')
+    def post(self, request, *args, **kwargs):
+        return redirect('meals_list')

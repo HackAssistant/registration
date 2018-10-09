@@ -20,9 +20,16 @@ class MealsListTable(tables.Table):
     change = tables.TemplateColumn(
         "<a href='{% url 'meal_detail' record.id %}'>Modify</a> ",
         verbose_name='Actions', orderable=False)
+    checkin = tables.TemplateColumn(
+        "<a href='{% url 'meal_checkin' record.id %}'>Check-in hacker</a> ",
+        verbose_name='Check-in', orderable=False)
     starts2 = tables.DateColumn(accessor='starts', verbose_name='Starts', format='d/m/Y G:i')
     ends2 = tables.DateTimeColumn(accessor='ends', verbose_name='Ends', format='d/m/Y G:i')
     eaten = tables.Column(accessor='eaten', verbose_name='Eaten')
+
+    def before_render(self, request):
+        if not request.user.is_organizer:
+            self.columns.hide('change')
 
     class Meta:
         model = Meal

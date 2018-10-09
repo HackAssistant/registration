@@ -1,0 +1,10 @@
+{% extends "base_tabs.html" %}
+{% block head_title %}Check-in meal{% endblock %}
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+{% block out_panel %}
+    <form id="meal-form" action="" method="post">
+	{% csrf_token %}
+        <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
+	<button class="btn btn-success" name="update">Check-in meal</button>
+    </form>
+{% endblock %}
