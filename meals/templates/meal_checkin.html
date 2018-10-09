@@ -11,20 +11,27 @@
 
 {% block head_title %}Check-in meal {{meal.id}}{% endblock %}
 
+{% block panel %}
+    <dl class="dl-horizontal" style="margin-bottom: 0;">
+	{% include 'include/field.html' with desc='Meal' value=meal.name %}
+    </dl>
+{% endblock %}
+
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
 
 {% block out_panel %}
     <div class="panel-footer">
-        {% if False %}
-            <div style="padding: 1em 1.5em 1.5em 1.5em;">
-                <h4 style="margin-bottom: 15px;">Testing!</h4>
+        <form id="meals-search" action="" method="post" style="padding-top: 1.5em;">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="control-label" for="meals-scan-image">QR scanner</label>
+                <div id="meals-scan-image"></div>
             </div>
-        {% else %}
-            <form action="" method="post" style="padding-top: 1.5em;">
-                {% csrf_token %}
-                <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
-                <button class="btn btn-success btn-block" name="checkin">Check-in hacker</button>
-            </form>
-        {% endif %}
+            <div class="form-group">
+                <input type="text" id="id_search" class="form-control" name="qr_id" value=""/>
+            </div>
+            <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
+            <button class="btn btn-success btn-block" name="checkin">Check-in hacker</button>
+        </form>
     </div>
 {% endblock %}

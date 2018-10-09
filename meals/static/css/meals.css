@@ -19,7 +19,7 @@
     padding-left: 10px;
 }
 
-.checkin-popup-scan {
+.meals-popup-scan {
     position: absolute;
     top: 50px;
     left: 50%;
@@ -33,11 +33,24 @@
     background-color: white;
 }
 
-.checkin-popup-scan select {
+.meals-popup-scan select {
     margin-bottom: 15px;
 }
 
-.checkin-popup-scan video {
+.meals-popup-scan video {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.meals-inside-scan {
+    width: 100%;
+}
+
+.meals-inside-scan select {
+    margin-bottom: 15px;
+}
+
+.meals-inside-scan video {
     width: 100%;
     margin: 0 auto;
 }

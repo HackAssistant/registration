@@ -138,9 +138,47 @@ class MealsCheckin(IsVolunteerMixin, TabsView):
 
     def get_back_url(self):
         return 'javascript:history.back()'
+    
+    def get_context_data(self, **kwargs):
+        context = super(MealsCheckin, self).get_context_data(**kwargs)
+        mealid = kwargs['id']
+        meal = Meal.objects.filter(id=mealid).first()
+        if not meal:
+            raise Http404
+        context.update({
+            'meal': meal,
+            'types': MEAL_TYPE,
+            'starts': meal.starts.strftime("%Y-%m-%d %H:%M:%S"),
+            'ends': meal.ends.strftime("%Y-%m-%d %H:%M:%S"),
+            'eaten': meal.eaten()
+        })
+        return context
 
     def post(self, request, *args, **kwargs):
-        return redirect('meals_list')
+        mealid = request.POST.get('meal_id')
+        obj_meal = Meal.objects.filter(id=mealid).first()
+        qrid = request.POST.get('qr_id')
+        obj_checkin = CheckIn.objects.filter(qr_identifier=qrid).first()
+        if obj_checkin is None:
+            messages.success(self.request, 'Error! Invalid user!')
+            return redirect('meal_checkin', id=mealid)
+        obj_application = obj_checkin.application
+        obj_user = obj_application.user
+        if obj_application is None:
+            messages.success(self.request, 'Error! No application found!')
+            return redirect('meal_checkin', id=mealid)
+        var_diet = obj_application.diet
+        var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
+        var_repetitions = obj_meal.times
+        if var_eatens >= var_repetitions:
+            messages.success(self.request, 'Warning! Hacker already ate!')
+            return redirect('meal_checkin', id=mealid)
+        obj_eaten = Eaten()
+        obj_eaten.meal = obj_meal
+        obj_eaten.user = obj_user
+        obj_eaten.save()
+        messages.success(self.request, 'Done! Diet: ' + var_diet + '.')
+        return redirect('meal_checkin', id=mealid)
 
 
 class MealsApi(APIView):

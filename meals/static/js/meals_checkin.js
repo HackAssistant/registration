@@ -1,5 +1,5 @@
 
-let baggage_webcam = (()=>{
+let meals_webcam = (()=>{
     let obj = {}
     let cams = []
 
@@ -20,9 +20,6 @@ let baggage_webcam = (()=>{
         $(window).on("load", function(){
 	    obj.imageScan()
         })
-        $("#baggage-form").on("submit", (ev)=>{
-            obj.capture()
-        })
     }
 
     //Opens a popup with a camera preview. If a QR is detected,
@@ -37,11 +34,17 @@ let baggage_webcam = (()=>{
         let selectedCam = parseInt(localStorage.getItem("selectedCam"))
         //Create video element for camera output
         let videoElem = document.createElement('video')
-	videoElem.id = "baggage-scan-video"
+	videoElem.id = "meals-scan-video"
         //Init scanner with this element
         let scanner = new Instascan.Scanner({ video: videoElem });
-        camerainput = document.getElementById("baggage-scan-image")
-        camerainput.classList.add("baggage-inside-scan")
+        scanner.addListener('scan', function (content) {
+            console.info("Read QR content: "+content)
+            $("#id_search")[0].value = content
+            scanner.stop()
+	    document.getElementById("meals-search").submit()
+        });
+        camerainput = document.getElementById("meals-scan-image")
+        camerainput.classList.add("meals-inside-scan")
         //Append camera selector
         let selectCam = document.createElement("select")
 	selectCam.classList.add("form-control")
@@ -64,17 +67,6 @@ let baggage_webcam = (()=>{
         
     }
     
-    obj.capture = ()=>{
-	var video = document.getElementById('baggage-scan-video');
-	var canvas = document.createElement("canvas");
-        document.body.appendChild(canvas);
-	canvas.width  = video.videoWidth;
-        canvas.height = video.videoHeight;
-	canvas.getContext('2d').drawImage(video, 0, 0);
-        var dataURL = canvas.toDataURL("image/png");
-        document.getElementById('baggage-scan-file').value = dataURL;
-    }
-    
     return obj
 })()
 
@@ -84,7 +76,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     }
     else{
 	clearInterval(t)
-	baggage_webcam.initScanner()
+	meals_webcam.initScanner()
     }
-    baggage_webcam.initListeners()
+    meals_webcam.initListeners()
 })
