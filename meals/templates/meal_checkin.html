@@ -1,10 +1,30 @@
 {% extends "base_tabs.html" %}
-{% block head_title %}Check-in meal{% endblock %}
+
+{% load static %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/meals.css' %}">
+    <script src="{% static 'lib/instascan.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/meals_checkin.js' %}"></script>
+{% endblock %}
+
+{% block head_title %}Check-in meal {{meal.id}}{% endblock %}
+
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+
 {% block out_panel %}
-    <form id="meal-form" action="" method="post">
-	{% csrf_token %}
-        <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
-	<button class="btn btn-success" name="update">Check-in meal</button>
-    </form>
+    <div class="panel-footer">
+        {% if False %}
+            <div style="padding: 1em 1.5em 1.5em 1.5em;">
+                <h4 style="margin-bottom: 15px;">Testing!</h4>
+            </div>
+        {% else %}
+            <form action="" method="post" style="padding-top: 1.5em;">
+                {% csrf_token %}
+                <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
+                <button class="btn btn-success btn-block" name="checkin">Check-in hacker</button>
+            </form>
+        {% endif %}
+    </div>
 {% endblock %}
