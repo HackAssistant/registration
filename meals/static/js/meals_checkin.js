@@ -15,7 +15,7 @@ let meals_webcam = (()=>{
             console.error(e);
         });
     }
-    
+
     obj.initListeners = ()=>{
         $(window).on("load", function(){
 	    obj.imageScan()
@@ -23,7 +23,7 @@ let meals_webcam = (()=>{
     }
 
     //Opens a popup with a camera preview. If a QR is detected,
-    //it's value is set into 'inputElem'. 
+    //it's value is set into 'inputElem'.
     //Clicking the bg cancels the operation
     //pre: call initScanner
     obj.imageScan = ()=>{
@@ -32,6 +32,10 @@ let meals_webcam = (()=>{
             localStorage.setItem("selectedCam", 0)
 
         let selectedCam = parseInt(localStorage.getItem("selectedCam"))
+        if (isNaN(selectedCam)){
+            selectedCam = 0
+            localStorage.setItem("selectedCam", 0)
+        }
         //Create video element for camera output
         let videoElem = document.createElement('video')
 	videoElem.id = "meals-scan-video"
@@ -48,6 +52,7 @@ let meals_webcam = (()=>{
         //Append camera selector
         let selectCam = document.createElement("select")
 	selectCam.classList.add("form-control")
+    selectCam.classList.add("selected-camera-class")
         let optionsStr=""
         for(let i =0; i < cams.length; i++)
             optionsStr += "<option value='"+i+"'>" + (cams[i].name || "Camera "+i) + "</option>"
@@ -56,17 +61,17 @@ let meals_webcam = (()=>{
         selectCam.value = ""+selectedCam
         //On selector change, we stop the scanner preview and change the camera
         selectCam.addEventListener("change", ()=>{
-            let selectedCam = parseInt(this.value)
+            let selectedCam = parseInt($(".selected-camera-class option:selected").val())
             localStorage.setItem("selectedCam", selectedCam)
         })
         //Then we append the video preview
         camerainput.appendChild(videoElem)
-        
+
         //Start the scanner with the stored value
         scanner.start(cams[selectedCam])
-        
+
     }
-    
+
     return obj
 })()
 
