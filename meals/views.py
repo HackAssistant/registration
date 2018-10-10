@@ -183,7 +183,9 @@ class MealsCheckin(IsVolunteerMixin, TabsView):
 
         times_hacker_ate = Eaten.objects.filter(meal=current_meal, user=hacker_application.user).count()
         if times_hacker_ate >= current_meal.times:
-            error_message = 'Warning! Hacker already ate %d out of %d available times!' % (times_hacker_ate, current_meal.times)
+            error_message = 'Warning! Hacker already ate %d out of %d available times!' % \
+                            (times_hacker_ate, current_meal.times)
+
             messages.warning(self.request, error_message)
 
             base_url = reverse('meal_checkin', kwargs={'id': mealid})
