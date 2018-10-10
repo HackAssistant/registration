@@ -63,6 +63,8 @@ let meals_webcam = (()=>{
         selectCam.addEventListener("change", ()=>{
             let selectedCam = parseInt($(".selected-camera-class option:selected").val())
             localStorage.setItem("selectedCam", selectedCam)
+            scanner.stop()
+            scanner.start(cams[selectedCam])
         })
         //Then we append the video preview
         camerainput.appendChild(videoElem)
