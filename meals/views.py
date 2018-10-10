@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.core.urlresolvers import reverse
 from meals.models import Meal, Eaten, MEAL_TYPE
 from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
@@ -7,6 +9,7 @@ from django_filters.views import FilterView
 from django.core import serializers
 from django.http import HttpResponse
 from checkin.models import CheckIn
+from applications import models as models_app
 from app.views import TabsView
 from datetime import datetime
 from django.contrib import messages
@@ -100,7 +103,7 @@ class MealAdd(IsOrganizerMixin, TabsView):
     template_name = 'meal_add.html'
 
     def get_back_url(self):
-        return 'javascript:history.back()'
+        return redirect('meals_list')
 
     def get_context_data(self, **kwargs):
         context = super(MealAdd, self).get_context_data(**kwargs)
@@ -137,8 +140,8 @@ class MealsCheckin(IsVolunteerMixin, TabsView):
     template_name = 'meal_checkin.html'
 
     def get_back_url(self):
-        return 'javascript:history.back()'
-    
+        return reverse('meals_list')
+
     def get_context_data(self, **kwargs):
         context = super(MealsCheckin, self).get_context_data(**kwargs)
         mealid = kwargs['id']
@@ -152,33 +155,57 @@ class MealsCheckin(IsVolunteerMixin, TabsView):
             'ends': meal.ends.strftime("%Y-%m-%d %H:%M:%S"),
             'eaten': meal.eaten()
         })
+        if self.request.GET.get('success', False):
+            context.update({
+                'success': True,
+                'diet': self.request.GET.get('diet', False)
+            })
+        if self.request.GET.get('error', False):
+            context.update({
+                'error': self.request.GET.get('error', 'Seems there\'s an error'),
+            })
         return context
 
     def post(self, request, *args, **kwargs):
         mealid = request.POST.get('meal_id')
-        obj_meal = Meal.objects.filter(id=mealid).first()
         qrid = request.POST.get('qr_id')
-        obj_checkin = CheckIn.objects.filter(qr_identifier=qrid).first()
-        if obj_checkin is None:
-            messages.success(self.request, 'Error! Invalid user!')
+
+        current_meal = Meal.objects.filter(id=mealid).first()
+        hacker_checkin = CheckIn.objects.filter(qr_identifier=qrid).first()
+        if hacker_checkin is None:
+            messages.error(self.request, 'Error! Invalid QR code!')
             return redirect('meal_checkin', id=mealid)
-        obj_application = obj_checkin.application
-        obj_user = obj_application.user
-        if obj_application is None:
-            messages.success(self.request, 'Error! No application found!')
+
+        hacker_application = getattr(hacker_checkin, 'application', None)
+        if hacker_application is None:
+            messages.error(self.request, 'Error! No application found!')
             return redirect('meal_checkin', id=mealid)
-        var_diet = obj_application.diet
-        var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
-        var_repetitions = obj_meal.times
-        if var_eatens >= var_repetitions:
-            messages.success(self.request, 'Warning! Hacker already ate!')
-            return redirect('meal_checkin', id=mealid)
-        obj_eaten = Eaten()
-        obj_eaten.meal = obj_meal
-        obj_eaten.user = obj_user
-        obj_eaten.save()
-        messages.success(self.request, 'Done! Diet: ' + var_diet + '.')
-        return redirect('meal_checkin', id=mealid)
+
+        times_hacker_ate = Eaten.objects.filter(meal=current_meal, user=hacker_application.user).count()
+        if times_hacker_ate >= current_meal.times:
+            error_message = 'Warning! Hacker already ate %d out of %d available times!' % (times_hacker_ate, current_meal.times)
+            messages.warning(self.request, error_message)
+
+            base_url = reverse('meal_checkin', kwargs={'id': mealid})
+            query_string = urlencode({'error': error_message})
+            return redirect('{}?{}'.format(base_url, query_string))
+
+        checkin = Eaten(meal=current_meal, user=hacker_application.user)
+        checkin.save()
+
+        params = {'success': True}
+        if hacker_application.diet == models_app.D_NONE:
+            messages.success(self.request, 'Success! No dietary restriction.')
+        elif hacker_application.diet == models_app.D_OTHER:
+            messages.success(self.request, 'Success! Restrictions: %s.' % hacker_application.other_diet)
+            params.update({'diet': hacker_application.other_diet})
+        else:
+            messages.success(self.request, 'Success! Restrictions: %s.' % hacker_application.diet)
+            params.update({'diet': hacker_application.diet})
+
+        base_url = reverse('meal_checkin', kwargs={'id': mealid})
+        query_string = urlencode(params)
+        return redirect('{}?{}'.format(base_url, query_string))
 
 
 class MealsApi(APIView):

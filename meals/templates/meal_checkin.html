@@ -9,12 +9,27 @@
     <script type="text/javascript" src="{% static 'js/meals_checkin.js' %}"></script>
 {% endblock %}
 
-{% block head_title %}Check-in meal {{meal.id}}{% endblock %}
+{% block head_title %}Check-in meal {{meal.name}}{% endblock %}
 
 {% block panel %}
-    <dl class="dl-horizontal" style="margin-bottom: 0;">
-	{% include 'include/field.html' with desc='Meal' value=meal.name %}
-    </dl>
+    <h2>Check-in meal</h2>
+    {% if success %}
+        <div class="alert alert-success">
+            <p>
+                Great job! Successfully scanned hacker for {{ meal.name }}!  <br>
+                <strong>{% if diet %}Dietary restriction: {{ diet }}{% else %}No dietary restriction.{% endif %}</strong>
+            </p>
+        </div>
+    {% endif %}
+     {% if error %}
+        <div class="alert alert-danger">
+            <p>
+                <strong>{{ error }}</strong>
+            </p>
+        </div>
+    {% endif %}
+    <p>Check in hackers for {{ meal.name }}. Use the camera below to scan QR codes.</p>
+
 {% endblock %}
 
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
@@ -31,7 +46,7 @@
                 <input type="text" id="id_search" class="form-control" name="qr_id" value=""/>
             </div>
             <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
-            <button class="btn btn-success btn-block" name="checkin">Check-in hacker</button>
+            <button class="btn btn-success btn-block" name="checkin">Submit QR code</button>
         </form>
     </div>
 {% endblock %}
