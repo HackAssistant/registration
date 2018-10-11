@@ -16,7 +16,7 @@ from user.models import User
 
 
 def user_tabs(user):
-    return [('List', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False),
+    return [('List', reverse('check_in_list'), False),
             ('Ranking', reverse('check_in_ranking'), False)]
 
 
@@ -31,13 +31,6 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
 
     def get_queryset(self):
         return models.Application.objects.exclude(status=models.APP_ATTENDED)
-
-
-class QRView(IsVolunteerMixin, TabsView):
-    template_name = 'checkin/qr.html'
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
 
 
 class CheckInHackerView(IsVolunteerMixin, TabsView):
@@ -64,11 +57,16 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
 
     def post(self, request, *args, **kwargs):
         appid = request.POST.get('app_id')
+        qrcode = request.POST.get('qr_code')
+        if qrcode is None or qrcode == "":
+            messages.success(self.request, 'The QR code is mandatory!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         app = models.Application.objects.filter(uuid=appid).first()
         app.check_in()
         ci = CheckIn()
         ci.user = request.user
         ci.application = app
+        ci.qr_identifier = qrcode
         ci.save()
         messages.success(self.request, 'Hacker checked-in! Good job! '
                                        'Nothing else to see here, '
