@@ -30,6 +30,7 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.email_verified = True
         user.is_volunteer = True
+        user.is_hardware_admin = True
         user.save(using=self._db)
         return user
 
@@ -50,6 +51,7 @@ class User(AbstractBaseUser):
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()

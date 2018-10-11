@@ -28,3 +28,9 @@ urlpatterns = [
 
 if settings.REIMBURSEMENT_ENABLED:
     urlpatterns.append(url(r'^reimbursement/', include('reimbursement.urls')))
+
+if settings.HARDWARE_ENABLED:
+    urlpatterns.append(url(r'^hardware/', include('hardware.urls')))
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
