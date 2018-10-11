@@ -40,4 +40,3 @@ class Command(BaseCommand):
                 except:
                     print('There was a problem inviting the user: {0}.  Error: {1}.'
                           .format(email, sys.exc_info()[1]))
-
