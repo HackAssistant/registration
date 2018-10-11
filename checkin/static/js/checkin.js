@@ -77,7 +77,7 @@ let checkin_qr = (()=>{
         selectCam.value = ""+selectedCam
         //On selector change, we stop the scanner preview and change the camera
         selectCam.addEventListener("change", ()=>{
-            let selectedCam = parseInt(this.value)
+            let selectedCam = parseInt($(".selected-camera-class option:selected").val())
             localStorage.setItem("selectedCam", selectedCam)
             scanner.stop()
             scanner.start(cams[seletedCam])
