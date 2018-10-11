@@ -58,7 +58,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
     def post(self, request, *args, **kwargs):
         appid = request.POST.get('app_id')
         qrcode = request.POST.get('qr_code')
-        if qrcode is None or qrcode == "":
+        if qrcode is None or qrcode == '':
             messages.success(self.request, 'The QR code is mandatory!')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         app = models.Application.objects.filter(uuid=appid).first()

@@ -28,7 +28,7 @@ class ApplicationsCheckInTable(tables.Table):
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email']
-        empty_text = 'No hacker found, are them all checked-in?'
+        empty_text = 'No hacker found, have they all checked-in??'
 
 
 class RankingListTable(tables.Table):
