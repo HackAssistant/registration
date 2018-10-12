@@ -1,25 +1,27 @@
+import json
+from datetime import datetime
 from urllib.parse import urlencode
 
-from django.core.urlresolvers import reverse
-from meals.models import Meal, Eaten, MEAL_TYPE
-from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
-from app.mixins import TabsViewMixin
-from django_tables2 import SingleTableMixin
-from django_filters.views import FilterView
-from django.core import serializers
-from django.http import HttpResponse
-from checkin.models import CheckIn
-from applications import models as models_app
-from app.views import TabsView
-from datetime import datetime
-from django.contrib import messages
-from django.shortcuts import redirect
-from django.http import Http404
-import json
 from django.conf import settings
-from user.mixins import IsOrganizerMixin, IsVolunteerMixin
+from django.contrib import messages
+from django.core import serializers
+from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.views import View
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+
+from app.mixins import TabsViewMixin
+from app.views import TabsView
+from applications import models as models_app
+from checkin.models import CheckIn
+from meals.models import Meal, Eaten, MEAL_TYPE
+from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
+from user.mixins import IsOrganizerMixin, IsVolunteerMixin
 
 
 def organizer_tabs(user):
@@ -208,6 +210,44 @@ class MealsCheckin(IsVolunteerMixin, TabsView):
         base_url = reverse('meal_checkin', kwargs={'id': mealid})
         query_string = urlencode(params)
         return redirect('{}?{}'.format(base_url, query_string))
+
+
+class MealsCoolAPI(View, IsVolunteerMixin):
+
+    def post(self, request, *args, **kwargs):
+        mealid = request.POST.get('meal_id', None)
+        qrid = request.POST.get('qr_id', None)
+
+        if not qrid or not mealid:
+            return JsonResponse({'error': 'Missing meal and/or QR. Trying to trick us?'})
+
+        current_meal = Meal.objects.filter(id=mealid).first()
+        hacker_checkin = CheckIn.objects.filter(qr_identifier=qrid).first()
+        if not hacker_checkin:
+            return JsonResponse({'error': 'Error! Invalid QR code!'})
+
+        hacker_application = getattr(hacker_checkin, 'application', None)
+        if not hacker_application:
+            return JsonResponse({'error': 'Error! No application found!'})
+
+        times_hacker_ate = Eaten.objects.filter(meal=current_meal, user=hacker_application.user).count()
+        if times_hacker_ate >= current_meal.times:
+            error_message = 'Warning! Hacker already ate %d out of %d available times!' % \
+                            (times_hacker_ate, current_meal.times)
+
+            return JsonResponse({'error': error_message})
+
+        checkin = Eaten(meal=current_meal, user=hacker_application.user)
+        checkin.save()
+
+        if hacker_application.diet == models_app.D_NONE:
+            diet = 'No dietary restriction.'
+        elif hacker_application.diet == models_app.D_OTHER:
+            diet = hacker_application.other_diet
+        else:
+            diet = hacker_application.diet
+
+        return JsonResponse({'success': True, 'diet': diet})
 
 
 class MealsApi(APIView):
