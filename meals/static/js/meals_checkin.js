@@ -74,7 +74,7 @@ let meals_webcam = (()=>{
                 if (data.hasOwnProperty("error")){
                     alert('Error: '+ data.error)
                 } else {
-                    alert('Diet:'+diet)
+                    alert('Diet:'+data.diet)
                 }
                 let selectedCam = parseInt(selectCam.val())
                 scanner.start(cams[selectedCam])
