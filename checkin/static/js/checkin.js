@@ -57,12 +57,19 @@ let checkin_qr = (()=>{
         //Once we scan a value, set the inputElem to this value and close the popup
         scanner.addListener('scan', function (content) {
             console.info("Read QR content: "+content)
-            inputElem.value = content
-            scanner.stop()
-            popup.parentNode.removeChild(popup)
-            veil.parentNode.removeChild(veil)
-            popup = ""
-	    document.getElementById("checkin-search").submit()
+            reg = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+            if (reg.test(content)){
+                console.info("MEC")
+                window.location.href = 'checkin/' + content
+            }
+            else{
+                inputElem.value = content
+                scanner.stop()
+                popup.parentNode.removeChild(popup)
+                veil.parentNode.removeChild(veil)
+                popup = ""
+                document.getElementById("checkin-search").submit()
+	    }
         });
         //Creating the popup
         let popup = document.createElement("div")
