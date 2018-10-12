@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^users/$', views.MealsUsers.as_view(), name='meals_users'),
     url(r'^(?P<id>[\w-]+)$', views.MealDetail.as_view(), name='meal_detail'),
     url(r'^scan/(?P<id>[\w-]+)$', views.MealsCheckin.as_view(), name='meal_checkin'),
-    url(r'^api/$', views.MealsApi.as_view(), name='meals_api')
+    url(r'^api/$', views.MealsApi.as_view(), name='meals_api'),
+    url(r'^api/checkin$', views.MealsCoolAPI.as_view(), name='cool_meals_api')
 ]

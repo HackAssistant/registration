@@ -123,6 +123,7 @@
         </div>
     </nav>
 {% endblock %}
+{% block body_plain %}
 <div class="content container">
     <div class="content-inside">
 
@@ -145,6 +146,8 @@
         {% endblock %}
     </div>
 </div>
+{% endblock %}
+{% block footer %}
 <footer class="footer navbar-fixed-bottom">
     <div class="container">
         <div class="row">
@@ -204,6 +207,7 @@
         </div>
     </div>
 </footer>
+{% endblock %}
 
 <!--cookies-->
 <div id="cookie-notice" style="display:none">

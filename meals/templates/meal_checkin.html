@@ -1,52 +1,31 @@
-{% extends "base_tabs.html" %}
+{% extends "base.html" %}
 
 {% load static %}
-{% load bootstrap3 %}
 
-{% block extra_head %}
+{% block head %}
     <link rel="stylesheet" href="{% static 'css/meals.css' %}">
+
+{% endblock %}
+
+{% block extra_scripts %}
     <script src="{% static 'lib/instascan.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/meals_checkin.js' %}"></script>
+
 {% endblock %}
+
+{% block navbar %}{% endblock %}
 
 {% block head_title %}Check-in meal {{meal.name}}{% endblock %}
 
-{% block panel %}
-    <h2>Check-in meal</h2>
-    {% if success %}
-        <div class="alert alert-success">
-            <p>
-                Great job! Successfully scanned hacker for {{ meal.name }}!  <br>
-                <strong>{% if diet %}Dietary restriction: {{ diet }}.{% else %}No dietary restriction.{% endif %}</strong>
-            </p>
-        </div>
-    {% endif %}
-     {% if error %}
-        <div class="alert alert-danger">
-            <p>
-                <strong>{{ error }}</strong>
-            </p>
-        </div>
-    {% endif %}
-    <p>Check in hackers for {{ meal.name }}. Use the camera below to scan QR codes.</p>
-
+{% block body_plain %}
+    <a class="btn btn-block" href="{% url 'meals_list' %}">< Back</a>
+    <div id="meals-scan-image" class="meals-inside-scan" style="max-width: 100%;max-height: 100%;" data-mealid="{{ meal.id }}"
+    data-apiurl="{% url 'cool_meals_api' %}">
+        <select class="form-control"></select>
+        <video id="meals-scan-video" style="width: 100%; max-height: 80%; margin:0 auto;">   </video>
+    </div>
 {% endblock %}
 
-{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
 
-{% block out_panel %}
-    <div class="panel-footer">
-        <form id="meals-search" action="" method="post" style="padding-top: 1.5em;">
-            {% csrf_token %}
-            <div class="form-group">
-                <label class="control-label" for="meals-scan-image">QR scanner</label>
-                <div id="meals-scan-image"></div>
-            </div>
-            <div class="form-group">
-                <input type="text" id="id_search" class="form-control" name="qr_id" value=""/>
-            </div>
-            <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
-            <button class="btn btn-success btn-block" name="checkin">Submit QR code</button>
-        </form>
-    </div>
+{% block footer %}
 {% endblock %}
