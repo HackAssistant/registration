@@ -13,6 +13,9 @@ class CheckIn(models.Model):
     user = models.ForeignKey(User)
     update_time = models.DateTimeField()
 
+    # QR identifier for wristband identification
+    qr_identifier = models.CharField(max_length=255, null=True)
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
         self.update_time = datetime.now()
