@@ -26,6 +26,7 @@ class MealsListTable(tables.Table):
     starts2 = tables.DateColumn(accessor='starts', verbose_name='Starts', format='d/m/Y G:i')
     ends2 = tables.DateTimeColumn(accessor='ends', verbose_name='Ends', format='d/m/Y G:i')
     eaten = tables.Column(accessor='eaten', verbose_name='Eaten')
+    opened = tables.Column(accessor='opened', verbose_name='Active')
 
     def before_render(self, request):
         if not request.user.is_organizer:
@@ -35,7 +36,7 @@ class MealsListTable(tables.Table):
         model = Meal
         attrs = {'class': 'table table-hover'}
         template = 'templates/meals_list.html'
-        fields = ['id', 'name', 'kind', 'times', 'starts2', 'ends2', 'eaten']
+        fields = ['id', 'name', 'kind', 'opened', 'times', 'starts2', 'ends2', 'eaten']
         empty_text = 'No meals available'
         order_by = 'starts'
 

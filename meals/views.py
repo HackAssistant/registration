@@ -39,7 +39,9 @@ class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return Meal.objects.filter()
+        if self.request.user.is_organizer:
+            return Meal.objects.all()
+        return Meal.objects.filter(opened=True)
 
 
 class MealsUsers(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -52,7 +54,7 @@ class MealsUsers(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return Eaten.objects.filter()
+        return Eaten.objects.all()
 
 
 class MealDetail(IsOrganizerMixin, TabsView):
@@ -94,6 +96,8 @@ class MealDetail(IsOrganizerMixin, TabsView):
         mealtimes = request.POST.get('meal_times')
         if mealtimes:
             meal.times = mealtimes
+        mealopened = request.POST.get('meal_opened')
+        meal.opened = (mealopened == 'opened')
         meal.save()
         messages.success(self.request, 'Meal updated!')
         return redirect('meals_list')
@@ -131,6 +135,9 @@ class MealAdd(IsOrganizerMixin, TabsView):
         mealtimes = request.POST.get('meal_times')
         if mealtimes:
             meal.times = mealtimes
+        mealopened = request.POST.get('meal_opened')
+        if mealopened:
+            meal.opened = (mealopened == 'opened')
         meal.save()
         messages.success(self.request, 'Meal added!')
         return redirect('meals_list')

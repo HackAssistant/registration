@@ -23,6 +23,8 @@ class Meal(models.Model):
     ends = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
     # Number of times a hacker can eat this meal
     times = models.PositiveIntegerField(null=False, default=1)
+    # Status of the meal
+    opened = models.BooleanField(null=False, default=False)
 
     def __str__(self):
         return str(self.name)

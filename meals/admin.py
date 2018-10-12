@@ -4,7 +4,7 @@ from meals import models
 
 class MealsMealAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'name', 'times', 'starts', 'ends'
+        'id', 'name', 'times', 'opened', 'starts', 'ends'
     )
     search_fields = (
         'name',
