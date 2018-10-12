@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg, F
 
 from app import settings
 from user.models import User
@@ -95,6 +95,16 @@ class Presentation(models.Model):
 
     class Meta:
         unique_together = (('project', 'room'),)
+
+    @classmethod
+    def annotate_score(cls, qs):
+        avg_ = (F('tech_avg') + F('design_avg') + F('completion_avg') + F('learning_avg')) / 4
+        return qs \
+            .annotate(tech_avg=Avg('presentationevaluation__tech')) \
+            .annotate(design_avg=Avg('presentationevaluation__design')) \
+            .annotate(completion_avg=Avg('presentationevaluation__completion')) \
+            .annotate(learning_avg=Avg('presentationevaluation__learning')) \
+            .annotate(score_avg=avg_)
 
 
 JUDGE_ALIASES = [

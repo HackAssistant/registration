@@ -21,7 +21,38 @@ class RoomAdmin(admin.ModelAdmin):
 
 
 class PresentationAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('project', 'room', 'done', 'score', 'tech_score',
+                    'design_score', 'learning_score', 'completion_score')
+    list_filter = ('room__challenge', 'room', 'done')
+
+    def score(self, presentation):
+        return presentation.score_avg
+
+    score.admin_order_field = 'score_avg'
+
+    def tech_score(self, presentation):
+        return presentation.tech_avg
+
+    tech_score.admin_order_field = 'tech_score'
+
+    def design_score(self, presentation):
+        return presentation.design_avg
+
+    design_score.admin_order_field = 'design_score'
+
+    def learning_score(self, presentation):
+        return presentation.learning_avg
+
+    learning_score.admin_order_field = 'learning_score'
+
+    def completion_score(self, presentation):
+        return presentation.completion_avg
+
+    completion_score.admin_order_field = 'completion_score'
+
+    def get_queryset(self, request):
+        qs = super(PresentationAdmin, self).get_queryset(request)
+        return models.Presentation.annotate_score(qs)
 
 
 class PresentationEvaluationAdmin(admin.ModelAdmin):
