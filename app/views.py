@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -28,6 +29,9 @@ def root_view(request):
 
 
 def code_conduct(request):
+    code_link = getattr(settings, 'CODE_CONDUCT_LINK', None)
+    if code_link:
+        return HttpResponseRedirect(code_link)
     return render(request, 'code_conduct.html')
 
 

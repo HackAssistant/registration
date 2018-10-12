@@ -57,6 +57,9 @@ if BAGGAGE_ENABLED:
 if REIMBURSEMENT_ENABLED:
     INSTALLED_APPS.append('reimbursement')
 
+if HARDWARE_ENABLED:
+    INSTALLED_APPS.append('hardware')
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
