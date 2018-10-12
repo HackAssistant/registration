@@ -1,5 +1,5 @@
-.content_container{
-	width:90%;
+.content-container{
+	width:80%;
 }
 
 .content-inside{
@@ -34,29 +34,42 @@
 	font-weight: bold;
 }
 
-
-.content-inside > div ul li:nth-child(1){
+.content-inside > div ol li:nth-child(1){
 	font-size:20px;
+	list-style:none;
 }
 
-.content-inside > div ul li:nth-child(1)::before{
+.content-inside > div ol li:nth-child(1)::before{
 	content:'Current: ';
 	font-size:20px;
 	font-weight: bold;
 }
 
-.content-inside > div ul li:nth-child(2){
+.content-inside > div ol li:nth-child(2){
 	font-size:18px;
+	list-style:none;
 }
 
-.content-inside > div ul li:nth-child(2)::before{
+.content-inside > div ol li:nth-child(2)::before{
 	content:'Next: ';
 	font-size:18px;
 	font-weight: bold;
+}
+
+.content-inside > div ol li{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	list-style:decimal;
+	list-style-position:inside;
 }
 
 .judging-close-button{
 	position:absolute;
 	right:15px;
 	cursor:pointer;
+}
+
+.content-inside > div.empty > h1{
+	padding:15px 5px;
+	margin:0;
 }
