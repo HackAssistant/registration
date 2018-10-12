@@ -1,7 +1,7 @@
 {% extends "base_tabs.html" %}
 {% load static %}
 {% block extra_head %}
-	<link rel="stylesheet" href="{% static 'css/judging.css' %}">
+	<link rel="stylesheet" href="{% static 'css/presentations.css' %}">
 	<script>
 		document.addEventListener("DOMContentLoaded", ()=>{
 			let btns = document.getElementsByClassName("judging-close-button")
@@ -12,6 +12,11 @@
 				})
 			}
 		})
+
+		//TODO: get data via ajax and update the view
+		setTimeout(function(){
+			location.reload()
+		}, 10000)
 	</script>
 {% endblock %}
 {% block body %}
