@@ -54,6 +54,7 @@ class BaggageListTable(tables.Table):
         verbose_name='Actions', orderable=False)
 
     position = tables.Column(accessor='position', verbose_name='Position')
+    bid = tables.Column(verbose_name='Bag id')
 
     class Meta:
         model = Bag
@@ -84,6 +85,7 @@ class BaggageUsersTable(tables.Table):
 
 class BaggageCurrentHackerTable(tables.Table):
     position = tables.Column(accessor='position', verbose_name='Position')
+    bid = tables.Column(verbose_name='Bag id')
 
     class Meta:
         model = Bag
