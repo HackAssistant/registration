@@ -60,7 +60,7 @@ class BaggageListTable(tables.Table):
         attrs = {'class': 'table table-hover'}
         template = 'templates/baggage_list.html'
         fields = ['bid', 'room', 'position', 'owner', 'type', 'color', 'special']
-        empty_text = 'No baggage items checked-in'
+        empty_text = 'No baggage items checked-in.'
         order_by = '-bid'
 
 
@@ -80,3 +80,15 @@ class BaggageUsersTable(tables.Table):
         template = 'templates/baggage_users.html'
         fields = ['name', 'email', 'checkin', 'checkout']
         empty_text = 'No users!'
+
+
+class BaggageCurrentHackerTable(tables.Table):
+    position = tables.Column(accessor='position', verbose_name='Position')
+
+    class Meta:
+        model = Bag
+        attrs = {'class': 'table table-hover'}
+        template = 'templates/baggage_list.html'
+        fields = ['bid', 'room', 'position', 'type', 'color', 'description', 'special']
+        empty_text = 'No baggage items checked-in.'
+        order_by = '-bid'

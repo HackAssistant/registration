@@ -1,6 +1,7 @@
 from django.core.urlresolvers import reverse
 from app.mixins import TabsViewMixin
-from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable, BaggageUsersFilter
+from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable
+from baggage.tables import BaggageUsersFilter, BaggageCurrentHackerTable
 from baggage.models import Bag, BAG_ADDED, BAG_REMOVED, Room
 from user.models import User
 from checkin.models import CheckIn
@@ -15,6 +16,7 @@ import base64
 from django.core.files.base import ContentFile
 import time
 from user.mixins import IsVolunteerMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def organizer_tabs(user):
@@ -22,6 +24,11 @@ def organizer_tabs(user):
          ('List', reverse('baggage_list'), False),
          ('Map', reverse('baggage_map'), False),
          ('History', reverse('baggage_history'), False)]
+    return t
+
+
+def hacker_tabs(user):
+    t = [('Baggage', reverse('baggage_currenthacker'), False), ]
     return t
 
 
@@ -200,3 +207,17 @@ class BaggageHistory(IsVolunteerMixin, TabsView):
             'bags': bags
         })
         return context
+
+
+class BaggageCurrentHacker(LoginRequiredMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'baggage_currenthacker.html'
+    table_class = BaggageCurrentHackerTable
+    filterset_class = BaggageListFilter
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return hacker_tabs(self.request.user)
+
+    def get_queryset(self):
+        user = self.request.user
+        return Bag.objects.filter(status=BAG_ADDED, owner=user)
