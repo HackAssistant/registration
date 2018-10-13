@@ -4,11 +4,24 @@
 	<link rel="stylesheet" href="{% static 'css/presentations.css' %}">
 	<script>
 		document.addEventListener("DOMContentLoaded", ()=>{
-			let btns = document.getElementsByClassName("judging-close-button")
-			for(let i = 0; i < btns.length; i++)
+			document.getElementById("reset-btn").addEventListener("click", function(){
+				localStorage.setItem("closed_presentations", "[]")
+				location.reload()
+			})
+
+			var opened = JSON.parse(localStorage["closed_presentations"] || "[]")
+			var btns = document.getElementsByClassName("judging-close-button")
+			for(var i = 0; i < btns.length; i++)
 			{
+				if(opened.indexOf(btns[i].parentNode.dataset.roomName) !== -1)
+				{
+					$(btns[i].parentNode).hide()
+				}
 				btns[i].addEventListener("click", (ev)=>{
 					$(ev.target.parentNode).hide(200)
+					var ls = JSON.parse(localStorage["closed_presentations"] || "[]")
+					ls.push(ev.target.parentNode.dataset.roomName)
+					localStorage.setItem("closed_presentations", JSON.stringify(ls))
 				})
 			}
 		})
@@ -16,10 +29,11 @@
 		//TODO: get data via ajax and update the view
 		setTimeout(function(){
 			location.reload()
-		}, 10000)
+		}, 20000)
 	</script>
 {% endblock %}
 {% block body %}
+	<a href="#" id="reset-btn" >Reset</a>
 	{% for room in rooms %}
 		{% include 'include/room_presentations.html' %}
 	{% empty %}
