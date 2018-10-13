@@ -19,7 +19,7 @@ BAG_BUILDINGS = (
 class Room(models.Model):
     """Represents a room where a position can be"""
 
-    # Building identifier
+    # Room identifier
     room = models.CharField(primary_key=True, max_length=63, null=False, choices=BAG_BUILDINGS)
     # Number of rows
     row = models.PositiveIntegerField(null=False, default=0)
@@ -117,21 +117,3 @@ class Bag(models.Model):
         if self.special:
             return '@' + str(self.col)
         return str(self.row) + str(self.col)
-
-
-class Comment(models.Model):
-    """Represents a comment on an item for when it was updated"""
-
-    # Movement identifier
-    bid = models.AutoField(primary_key=True)
-    # Item from which the move is related to
-    item = models.ForeignKey(Bag, on_delete=models.CASCADE)
-    # Time for when the comment was made
-    time = models.DateTimeField(auto_now=False, auto_now_add=True)
-    # User that created the movement
-    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
-    # Additional comments on the movement
-    comment = models.TextField(max_length=1023, null=True, blank=True)
-
-    def __str__(self):
-        return str(self.bid)

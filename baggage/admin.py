@@ -29,18 +29,5 @@ class BaggageListAdmin(admin.ModelAdmin):
         return []
 
 
-class BaggageCommentAdmin(admin.ModelAdmin):
-    list_display = (
-        'bid', 'item', 'time', 'user', 'comment', 'time'
-    )
-    search_fields = (
-        'item__owner__email', 'item__owner__name', 'user__email', 'user__name', 'comment'
-    )
-
-    def get_actions(self, request):
-        return []
-
-
 admin.site.register(models.Room, admin_class=BaggageRoomAdmin)
 admin.site.register(models.Bag, admin_class=BaggageListAdmin)
-admin.site.register(models.Comment, admin_class=BaggageCommentAdmin)
