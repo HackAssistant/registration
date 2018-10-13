@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
     <script src="{% static 'lib/instascan.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/baggage.js' %}"></script>
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
 {% endblock %}
 
 {% block head_title %}Baggage check-in{% endblock %}
@@ -18,9 +20,4 @@
             <button type="submit" class="btn btn-info">Filter</button>
         </form>
     </div>
-{% endblock %}
-
-{% block extra_panel %}
-    <script src="{% static 'lib/typeahead.min.js' %}"></script>
-    <script src="{% static 'js/form_modifiers.js' %}"></script>
 {% endblock %}

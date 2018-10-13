@@ -36,38 +36,6 @@ class Room(models.Model):
 class Bag(models.Model):
     """Represents a baggage item"""
 
-    TYPES = (
-        ('BAC', 'Backpack'),
-        ('HAR', 'Hardware'),
-        ('CLO', 'Clothes'),
-        ('OTH', 'Other')
-    )
-
-    COLORS = (
-        ('BE', 'Beige'),
-        ('BK', 'Black'),
-        ('BL', 'Blue'),
-        ('BW', 'Brown'),
-        ('CO', 'Coral'),
-        ('CY', 'Cyan'),
-        ('GR', 'Green'),
-        ('GY', 'Grey'),
-        ('LA', 'Lavender'),
-        ('LI', 'Lime'),
-        ('MA', 'Magenta'),
-        ('MO', 'Maroon'),
-        ('MI', 'Mint'),
-        ('NA', 'Navy'),
-        ('OL', 'Olive'),
-        ('OR', 'Orange'),
-        ('PI', 'Pink'),
-        ('PU', 'Purple'),
-        ('RE', 'Red'),
-        ('TE', 'Teal'),
-        ('WH', 'White'),
-        ('YE', 'Yellow')
-    )
-
     STATUS = (
         (BAG_ADDED, 'Added'),
         (BAG_REMOVED, 'Removed')
