@@ -86,6 +86,7 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right ">
+                    {% include 'include/judging_tab.html' %}
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_admin %}
                             <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
@@ -108,9 +109,7 @@
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}
                         {% endif %}
-                        <li><a href="{% url 'import_projects' %}">Judging</a></li>
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
-
                     {% else %}
                         <li><a href="{% url 'account_login' %}">Sign In</a></li>
                         <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
