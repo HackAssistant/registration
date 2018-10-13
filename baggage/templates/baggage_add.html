@@ -1,0 +1,144 @@
+{% extends "base_tabs.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+{% load baggage_tags %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
+    {% if h_b_picture %}
+        <script src="{% static 'lib/instascan.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
+{% endblock %}
+
+{% block head_title %}Baggage check-in{% endblock %}
+
+{% block panel %}
+    <dl class="dl-horizontal" style="margin-bottom: 0;">
+	{% include 'include/field.html' with desc='Name' value=user.name %}
+	{% include 'include/field.html' with desc='Email' value=user.email %}
+	{% include 'include/field.html' with desc='Position' value=position %}
+    </dl>
+    
+    
+    <script>
+        $(document).ready(function(){
+            make_field_typeahead('bag_type', '{% static 'types.json' %}');
+            make_field_typeahead('bag_color', '{% static 'colors.json' %}');
+        })
+    </script>
+{% endblock %}
+
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+
+{% block out_panel %}
+    <form id="baggage-form" action="" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	<div class="form-group">
+	    <label class="control-label" for="bag_type">Type</label>
+	    <input type="text" id="id_bag_type" class="form-control" name="bag_type" autocomplete="off" />
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="bag_color">Color</label>
+	    <input type="text" id="id_bag_color" class="form-control" name="bag_color" autocomplete="off" />
+	</div>
+	{% if h_b_picture %}
+	    <div class="form-group">
+	        <label class="control-label" for="baggage-scan-image">Image</label>
+	        <p class="image-info"><i class="fa fa-info-circle"></i> Picture will be taken automatically on check-in.</p>
+	        <div id="baggage-scan-image"></div>
+	        <input type="hidden" class="form-control" id="baggage-scan-file" name="bag_image" />
+	    </div>
+	{% endif %}
+	<div class="form-group">
+	    <label class="control-label" for="bag_description">Description</label>
+	    <textarea rows="4" cols="50" class="form-control" name="bag_description"></textarea>
+	</div>
+	<div class="form-group" id="baggage-sel-special" style="margin-bottom: 5px;">
+	    <input type="checkbox" name="bag_special" id="pos_special" value="special"> Special
+	</div>
+	<div class="form-group" id="baggage-sel-manual">
+	    <input type="checkbox" name="pos_manual" id="pos_manual" value="manual"> Manual position
+	</div>
+	<div id="baggage-manual" style="display: none;">
+	    {% if rooms|length > 0 %}
+		<div class="form-group">
+		    <label class="control-label" for="pos_room">Room</label>
+		    <select class="form-control" id="baggage-rooms" name="pos_room">
+		    {% for room in rooms %}
+			<option value="{{ room.room }}">{{ room.room }}</option>
+		    {% endfor %}
+		    </select>
+		</div>
+		<div class="form-group">
+		    <label class="control-label" for="pos_row">Row</label>
+		    <select class="form-control" id="baggage-rows" name="pos_row">
+		    {% for i in "x"|ljust:rooms.0.row %}
+			<option value="{{ forloop.counter0|itoa }}" {% if forloop.counter0 == 0 %} selected {% endif %}>{{ forloop.counter0|itoa }}</option>
+		    {% endfor %}
+		    </select>
+		</div>
+		<div class="form-group">
+		    <label class="control-label" for="pos_col">Column</label>
+		    <select class="form-control" id="baggage-cols" name="pos_col">
+		    {% for i in "x"|ljust:rooms.0.col %}
+			<option value="{{ forloop.counter0 }}" {% if forloop.counter0 == 0 %} selected {% endif %}>{{ forloop.counter0 }}</option>
+		    {% endfor %}
+		    </select>
+		</div>
+	    {% endif %}
+	</div>
+        <input type="hidden" name="user_id" value="{{ user.id }}"/>
+	<button class="btn btn-success" name="checkin">Bag check-in</button>
+    </form>
+    
+    <script>
+        var room = document.getElementById("baggage-rooms");
+        room.addEventListener("change", function(){
+	    {% for room in rooms %}
+	        if(room.value == "{{ room.room }}"){
+		    var rows = document.getElementById("baggage-rows")
+		    rows_room = ""
+		    {% for i in "x"|ljust:room.row %}
+		        rows_room += "<option value=\"{{ forloop.counter0|itoa }}\">{{ forloop.counter0|itoa }}</option>"
+		    {% endfor %}
+		    rows.innerHTML = rows_room
+		    var cols = document.getElementById("baggage-cols")
+		    cols_room = ""
+		    {% for i in "x"|ljust:room.col %}
+		        cols_room += "<option value=\"{{ forloop.counter0 }}\">{{ forloop.counter0 }}</option>"
+		    {% endfor %}
+		    cols.innerHTML = cols_room
+	        }
+	    {% endfor %}
+	});
+	
+	var special = document.getElementById("pos_special");
+	special.addEventListener("change", function(){
+	    if(special.checked == true){
+		document.getElementById("baggage-manual").style.display = "none"
+		document.getElementById("baggage-sel-manual").style.display = "none"
+		document.getElementById("baggage-sel-special").style.marginBottom = "15px"
+	    }
+	    else{
+		document.getElementById("pos_manual").checked = false
+		document.getElementById("baggage-manual").style.display = "none"
+		document.getElementById("baggage-sel-manual").style.display = "block"
+		document.getElementById("baggage-sel-special").style.marginBottom = "5px"
+	    }
+	});
+	
+	var manual = document.getElementById("pos_manual");
+	manual.addEventListener("change", function(){
+	    if(manual.checked == true){
+		document.getElementById("baggage-manual").style.display = "block"
+	    }
+	    else{
+		document.getElementById("baggage-manual").style.display = "none"
+	    }
+	});
+    </script>
+{% endblock %}

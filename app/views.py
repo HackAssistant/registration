@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from applications.models import Application
 from reimbursement.models import Reimbursement
+from baggage.models import Bag
 from django.shortcuts import get_object_or_404
 from urllib.parse import quote
 from django.http import StreamingHttpResponse
@@ -59,6 +60,10 @@ def protectedMedia(request, file_):
         if request.user.is_authenticated() and (request.user.is_organizer or
                                                 (app and (app.hacker_id == request.user.id))):
             downloadable_path = app.receipt.path
+    elif path == "baggage":
+        bag = get_object_or_404(Bag, image=file_)
+        if request.user.is_authenticated() and (request.user.is_organizer or request.user.is_volunteer):
+            downloadable_path = bag.image.path
     if downloadable_path:
         response = StreamingHttpResponse(open(downloadable_path, 'rb'))
         response['Content-Type'] = ''

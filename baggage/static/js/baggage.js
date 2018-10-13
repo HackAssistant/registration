@@ -1,5 +1,5 @@
 
-let checkin_qr = (()=>{
+let baggage_qr = (()=>{
     let obj = {}
     let cams = []
 
@@ -19,11 +19,11 @@ let checkin_qr = (()=>{
     //-Shows a toast if there's a message
     obj.processResponse = (data)=>{        
         if(data.content){
-            $('#checkin-container').fadeTo(200, 0, ()=>{
-                $('#checkin-container').html(data.content)
+            $('#baggage-container').fadeTo(200, 0, ()=>{
+                $('#baggage-container').html(data.content)
                 obj.initListeners()
                 //obj.initTypeaheads()
-                $('#checkin-container').fadeTo(200, 1)
+                $('#baggage-container').fadeTo(200, 1)
             })
         }
     }
@@ -32,9 +32,6 @@ let checkin_qr = (()=>{
     obj.initListeners = ()=>{
         $("#id_search-qr").on("click", (ev)=>{
             obj.qrScan($("#id_search")[0])
-        })
-        $("#qr_code-qr").on("click", (ev)=>{
-            obj.qrScan($("#qr_code")[0])
         })
     }
 
@@ -57,22 +54,16 @@ let checkin_qr = (()=>{
         //Once we scan a value, set the inputElem to this value and close the popup
         scanner.addListener('scan', function (content) {
             console.info("Read QR content: "+content)
-            reg = /^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
-            if (reg.test(content)){
-                window.location.href = 'checkin/' + content
-            }
-            else{
-                inputElem.value = content
-                scanner.stop()
-                popup.parentNode.removeChild(popup)
-                veil.parentNode.removeChild(veil)
-                popup = ""
-                document.getElementById("checkin-search").submit()
-	          }
+            inputElem.value = content
+            scanner.stop()
+            popup.parentNode.removeChild(popup)
+            veil.parentNode.removeChild(veil)
+            popup = ""
+	    document.getElementById("baggage-search").submit()
         });
         //Creating the popup
         let popup = document.createElement("div")
-        popup.classList.add("checkin-popup-scan")
+        popup.classList.add("baggage-popup-scan")
         //Append camera selector
         let selectCam = document.createElement("select")
         let optionsStr=""
@@ -83,10 +74,10 @@ let checkin_qr = (()=>{
         selectCam.value = ""+selectedCam
         //On selector change, we stop the scanner preview and change the camera
         selectCam.addEventListener("change", ()=>{
-            let selectedCam = parseInt($(".selected-camera-class option:selected").val())
+            let selectedCam = parseInt(this.value)
             localStorage.setItem("selectedCam", selectedCam)
             scanner.stop()
-            scanner.start(cams[seletedCam])
+            scanner.start(cams[selectedCam])
         })
         //Then we append the video preview
         popup.appendChild(videoElem)
@@ -114,7 +105,7 @@ let checkin_qr = (()=>{
 })()
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    checkin_qr.initListeners()
+    baggage_qr.initListeners()
     //baggage_qr.initTypeaheads()
-    checkin_qr.initScanner()
+    baggage_qr.initScanner()
 })

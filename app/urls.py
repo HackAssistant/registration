@@ -25,6 +25,9 @@ urlpatterns = [
     url(r'^files/(?P<file_>.*)$', views.protectedMedia, name="protect_media")
 ]
 
+if settings.BAGGAGE_ENABLED:
+    urlpatterns.append(url(r'^baggage/', include('baggage.urls')))
+
 if settings.REIMBURSEMENT_ENABLED:
     urlpatterns.append(url(r'^reimbursement/', include('reimbursement.urls')))
 
