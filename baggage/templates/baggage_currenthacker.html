@@ -3,43 +3,13 @@
 {% load static %}
 {% load bootstrap3 %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
+{% endblock %}
+
 {% block head_title %}Baggage check-out{% endblock %}
 
 {% block panel %}
-    <script src="{% static 'lib/typeahead.min.js' %}"></script>
-    <script src="{% static 'js/form_modifiers.js' %}"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-
-    <script>
-
-        $(document).ready(function () {
-                var exp_time = $('input[name="time_from"]');
-                exp_time.daterangepicker({
-                    timePicker: true,
-                    singleDatePicker: true,
-                    timePicker24Hour: true,
-                    timePickerIncrement: 5,
-                    startDate: moment(exp_time.val()),
-                    locale: {
-                        firstDay: 1,
-                        format: 'YYYY-MM-DD H:mm:ss'
-                    }
-                });
-                var exp_time2 = $('input[name="time_to"]');
-                exp_time2.daterangepicker({
-                    timePicker: true,
-                    singleDatePicker: true,
-                    timePicker24Hour: true,
-                    timePickerIncrement: 5,
-                    startDate: moment(exp_time2.val()),
-                    locale: {
-                        firstDay: 1,
-                        format: 'YYYY-MM-DD H:mm:ss'
-                    }
-                });
-            }
-        );
-    </script>
+    <h3>Current checked-in bags</h3>
+    <p class="image-info"><i class="fa fa-info-circle"></i> If you want or need to leave your baggage, please take it to the <a href="http://maps.hackupc.com/#/infodesk" target="_blank">infodesk</a>.</p>
 {% endblock %}
