@@ -140,7 +140,7 @@ class RoomJudgingView(IsOrganizerMixin, TabsViewMixin, TemplateView):
         return HttpResponseRedirect(reverse('judge_projects'))
 
 
-class RoomsView(LoginRequiredMixin, TemplateView):
+class RoomsView(TemplateView):
     template_name = 'rooms_presentations.html'
 
     def get_context_data(self, **kwargs):
