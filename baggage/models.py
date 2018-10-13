@@ -1,6 +1,5 @@
 from django.db import models
 from user.models import User
-from django.utils.datetime_safe import datetime
 
 BAG_ADDED = 'A'
 BAG_REMOVED = 'R'
@@ -107,11 +106,6 @@ class Bag(models.Model):
 
     def __str__(self):
         return str(self.bid)
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        self.update_time = datetime.now()
-        super(Bag, self).save(force_insert, force_update, using, update_fields)
 
     def position(self):
         if self.special:
