@@ -49,9 +49,9 @@
           <div class="row">
             <div class="col-md-2"><dt>Judge {{ judge }}</dt><dd></dd></div>
             <div class="col-md-2 col-md-offset-2">{% include 'include/number10.html' with name="tech_score_"|add:judge %}</div>
-            <div class="col-md-2">{% include 'include/number10.html' with name="design_score_"|add:judge %}</div>
-            <div class="col-md-2">{% include 'include/number10.html' with name="completion_score_"|add:judge %}</div>
-            <div class="col-md-2">{% include 'include/number10.html' with name="learning_score_"|add:judge %}</div>
+            <div class="col-md-2">{% include 'include/number5.html' with name="design_score_"|add:judge %}</div>
+            <div class="col-md-2">{% include 'include/number5.html' with name="completion_score_"|add:judge %}</div>
+            <div class="col-md-2">{% include 'include/number5.html' with name="learning_score_"|add:judge %}</div>
           </div>
         </dl>
         {% endfor %}
