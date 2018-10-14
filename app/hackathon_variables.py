@@ -92,4 +92,7 @@ HARDWARE_REQUEST_TIME = 15
 SLACK_BOT = {
     'id' : os.environ.get('SL_BOT_ID', None),
     'token' : os.environ.get('SL_BOT_TOKEN', None),
+    'channel' : os.environ.get('SL_BOT_CHANNEL', None),
+    'director1' : os.environ.get('SL_BOT_DIRECTOR1', None),
+    'director2' : os.environ.get('SL_BOT_DIRECTOR2', None)
 }
