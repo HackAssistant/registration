@@ -52,6 +52,10 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 # (OPTIONAL) Send 500 errors to email while on production mode
 HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
+# Baggage configuration
+BAGGAGE_ENABLED = True
+BAGGAGE_PICTURE = True
+
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
 DEFAULT_REIMBURSEMENT_AMOUNT = 100
@@ -85,3 +89,7 @@ HARDWARE_ENABLED = False
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
+SLACK_BOT = {
+    'id' : os.environ.get('SL_BOT_ID', None),
+    'token' : os.environ.get('SL_BOT_TOKEN', None),
+}

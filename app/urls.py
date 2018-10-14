@@ -26,6 +26,9 @@ urlpatterns = [
     url(r'^meals/', include('meals.urls')),
 ]
 
+if settings.BAGGAGE_ENABLED:
+    urlpatterns.append(url(r'^baggage/', include('baggage.urls')))
+
 if settings.REIMBURSEMENT_ENABLED:
     urlpatterns.append(url(r'^reimbursement/', include('reimbursement.urls')))
 

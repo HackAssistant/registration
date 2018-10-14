@@ -52,6 +52,9 @@ INSTALLED_APPS = [
     'meals',
 ]
 
+if BAGGAGE_ENABLED:
+    INSTALLED_APPS.append('baggage')
+
 if REIMBURSEMENT_ENABLED:
     INSTALLED_APPS.append('reimbursement')
 
