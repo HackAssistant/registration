@@ -57,7 +57,8 @@
         {% endfor %}
 
         <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
-        <button name="skip" class="btn btn-default btn-block" value="skip">Skip project
+        <button name="skip" class="btn btn-default btn-block" value="skip"
+                onclick="return confirm('Do you want to move this presentation to the end of the queue?');">Skip project
         </button>
       </form>
 
