@@ -18,7 +18,7 @@ def send_slack_invite(email, active=True):
 
     if not token or not team:
         raise SlackInvitationException(
-            "Not configured slack, team = %s and token = %s" % (team, token))
+            'Not configured slack, team = %s and token = %s' % (team, token))
 
     r = requests.post(BASE_URL.format(team), data={
         'email': email,
@@ -37,14 +37,14 @@ def send_slack_message(user_email, content_message):
     token = settings.SLACK_BOT.get('token', None)
 
     if not token:
-        print("[ERROR] Slack bot not configured.")
+        print('[ERROR] Slack bot not configured.')
     else:
         sc = SlackClient(token)
         user = sc.api_call('users.lookupByEmail', email=user_email)
-        if user["ok"]:
-            user_id = user["user"]["id"]
-            message = sc.api_call("chat.postMessage", channel=user_id, text=content_message, as_user=botid)
-            if not message["ok"]:
-                print("[ERROR] Couldn't send Slack message.")
+        if user['ok']:
+            user_id = user['user']['id']
+            message = sc.api_call('chat.postMessage', channel=user_id, text=content_message, as_user=botid)
+            if not message['ok']:
+                print('[ERROR] Couldn\'t send Slack message.')
         else:
-            print("[ERROR] Couldn't get Slack user information.")
+            print('[ERROR] Couldn\'t get Slack user information.')
