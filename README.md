@@ -52,6 +52,8 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
 - **DROPBOX_OAUTH2_TOKEN**(optional): Enables DropBox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
+- **SL_BOT_ID**(optional): Slack bot ID to send messages from.
+- **SL_BOT_TOKEN**(optional): Slack bot token to send messages.
 
 
 ## Server
