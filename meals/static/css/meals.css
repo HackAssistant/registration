@@ -4,3 +4,33 @@ body{
     width: 100%;
     margin-bottom: 0px !important;
 }
+
+
+#back-button {
+    width: 100%;
+}
+
+select {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    margin-top: 0;
+}
+
+.full-screen {
+    height: 100%;
+}
+.col {
+    padding: 0;
+}
+@media(max-width:992px){
+
+}

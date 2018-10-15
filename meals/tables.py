@@ -23,22 +23,26 @@ class MealsListTable(tables.Table):
     checkin = tables.TemplateColumn(
         "<a href='{% url 'meal_checkin' record.id %}'>Check-in hacker</a> ",
         verbose_name='Check-in', orderable=False)
-    starts2 = tables.DateColumn(accessor='starts', verbose_name='Starts', format='d/m/Y G:i')
-    ends2 = tables.DateTimeColumn(accessor='ends', verbose_name='Ends', format='d/m/Y G:i')
-    eaten = tables.Column(accessor='eaten', verbose_name='Eaten')
+    starts = tables.DateColumn(accessor='starts', verbose_name='Starts', format='d/m G:i')
+    ends = tables.DateTimeColumn(accessor='ends', verbose_name='Ends', format='d/m G:i')
+    eaten = tables.Column(accessor='eaten', verbose_name='Total rations served')
+    times = tables.Column(accessor='times', verbose_name='Rations/hacker')
     opened = tables.Column(accessor='opened', verbose_name='Active')
 
     def before_render(self, request):
         if not request.user.is_organizer:
+            self.columns.hide('opened')
             self.columns.hide('change')
+            self.columns.hide('ends')
+            self.columns.hide('starts')
 
     class Meta:
         model = Meal
         attrs = {'class': 'table table-hover'}
         template = 'templates/meals_list.html'
-        fields = ['id', 'name', 'kind', 'opened', 'times', 'starts2', 'ends2', 'eaten']
+        fields = ['name', 'kind', 'opened', 'eaten', 'times', 'starts', 'ends', ]
         empty_text = 'No meals available'
-        order_by = 'starts'
+        order_by = '-starts'
 
 
 class MealsUsersFilter(django_filters.FilterSet):

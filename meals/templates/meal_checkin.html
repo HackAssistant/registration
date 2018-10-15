@@ -18,12 +18,18 @@
 {% block head_title %}Check-in meal {{meal.name}}{% endblock %}
 
 {% block body_plain %}
-    <a class="btn btn-block" href="{% url 'meals_list' %}">< Back</a>
-    <div id="meals-scan-image" class="meals-inside-scan" style="max-width: 100%;max-height: 100%;" data-mealid="{{ meal.id }}"
-    data-apiurl="{% url 'cool_meals_api' %}">
-        <select class="form-control"></select>
-        <video id="meals-scan-video" style="width: 100%; max-height: 80%; margin:0 auto;">   </video>
+<div class="container-fluid full-screen">
+    <div class="row full-screen">
+        <div class="col-md-offset-3 col-md-6 col full-screen">
+            <div id="meals-scan-image" class="meals-inside-scan" style="max-width: 100%;max-height: 100%;" data-mealid="{{ meal.id }}"
+            data-apiurl="{% url 'cool_meals_api' %}">
+                <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a>
+                <video id="meals-scan-video" style="width: 100%; max-height: 80%; margin:0 auto;">   </video>
+                <select class="form-control"></select>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
 
 
