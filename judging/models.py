@@ -38,8 +38,7 @@ class Room(models.Model):
     main_judge = models.OneToOneField(
         User,
         on_delete=models.SET_NULL,
-        null=True,
-        limit_choices_to={'is_organizer': True}
+        null=True
     )
 
     def get_current_presentations(self):

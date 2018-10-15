@@ -2,9 +2,10 @@ import csv
 import io
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
 from app.mixins import TabsViewMixin
@@ -12,12 +13,13 @@ from app.utils import reverse
 from app.views import TabsView
 from judging import forms
 from judging.models import Project, Presentation, Room, PresentationEvaluation
-from user.mixins import IsDirectorMixin, IsOrganizerMixin
+from user.mixins import IsDirectorMixin
 
 
 def organizer_tabs(user):
-    t = [('Rooms', reverse('project_list'), False),
-         ('Judge', reverse('judge_projects'), False), ]
+    t = [('Rooms', reverse('project_list'), False), ]
+    if hasattr(user, 'room'):
+        t.append(('Judge', reverse('judge_projects'), False))
     if user.is_director:
         t.append(('Import', reverse('import_projects'), False))
     return t
@@ -87,7 +89,7 @@ def skip_presentation(presentation):
     presentation.save()
 
 
-class RoomJudgingView(IsOrganizerMixin, TabsViewMixin, TemplateView):
+class RoomJudgingView(LoginRequiredMixin, TabsViewMixin, TemplateView):
     template_name = 'room_judging.html'
 
     def get_current_tabs(self):
@@ -105,6 +107,12 @@ class RoomJudgingView(IsOrganizerMixin, TabsViewMixin, TemplateView):
                       'room': self.request.user.room,
                       'project': project})
         return c
+
+    def get(self, request, *args, **kwargs):
+        if not hasattr(self.request.user, 'room'):
+            return redirect('project_list')
+        else:
+            return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         presentation_id = request.POST.get('presentation_id')
