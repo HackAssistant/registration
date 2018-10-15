@@ -19,3 +19,7 @@ __pycache__/
 
 files/*
 !files/.keep
+
+*.log
+cache/
+*.sh

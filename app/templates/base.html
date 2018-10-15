@@ -91,6 +91,9 @@
                         {% if request.user.is_admin %}
                             <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
                                     href="{% url 'admin:index' %}">Admin</a></li>
+                        {% elif request.user.email_verified and not request.user.is_organizer and not request.user.is_volunteer %}
+                            <li class="{% if 'dashboard' in request.build_absolute_uri %}active{% endif %}">
+                                <a href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
                         {% if request.user.email_verified %}
                             {% if request.user.is_organizer %}
@@ -104,10 +107,15 @@
                                         <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
                                 {% endif %}
                             {% endif %}
+                            {% include 'include/baggage_tab.html' %}
+                            {% if h_hw_enabled %}
+                                {% include 'include/hardware_tab.html' %}
+                            {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer %}
                                 <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}
+                            {% include 'include/meals_tab.html' %}
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
                     {% else %}
@@ -119,6 +127,7 @@
         </div>
     </nav>
 {% endblock %}
+{% block body_plain %}
 <div class="content container">
     <div class="content-inside">
 
@@ -141,6 +150,8 @@
         {% endblock %}
     </div>
 </div>
+{% endblock %}
+{% block footer %}
 <footer class="footer navbar-fixed-bottom">
     <div class="container">
         <div class="row">
@@ -200,6 +211,7 @@
         </div>
     </div>
 </footer>
+{% endblock %}
 
 <!--cookies-->
 <div id="cookie-notice" style="display:none">

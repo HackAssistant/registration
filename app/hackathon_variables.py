@@ -52,6 +52,10 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 # (OPTIONAL) Send 500 errors to email while on production mode
 HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
+# Baggage configuration
+BAGGAGE_ENABLED = True
+BAGGAGE_PICTURE = True
+
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
 DEFAULT_REIMBURSEMENT_AMOUNT = 100
@@ -63,6 +67,9 @@ REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 10, 19, 3, 14, tzinfo=timezone.
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
 HACKATHON_MAX_TEAMMATES = 4
+
+# (OPTIONAL) Code of conduct link
+# CODE_CONDUCT_LINK = "https://pages.hackcu.org/code_conduct/"
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from
@@ -76,3 +83,16 @@ SLACK = {
 # This allows to store an extra cookie in the browser to be shared with other application on the same domain
 # LOGGED_IN_COOKIE_DOMAIN = '.gerard.space'
 # LOGGED_IN_COOKIE_KEY = 'hackassistant_logged_in'
+
+# Hardware configuration
+HARDWARE_ENABLED = False
+#Hardware request time length (in minutes)
+HARDWARE_REQUEST_TIME = 15
+
+SLACK_BOT = {
+    'id' : os.environ.get('SL_BOT_ID', None),
+    'token' : os.environ.get('SL_BOT_TOKEN', None),
+    'channel' : os.environ.get('SL_BOT_CHANNEL', None),
+    'director1' : os.environ.get('SL_BOT_DIRECTOR1', None),
+    'director2' : os.environ.get('SL_BOT_DIRECTOR2', None)
+}

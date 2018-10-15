@@ -12,7 +12,7 @@ class UserChangeForm(forms.ModelForm):
     password hash display field.
     """
     password = ReadOnlyPasswordHashField(label=("Password"),
-                                         help_text=("Raw passwords are not stored, so there is no way to see "
+                                         help_text=("Passwords are not stored in plaintext, so there is no way to see "
                                                     "this user's password"))
 
     class Meta:
@@ -34,7 +34,7 @@ class LoginForm(forms.Form):
 class RegisterForm(LoginForm):
     password2 = forms.CharField(widget=forms.PasswordInput, label='Repeat password', max_length=100,
                                 help_text=' '.join(password_validators_help_texts()))
-    name = forms.CharField(label='Full name', max_length=225, help_text='How do you want us to call you?')
+    name = forms.CharField(label='Full name', max_length=225, help_text='What is your preferred full name?')
 
     terms_and_conditions = forms.BooleanField(
         label='I\'ve read, understand and accept <a href="/privacy_and_cookies" target="_blank">HackUPC '
@@ -70,7 +70,9 @@ class PasswordResetForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data['email']
         if not User.objects.filter(email=email).exists():
-            raise forms.ValidationError("There's no user with this email. Don't you want to register first?")
+            raise forms.ValidationError(
+                "We couldn't find a user with that email address. Why not register an account?"
+            )
         return email
 
 
@@ -98,7 +100,7 @@ class SetPasswordForm(forms.Form):
         password2 = self.cleaned_data.get('new_password2')
         if password1 and password2:
             if password1 != password2:
-                raise forms.ValidationError("The two password fields didn't match.")
+                raise forms.ValidationError("The passwords do not match.")
         password_validation.validate_password(password2)
         return password2
 

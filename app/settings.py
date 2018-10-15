@@ -49,11 +49,18 @@ INSTALLED_APPS = [
     'teams',
     'stats',
     'storages',
+    'meals',
     'judging'
 ]
 
+if BAGGAGE_ENABLED:
+    INSTALLED_APPS.append('baggage')
+
 if REIMBURSEMENT_ENABLED:
     INSTALLED_APPS.append('reimbursement')
+
+if HARDWARE_ENABLED:
+    INSTALLED_APPS.append('hardware')
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -238,3 +245,5 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Maximum file upload size for forms
 MAX_UPLOAD_SIZE = 5242880
+
+MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)

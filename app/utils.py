@@ -66,6 +66,7 @@ def get_substitutions_templates():
             'h_app_name': getattr(settings, 'HACKATHON_APPLICATION_NAME', None),
             'h_contact_email': getattr(settings, 'HACKATHON_CONTACT_EMAIL', None),
             'h_max_team': getattr(settings, 'HACKATHON_MAX_TEAMMATES', 4),
+            'h_team_enabled': getattr(settings, 'TEAMS_ENABLED', False),
             'h_domain': getattr(settings, 'HACKATHON_DOMAIN', None),
             'h_description': getattr(settings, 'HACKATHON_DESCRIPTION', None),
             'h_ga': getattr(settings, 'HACKATHON_GOOGLE_ANALYTICS', None),
@@ -87,6 +88,8 @@ def get_substitutions_templates():
             'h_r_requirements': getattr(settings, 'REIMBURSEMENT_REQUIREMENTS', None),
             'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRY_DAYS', None),
             'h_r_enabled': getattr(settings, 'REIMBURSEMENT_ENABLED', False),
+            'h_hw_enabled': getattr(settings, 'HARDWARE_ENABLED', False),
+            'h_b_picture': getattr(settings, 'BAGGAGE_PICTURE', False)
             }
 
 
@@ -128,7 +131,8 @@ def hacker_tabs(user):
     application = getattr(user, 'application', None)
     l = [('Home', reverse('dashboard'),
           'Invited' if application and user.application.needs_action() else False), ]
-    if user.email_verified and application:
+    if user.email_verified and application and getattr(settings, 'TEAMS_ENABLED', False) \
+       and not application.answered_invite():
         l.append(('Team', reverse('teams'), False))
     if application:
         l.append(('Application', reverse('application'), False))

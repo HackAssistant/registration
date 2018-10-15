@@ -1,0 +1,3 @@
+{% if request.user.is_organizer or request.user.is_volunteer %}
+    <li class="{% if 'meals' in request.build_absolute_uri %}active{% endif %}"><a href="{% url 'meals_list' %}" >Meals</a></li>
+{% endif %}

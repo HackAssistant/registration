@@ -1,6 +1,7 @@
 import django_filters
 import django_tables2 as tables
 from django import forms
+from django.conf import settings
 from django.db.models import Q
 
 from applications.models import Application, STATUS
@@ -30,7 +31,8 @@ class InviteFilter(django_filters.FilterSet):
 
     class Meta:
         model = Application
-        fields = ['search', 'first_timer', 'reimb']
+        fields = ['search', 'first_timer', 'reimb'] if getattr(settings, 'REIMBURSEMENT_ENABLED', False) else \
+            ['search', 'first_timer']
 
 
 class ApplicationsListTable(tables.Table):
@@ -60,8 +62,9 @@ class AdminApplicationsListTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'counter', 'user.name', 'vote_avg',
-                  'review_count', 'reimb_amount', 'university', 'origin']
+        fields = ['selected', 'user.name', 'vote_avg', 'reimb_amount', 'university', 'origin'] \
+            if getattr(settings, 'REIMBURSEMENT_ENABLED', False) else \
+            ['selected', 'user.name', 'vote_avg', 'university', 'origin']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 

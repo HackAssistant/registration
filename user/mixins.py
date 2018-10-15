@@ -38,6 +38,17 @@ class IsDirectorMixin(UserPassesTestMixin):
             self.request.user.is_authenticated and self.request.user.is_director
 
 
+class IsHardwareAdminMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        return self.request.user.is_hardware_admin or self.request.user.is_organizer
+
+
 def is_organizer(f, raise_exception=True):
     """
     Decorator for views that checks whether a user is an organizer or not
