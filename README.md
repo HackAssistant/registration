@@ -54,6 +54,9 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **DROPBOX_OAUTH2_TOKEN**(optional): Enables DropBox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
 - **SL_BOT_ID**(optional): Slack bot ID to send messages from.
 - **SL_BOT_TOKEN**(optional): Slack bot token to send messages.
+- **SL_BOT_CHANNEL**(optional): General channel to refer from the bot messages.
+- **SL_BOT_DIRECTOR1**(optional): User ID of one of the directors.
+- **SL_BOT_DIRECTOR2**(optional): User ID of the other director.
 
 
 ## Server
