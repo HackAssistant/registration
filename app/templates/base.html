@@ -114,6 +114,7 @@
                                 <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}
+                            {% include 'include/meals_tab.html' %}
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
 
@@ -126,6 +127,7 @@
         </div>
     </nav>
 {% endblock %}
+{% block body_plain %}
 <div class="content container">
     <div class="content-inside">
 
@@ -148,6 +150,8 @@
         {% endblock %}
     </div>
 </div>
+{% endblock %}
+{% block footer %}
 <footer class="footer navbar-fixed-bottom">
     <div class="container">
         <div class="row">
@@ -207,6 +211,7 @@
         </div>
     </div>
 </footer>
+{% endblock %}
 
 <!--cookies-->
 <div id="cookie-notice" style="display:none">
