@@ -3,9 +3,9 @@ from datetime import datetime
 
 from django.conf import settings
 from django.contrib import messages
-from django.core import serializers
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.core.serializers.python import Serializer
 from django.http import Http404
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
@@ -214,6 +214,16 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         return JsonResponse({'success': True, 'diet': diet})
 
 
+class MealSerializer(Serializer):
+    def end_object(self, obj):
+        self._current['id'] = obj._get_pk_val()
+        self._current['starts'] = str(obj.starts)
+        self._current['ends'] = str(obj.ends)
+        self._current['kind'] = obj.get_kind_display()
+        self._current['eaten'] = obj.eaten()
+        self.objects.append(self._current)
+
+
 class MealsApi(APIView):
     permission_classes = (AllowAny,)
 
@@ -229,8 +239,10 @@ class MealsApi(APIView):
         var_all = request.GET.get('all')
         if var_all == '1':
             meals = Meal.objects.all().order_by('starts')
-        meals_data = serializers.serialize('json', meals)
-        return HttpResponse(json.dumps({'code': 0, 'content': json.loads(meals_data)}), content_type='application/json')
+        serializer = MealSerializer()
+        meals_data = serializer.serialize(meals)
+        print(meals_data)
+        return HttpResponse(json.dumps({'code': 0, 'content': meals_data}), content_type='application/json')
 
     def post(self, request, format=None):
         var_token = request.GET.get('token')
