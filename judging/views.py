@@ -2,7 +2,7 @@ import csv
 import io
 
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import redirect_to_login
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -89,7 +89,7 @@ def skip_presentation(presentation):
     presentation.save()
 
 
-class RoomJudgingView(LoginRequiredMixin, TabsViewMixin, TemplateView):
+class RoomJudgingView(TabsViewMixin, TemplateView):
     template_name = 'room_judging.html'
 
     def get_current_tabs(self):
@@ -109,12 +109,15 @@ class RoomJudgingView(LoginRequiredMixin, TabsViewMixin, TemplateView):
         return c
 
     def get(self, request, *args, **kwargs):
-        if not hasattr(self.request.user, 'room'):
+        if not request.user.is_authenticated or not hasattr(self.request.user, 'room'):
             return redirect('project_list')
         else:
             return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not hasattr(self.request.user, 'room'):
+            return redirect_to_login(self.request.get_full_path())
+
         presentation_id = request.POST.get('presentation_id')
         presentation = Presentation.objects.get(pk=presentation_id)
 
@@ -140,8 +143,8 @@ class RoomJudgingView(LoginRequiredMixin, TabsViewMixin, TemplateView):
                     presentation.done = True
                     presentation.save()
 
-        # If application has already been voted -> Skip and bring next
-        # application
+            # If application has already been voted -> Skip and bring next
+            # application
             except IntegrityError:
                 pass
         return HttpResponseRedirect(reverse('judge_projects'))
