@@ -1,0 +1,5 @@
+{% if request.user.is_organizer %}
+<li><a href="{% url 'import_projects' %}">Judging</a></li>
+{% else %}
+  <li><a href="{% url 'judge_projects' %}">Judging</a></li>
+{% endif %}

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'stats',
     'storages',
     'meals',
+    'judging'
 ]
 
 if BAGGAGE_ENABLED:

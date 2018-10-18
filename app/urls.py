@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'terms_and_conditions/$', views.terms_and_conditions, name='terms_and_conditions'),
     url(r'^files/(?P<file_>.*)$', views.protectedMedia, name="protect_media"),
     url(r'^meals/', include('meals.urls')),
+    url(r'^judging/', include('judging.urls')),
 ]
 
 if settings.BAGGAGE_ENABLED:
