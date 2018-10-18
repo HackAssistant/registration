@@ -141,8 +141,8 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
             bag.col = position[3]
             bag.save()
             messages.success(self.request, 'Bag checked-in!')
-            send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just'
-                               'registered :memo: a bag with ID `' + str(bag.bid) + '` located'
+            send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
+                               'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
                                ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
                                '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
             return redirect('baggage_detail', id=(str(bag.bid,)), first='first/')
