@@ -188,7 +188,7 @@ SENDGRID_API_KEY = os.environ.get('SG_KEY', None)
 # SMTP
 EMAIL_HOST = os.environ.get('EMAIL_HOST', None)
 EMAIL_PORT = os.environ.get('EMAIL_PORT', None)
-EMAIL_USE_TLS = True if (EMAIL_PORT == 587) else None
+EMAIL_USE_TLS = True if (EMAIL_PORT == "587") else None
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
 
@@ -232,7 +232,7 @@ else:
     }
 
 # Add domain to allowed hosts
-ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
+ALLOWED_HOSTS.append(HACKATHON_DOMAIN.split(":", 1)[0])
 
 # Deployment configurations for proxy pass and csrf
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
