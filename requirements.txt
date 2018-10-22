@@ -28,7 +28,7 @@ django-tables2==1.14.2
 tablib==0.12.1
 dj-database-url==0.4.2
 whitenoise==3.3.1
-psycopg2==2.7.1
+psycopg2==2.7.5
 flake8==3.4.1
 dropbox==8.7.1
 git+https://github.com/jschneier/django-storages.git#egg=django-storages
