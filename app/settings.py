@@ -232,7 +232,7 @@ else:
     }
 
 # Add domain to allowed hosts
-ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
+ALLOWED_HOSTS.append(HACKATHON_DOMAIN.split(":", 1)[0])
 
 # Deployment configurations for proxy pass and csrf
 CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS
