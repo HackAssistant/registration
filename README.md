@@ -35,6 +35,9 @@ Needs: Python 3.X, virtualenv
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
+- On Windows substitute last two steps by:
+- `env\Scripts\activate`
+- `pip install -r requirements-windows.txt`
 - (Optional) If using Postgres, set up the necessary environment variables for its usage before this step
 - `python manage.py migrate`
 - `python manage.py createsuperuser` (creates super user to manage all the app)
