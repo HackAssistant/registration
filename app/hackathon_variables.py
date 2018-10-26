@@ -60,6 +60,7 @@ HACKATHON_MAX_TEAMMATES = 4
 
 # (OPTIONAL) Code of conduct link
 CODE_CONDUCT_LINK = "https://static.mlh.io/docs/mlh-code-of-conduct.pdf"
+PRIVACY_POLICY_LINK = "https://hackkosice.com/privacy-policy"
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from

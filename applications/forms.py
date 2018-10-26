@@ -66,6 +66,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 settings.HACKATHON_NAME), )
 
+
+    privacy_policy = forms.BooleanField(required=False,
+                                      label='I have read and accept '
+                                            '<a href="%s" target="_blank">%s Privacy Policy</a>' % (
+                                                getattr(settings, 'PRIVACY_POLICY_LINK', '/privacy_policy'),
+                                                settings.HACKATHON_NAME), )
+
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
@@ -83,6 +90,17 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError(
                 "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
         return cc
+
+    def clean_privacy_policy(self):
+        pc = self.cleaned_data.get('privacy_policy', False)
+        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not pc and not self.instance.pk:
+            raise forms.ValidationError(
+                "To attend %s you must abide by our privacy policy" % settings.HACKATHON_NAME)
+        return pc
+
 
     def clean_github(self):
         data = self.cleaned_data['github']
@@ -175,6 +193,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(('Privacy Policy', {'fields': ('privacy_policy',)}))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
