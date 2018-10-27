@@ -196,19 +196,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please specify your gender")
         return data
 
-    def clean_phone_number(self):
-        data = self.cleaned_data.get('phone_number', False)
-        if not data[0]=='+':
-            raise forms.ValidationError("Phone number have to start with area code")
-        temp = ''
-        for sign in data:
-            if not sign == ' ':
-                temp += sign
-        data = temp
-        if len(data)<9 or len(data)>16:
-            raise forms.ValidationError("Entered phone number is invalid")
-        return data
-
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
