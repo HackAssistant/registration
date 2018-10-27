@@ -73,6 +73,31 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                 getattr(settings, 'PRIVACY_POLICY_LINK', '/privacy_policy'),
                                                 settings.HACKATHON_NAME), )
 
+    application_sharing = forms.BooleanField(
+            required=False,
+            label='I authorize you to share my application/registration \
+            information for event administration, ranking, MLH \
+            administration, pre- and post-event informational e-mails, \
+            and occasional messages about hackathons in-line with the \
+            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. \
+            I further I agree to the terms of both the \
+            <a href="#" target="_blank">MLH Contest Terms and Conditions</a> \
+            and the \
+            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>'
+        )
+
+    media_permission = forms.BooleanField(
+            required=False,
+            label='Photos will be taken at the event by the %s \
+            organisers and/or by an external party such as MLH. I agree \
+            that photos from the event can be taken, used for internal \
+            and marketing purposes, shared with our sponsors and partners, \
+            including MLH. I also grant %s, MLH and other partners \
+            the permission to record and publish photos and video \
+            of the event and the exclusive right to produce commercial \
+            video content' % (settings.HACKATHON_NAME, settings.HACKATHON_NAME)
+        )
+
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
@@ -93,13 +118,29 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     def clean_privacy_policy(self):
         pc = self.cleaned_data.get('privacy_policy', False)
-        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # Check that if it's the first submission hackers checks privacy policy checkbox
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not pc and not self.instance.pk:
             raise forms.ValidationError(
                 "To attend %s you must abide by our privacy policy" % settings.HACKATHON_NAME)
         return pc
+
+    def clean_application_sharing(self):
+        aps = self.cleaned_data.get('application_sharing', False)
+        # Check if hackers agreed with application sharing
+        if not aps:
+            raise forms.ValidationError(
+                "To attend %s you must give us permission to shre your application" % settings.HACKATHON_NAME)
+        return aps
+
+    def clean_media_parmission(self):
+        mp = self.cleaned_data.get('media_parmission', False)
+        # Check if hackers give us permission to publish media files asociated with them
+        if not mp:
+            raise forms.ValidationError(
+                "To attend %s you must agree with that photos from the event can be used as described below" % settings.HACKATHON_NAME)
+        return mp
 
 
     def clean_github(self):
@@ -192,8 +233,23 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
-            self._fieldsets.append(('Privacy Policy', {'fields': ('privacy_policy',)}))
+            self._fieldsets.append(('Permissions', 
+                {'fields': (
+                        'code_conduct',
+                        'privacy_policy',
+                        'application_sharing',
+                        'media_permission',
+                    ),
+                'description': 'We need this permissions to provide you better experiences'}
+            ))
+        else:
+            self._fieldsets.append(('Permissions', 
+                {'fields': (
+                        'application_sharing',
+                        'media_permission',
+                    ),
+                'description': 'We need this permissions to provide you better experiences'}
+            ))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
