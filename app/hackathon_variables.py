@@ -12,7 +12,7 @@ TIME_ZONE = 'CET'
 HACKATHON_DESCRIPTION = 'HackAssistant is an organization to mantain ' \
                         'a few open-source projects related with hackathon management'
 # Domain where application is deployed, can be set by env variable
-HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'do.hackkosice.com')
+HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'apply.hackkosice.com')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
 HACKATHON_CONTACT_EMAIL = 'contact@hackkosice.com'
 # Hackathon logo url, will be used on all emails
@@ -20,7 +20,8 @@ HACKATHON_LOGO_URL = 'https://hackkosice.com/wp-content/uploads/2018/10/logo_pur
 
 HACKATHON_OG_IMAGE = 'https://hackkosice.com/wp-content/uploads/2018/04/logo_s1.png'
 # (OPTIONAL) Track visits on your website
-# HACKATHON_GOOGLE_ANALYTICS = 'UA-7777777-2' # TODO add Web Analytics code
+# TODO add Web Analytics code
+# HACKATHON_GOOGLE_ANALYTICS = 'UA-7777777-2'
 # (OPTIONAL) Hackathon twitter user
 HACKATHON_TWITTER_ACCOUNT = 'hackkosice'
 # (OPTIONAL) Hackathon Facebook page
@@ -60,6 +61,7 @@ HACKATHON_MAX_TEAMMATES = 4
 
 # (OPTIONAL) Code of conduct link
 CODE_CONDUCT_LINK = "https://static.mlh.io/docs/mlh-code-of-conduct.pdf"
+PRIVACY_POLICY_LINK = "https://hackkosice.com/privacy-policy"
 
 # (OPTIONAL) Slack credentials
 # Highly recommended to create a separate user account to extract the token from

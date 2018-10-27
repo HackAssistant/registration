@@ -23,3 +23,6 @@ files/*
 *.log
 cache/
 *.sh
+
+hackkosice/
+.vscode/
