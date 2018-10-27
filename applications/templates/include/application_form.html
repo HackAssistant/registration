@@ -107,6 +107,14 @@
             });
             // Making gender specification look like required
             other_gender.parent().addClass('required');
+
+            var other_race = $('#id_other_race');
+            var race = $('#id_race');
+            conditional_field(other_race, race, function () {
+                return race.val() === 'O';
+            });
+            // Making race specification look like required
+            other_race.parent().addClass('required');
         }
     )
 

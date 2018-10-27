@@ -196,6 +196,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please specify your gender")
         return data
 
+    def clean_other_race(self):
+        data = self.cleaned_data['other_race']
+        race = self.cleaned_data['race']
+        if race == 'O' and not data:
+            raise forms.ValidationError("Please specify your race/ethnicity")
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -206,7 +213,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         self._fieldsets = [
             ('Personal Info',
              {'fields': ('university', 'degree', 'graduation_year', 'gender',
-                         'other_gender', 'phone_number', 'tshirt_size', 'diet',
+                         'other_gender', 'race', 'other_race', 'phone_number', 'tshirt_size', 'diet',
                          'other_diet', 'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
@@ -256,6 +263,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         help_texts = {
             'gender': 'This is for demographic purposes. You can skip this '
                       'question if you want',
+            'race': 'This is just for statistic purposes. You can skip this '
+                      'question if you want',
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
             'degree': 'What\'s your major?',
@@ -277,6 +286,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
         labels = {
             'other_gender': 'What gender do you identify as?',
+            'race': 'What is your race/ethnicity?',
+            'other_race': 'Please specify your race/ethnicity',
             'graduation_year': 'What is your graduation year?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',

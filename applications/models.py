@@ -101,6 +101,9 @@ class Application(models.Model):
     # Population analysis, optional
     gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
     other_gender = models.CharField(max_length=50, blank=True, null=True)
+
+    race = models.CharField(max_length=100, choices=RACES, default=NO_ANSWER)
+    other_race = models.CharField(max_length=500, blank=True, null=True)
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
