@@ -51,15 +51,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    under_age = forms.TypedChoiceField(
-        required=True,
-        label='How old are you?',
-        initial=False,
-        coerce=lambda x: x == 'True',
-        choices=((False, '18 or over'), (True, 'Under 18')),
-        widget=forms.RadioSelect
-    )
-
     code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
                                             '<a href="%s" target="_blank">%s Code of conduct</a>' % (
@@ -129,7 +120,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     def clean_application_sharing(self):
         aps = self.cleaned_data.get('application_sharing', False)
         # Check if hackers agreed with application sharing
-        if not aps:
+        if not aps and not self.instance.pk:
             raise forms.ValidationError(
                 "To attend %s you must give us permission to shre your application" % settings.HACKATHON_NAME)
         return aps
@@ -137,7 +128,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     def clean_media_parmission(self):
         mp = self.cleaned_data.get('media_parmission', False)
         # Check if hackers give us permission to publish media files asociated with them
-        if not mp:
+        if not mp and not self.instance.pk:
             raise forms.ValidationError(
                 "To attend %s you must agree with that photos from the event can be used as described below" % settings.HACKATHON_NAME)
         return mp
@@ -214,7 +205,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Personal Info',
              {'fields': ('university', 'degree', 'graduation_year', 'gender',
                          'other_gender', 'race', 'other_race', 'phone_number', 'tshirt_size', 'diet',
-                         'other_diet', 'under_age', 'lennyface'),
+                         'other_diet', 'birth_day', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -278,6 +269,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
         widgets = {
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'birth_day': forms.DateInput(attrs={'type': 'date'}),
             'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
@@ -291,6 +283,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'graduation_year': 'What is your graduation year?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
+            'birth_day': 'What is your date of birth?',
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
@@ -301,4 +294,4 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
         }
 
-        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', ]
+        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', 'under_age']

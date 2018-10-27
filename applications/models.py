@@ -7,6 +7,7 @@ from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
+from datetime import date, timedelta
 
 from app import utils
 from user.models import User
@@ -104,8 +105,10 @@ class Application(models.Model):
 
     race = models.CharField(max_length=100, choices=RACES, default=NO_ANSWER)
     other_race = models.CharField(max_length=500, blank=True, null=True)
-    # Personal data (asking here because we don't want to ask birthday)
-    under_age = models.BooleanField()
+    # Personal data
+    birth_day = models.DateField()
+    # under_age field can be removed, but it is used at more places in code, so it must be removed properly
+    under_age = models.NullBooleanField()
 
     phone_number = models.CharField(blank=True, null=True, max_length=16,
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
@@ -168,6 +171,11 @@ class Application(models.Model):
 
     def save(self, **kwargs):
         self.status_update_date = timezone.now()
+        delta = date.today() - self.birth_day
+        if delta < timedelta(days=(18*365+4)):
+            self.under_age = True
+        else:
+            self.under_age = False
         super(Application, self).save(**kwargs)
 
     def invite(self, user):
