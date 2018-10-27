@@ -21,7 +21,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
-    phone_number = forms.CharField(required=False, widget=forms.TextInput(
+    phone_number = forms.CharField(required=True, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     university = forms.CharField(required=True,
                                  label='What university do you study at?',
@@ -189,6 +189,26 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
 
+    def clean_other_gender(self):
+        data = self.cleaned_data['other_gender']
+        gender = self.cleaned_data['gender']
+        if gender == 'O' and not data:
+            raise forms.ValidationError("Please specify your gender")
+        return data
+
+    def clean_phone_number(self):
+        data = self.cleaned_data.get('phone_number', False)
+        if not data[0]=='+':
+            raise forms.ValidationError("Phone number have to start with area code")
+        temp = ''
+        for sign in data:
+            if not sign == ' ':
+                temp += sign
+        data = temp
+        if len(data)<9 or len(data)>16:
+            raise forms.ValidationError("Entered phone number is invalid")
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -199,8 +219,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         self._fieldsets = [
             ('Personal Info',
              {'fields': ('university', 'degree', 'graduation_year', 'gender',
-                         'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
+                         'other_gender', 'phone_number', 'tshirt_size', 'diet',
+                         'other_diet', 'under_age', 'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -242,14 +262,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                     ),
                 'description': 'We need this permissions to provide you better experiences'}
             ))
-        else:
-            self._fieldsets.append(('Permissions', 
-                {'fields': (
-                        'application_sharing',
-                        'media_permission',
-                    ),
-                'description': 'We need this permissions to provide you better experiences'}
-            ))
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
@@ -277,8 +289,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         }
 
         labels = {
-            'gender': 'What gender do you identify as?',
-            'graduation_year': 'What year will you graduate?',
+            'other_gender': 'What gender do you identify as?',
+            'graduation_year': 'What is your graduation year?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
