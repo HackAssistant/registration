@@ -34,13 +34,13 @@ STATUS = [
 NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
-NON_BINARY = 'NB'
+OTHER = 'O'
 
 GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
-    (NON_BINARY, 'Non-binary'),
+    (OTHER, 'Other (please specify)'),
 ]
 
 D_NONE = 'None'
@@ -83,6 +83,7 @@ class Application(models.Model):
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
+    other_gender = models.CharField(max_length=50, blank=True, null=True)
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
