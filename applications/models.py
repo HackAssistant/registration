@@ -11,6 +11,9 @@ from django.utils import timezone
 from app import utils
 from user.models import User
 
+NO_ANSWER = 'NA'
+OTHER = 'O'
+
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
 APP_INVITED = 'I'
@@ -31,16 +34,30 @@ STATUS = [
     (APP_EXPIRED, 'Expired'),
 ]
 
-NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
-OTHER = 'O'
 
 GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
     (OTHER, 'Other (please specify)'),
+]
+
+AMERICAN = 'American Indian or Alaskan Native'
+ASIAN = 'Asian / Pacific Islander'
+BLACK = 'Black or African American'
+HISPANIC = 'Hispanic'
+WHITE = 'White / Caucasian'
+
+RACES = [
+    (NO_ANSWER, 'Prefer not to answer'),
+    (AMERICAN, 'American Indian or Alaskan Native'),
+    (ASIAN, 'Asian / Pacific Islander'),
+    (BLACK, 'Black or African American'),
+    (HISPANIC, 'Hispanic'),
+    (WHITE, 'White / Caucasian'),
+    (OTHER, 'Multiple ethnicity / Other (Please Specify)'),
 ]
 
 D_NONE = 'None'
@@ -62,7 +79,7 @@ DIETS = [
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023'.split(' '))]
+YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024 2025'.split(' '))]
 DEFAULT_YEAR = 2018
 
 
