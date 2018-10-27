@@ -12,7 +12,7 @@ TIME_ZONE = 'CET'
 HACKATHON_DESCRIPTION = 'HackAssistant is an organization to mantain ' \
                         'a few open-source projects related with hackathon management'
 # Domain where application is deployed, can be set by env variable
-HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'do.hackkosice.com')
+HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'apply.hackkosice.com')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
 HACKATHON_CONTACT_EMAIL = 'contact@hackkosice.com'
 # Hackathon logo url, will be used on all emails
