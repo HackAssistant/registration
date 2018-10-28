@@ -11,6 +11,7 @@ from datetime import date, timedelta
 
 from app import utils
 from user.models import User
+import random
 
 NO_ANSWER = 'NA'
 OTHER = 'O'
@@ -89,6 +90,7 @@ class Application(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
+    #ambassador = models.ForeignKey(Ambassador, blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -107,10 +109,8 @@ class Application(models.Model):
     other_race = models.CharField(max_length=500, blank=True, null=True)
     # Personal data
     birth_day = models.DateField()
-    # under_age field can be removed, but it is used at more places in code, so it must be removed properly
-    under_age = models.NullBooleanField()
 
-    phone_number = models.CharField(blank=True, null=True, max_length=16,
+    phone_number = models.CharField(max_length=16,
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                                                message="Phone number must be entered in the format: \
                                                                   '+#########'. Up to 15 digits allowed.")])
@@ -173,12 +173,14 @@ class Application(models.Model):
 
     def save(self, **kwargs):
         self.status_update_date = timezone.now()
+        super(Application, self).save(**kwargs)
+
+    def under_age(self):
         delta = date.today() - self.birth_day
         if delta < timedelta(days=(18*365+4)):
-            self.under_age = True
+            return True
         else:
-            self.under_age = False
-        super(Application, self).save(**kwargs)
+            return False
 
     def invite(self, user):
         # We can re-invite someone invited
