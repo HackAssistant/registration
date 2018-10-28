@@ -43,8 +43,25 @@ class ApplicationAdmin(admin.ModelAdmin):
         return models.Application.annotate_vote(qs)
 
 
+class AmbassadorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'origin', 'university', 'convinced')
+    list_filter = ('origin',)
+    list_per_page = 100
+    search_fields = ('user__name', 'user__email', 'university')
+    ordering = ('user__name',)
+    date_hierarchy = 'created_date'
+
+    def name(self, obj):
+        return obj.user.get_full_name() + ' (' + obj.user.email + ')'
+
+    name.admin_order_field = 'user__name'
+
+
 admin.site.register(models.Application, admin_class=ApplicationAdmin)
+admin.site.register(models.Ambassador, admin_class=AmbassadorAdmin)
+
 admin.site.site_header = '%s Admin' % settings.HACKATHON_NAME
 admin.site.site_title = '%s Admin' % settings.HACKATHON_NAME
 admin.site.index_title = 'Home'
+
 admin.site.login = login_required(admin.site.login)
