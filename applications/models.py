@@ -11,7 +11,6 @@ from datetime import date, timedelta
 
 from app import utils
 from user.models import User
-import random
 
 NO_ANSWER = 'NA'
 OTHER = 'O'
@@ -85,12 +84,39 @@ YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024 2025
 DEFAULT_YEAR = 2018
 
 
+class Ambassador(models.Model):
+    # Ambassadors credentials
+    user = models.OneToOneField(User, primary_key=True)
+    secret_code = models.CharField(max_length=50, unique=True)
+
+    created_date = models.DateTimeField(default=timezone.now)
+
+    # Basic contact informations about ambassador
+    origin = models.CharField(max_length=300)
+    university = models.CharField(max_length=300)
+    phone_number = models.CharField(
+        max_length=16,
+        validators=[RegexValidator(
+            regex=r'^\+?1?\d{9,15}$',
+            message="Phone number must be entered in the format: '+#########'. Up to 15 digits allowed."
+        )]
+    )
+    tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+    def __str__(self):
+        return self.user.email
+
+    def convinced(self):
+        apps = Application.objects.filter(ambassador=self.user.pk)
+        return len(apps)
+
+
 class Application(models.Model):
     # META
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
-    #ambassador = models.ForeignKey(Ambassador, blank=True, null=True)
+    ambassador = models.ForeignKey(Ambassador, blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
