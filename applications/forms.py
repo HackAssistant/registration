@@ -21,8 +21,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
+
     phone_number = forms.CharField(required=True, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
+
     university = forms.CharField(required=True,
                                  label='What university do you study at?',
                                  help_text='Current or most recent school you attended.',
@@ -208,16 +210,16 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('university', 'major', 'degree', 'graduation_year', 'gender',
-                         'other_gender', 'race', 'other_race', 'phone_number', 'tshirt_size', 'diet',
-                         'other_diet', 'birth_day'),
+             {'fields': ('gender', 'other_gender', 'race', 'other_race', 'birth_day',
+                         'phone_number', 'university', 'major', 'degree', 'graduation_year',
+                         'tshirt_size', 'diet', 'other_diet'),
              'description': 'Hey there, before we begin, we need to know some basics about you.', }),
             ('Let us get to know you better',
              {'fields': ('lennyface', 'spirit_animal'),
              'description': 'We would like to know a little more about you. ;)', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
+             {'fields': ('resume', 'site', 'github', 'devpost', 'linkedin'),
              'description': 'Some of our sponsors may use this information for recruitment purposes,'
              'so please include as much as you can.'}),
         ]
