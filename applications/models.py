@@ -130,8 +130,9 @@ class Application(models.Model):
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
-    # Random lenny face
+    # Random questions or let us get to know you better
     lennyface = models.CharField(max_length=300, default='-.-')
+    spirit_animal = models.TextField(max_length=1000, blank=True, null=True)
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes', null=True, blank=True)
@@ -139,6 +140,7 @@ class Application(models.Model):
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
+    major = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
 
     # URLs

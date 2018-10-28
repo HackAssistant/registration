@@ -29,8 +29,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=True, label='What\'s your major/degree?',
-                             help_text='Current or most recent degree you\'ve received',
+    major = forms.CharField(required=True, label='What is your major?',
+                             help_text='Your major of study at university',
+                             widget=forms.TextInput(
+                                 attrs={'class': 'typeahead-majors', 'autocomplete': 'off'}))
+
+    degree = forms.CharField(required=True, label='What is your most current level of study?',
+                             help_text='Most recent degree you\'ve received',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
@@ -203,15 +208,18 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('university', 'degree', 'graduation_year', 'gender',
+             {'fields': ('university', 'major', 'degree', 'graduation_year', 'gender',
                          'other_gender', 'race', 'other_race', 'phone_number', 'tshirt_size', 'diet',
-                         'other_diet', 'birth_day', 'lennyface'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
+                         'other_diet', 'birth_day'),
+             'description': 'Hey there, before we begin, we need to know some basics about you.', }),
+            ('Let us get to know you better',
+             {'fields': ('lennyface', 'spirit_animal'),
+             'description': 'We would like to know a little more about you. ;)', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
-              'description': 'Some of our sponsors may use this information for recruitment purposes,'
-              'so please include as much as you can.'}),
+             'description': 'Some of our sponsors may use this information for recruitment purposes,'
+             'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
@@ -271,6 +279,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
             'birth_day': forms.DateInput(attrs={'type': 'date'}),
             'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'spirit_animal': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
@@ -285,6 +294,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'diet': 'Dietary requirements',
             'birth_day': 'What is your date of birth?',
             'lennyface': 'Describe yourself in one "lenny face"?',
+            'spirit_animal': 'What\'s your spirit animal and why?',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',

@@ -47,6 +47,7 @@
     $(document).ready(function () {
 
             make_field_typeahead('university', '{% static 'schools.json' %}');
+            make_field_typeahead('major', '{% static 'majors.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
             $("#id_origin").typeahead({
                 minLength: 3,
