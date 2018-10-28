@@ -3,11 +3,12 @@ from __future__ import print_function
 
 import logging
 from datetime import timedelta
+import random
 
 from django import http
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
@@ -174,6 +175,51 @@ class HackerApplication(LoginRequiredMixin, TabsView):
             messages.success(request, 'Application changes saved successfully!')
 
             return HttpResponseRedirect(reverse('application'))
+        else:
+            c = self.get_context_data()
+            c.update({'form': form})
+            return render(request, self.template_name, c)
+
+
+class AmbassadorView(LoginRequiredMixin, TabsView):
+    template_name = 'ambassador.html'
+
+    def get_current_tabs(self):
+        return hacker_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(AmbassadorView, self).get_context_data(**kwargs)
+        try:
+            ambassador = models.Ambassador.objects.get(user=self.request.user)
+            context.update({'ambassador': ambassador,})
+        except(models.Ambassador.DoesNotExist):
+            context.update({'form': forms.AmbassadorForm(),})
+        return context
+
+    def get_secret_code():
+        temp_code = ''.join([random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+
+        try:
+            models.Ambassador.objects.get(secret_code=temp_code)
+        except(models.Ambassador.DoesNotExist):
+            return temp_code
+        else:
+            return get_secret_code()
+
+    def post(self, request, *args, **kwargs):
+        try:
+            form = forms.AmbassadorForm(request.POST, request.FILES, instance=request.user.ambassador)
+        except:
+            form = forms.AmbassadorForm(request.POST, request.FILES)
+        if form.is_valid():
+            ambassador_apply = form.save(commit=False)
+            ambassador_apply.user = request.user
+            ambassador_apply.secret_code = self.get_secret_code()
+            ambassador_apply.save()
+
+            messages.success(request, 'Ambassador changes saved successfully!')
+
+            return HttpResponseRedirect(reverse('ambassador'))
         else:
             c = self.get_context_data()
             c.update({'form': form})

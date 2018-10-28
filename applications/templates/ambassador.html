@@ -1,0 +1,77 @@
+{% extends 'base_tabs.html' %}
+
+{% load bootstrap3 %}
+{% block head_title %}Ambassador{% endblock %}
+
+{% block panel %}
+    <div class="row">
+        {% if not user.email_verified %}
+            <div class="col-md-12">
+                <p>
+                    Please check your inbox to verify that <b>{{ user.email }}</b> is your email.
+                    Check your SPAM folder. If you haven't received an email, you can ask to send it again.
+                </p>
+                <a href="{% url 'send_email_verification' %}" class="btn  btn-success btn-block">Send verification email
+                    again</a>
+            </div>
+        {% elif ambassador %}
+            <style>
+                .row {
+                    margin-bottom: 10px;
+                }
+
+                .row:last-child {
+                    margin-bottom: 0;
+                }
+            </style>
+
+            <div class="col-md-12">
+                <h3>What to do now?</h3>
+                <p>
+                    Some job description...
+                </p>
+                <h3>Your ambassador's profile</h3>
+                <div class="row">
+                    <div class="col-md-3">Hackers convinced:</div>
+                    <div class="col-md-6">{{ ambassador.convinced }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Your secret code:</div>
+                    <div class="col-md-6"><strong>
+                        {{ ambassador.secret_code }}
+                    </strong></div>
+                </div>
+                <div class="row">
+                        <div class="col-md-3">Origin:</div>
+                        <div class="col-md-6">{{ ambassador.origin }}</div>
+                    </div>
+                <div class="row">
+                    <div class="col-md-3">University:</div>
+                    <div class="col-md-6">{{ ambassador.university }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">Phone number:</div>
+                    <div class="col-md-6">{{ ambassador.phone_number }}</div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-md-12">
+                <h3>What does 'ambassador' mean?</h3>
+                <p>
+                    Ambassadors are peaple, who help us spread news about the {{ h_name }}. It's an great 
+                    opportunity for you to help hackathon grow even bigger and also seize some advantages 
+                    for yourself. You have only to become an ambassador and convince people to send us 
+                    their application. You can find out more information here: 
+                    <a href="https://hackkosice.com/ambassadors/">https://hackkosice.com/ambassadors/</a>.
+                </p>
+                <p>
+                    We would love to see you as a part of {{ h_name }} ambassadors team. And of course, 
+                    as an ambassador you can still participate at our hackathon, so don't hesitate more 
+                    and <strong>become a {{ h_name }} ambassodor</strong> right now! You don't have 
+                    anything to loose, you can only gain. :)
+                </p>
+                {% include 'include/ambassador_form.html' %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
