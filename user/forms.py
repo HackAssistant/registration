@@ -34,9 +34,10 @@ class LoginForm(forms.Form):
 class RegisterForm(LoginForm):
     password2 = forms.CharField(widget=forms.PasswordInput, label='Repeat password', max_length=100,
                                 help_text=' '.join(password_validators_help_texts()))
-    name = forms.CharField(label='Full name', max_length=225, help_text='What is your preferred full name?')
+    first_name = forms.CharField(label='First name', max_length=50)
+    last_name = forms.CharField(label='Last name', max_length=50)
 
-    field_order = ['name', 'email', 'password', 'password2']
+    field_order = ['first_name', 'last_name', 'email', 'password', 'password2']
 
     def clean_password2(self):
         # Check that the two password entries match

@@ -55,7 +55,7 @@ def signup(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            name = form.cleaned_data['name']
+            name = form.cleaned_data['first_name'] + ' ' + form.cleaned_data['last_name']
 
             if models.User.objects.filter(email=email).first() is not None:
                 messages.error(request, 'An account with this email already exists')
