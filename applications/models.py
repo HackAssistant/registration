@@ -7,9 +7,13 @@ from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
+from datetime import date, timedelta
 
 from app import utils
 from user.models import User
+
+NO_ANSWER = 'NA'
+OTHER = 'O'
 
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
@@ -31,16 +35,30 @@ STATUS = [
     (APP_EXPIRED, 'Expired'),
 ]
 
-NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
-NON_BINARY = 'NB'
 
 GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
-    (NON_BINARY, 'Non-binary'),
+    (OTHER, 'Other (please specify)'),
+]
+
+AMERICAN = 'American Indian or Alaskan Native'
+ASIAN = 'Asian / Pacific Islander'
+BLACK = 'Black or African American'
+HISPANIC = 'Hispanic'
+WHITE = 'White / Caucasian'
+
+RACES = [
+    (NO_ANSWER, 'Prefer not to answer'),
+    (AMERICAN, 'American Indian or Alaskan Native'),
+    (ASIAN, 'Asian / Pacific Islander'),
+    (BLACK, 'Black or African American'),
+    (HISPANIC, 'Hispanic'),
+    (WHITE, 'White / Caucasian'),
+    (OTHER, 'Multiple ethnicity / Other (Please Specify)'),
 ]
 
 D_NONE = 'None'
@@ -62,8 +80,35 @@ DIETS = [
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023'.split(' '))]
+YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024 2025'.split(' '))]
 DEFAULT_YEAR = 2018
+
+
+class Ambassador(models.Model):
+    # Ambassadors credentials
+    user = models.OneToOneField(User, primary_key=True)
+    secret_code = models.CharField(max_length=50, unique=True)
+
+    created_date = models.DateTimeField(default=timezone.now)
+
+    # Basic contact informations about ambassador
+    origin = models.CharField(max_length=300)
+    university = models.CharField(max_length=300)
+    phone_number = models.CharField(
+        max_length=16,
+        validators=[RegexValidator(
+            regex=r'^\+?1?\d{9,15}$',
+            message="Phone number must be entered in the format: '+#########'. Up to 15 digits allowed."
+        )]
+    )
+    tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+    def __str__(self):
+        return self.user.email
+
+    def convinced(self):
+        apps = Application.objects.filter(ambassador=self.user.pk)
+        return len(apps)
 
 
 class Application(models.Model):
@@ -71,6 +116,7 @@ class Application(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
+    ambassador = models.ForeignKey(Ambassador, blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -83,10 +129,14 @@ class Application(models.Model):
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
-    # Personal data (asking here because we don't want to ask birthday)
-    under_age = models.BooleanField()
+    other_gender = models.CharField(max_length=50, blank=True, null=True)
 
-    phone_number = models.CharField(blank=True, null=True, max_length=16,
+    race = models.CharField(max_length=100, choices=RACES, default=NO_ANSWER)
+    other_race = models.CharField(max_length=500, blank=True, null=True)
+    # Personal data
+    birth_day = models.DateField()
+
+    phone_number = models.CharField(max_length=16,
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                                                message="Phone number must be entered in the format: \
                                                                   '+#########'. Up to 15 digits allowed.")])
@@ -106,8 +156,9 @@ class Application(models.Model):
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
-    # Random lenny face
+    # Random questions or let us get to know you better
     lennyface = models.CharField(max_length=300, default='-.-')
+    spirit_animal = models.TextField(max_length=1000, blank=True, null=True)
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes', null=True, blank=True)
@@ -115,6 +166,7 @@ class Application(models.Model):
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
+    major = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
 
     # URLs
@@ -148,6 +200,13 @@ class Application(models.Model):
     def save(self, **kwargs):
         self.status_update_date = timezone.now()
         super(Application, self).save(**kwargs)
+
+    def under_age(self):
+        delta = date.today() - self.birth_day
+        if delta < timedelta(days=(18*365+4)):
+            return True
+        else:
+            return False
 
     def invite(self, user):
         # We can re-invite someone invited

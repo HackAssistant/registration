@@ -1,6 +1,7 @@
 {% load bootstrap3 %}
 {% load static %}
 {% load form_utils %}
+
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
     #id_scholarship > div, #id_reimb > div {
@@ -14,6 +15,7 @@
     }
 
 </style>
+
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% bootstrap_form_errors form %}
@@ -37,7 +39,6 @@
     {% endif %}
 </form>
 
-
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 <script src="{% static 'js/form_modifiers.js' %}"></script>
 
@@ -46,6 +47,7 @@
     $(document).ready(function () {
 
             make_field_typeahead('university', '{% static 'schools.json' %}');
+            make_field_typeahead('major', '{% static 'majors.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
             $("#id_origin").typeahead({
                 minLength: 3,
@@ -99,6 +101,22 @@
             });
             // Making projects look like required
             projects.parent().addClass('required');
+
+            var other_gender = $('#id_other_gender');
+            var gender = $('#id_gender');
+            conditional_field(other_gender, gender, function () {
+                return gender.val() === 'O';
+            });
+            // Making gender specification look like required
+            other_gender.parent().addClass('required');
+
+            var other_race = $('#id_other_race');
+            var race = $('#id_race');
+            conditional_field(other_race, race, function () {
+                return race.val() === 'O';
+            });
+            // Making race specification look like required
+            other_race.parent().addClass('required');
         }
     )
 
