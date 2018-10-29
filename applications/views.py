@@ -30,6 +30,17 @@ def check_application_exists(user, uuid):
         raise Http404
 
 
+def new_secret_code():
+    temp_code = ''.join([random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+
+    try:
+        models.Ambassador.objects.get(secret_code=temp_code)
+    except(models.Ambassador.DoesNotExist):
+        return temp_code
+    else:
+        return new_secret_code()
+
+
 class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         check_application_exists(self.request.user, self.kwargs.get('id', None))
@@ -196,16 +207,6 @@ class AmbassadorView(LoginRequiredMixin, TabsView):
             context.update({'form': forms.AmbassadorForm(),})
         return context
 
-    def get_secret_code():
-        temp_code = ''.join([random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
-
-        try:
-            models.Ambassador.objects.get(secret_code=temp_code)
-        except(models.Ambassador.DoesNotExist):
-            return temp_code
-        else:
-            return get_secret_code()
-
     def post(self, request, *args, **kwargs):
         try:
             form = forms.AmbassadorForm(request.POST, request.FILES, instance=request.user.ambassador)
@@ -214,7 +215,7 @@ class AmbassadorView(LoginRequiredMixin, TabsView):
         if form.is_valid():
             ambassador_apply = form.save(commit=False)
             ambassador_apply.user = request.user
-            ambassador_apply.secret_code = self.get_secret_code()
+            ambassador_apply.secret_code = new_secret_code()
             ambassador_apply.save()
 
             messages.success(request, 'Ambassador changes saved successfully!')
