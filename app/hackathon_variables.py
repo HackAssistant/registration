@@ -21,7 +21,7 @@ HACKATHON_LOGO_URL = 'https://hackkosice.com/wp-content/uploads/2018/10/logo_pur
 HACKATHON_OG_IMAGE = 'https://hackkosice.com/wp-content/uploads/2018/04/logo_s1.png'
 # (OPTIONAL) Track visits on your website
 # TODO add Web Analytics code
-# HACKATHON_GOOGLE_ANALYTICS = 'UA-7777777-2'
+HACKATHON_GOOGLE_ANALYTICS = 'UA-117942945-1'
 # (OPTIONAL) Hackathon twitter user
 HACKATHON_TWITTER_ACCOUNT = 'hackkosice'
 # (OPTIONAL) Hackathon Facebook page
