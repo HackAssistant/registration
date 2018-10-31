@@ -117,6 +117,14 @@
             });
             // Making race specification look like required
             other_race.parent().addClass('required');
+
+            var job_type = $('#id_job_type');
+            var job_interest = $('#id_job_interest');
+            conditional_field(job_type, job_interest, function () {
+                return job_interest.val() !== 'No';
+            });
+            // Making race specification look like required
+            job_type.parent().addClass('required');
         }
     )
 

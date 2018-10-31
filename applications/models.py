@@ -77,6 +77,22 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
+NO_JOB = 'No'
+OPEN_JOB = 'Maybe'
+WANT_JOB = 'Yes'
+
+JOB_INTERESTS = [
+    (NO_JOB, 'Not looking for'),
+    (OPEN_JOB, 'Open'),
+    (WANT_JOB, 'Actively looking for'),
+]
+
+JOB_TYPES = [
+    ('internship', 'Internship'),
+    ('part_time', 'Part-time job'),
+    ('full_time', 'Full-time job'),
+]
+
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
@@ -150,6 +166,10 @@ class Application(models.Model):
     description = models.TextField(max_length=500)
     # Explain a little bit what projects have you done lately
     projects = models.TextField(max_length=500, blank=True, null=True)
+
+    # Are you looking for a job?
+    job_interest = models.CharField(max_length=100, default=OPEN_JOB, choices=JOB_INTERESTS)
+    job_type = models.CharField(max_length=100, choices=JOB_TYPES, blank=True, null=True)
 
     # Reimbursement
     reimb = models.BooleanField(default=False)

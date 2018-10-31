@@ -223,6 +223,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         else:
             return None
 
+    def clean_job_type(self):
+        data = self.cleaned_data['job_type']
+        interest = self.cleaned_data['job_interest']
+        if not interest == 'No' and not data:
+            raise forms.ValidationError("Please specify what type of job do you prefer")
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -236,6 +243,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                          'phone_number', 'university', 'major', 'degree', 'graduation_year',
                          'tshirt_size', 'diet', 'other_diet'),
              'description': 'Hey there, before we begin, we need to know some basics about you.', }),
+            ('Job preferences',
+             {'fields': ('job_interest', 'job_type'),
+             'description': 'What if our sponsors offers you some job?', }),
             ('Let us get to know you better',
              {'fields': ('lennyface', 'spirit_animal'),
              'description': 'We would like to know a little more about you. ;)', }),
@@ -319,6 +329,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'birth_day': 'What is your date of birth?',
+            'job_interest': 'Are you looking for a job?',
+            'job_type': 'What type of job would you prefer?',
             'lennyface': 'Describe yourself in one "lenny face"?',
             'spirit_animal': 'What\'s your spirit animal and why?',
             'origin': 'Where are you joining us from?',
