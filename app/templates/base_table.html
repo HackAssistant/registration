@@ -26,7 +26,7 @@
     {% endblock %}
 {% endblock %}
 {% block out_panel %}
-    <form action="" method="post">
+    <form action="{{ form_action }}" method="{{ form_method }}">
         {% csrf_token %}
         {% render_table table 'django_tables2/bootstrap-responsive.html' %}
         {% block table_footer %}
