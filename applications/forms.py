@@ -42,6 +42,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
+    hear_about = forms.CharField(
+        required=True,
+        label='Where did you first hear about %s?' % settings.HACKATHON_NAME,
+        widget=forms.TextInput(attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'})
+    )
+
     ambassador = forms.CharField(
         required=False,
         label='What is your ambassador\'s secret code?',
@@ -248,9 +254,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
              {'fields': ('job_interest', 'job_type'),
              'description': 'What if our sponsors offers you some job?', }),
             ('Let us get to know you better',
-             {'fields': ('spirit_animal'),
+             {'fields': ('spirit_animal',),
              'description': 'We would like to know a little more about you. ;)', }),
-            ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
+            ('Hackathons?', {'fields': ('description', 'hear_about', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
              {'fields': ('resume', 'site', 'github', 'devpost', 'linkedin'),
              'description': 'Some of our sponsors may use this information for recruitment purposes,'

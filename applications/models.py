@@ -177,6 +177,7 @@ class Application(models.Model):
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
     # Random questions or let us get to know you better
+    hear_about = models.CharField(max_length=200)
     spirit_animal = models.TextField(max_length=1000, blank=True, null=True)
 
     # Giv me a resume here!

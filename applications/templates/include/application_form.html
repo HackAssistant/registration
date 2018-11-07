@@ -49,6 +49,7 @@
             make_field_typeahead('university', '{% static 'schools.json' %}');
             make_field_typeahead('major', '{% static 'majors.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
+            make_field_typeahead('hear_about', '{% static 'marketing_types.json' %}');
             $("#id_origin").typeahead({
                 minLength: 3,
                 source: function (query, process) {
