@@ -71,7 +71,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                       label='I have read and accept '
                                             '<a href="%s" target="_blank">%s Code of conduct</a>' % (
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
-                                                settings.HACKATHON_NAME), )
+                                                'MLH'
+                                            ))
 
 
     privacy_policy = forms.BooleanField(required=False,
