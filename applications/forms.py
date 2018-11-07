@@ -248,7 +248,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
              {'fields': ('job_interest', 'job_type'),
              'description': 'What if our sponsors offers you some job?', }),
             ('Let us get to know you better',
-             {'fields': ('lennyface', 'spirit_animal'),
+             {'fields': ('spirit_animal'),
              'description': 'We would like to know a little more about you. ;)', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -305,8 +305,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                'you graduate',
             'degree': 'What\'s your major?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
-            'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
-                         ' http://textsmili.es/</a>',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
@@ -332,7 +330,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'birth_day': 'What is your date of birth?',
             'job_interest': 'Are you looking for a job?',
             'job_type': 'What type of job would you prefer?',
-            'lennyface': 'Describe yourself in one "lenny face"?',
             'spirit_animal': 'What\'s your spirit animal and why?',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
