@@ -6,6 +6,7 @@ from datetime import timedelta
 
 from django import http
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect
@@ -110,7 +111,11 @@ class HackerDashboard(LoginRequiredMixin, TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
-        form = forms.ApplicationForm()
+        try:
+            draft = models.DraftApplication.objects.get(user=self.request.user)
+            form = forms.ApplicationForm(instance=models.Application(**draft.get_dict()))
+        except:
+            form = forms.ApplicationForm()
         context.update({'form': form})
         try:
             application = models.Application.objects.get(user=self.request.user)
@@ -178,3 +183,14 @@ class HackerApplication(LoginRequiredMixin, TabsView):
             c = self.get_context_data()
             c.update({'form': form})
             return render(request, self.template_name, c)
+
+
+@login_required
+def save_draft(request):
+    d = models.DraftApplication()
+    d.user = request.user
+    valid_keys = forms.ApplicationForm().fields.keys()
+    d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys))
+    d.save()
+    messages.success(request, 'Draft saved! Unfortunately, files are not kept')
+    return HttpResponseRedirect('%s?saved_draft=True' % reverse('dashboard'))

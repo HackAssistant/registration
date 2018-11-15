@@ -32,8 +32,14 @@
     <small><span style="color: red">*</span>Indicates required field</small>
 
     {% if not application or application.can_be_edit %}
+         {% if not application %}
+            <button class="btn btn-info btn-block" type="submit" formaction="{% url 'save_draft' %}" formnovalidate>
+               Save progress
+            </button>
+        {% endif %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
             Submit application{% endif %}</button>
+
     {% endif %}
 </form>
 

@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import json
 import uuid as uuid
 
 from django.core.exceptions import ValidationError
@@ -253,3 +254,17 @@ class Application(models.Model):
 
     def can_confirm(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
+
+class DraftApplication(models.Model):
+    content = models.CharField(max_length=1000)
+    user = models.OneToOneField(User, primary_key=True)
+
+    def save_dict(self, d):
+        d = dict((k, v) for k, v in d.items() if v)
+        if d.get('csrfmiddlewaretoken', None):
+            del d['csrfmiddlewaretoken']
+        self.content = json.dumps(d)
+
+    def get_dict(self):
+        return json.loads(self.content)
