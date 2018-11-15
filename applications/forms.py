@@ -37,22 +37,22 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-majors', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=True, label='What is your most current level of study?',
-                             help_text='Most recent degree you\'ve received',
+    degree = forms.CharField(required=True, label='What is your current or most recent level of study?',
+                             help_text='Current or most recent degree you\'ve received '
+                                       '(e.g. Bachelor\'s or Master\'s) degree)',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
     hear_about = forms.CharField(
         required=True,
         label='Where did you first hear about %s?' % settings.HACKATHON_NAME,
-        widget=forms.TextInput(attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'})
+        widget=forms.TextInput(attrs={'class': 'typeahead-marketing_types', 'autocomplete': 'off'})
     )
 
     ambassador = forms.CharField(
         required=False,
-        label='What is your ambassador\'s secret code?',
-        help_text='Entering a secret code can help your ambassador. If you don\'t have one, \
-        leave this blank',
+        label='Do you have a secret code?',
+        help_text='This should be blank unless you were told a secret code, in which case enter it here.',
         widget=forms.TextInput(attrs={'autocomplete': 'off'})
     )
 
@@ -272,7 +272,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Hackathons?', {'fields': ('description', 'hear_about', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
              {'fields': ('resume', 'site', 'github', 'devpost', 'linkedin'),
-             'description': 'Some of our sponsors may use this information for recruitment purposes,'
+             'description': 'Some of our sponsors may use this information for recruitment purposes, '
              'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
@@ -342,7 +342,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
-            'comment': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'comment': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
 
         labels = {
