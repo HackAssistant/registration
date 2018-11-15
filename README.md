@@ -158,8 +158,8 @@ MyMLH is a centralized login system used by MLH.  It makes it easier for hackers
 
 This integration allows hackers to have part of their application completed using their information from MLH.
 
-As of the moment, MyMLH can only be used to sign up. This decision is due to the fact that MyMLH accounts can have accounts with emails not verified. This can be a security concern as someone could create an account with someone else's email and it would totally invalidate our verification email system.
-In that direction the approach taken is to extract fields and use them for the application later on. 
+As of the moment, MyMLH can only be used to sign up. This decision is due to the fact that MyMLH can have accounts with emails not verified. This can be a security concern as someone could create an account with someone else's email and it would totally invalidate our verification email system.
+In that direction the approach taken is to extract fields and use them for the application during the sign up process. 
 
 1. Create a [new MyMLH app](https://my.mlh.io/oauth/applications/new).
 2. Add `https://DOMAIN//user/callback/mlh/` as a Redirect URI. Replace `DOMAIN` for the domain used to deploy your system. Ex: `http://registration.gerard.space/user/callback/mlh/`.
