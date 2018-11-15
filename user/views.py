@@ -252,4 +252,7 @@ def callback(request, provider=None):
             draft.save()
             return HttpResponseRedirect(reverse('root'))
     else:
-        return TemplateResponse(request, 'callback.html', {'form': SetPasswordForm()})
+        c = {'form': SetPasswordForm()}
+        if not request.GET.get('code', None):
+            c['error'] = request.GET.get('error_description', 'Callback parameters missing.')
+        return TemplateResponse(request, 'callback.html', c, status=200 if request.GET.get('code', None) else 400)
