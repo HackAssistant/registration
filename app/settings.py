@@ -230,6 +230,17 @@ else:
         }
     }
 
+OAUTH_PROVIDERS = {
+    'mlh': {
+        'auth_url': 'https://my.mlh.io/oauth/authorize',
+        'token_url': 'https://my.mlh.io/oauth/token',
+        'id': os.environ.get('MLH_CLIENT_SECRET', '').split('@')[0],
+        'secret': os.environ.get('MLH_CLIENT_SECRET', '@').split('@')[1],
+        'user_url': 'https://my.mlh.io/api/v2/user.json'
+
+    }
+}
+
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 

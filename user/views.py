@@ -1,3 +1,4 @@
+import requests
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,7 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
 from app.utils import reverse
+from applications import models as a_models
 from user import forms, models, tokens
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.models import User
@@ -176,3 +178,67 @@ def send_email_verification(request):
     msg.send()
     messages.success(request, "Verification email successfully sent")
     return HttpResponseRedirect(reverse('root'))
+
+
+def callback(request, provider=None):
+    if not provider:
+        return HttpResponseRedirect(reverse('root'))
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('root'))
+    if request.method == 'POST':
+        form = SetPasswordForm(request.POST)
+        if not form.is_valid():
+            return TemplateResponse(request, 'callback.html', {'form': form})
+        password = form.cleaned_data['new_password1']
+
+        # if this is a POST request we need to process the form data
+        if provider == 'mlh':
+            conf = settings.OAUTH_PROVIDERS.get('mlh', {})
+            if not conf:
+                return HttpResponseRedirect(reverse('root'))
+            conf['code'] = request.GET.get('code', None)
+            if not conf['code']:
+                messages.error(request, 'Missing code, please start again!')
+                return HttpResponseRedirect(reverse('root'))
+            conf['redirect_url'] = reverse('callback', request=request, kwargs={'provider': provider})
+            token_url = '{token_url}?client_id={id}&client_secret={secret}&code={code}&' \
+                        'redirect_uri={redirect_url}&grant_type=authorization_code'.format(**conf).replace('\n', '')
+            resp = requests.post(
+                token_url
+            )
+            if resp.json().get('error', None):
+                messages.error(request, 'Authentification failed, try again please!')
+                return HttpResponseRedirect(reverse('root'))
+            conf['access_token'] = resp.json().get('access_token', None)
+            mlhuser = requests.get('{user_url}?access_token={access_token}'.format(**conf)).json()
+            if mlhuser.get('status', None).lower() != 'ok':
+                messages.error(request, 'Authentification failed, try again please!')
+                return HttpResponseRedirect(reverse('root'))
+            email = mlhuser.get('data', {}).get('email', None)
+            name = mlhuser.get('data', {}).get('first_name', '') + ' ' + mlhuser.get('data', {}).get('last_name', None)
+
+            if models.User.objects.filter(email=email).first() is not None:
+                messages.error(request, 'An account with this email already exists')
+                return HttpResponseRedirect(reverse('root'))
+            else:
+                user = models.User.objects.create_user(email=email, password=password, name=name)
+            user = auth.authenticate(email=email, password=password)
+            auth.login(request, user)
+            draft = a_models.DraftApplication()
+            draft.user = user
+
+            mlhdiet = mlhuser.get('data', {}).get('dietary_restrictions', '')
+            diet = mlhdiet if mlhdiet in dict(a_models.DIETS).keys() else 'Others'
+
+            draft.save_dict({
+                'degree': mlhuser.get('data', {}).get('major', ''),
+                'university': mlhuser.get('data', {}).get('school', {}).get('name', ''),
+                'phone_number': mlhuser.get('data', {}).get('phone_number', ''),
+                'tshirt_size': mlhuser.get('data', {}).get('shirt_size', ''),
+                'diet': mlhdiet,
+                'other_diet': mlhdiet if diet == 'Others' else '',
+            })
+            draft.save()
+            return HttpResponseRedirect(reverse('root'))
+    else:
+        return TemplateResponse(request, 'callback.html', {'form': SetPasswordForm()})
