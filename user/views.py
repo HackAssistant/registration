@@ -191,15 +191,21 @@ def callback(request, provider=None):
             return TemplateResponse(request, 'callback.html', {'form': form})
         password = form.cleaned_data['new_password1']
 
-        # if this is a POST request we need to process the form data
+        # MLH provider logic
         if provider == 'mlh':
             conf = settings.OAUTH_PROVIDERS.get('mlh', {})
-            if not conf:
+
+            # If logic not configured, exit
+            if not conf or not conf.get('id', False):
                 return HttpResponseRedirect(reverse('root'))
+
+            # Get Auth code from GET request
             conf['code'] = request.GET.get('code', None)
             if not conf['code']:
                 messages.error(request, 'Missing code, please start again!')
                 return HttpResponseRedirect(reverse('root'))
+
+            # Get Bearer token
             conf['redirect_url'] = reverse('callback', request=request, kwargs={'provider': provider})
             token_url = '{token_url}?client_id={id}&client_secret={secret}&code={code}&' \
                         'redirect_uri={redirect_url}&grant_type=authorization_code'.format(**conf).replace('\n', '')
@@ -209,27 +215,32 @@ def callback(request, provider=None):
             if resp.json().get('error', None):
                 messages.error(request, 'Authentification failed, try again please!')
                 return HttpResponseRedirect(reverse('root'))
+
+            # Get user json
             conf['access_token'] = resp.json().get('access_token', None)
             mlhuser = requests.get('{user_url}?access_token={access_token}'.format(**conf)).json()
             if mlhuser.get('status', None).lower() != 'ok':
                 messages.error(request, 'Authentification failed, try again please!')
                 return HttpResponseRedirect(reverse('root'))
+
+            # Create user
             email = mlhuser.get('data', {}).get('email', None)
             name = mlhuser.get('data', {}).get('first_name', '') + ' ' + mlhuser.get('data', {}).get('last_name', None)
-
             if models.User.objects.filter(email=email).first() is not None:
                 messages.error(request, 'An account with this email already exists')
                 return HttpResponseRedirect(reverse('root'))
             else:
                 user = models.User.objects.create_user(email=email, password=password, name=name)
+
+            # Auth user
             user = auth.authenticate(email=email, password=password)
             auth.login(request, user)
+
+            # Save extra info
             draft = a_models.DraftApplication()
             draft.user = user
-
             mlhdiet = mlhuser.get('data', {}).get('dietary_restrictions', '')
             diet = mlhdiet if mlhdiet in dict(a_models.DIETS).keys() else 'Others'
-
             draft.save_dict({
                 'degree': mlhuser.get('data', {}).get('major', ''),
                 'university': mlhuser.get('data', {}).get('school', {}).get('name', ''),

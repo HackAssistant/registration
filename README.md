@@ -24,6 +24,7 @@
 - Django Admin dashboard to manually edit applications, reimbursement and users 👓
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
 - (Optional) Automated slack invites on confirm 
+- (Optional) Sign up and application partial fill using MyMLH
 
 **Demo**: http://registration.gerard.space (updated from master automatically. Running on Heroku free dyno)
 
@@ -55,6 +56,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
 - **DROPBOX_OAUTH2_TOKEN**(optional): Enables Dropbox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
+- **MLH_CLIENT_SECRET**(optional): Enables MyMLH as a sign up option. Format is `client_id@client_secret` (See "Set up MyMLH" below)
 
 
 ## Server
@@ -149,6 +151,21 @@ This will need to be used for Heroku or some Docker deployments. File uploads so
 1. Create a [new Dropbox app](https://www.dropbox.com/developers/apps)
 2. Generate Access token [here](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/)
 3. Set token as environment variable **DROPBOX_OAUTH2_TOKEN**
+
+#### Set up MyMLH
+
+MyMLH is a centralized login system used by MLH.  It makes it easier for hackers to sign up for more events without re-entering their data every time around.
+
+This integration allows hackers to have part of their application completed using their information from MLH.
+
+As of the moment, MyMLH can only be used to sign up. This decision is due to the fact that MyMLH accounts can have accounts with emails not verified. This can be a security concern as someone could create an account with someone else's email and it would totally invalidate our verification email system.
+In that direction the approach taken is to extract fields and use them for the application later on. 
+
+1. Create a [new MyMLH app](https://my.mlh.io/oauth/applications/new).
+2. Add `https://DOMAIN//user/callback/mlh/` as a Redirect URI. Replace `DOMAIN` for the domain used to deploy your system. Ex: `http://registration.gerard.space/user/callback/mlh/`.
+3. Set **MLH_CLIENT_SECRET** using the strings in `Application ID` and `Secret` fields, concatenated with a `@`. Ex: `application_id@secret`.
+
+Note that to test locally you will need to add a line where `DOMAIN` is `localhost:8000`.
 
 #### Set up nginx
 
