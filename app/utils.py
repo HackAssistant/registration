@@ -137,6 +137,6 @@ def hacker_tabs(user):
         l.append(('Travel', reverse('reimbursement_dashboard'),
                   'Pending' if user.reimbursement.needs_action() else False))
 
-    l.append(('Ambassador', reverse('ambassador'), False))
+    #l.append(('Ambassador', reverse('ambassador'), False))
 
     return l

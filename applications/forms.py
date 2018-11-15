@@ -287,7 +287,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Secret code', {'fields': ('ambassador',),}))
+            # self._fieldsets.append(('Secret code', {'fields': ('ambassador',),}))
             self._fieldsets.append(
                 ('Permissions',
                     {'fields': (
