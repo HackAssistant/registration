@@ -44,7 +44,8 @@
 
 
     {% elif not h_app_closed and not team %}
-        <p>Do you have a team already? Join it below. Otherwise you can create a new team. </p>
+        <p>Do you have a team already? Join it below. Otherwise you can create a new team.</p>
+        <p>You can also form teams at the beginning of the hackathon, so don't worry about this unless you already have a team.</p>
         <form action="" method="post" class="form">
             {% csrf_token %}
             {% bootstrap_form form %}
