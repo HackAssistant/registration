@@ -1,5 +1,5 @@
 body {
-    background: #5E2137;
+    background: #f8f8f8;
     background-size: cover;
     font-family: 'Roboto', Helvetica, sans-serif;
     font-size: 15px;
@@ -66,12 +66,12 @@ body {
 /*}*/
 
 footer p, footer small {
-    color: #777;
+    color: #f8f8f8;
     opacity: 0.5;
 }
 
 footer p > a {
-    color: #4b4b4b;
+    color: #f8f8f8;
     opacity: 1;
 }
 
@@ -81,7 +81,7 @@ footer .row {
 
 footer a, footer a:focus, footer a:active {
     opacity: 0.5;
-    color: #777;
+    color: #f8f8f8;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
     -o-transition: all .1s linear;
@@ -90,7 +90,7 @@ footer a, footer a:focus, footer a:active {
 
 footer a:hover {
     opacity: 0.9;
-    color: #4b4b4b;
+    color: #ffffff;
 }
 
 .social-icons > a {
@@ -107,6 +107,7 @@ nav.navbar {
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    background-color: #5E2137;
 }
 
 div.panel {
@@ -222,6 +223,18 @@ img {
 .hk-image {
     margin: 0;
     padding: 0;
+}
+
+footer.footer {
+    background-color: #5E2137;
+}
+
+.navbar-nav>li>a {
+    color: #d8d8d8 !important;
+}
+
+.navbar-nav>li>a:hover {
+    color: #ffffff !important;
 }
 
 @media (max-width: 768px) {
