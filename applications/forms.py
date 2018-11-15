@@ -73,9 +73,19 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
+    visas = forms.TypedChoiceField(
+        required=False,
+        label='Do you need visa invitation letter?',
+        coerce=lambda x: x == 'True',
+        choices=((False, 'No'), (True, 'Yes')),
+        initial=False,
+        widget=forms.RadioSelect
+    )
+
     code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
-                                            '<a href="%s" target="_blank">%s Code of conduct</a>' % (
+                                            '<a href="%s" target="_blank">%s Code of conduct</a>\
+                                            <span style="color: red">*</span>' % (
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 'MLH'
                                             ))
@@ -83,7 +93,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     privacy_policy = forms.BooleanField(required=False,
                                       label='I have read and accept '
-                                            '<a href="%s" target="_blank">%s Privacy Policy</a>' % (
+                                            '<a href="%s" target="_blank">%s Privacy Policy</a>\
+                                            <span style="color: red">*</span>' % (
                                                 getattr(settings, 'PRIVACY_POLICY_LINK', '/privacy_policy'),
                                                 settings.HACKATHON_NAME), )
 
@@ -97,7 +108,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             I further I agree to the terms of both the \
             <a href="#" target="_blank">MLH Contest Terms and Conditions</a> \
             and the \
-            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>'
+            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
+            <span style="color: red">*</span>'
         )
 
     media_permission = forms.BooleanField(
@@ -109,7 +121,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             including MLH. I also grant %s, MLH and other partners \
             the permission to record and publish photos and video \
             of the event and the exclusive right to produce commercial \
-            video content' % (settings.HACKATHON_NAME, settings.HACKATHON_NAME)
+            video content <span style="color: red">*</span>\
+            ' % (settings.HACKATHON_NAME, settings.HACKATHON_NAME)
         )
 
     def clean_resume(self):
@@ -279,15 +292,19 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                      }))
         elif not r_enabled:
             self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',)}), )
+                                    {'fields': ('origin', 'visas',)}), )
         else:
             self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
+                                    {'fields': ('origin', 'visas', 'reimb', 'reimb_amount'), }), )
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        if not self.instance.pk:
+        # if not self.instance.pk:
             # self._fieldsets.append(('Secret code', {'fields': ('ambassador',),}))
+
+        self._fieldsets.append(('Other', {'fields': ('comment',),}))
+
+        if not self.instance.pk:
             self._fieldsets.append(
                 ('Permissions',
                     {'fields': (
@@ -313,7 +330,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
-            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
+            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
+            'comment': 'If there is anything more you want us to know, write it here (special needs).'
         }
 
         widgets = {
@@ -324,9 +342,11 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
+            'comment': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
         }
 
         labels = {
+            'comment': 'Do you have any additional comments?',
             'other_gender': 'What gender do you identify as?',
             'race': 'What is your race/ethnicity?',
             'other_race': 'Please specify your race/ethnicity',

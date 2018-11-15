@@ -171,14 +171,16 @@ class Application(models.Model):
     job_interest = models.CharField(max_length=100, default=OPEN_JOB, choices=JOB_INTERESTS)
     job_type = models.CharField(max_length=100, choices=JOB_TYPES, blank=True, null=True)
 
-    # Reimbursement
+    # Reimbursement and visa
     reimb = models.BooleanField(default=False)
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
+    visas = models.BooleanField(default=False)
 
     # Random questions or let us get to know you better
     hear_about = models.CharField(max_length=200)
     spirit_animal = models.TextField(max_length=1000, blank=True, null=True)
+    comment = models.TextField(max_length=1000, blank=True, null=True)
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes', null=True, blank=True)
