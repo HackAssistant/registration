@@ -75,7 +75,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     visas = forms.TypedChoiceField(
         required=False,
-        label='Do you need visa invitation letter?',
+        label='Do you need an Invitation letter for visa?',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         initial=False,
@@ -331,7 +331,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
-            'comment': 'If there is anything more you want us to know, write it here (special needs).'
+            'comment': 'If there is anything more you want us to know, put it here (e.g. special needs).'
         }
 
         widgets = {
