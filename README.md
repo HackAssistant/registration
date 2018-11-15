@@ -23,8 +23,8 @@
 - Automatic control of confirmation, expiration and cancellation flows 🔄
 - Django Admin dashboard to manually edit applications, reimbursement and users 👓
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
-- (Optional) Automated slack invites on confirm 
-- (Optional) Sign up and application partial fill using MyMLH
+- (Optional) Automated slack invites on confirm #️⃣
+- (Optional) MyMLH sign up 📥
 
 **Demo**: http://registration.gerard.space (updated from master automatically. Running on Heroku free dyno)
 
