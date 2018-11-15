@@ -25,12 +25,16 @@ from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
 
 
-def add_vote(application, user, tech_rat, pers_rat):
+def add_vote(application, user, tech_rat, pers_rat, passion_rat, culture_rat):
     v = models.Vote()
     v.user = user
     v.application = application
+
     v.tech = tech_rat
     v.personal = pers_rat
+    v.passion = passion_rat
+    v.culture = culture_rat
+
     v.save()
     return v
 
@@ -245,15 +249,18 @@ class ReviewApplicationView(ApplicationDetailView):
     def post(self, request, *args, **kwargs):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
+        passion_vote = request.POST.get('passion_rat', None)
+        culture_vote = request.POST.get('cult_rat', None)
+
         comment_text = request.POST.get('comment_text', None)
         application = models.Application.objects.get(pk=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
-                add_vote(application, request.user, None, None)
+                add_vote(application, request.user, None, None, None, None)
             elif request.POST.get('add_comment'):
                 add_comment(application, request.user, comment_text)
             else:
-                add_vote(application, request.user, tech_vote, pers_vote)
+                add_vote(application, request.user, tech_vote, pers_vote, passion_vote, culture_vote)
         # If application has already been voted -> Skip and bring next
         # application
         except IntegrityError:

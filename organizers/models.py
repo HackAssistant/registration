@@ -60,7 +60,7 @@ class Vote(models.Model):
                                update_fields)
 
         # only recalculate when values are different than None
-        if not self.personal or not self.tech:
+        if not self.personal or not self.tech or not self.passion or not self.culture:
             return
 
         # Retrieve averages
