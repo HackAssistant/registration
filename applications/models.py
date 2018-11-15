@@ -168,7 +168,7 @@ class Application(models.Model):
     projects = models.TextField(max_length=500, blank=True, null=True)
 
     # Are you looking for a job?
-    job_interest = models.CharField(max_length=100, default=OPEN_JOB, choices=JOB_INTERESTS)
+    job_interest = models.CharField(max_length=100, default=WANT_JOB, choices=JOB_INTERESTS)
     job_type = models.CharField(max_length=100, choices=JOB_TYPES, blank=True, null=True)
 
     # Reimbursement and visa
