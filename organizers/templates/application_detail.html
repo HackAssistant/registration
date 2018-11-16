@@ -22,10 +22,9 @@
                 <h3>Personal</h3>
                 </dt>
                 <dd></dd>
-                {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
                 {% include 'include/field.html' with desc='Name' value=app.user.name %}
                 {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
-                {% include 'include/field.html' with desc='Country' value=app.origin_country %}
+                {% include 'include/field.html' with desc='Country' value=app.origin %}
                 {% if not vote %}
                     {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                     {% include 'include/field.html' with desc='Email' value=app.user.email %}
@@ -42,8 +41,14 @@
                 </dt>
                 <dd></dd>
                 {% include 'include/field.html' with desc='University' value=app.university %}
+                {% include 'include/field.html' with desc='Major' value=app.major %}
                 {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
                 {% include 'include/field.html' with desc='Degree' value=app.degree %}
+                {% if app.job_type %}
+                    {% include 'include/field.html' with desc='Job preference' value=app.job_type %}
+                {% else %}
+                    {% include 'include/field.html' with desc='Job preference' value='Not looking for' %}
+                {% endif %}
                 <hr>
                 <dt>
                 <h3>Background</h3>
@@ -53,7 +58,15 @@
                 {% include 'include/field.html' with desc='Why excited?' showlength="true" value=app.description|safe|urlize %}
                 {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects|safe|urlize %}
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
-                {% include 'include/field.html' with desc='Excited about' value=app.excited %}
+                <hr>
+                {% if app.spirit_animal or app.comment %}
+                    <dt>
+                    <h3>Other</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='Spirit animal' value=app.spirit_animal %}
+                    {% include 'include/field.html' with desc='Additional comments' showlength="true" value=app.comment %}
+                {% endif %}
             </dl>
             {% if not vote and teammates %}
                 <h3>Teammates</h3>
