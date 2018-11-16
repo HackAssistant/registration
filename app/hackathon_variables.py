@@ -75,5 +75,7 @@ LOGGED_IN_COOKIE_KEY = 'hackassistant_logged_in'
 
 # Hardware configuration
 HARDWARE_ENABLED = False
-#Hardware request time length (in minutes)
+# Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
+# Can Hackers start a request on the hardware lab?
+# HACKERS_CAN_REQUEST = False
