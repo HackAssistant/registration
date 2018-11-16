@@ -13,6 +13,8 @@ import random
 from app import utils
 from user.models import User
 
+import random, string
+
 NO_ANSWER = 'NA'
 OTHER = 'O'
 
@@ -104,7 +106,8 @@ DEFAULT_YEAR = 2018
 
 def user_directory_path(instance, filename):
     # File will be uploaded to MEDIA_ROOT/resumes/<filename>
-    filename = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    r = random.SystemRandom()
+    filename = ''.join(r.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     return 'resumes/{}'.format(filename)
 
 
