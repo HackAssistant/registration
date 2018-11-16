@@ -51,7 +51,7 @@ class ReceiptSubmissionReceipt(BetterModelForm):
             ('Upload your receipt',
              {'fields': ('receipt', 'multiple_hackers', 'friend_emails'), }),
             ('Where should we send you the monies?', {'fields': ('venmo_user', 'paypal_email',), }),
-            ('Where are you joining us from?', {'fields': ('origin',), }),
+            ('From which city are you travelling to %s?' % settings.HACKATHON_NAME, {'fields': ('origin',), }),
         )
         widgets = {
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
