@@ -19,6 +19,7 @@
 - Review applications interface for organizers (includes vote) ⚖️
 - Email verification 📨
 - Forgot password 🤔
+- Automatic progress save on draft applications ⚙️
 - Internal user role management: Hacker, Organizer, Volunteer, Director and Admin ☕️
 - Automatic control of confirmation, expiration and cancellation flows 🔄
 - Django Admin dashboard to manually edit applications, reimbursement and users 👓
