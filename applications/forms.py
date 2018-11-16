@@ -279,13 +279,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
         if r_enabled and deadline and deadline <= timezone.now() and not self.instance.pk:
             self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',),
+                                    {'fields': ('origin', 'visas',),
                                      'description': 'Reimbursement applications are now closed. '
                                                     'Sorry for the inconvenience.',
                                      }))
         elif self.instance.pk and r_enabled:
             self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',),
+                                    {'fields': ('origin', 'visas',),
                                      'description': 'If you applied for reimbursement, check out the Travel tab. '
                                                     'Email us at %s for any change needed on reimbursements.' %
                                                     settings.HACKATHON_CONTACT_EMAIL,
@@ -343,7 +343,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
-            'comment': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'comment': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
         }
 
         labels = {
