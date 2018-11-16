@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views import View
@@ -192,5 +192,4 @@ def save_draft(request):
     valid_keys = forms.ApplicationForm().fields.keys()
     d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys))
     d.save()
-    messages.success(request, 'Draft saved! Unfortunately, files are not kept')
-    return HttpResponseRedirect('%s?saved_draft=True' % reverse('dashboard'))
+    return JsonResponse({'saved': True})
