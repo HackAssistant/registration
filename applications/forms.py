@@ -327,10 +327,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                             'code_conduct',
                             'privacy_policy',
                             'application_sharing',
-                            'media_permission',
                             'partners_permission',
+                            'media_permission',
                         ),
-                        'description': 'We need this permissions to provide you better experiences'}),
+                        'description': 'We need these permissions to provide you better experience'}),
             )
         return super(ApplicationForm, self).fieldsets
 
