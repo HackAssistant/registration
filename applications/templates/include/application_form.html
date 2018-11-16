@@ -49,7 +49,14 @@
             make_field_typeahead('university', '{% static 'schools.json' %}');
             make_field_typeahead('major', '{% static 'majors.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
-            make_field_typeahead('hear_about', '{% static 'marketing_types.json' %}');
+            make_field_typeahead('hear_about', '{% static 'marketing_types.json' %}', {minLength: 0});
+            // hack to show the autocomplete box on click
+            $("#id_hear_about").on("click", function () {
+                ev = $.Event("keydown");
+                ev.keyCode = ev.which = 40;
+                $(this).trigger(ev);
+                return true;
+            });
             $("#id_origin").typeahead({
                 minLength: 3,
                 source: function (query, process) {
