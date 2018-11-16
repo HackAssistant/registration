@@ -213,7 +213,12 @@ server {
 
 ### Important SQL queries
 
-There are several queries that may be useful during the hackathon application process:
+Here are several queries that may be useful during the hackathon application process. 
+
+1. `source ./env/bin/activate`
+2. `python manage.py dbshell`
+3. Run SQL query
+4. Extract results
 
 #### Missing applications emails
 
