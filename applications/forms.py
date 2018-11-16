@@ -27,7 +27,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
 
     university = forms.CharField(required=True,
-                                 label='What university do you study at?',
+                                 label='What university (or high school) do you study at?',
                                  help_text='Current or most recent school you attended.',
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
@@ -330,7 +330,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
-            'reimb_amount': settings.REIMBURSEMENT_AMOUNTS + '<br>' + settings.REIMBURSEMENT_REQUIREMENTS,
+            'reimb_amount': '<p>' + settings.REIMBURSEMENT_AMOUNTS + '</p><p>'
+                            + settings.REIMBURSEMENT_REQUIREMENTS + '</p>',
             'comment': 'If there is anything more you want us to know, put it here (e.g. special needs).'
         }
 
@@ -370,7 +371,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
 class AmbassadorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     university = forms.CharField(required=True,
-                                 label='What university do you study at?',
+                                 label='What university (or high school) do you study at?',
                                  help_text='Current or most recent school you attended.',
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
