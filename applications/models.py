@@ -190,7 +190,7 @@ class Application(models.Model):
     comment = models.TextField(max_length=1000, blank=True, null=True)
 
     # Giv me a resume here!
-    resume = models.FileField(upload_to='user_directory_path', null=True, blank=True)
+    resume = models.FileField(upload_to=user_directory_path, null=True, blank=True)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
