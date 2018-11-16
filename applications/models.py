@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
 from datetime import date, timedelta
+import random
 
 from app import utils
 from user.models import User
