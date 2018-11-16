@@ -92,7 +92,7 @@ class AcceptReceiptForm(ModelForm):
         fields = (
             'reimbursement_money', 'origin',)
         labels = {
-            'reimbursement_money': 'Total cost in receipt'
+            'reimbursement_money': 'Total cost in receipt (%s)' % settings.CURRENCY
         }
 
         widgets = {

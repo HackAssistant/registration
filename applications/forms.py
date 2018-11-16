@@ -112,6 +112,14 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             <span style="color: red">*</span>'
         )
 
+    partners_permission = forms.BooleanField(
+        required=False,
+        label='I authorize you to share my application/registration information, including the CV, '
+              'with partners of %s. We, or our partners, may perform processing on and make use of the data '
+              'in your application for recruiting purposes, for example, sponsors may send you a job offer. '
+              '<span style="color: red">*</span>' % settings.HACKATHON_NAME
+    )
+
     media_permission = forms.BooleanField(
             required=False,
             label='Photos will be taken at the event by the %s \
@@ -158,7 +166,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Check if hackers agreed with application sharing
         if not aps and not self.instance.pk:
             raise forms.ValidationError(
-                "To attend %s you must give us permission to shre your application" % settings.HACKATHON_NAME)
+                "To attend %s you must give us permission to share your application with MLH" % settings.HACKATHON_NAME)
         return aps
 
     def clean_media_permission(self):
@@ -168,6 +176,14 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError(
                 "To attend %s you must agree with that photos from the event can be used as described below" % settings.HACKATHON_NAME)
         return mp
+
+    def clean_partners_permission(self):
+        pp = self.cleaned_data.get('partners_permission', False)
+        # Check if hackers give us permission to publish media files asociated with them
+        if not pp and not self.instance.pk:
+            raise forms.ValidationError(
+                "To attend %s you must give us permission to share your data with partners of %s" % (settings.HACKATHON_NAME, settings.HACKATHON_NAME))
+        return pp
 
 
     def clean_github(self):
@@ -312,6 +328,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                             'privacy_policy',
                             'application_sharing',
                             'media_permission',
+                            'partners_permission',
                         ),
                         'description': 'We need this permissions to provide you better experiences'}),
             )
