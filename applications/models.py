@@ -8,7 +8,6 @@ from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
 from datetime import date, timedelta
-import random
 
 from app import utils
 from user.models import User
@@ -107,8 +106,8 @@ DEFAULT_YEAR = 2018
 def user_directory_path(instance, filename):
     # File will be uploaded to MEDIA_ROOT/resumes/<filename>
     r = random.SystemRandom()
-    filename = ''.join(r.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-    return 'resumes/{}'.format(filename)
+    randomised = ''.join(r.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    return 'resumes/{}/{}'.format(randomised, filename)
 
 
 class Ambassador(models.Model):
