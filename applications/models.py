@@ -101,6 +101,12 @@ YEARS.append((0, 'Not a university student'))
 DEFAULT_YEAR = 2018
 
 
+def user_directory_path(instance, filename):
+    # File will be uploaded to MEDIA_ROOT/resumes/<filename>
+    filename = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    return 'resumes/{}'.format(filename)
+
+
 class Ambassador(models.Model):
     # Ambassadors credentials
     user = models.OneToOneField(User, primary_key=True)
@@ -184,7 +190,7 @@ class Application(models.Model):
     comment = models.TextField(max_length=1000, blank=True, null=True)
 
     # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes', null=True, blank=True)
+    resume = models.FileField(upload_to='user_directory_path', null=True, blank=True)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
