@@ -39,7 +39,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     degree = forms.CharField(required=True, label='What is your current or most recent level of study?',
                              help_text='Current or most recent degree you\'ve received '
-                                       '(e.g. Bachelor\'s or Master\'s) degree)',
+                                       '(e.g. Bachelor\'s or Master\'s degree)',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
@@ -330,7 +330,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
-            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
+            'reimb_amount': settings.REIMBURSEMENT_AMOUNTS + '<br>' + settings.REIMBURSEMENT_REQUIREMENTS,
             'comment': 'If there is anything more you want us to know, put it here (e.g. special needs).'
         }
 

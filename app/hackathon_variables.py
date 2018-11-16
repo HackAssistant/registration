@@ -51,9 +51,13 @@ HACKATHON_DEV_EMAILS = ['dev@hackkosice.com']
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
 CURRENCY = '\u20ac'
-REIMBURSEMENT_EXPIRY_DAYS = 5
-REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2019, 5, 1, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_EXPIRY_DAYS = 15
+REIMBURSEMENT_AMOUNTS = 'We provide travel reimbursements if you are coming from abroad. ' \
+                        'Up to 20\u20ac if you are coming from Czech/Poland/Hungary/Austria/Ukraine ' \
+                        'and up to 50\u20ac otherwise (excluding Slovakia).'
+REIMBURSEMENT_REQUIREMENTS = 'To get reimbursed, you need to attend the hackathon, ' \
+                             'demo a project and submit travel receipts.'
+REIMBURSEMENT_DEADLINE = timezone.datetime(2019, 4, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
