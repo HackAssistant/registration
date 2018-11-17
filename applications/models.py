@@ -44,7 +44,6 @@ GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
-    (OTHER, 'Other'),
 ]
 
 AMERICAN = 'American Indian or Alaskan Native'
