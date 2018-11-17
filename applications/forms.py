@@ -36,12 +36,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
-    major = forms.CharField(required=True, label='What is your major?',
+    major = forms.CharField(required=False, label='What is your major?',
                              help_text='Your major of study at university',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-majors', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=True, label='What is your current or most recent level of study?',
+    degree = forms.CharField(required=False, label='What is your current or most recent level of study?',
                              help_text='Current or most recent degree you\'ve received '
                                        '(e.g. Bachelor\'s or Master\'s degree)',
                              widget=forms.TextInput(

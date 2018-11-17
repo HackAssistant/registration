@@ -198,8 +198,8 @@ class Application(models.Model):
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
-    major = models.CharField(max_length=300)
-    degree = models.CharField(max_length=300)
+    major = models.CharField(max_length=300, blank=True)
+    degree = models.CharField(max_length=300, blank=True)
 
     # URLs
     github = models.URLField(blank=True, null=True)
