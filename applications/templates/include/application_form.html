@@ -50,6 +50,7 @@
             make_field_typeahead('major', '{% static 'majors.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
             make_field_typeahead('hear_about', '{% static 'marketing_types.json' %}', {minLength: 0});
+            make_field_typeahead('country', '{% static 'countries.json' %}');
             // hack to show the autocomplete box on click
             $("#id_hear_about").on("click", function () {
                 ev = $.Event("keydown");

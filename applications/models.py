@@ -167,6 +167,8 @@ class Application(models.Model):
                                                                message="Phone number must be entered in the format: \
                                                                   '+#########'. Up to 15 digits allowed.")])
 
+    country = models.CharField(max_length=300,blank=True)
+
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
 
