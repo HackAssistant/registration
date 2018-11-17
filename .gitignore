@@ -25,4 +25,5 @@ cache/
 *.sh
 
 hackkosice/
+env/
 .vscode/

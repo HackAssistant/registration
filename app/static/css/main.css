@@ -1,5 +1,5 @@
 body {
-    background: #2B546B; /*linear-gradient(#020913 0%, #00121E 19%, #001F3A 28%, #063651 56%, #2B546B 71%, #827C6C 100%) no-repeat center center fixed;*/
+    background: #f8f8f8;
     background-size: cover;
     font-family: 'Roboto', Helvetica, sans-serif;
     font-size: 15px;
@@ -66,12 +66,12 @@ body {
 /*}*/
 
 footer p, footer small {
-    color: #777;
+    color: #f8f8f8;
     opacity: 0.5;
 }
 
 footer p > a {
-    color: #4b4b4b;
+    color: #f8f8f8;
     opacity: 1;
 }
 
@@ -81,7 +81,7 @@ footer .row {
 
 footer a, footer a:focus, footer a:active {
     opacity: 0.5;
-    color: #777;
+    color: #f8f8f8;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
     -o-transition: all .1s linear;
@@ -90,7 +90,7 @@ footer a, footer a:focus, footer a:active {
 
 footer a:hover {
     opacity: 0.9;
-    color: #4b4b4b;
+    color: #ffffff;
 }
 
 .social-icons > a {
@@ -107,6 +107,7 @@ nav.navbar {
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    background-color: #5E2137;
 }
 
 div.panel {
@@ -219,6 +220,31 @@ img {
     padding: 15px;
 }
 
+.hk-image {
+    margin: 0;
+    padding: 0;
+}
+
+footer.footer {
+    background-color: #5E2137;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #d8d8d8;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #ffffff;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: rgb(221, 221, 221);
+}
+
+.navbar-default .navbar-toggle:hover .icon-bar, .navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #888;
+}
+
 @media (max-width: 768px) {
     .text-center-xs {
         text-align: center;
@@ -236,5 +262,52 @@ img {
 
     .footer {
         height: 145px;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar-header {
+        float: none;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+
+    .navbar-nav>li {
+        float: none;
+    }
+
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+
+    .collapsing {
+        overflow: hidden!important;
     }
 }

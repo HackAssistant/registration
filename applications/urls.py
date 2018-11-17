@@ -9,4 +9,5 @@ urlpatterns = [
         name='cancel_app'),
     url(r'^dashboard/$', views.HackerDashboard.as_view(), name='dashboard'),
     url(r'^application/$', views.HackerApplication.as_view(), name='application'),
+    url(r'^ambassador/$', views.AmbassadorView.as_view(), name='ambassador'),
 ]

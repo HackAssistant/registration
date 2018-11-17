@@ -1,10 +1,12 @@
-function make_field_typeahead(field_id, path_to_json) {
+function make_field_typeahead(field_id, path_to_json, options) {
     $.ajax({
         type: "GET",
         url: path_to_json,
         dataType: "json"
     }).done(function (res) {
-        $("#id_" + field_id).typeahead({source: res});
+        var opt = {source: res};
+        if (options) opt = Object.assign(opt, options);
+        $("#id_" + field_id).typeahead(opt);
     }).fail(function (jqXHR, textStatus, errorThrown) {
         console.error("AJAX call failed: " + textStatus + ", " + errorThrown);
     });

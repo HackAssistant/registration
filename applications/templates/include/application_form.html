@@ -1,9 +1,10 @@
 {% load bootstrap3 %}
 {% load static %}
 {% load form_utils %}
+
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
-    #id_scholarship > div, #id_reimb > div {
+    #id_scholarship > div, #id_reimb > div, #id_visas > div {
         display: inline-block;
         padding-right: 20px;
         margin-bottom: 0;
@@ -14,6 +15,7 @@
     }
 
 </style>
+
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% bootstrap_form_errors form %}
@@ -37,7 +39,6 @@
     {% endif %}
 </form>
 
-
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 <script src="{% static 'js/form_modifiers.js' %}"></script>
 
@@ -46,7 +47,16 @@
     $(document).ready(function () {
 
             make_field_typeahead('university', '{% static 'schools.json' %}');
+            make_field_typeahead('major', '{% static 'majors.json' %}');
             make_field_typeahead('degree', '{% static 'degrees.json' %}');
+            make_field_typeahead('hear_about', '{% static 'marketing_types.json' %}', {minLength: 0});
+            // hack to show the autocomplete box on click
+            $("#id_hear_about").on("click", function () {
+                ev = $.Event("keydown");
+                ev.keyCode = ev.which = 40;
+                $(this).trigger(ev);
+                return true;
+            });
             $("#id_origin").typeahead({
                 minLength: 3,
                 source: function (query, process) {
@@ -88,6 +98,8 @@
             $('#id_reimb').parent().addClass('required');
             reimb_amout.parent().addClass('required');
 
+            $('#id_visas').parent().addClass('required');
+
             var is_firsttime = $('input[name="first_timer"][value="True"]');
             var experienced = $('input[name="first_timer"][value="False"]');
             var projects = $('#id_projects');
@@ -99,6 +111,67 @@
             });
             // Making projects look like required
             projects.parent().addClass('required');
+
+            var other_gender = $('#id_other_gender');
+            var gender = $('#id_gender');
+            conditional_field(other_gender, gender, function () {
+                return gender.val() === 'O';
+            });
+            // Making gender specification look like required
+            other_gender.parent().addClass('required');
+
+            var other_race = $('#id_other_race');
+            var race = $('#id_race');
+            conditional_field(other_race, race, function () {
+                return race.val() === 'O';
+            });
+            // Making race specification look like required
+            other_race.parent().addClass('required');
+
+            var job_type = $('#id_job_type');
+            var job_interest = $('#id_job_interest');
+            conditional_field(job_type, job_interest, function () {
+                return job_interest.val() !== 'No';
+            });
+            // Making job type look like required
+            job_type.parent().addClass('required');
+
+            $('#id_guardian_name').parent().addClass('required');
+            $('#id_guardian_birth_day').parent().addClass('required');
+
+            // Conditional Permission from Parent/Legal guardian
+            var guardian_parent = $('#id_guardian_name').closest('fieldset');
+            function calculateAge(dateString) {
+                var today = new Date();
+                var birthDate = new Date(dateString);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+            function showGuardianPermissions() {
+                var d = new Date($('#id_birth_day').val());
+                return !isNaN(d) && calculateAge(d) < 18;
+            }
+            $('#id_birth_day').on('blur', function () {
+                if (showGuardianPermissions()) {
+                    guardian_parent.fadeIn();
+                } else {
+                    guardian_parent.fadeOut();
+                    $('#id_guardian_name').val('');
+                    $('#id_guardian_birth_day').val('');
+                    $("#id_guardian_code_conduct").prop('checked', false);
+                    $("#id_guardian_privacy_policy").prop('checked', false);
+                    $("#id_guardian_application_sharing").prop('checked', false);
+                    $("#id_guardian_partners_permission").prop('checked', false);
+                    $("#id_guardian_media_permission").prop('checked', false);
+                }
+            });
+            if (!showGuardianPermissions()) {
+                guardian_parent.hide()
+            }
         }
     )
 

@@ -126,7 +126,7 @@ def lazy_format(s, f):
 def hacker_tabs(user):
     application = getattr(user, 'application', None)
     l = [('Home', reverse('dashboard'),
-          'Invited' if application and user.application.needs_action() else False), ]
+          'Invited' if application and user.application.needs_action() else False),]
     if user.email_verified and application and getattr(settings, 'TEAMS_ENABLED', False) \
        and not application.answered_invite():
         l.append(('Team', reverse('teams'), False))
@@ -136,5 +136,7 @@ def hacker_tabs(user):
     if application and getattr(user, 'reimbursement', None) and settings.REIMBURSEMENT_ENABLED:
         l.append(('Travel', reverse('reimbursement_dashboard'),
                   'Pending' if user.reimbursement.needs_action() else False))
+
+    #l.append(('Ambassador', reverse('ambassador'), False))
 
     return l
