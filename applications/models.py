@@ -8,10 +8,11 @@ from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
 from datetime import date, timedelta
-import random
 
 from app import utils
 from user.models import User
+
+import random, string
 
 NO_ANSWER = 'NA'
 OTHER = 'O'
@@ -43,7 +44,6 @@ GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
-    (OTHER, 'Other (please specify)'),
 ]
 
 AMERICAN = 'American Indian or Alaskan Native'
@@ -104,8 +104,9 @@ DEFAULT_YEAR = 2018
 
 def user_directory_path(instance, filename):
     # File will be uploaded to MEDIA_ROOT/resumes/<filename>
-    filename = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(10))
-    return 'resumes/{}'.format(filename)
+    r = random.SystemRandom()
+    randomised = ''.join(r.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+    return 'resumes/{}/{}'.format(randomised, filename)
 
 
 class Ambassador(models.Model):
@@ -153,7 +154,6 @@ class Application(models.Model):
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
-    other_gender = models.CharField(max_length=50, blank=True, null=True)
 
     race = models.CharField(max_length=100, choices=RACES, default=NO_ANSWER)
     other_race = models.CharField(max_length=500, blank=True, null=True)
@@ -164,6 +164,8 @@ class Application(models.Model):
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                                                message="Phone number must be entered in the format: \
                                                                   '+#########'. Up to 15 digits allowed.")])
+
+    country = models.CharField(max_length=300,blank=True)
 
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
@@ -196,8 +198,8 @@ class Application(models.Model):
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
-    major = models.CharField(max_length=300)
-    degree = models.CharField(max_length=300)
+    major = models.CharField(max_length=300, blank=True)
+    degree = models.CharField(max_length=300, blank=True)
 
     # URLs
     github = models.URLField(blank=True, null=True)
@@ -209,6 +211,10 @@ class Application(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+    # Parent/Legal guardian information
+    guardian_name = models.CharField(verbose_name='Full name of Parent/Legal guardian', max_length=255, blank=True)
+    guardian_birth_day = models.DateField(verbose_name='Date of birth of Parent/Legal guardian', null=True, blank=True)
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -233,7 +239,7 @@ class Application(models.Model):
 
     def under_age(self):
         delta = date.today() - self.birth_day
-        if delta < timedelta(days=(18*365+4)):
+        if delta < timedelta(days=(18 * 365 + 4)):
             return True
         else:
             return False

@@ -10,6 +10,10 @@ from app.utils import validate_url
 from applications import models
 
 
+def calculate_age(born):
+    today = timezone.now()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
 class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control',
@@ -26,18 +30,21 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=True, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
 
+    country = forms.CharField(required=True,
+                              widget=forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off'}))
+
     university = forms.CharField(required=True,
                                  label='What university (or high school) do you study at?',
                                  help_text='Current or most recent school you attended.',
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
-    major = forms.CharField(required=True, label='What is your major?',
+    major = forms.CharField(required=False, label='What is your major?',
                              help_text='Your major of study at university',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-majors', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=True, label='What is your current or most recent level of study?',
+    degree = forms.CharField(required=False, label='What is your current or most recent level of study?',
                              help_text='Current or most recent degree you\'ve received '
                                        '(e.g. Bachelor\'s or Master\'s degree)',
                              widget=forms.TextInput(
@@ -89,15 +96,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 'MLH'
                                             ))
-
-
     privacy_policy = forms.BooleanField(required=False,
                                       label='I have read and accept '
                                             '<a href="%s" target="_blank">%s Privacy Policy</a>\
                                             <span style="color: red">*</span>' % (
                                                 getattr(settings, 'PRIVACY_POLICY_LINK', '/privacy_policy'),
                                                 settings.HACKATHON_NAME), )
-
     application_sharing = forms.BooleanField(
             required=False,
             label='I authorize you to share my application/registration \
@@ -111,15 +115,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
             <span style="color: red">*</span>'
         )
-
     partners_permission = forms.BooleanField(
         required=False,
         label='I authorize you to share my application/registration information, including the CV, '
               'with partners of %s. We, or our partners, may perform processing on and make use of the data '
               'in your application for recruiting purposes, for example, sponsors may send you a job offer. '
               '<span style="color: red">*</span>' % settings.HACKATHON_NAME
-    )
-
+        )
     media_permission = forms.BooleanField(
             required=False,
             label='Photos will be taken at the event by the %s \
@@ -132,6 +134,57 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             video content <span style="color: red">*</span>\
             ' % (settings.HACKATHON_NAME, settings.HACKATHON_NAME)
         )
+
+    guardian_name = forms.CharField(label='Full name of Parent/Legal guardian',
+                                    max_length=255, required=False)
+    guardian_birth_day = forms.DateField(label='Date of birth of Parent/Legal guardian',
+                                         required=False,
+                                         widget=forms.DateInput(attrs={'type': 'date'}))
+    guardian_code_conduct = forms.BooleanField(required=False,
+                                      label='I have read and accept '
+                                            '<a href="%s" target="_blank">%s Code of conduct</a>\
+                                            <span style="color: red">*</span>' % (
+                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
+                                                'MLH'
+                                            ))
+    guardian_privacy_policy = forms.BooleanField(required=False,
+                                        label='I have read and accept '
+                                              '<a href="%s" target="_blank">%s Privacy Policy</a>\
+                                              <span style="color: red">*</span>' % (
+                                                  getattr(settings, 'PRIVACY_POLICY_LINK', '/privacy_policy'),
+                                                  settings.HACKATHON_NAME), )
+    guardian_application_sharing = forms.BooleanField(
+        required=False,
+        label='I authorize you to share the application/registration \
+                information for event administration, ranking, MLH \
+                administration, pre- and post-event informational e-mails, \
+                and occasional messages about hackathons in-line with the \
+                <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. \
+                I further I agree to the terms of both the \
+                <a href="#" target="_blank">MLH Contest Terms and Conditions</a> \
+                and the \
+                <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
+                <span style="color: red">*</span>'
+    )
+    guardian_partners_permission = forms.BooleanField(
+        required=False,
+        label='I authorize you to share the application/registration information, including the CV, '
+              'with partners of %s. We, or our partners, may perform processing on and make use of the data '
+              'in the application for recruiting purposes, for example, sponsors may send the attendee a job offer. '
+              '<span style="color: red">*</span>' % settings.HACKATHON_NAME
+        )
+    guardian_media_permission = forms.BooleanField(
+        required=False,
+        label='Photos will be taken at the event by the %s \
+                organisers and/or by an external party such as MLH. I agree \
+                that photos from the event can be taken, used for internal \
+                and marketing purposes, shared with our sponsors and partners, \
+                including MLH. I also grant %s, MLH and other partners \
+                the permission to record and publish photos and video \
+                of the event and the exclusive right to produce commercial \
+                video content <span style="color: red">*</span>\
+                ' % (settings.HACKATHON_NAME, settings.HACKATHON_NAME)
+    )
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
@@ -186,6 +239,69 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return pp
 
 
+    def is_guardian_required(self):
+        applicant_bd = self.cleaned_data.get('birth_day', None)
+        if applicant_bd and calculate_age(applicant_bd) < 18:
+            return True
+        return False
+
+    def clean_guardian_birth_day(self):
+        bd = self.cleaned_data.get('guardian_birth_day', None)
+        if not self.instance.pk and self.is_guardian_required():
+            if not bd:
+                raise forms.ValidationError("Please specify your birth day")
+            # Check that the guardian is at least 18
+            if calculate_age(bd) < 18:
+                raise forms.ValidationError("Parent/Legal guardian must be over 18")
+        return bd
+
+    def clean_guardian_code_conduct(self):
+        cc = self.cleaned_data.get('guardian_code_conduct', False)
+        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk and self.is_guardian_required():
+            raise forms.ValidationError(
+                "As a parent or legal guardian you must abide by our code of conduct")
+        return cc
+
+    def clean_guardian_privacy_policy(self):
+        pc = self.cleaned_data.get('guardian_privacy_policy', False)
+        # Check that if it's the first submission hackers checks privacy policy checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not pc and not self.instance.pk and self.is_guardian_required():
+            raise forms.ValidationError(
+                "As a parent or legal guardian you must abide by our privacy policy")
+        return pc
+
+    def clean_guardian_application_sharing(self):
+        aps = self.cleaned_data.get('guardian_application_sharing', False)
+        # Check if hackers agreed with application sharing
+        if not aps and not self.instance.pk and self.is_guardian_required():
+            raise forms.ValidationError(
+                "As a parent or legal guardian you must give us permission to share the application with MLH")
+        return aps
+
+    def clean_guardian_media_permission(self):
+        mp = self.cleaned_data.get('guardian_media_permission', False)
+        # Check if hackers give us permission to publish media files asociated with them
+        if not mp and not self.instance.pk and self.is_guardian_required():
+            raise forms.ValidationError(
+                "As a parent or legal guardian you must agree with that photos from the event can be used "
+                "as described below")
+        return mp
+
+    def clean_guardian_partners_permission(self):
+        pp = self.cleaned_data.get('guardian_partners_permission', False)
+        # Check if hackers give us permission to publish media files asociated with them
+        if not pp and not self.instance.pk and self.is_guardian_required():
+            raise forms.ValidationError(
+                "As a parent or legal guardian you must give us permission to share the data "
+                "with partners of %s" % settings.HACKATHON_NAME)
+        return pp
+
+
     def clean_github(self):
         data = self.cleaned_data['github']
         validate_url(data, 'github.com')
@@ -232,13 +348,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
 
-    def clean_other_gender(self):
-        data = self.cleaned_data['other_gender']
-        gender = self.cleaned_data['gender']
-        if gender == 'O' and not data:
-            raise forms.ValidationError("Please specify your gender")
-        return data
-
     def clean_other_race(self):
         data = self.cleaned_data['other_race']
         race = self.cleaned_data['race']
@@ -275,8 +384,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'other_gender', 'race', 'other_race', 'birth_day',
-                         'phone_number', 'university', 'major', 'degree', 'graduation_year',
+             {'fields': ('gender', 'race', 'other_race', 'birth_day',
+                         'phone_number', 'country', 'university', 'major', 'degree', 'graduation_year',
                          'tshirt_size', 'diet', 'other_diet'),
              'description': 'Hey there, before we begin, we need to know some basics about you.', }),
             ('Job preferences',
@@ -327,10 +436,25 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                             'code_conduct',
                             'privacy_policy',
                             'application_sharing',
-                            'media_permission',
                             'partners_permission',
+                            'media_permission',
                         ),
-                        'description': 'We need this permissions to provide you better experiences'}),
+                        'description': 'We need these permissions to provide you better experience'}),
+            )
+            self._fieldsets.append(
+                ('Permissions of Parent/Legal guardian',
+                 {'fields': (
+                     'guardian_name',
+                     'guardian_birth_day',
+                     'guardian_code_conduct',
+                     'guardian_privacy_policy',
+                     'guardian_application_sharing',
+                     'guardian_partners_permission',
+                     'guardian_media_permission',
+                 ),
+                     'description': 'If you are under 18, your parent or legal guardian must agree with the '
+                                    'permissions below.<br>The fields below must be filled in by your parent or '
+                                    'legal guardian.'}),
             )
         return super(ApplicationForm, self).fieldsets
 
@@ -365,7 +489,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
         labels = {
             'comment': 'Do you have any additional comments?',
-            'other_gender': 'What gender do you identify as?',
             'race': 'What is your race/ethnicity?',
             'other_race': 'Please specify your race/ethnicity',
             'graduation_year': 'What is your graduation year?',
@@ -419,7 +542,7 @@ class AmbassadorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Permissions', 
+            self._fieldsets.append(('Permissions',
                 {'fields': (
                         'privacy_policy',
                     ),

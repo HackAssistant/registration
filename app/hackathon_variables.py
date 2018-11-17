@@ -9,8 +9,8 @@ HACKATHON_APPLICATION_NAME = 'Hack Kosice registration'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'HackAssistant is an organization to mantain ' \
-                        'a few open-source projects related with hackathon management'
+HACKATHON_DESCRIPTION = 'Hackathon in Kosice, Slovakia: 24 hours, 150 hackers, 1 spirit. ' \
+                        'Come to meet the best hackers, eat the best free food, invent something groundbreaking.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'apply.hackkosice.com')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
@@ -18,10 +18,10 @@ HACKATHON_CONTACT_EMAIL = 'contact@hackkosice.com'
 # Hackathon logo url, will be used on all emails
 HACKATHON_LOGO_URL = 'https://hackkosice.com/wp-content/uploads/2018/10/logo_purpleldpi.png'
 
-HACKATHON_OG_IMAGE = 'https://hackkosice.com/wp-content/uploads/2018/04/logo_s1.png'
+HACKATHON_OG_IMAGE = 'https://hackkosice.com/wp-content/uploads/2018/11/og_image_date.png'
 # (OPTIONAL) Track visits on your website
-# TODO add Web Analytics code
-HACKATHON_GOOGLE_ANALYTICS = 'UA-117942945-1'
+# Web Analytics code
+HACKATHON_GOOGLE_ANALYTICS = 'UA-117942945-2'
 # (OPTIONAL) Hackathon twitter user
 HACKATHON_TWITTER_ACCOUNT = 'hackkosice'
 # (OPTIONAL) Hackathon Facebook page
@@ -32,7 +32,7 @@ HACKATHON_GITHUB_REPO = 'https://github.com/hackkosice/registration/'
 # (OPTIONAL) Applications deadline
 # HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
-# TODO specify Registration and Closing ceremony times (make sure we won't need to change them)
+# Registration and Closing ceremony times (make sure we won't need to change them)
 HACKATHON_ARRIVE = 'Registration opens at 8:30 and closes at 9:30 on Saturday March 30th, ' \
                    'the opening ceremony will be at 10:00.'
 

@@ -229,12 +229,20 @@ footer.footer {
     background-color: #5E2137;
 }
 
-.navbar-nav>li>a {
-    color: #d8d8d8 !important;
+.navbar-default .navbar-nav > li > a {
+    color: #d8d8d8;
 }
 
-.navbar-nav>li>a:hover {
-    color: #ffffff !important;
+.navbar-default .navbar-nav > li > a:hover {
+    color: #ffffff;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: rgb(221, 221, 221);
+}
+
+.navbar-default .navbar-toggle:hover .icon-bar, .navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #888;
 }
 
 @media (max-width: 768px) {
