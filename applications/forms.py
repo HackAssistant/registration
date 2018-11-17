@@ -10,6 +10,10 @@ from app.utils import validate_url
 from applications import models
 
 
+def calculate_age(born):
+    today = timezone.now()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
 class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control',
@@ -128,8 +132,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ' % (settings.HACKATHON_NAME, settings.HACKATHON_NAME)
         )
 
-    guardian_name = forms.CharField(label='Full name of Parent/Legal guardian', max_length=255)
+    guardian_name = forms.CharField(label='Full name of Parent/Legal guardian',
+                                    max_length=255, required=False)
     guardian_birth_day = forms.DateField(label='Date of birth of Parent/Legal guardian',
+                                         required=False,
                                          widget=forms.DateInput(attrs={'type': 'date'}))
     guardian_code_conduct = forms.BooleanField(required=False,
                                       label='I have read and accept '
@@ -230,15 +236,18 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return pp
 
 
+    def is_guardian_required(self):
+        applicant_bd = self.cleaned_data.get('birth_day', None)
+        if applicant_bd and calculate_age(applicant_bd) < 18:
+            return True
+        return False
+
     def clean_guardian_birth_day(self):
         bd = self.cleaned_data.get('guardian_birth_day', None)
-        def calculate_age(born):
-            today = timezone.now()
-            return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-        # Check that the guardian is at least 18
-        if not self.instance.pk:
+        if not self.instance.pk and self.is_guardian_required():
             if not bd:
                 raise forms.ValidationError("Please specify your birth day")
+            # Check that the guardian is at least 18
             if calculate_age(bd) < 18:
                 raise forms.ValidationError("Parent/Legal guardian must be over 18")
         return bd
@@ -248,7 +257,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Check that if it's the first submission hackers checks code of conduct checkbox
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        if not cc and not self.instance.pk:
+        if not cc and not self.instance.pk and self.is_guardian_required():
             raise forms.ValidationError(
                 "As a parent or legal guardian you must abide by our code of conduct")
         return cc
@@ -258,7 +267,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Check that if it's the first submission hackers checks privacy policy checkbox
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        if not pc and not self.instance.pk:
+        if not pc and not self.instance.pk and self.is_guardian_required():
             raise forms.ValidationError(
                 "As a parent or legal guardian you must abide by our privacy policy")
         return pc
@@ -266,7 +275,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     def clean_guardian_application_sharing(self):
         aps = self.cleaned_data.get('guardian_application_sharing', False)
         # Check if hackers agreed with application sharing
-        if not aps and not self.instance.pk:
+        if not aps and not self.instance.pk and self.is_guardian_required():
             raise forms.ValidationError(
                 "As a parent or legal guardian you must give us permission to share the application with MLH")
         return aps
@@ -274,7 +283,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     def clean_guardian_media_permission(self):
         mp = self.cleaned_data.get('guardian_media_permission', False)
         # Check if hackers give us permission to publish media files asociated with them
-        if not mp and not self.instance.pk:
+        if not mp and not self.instance.pk and self.is_guardian_required():
             raise forms.ValidationError(
                 "As a parent or legal guardian you must agree with that photos from the event can be used "
                 "as described below")
@@ -283,7 +292,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     def clean_guardian_partners_permission(self):
         pp = self.cleaned_data.get('guardian_partners_permission', False)
         # Check if hackers give us permission to publish media files asociated with them
-        if not pp and not self.instance.pk:
+        if not pp and not self.instance.pk and self.is_guardian_required():
             raise forms.ValidationError(
                 "As a parent or legal guardian you must give us permission to share the data "
                 "with partners of %s" % settings.HACKATHON_NAME)

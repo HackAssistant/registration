@@ -133,8 +133,45 @@
             conditional_field(job_type, job_interest, function () {
                 return job_interest.val() !== 'No';
             });
-            // Making race specification look like required
+            // Making job type look like required
             job_type.parent().addClass('required');
+
+            $('#id_guardian_name').parent().addClass('required');
+            $('#id_guardian_birth_day').parent().addClass('required');
+
+            // Conditional Permission from Parent/Legal guardian
+            var guardian_parent = $('#id_guardian_name').closest('fieldset');
+            function calculateAge(dateString) {
+                var today = new Date();
+                var birthDate = new Date(dateString);
+                var age = today.getFullYear() - birthDate.getFullYear();
+                var m = today.getMonth() - birthDate.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+                return age;
+            }
+            function showGuardianPermissions() {
+                var d = new Date($('#id_birth_day').val());
+                return !isNaN(d) && calculateAge(d) < 18;
+            }
+            $('#id_birth_day').on('blur', function () {
+                if (showGuardianPermissions()) {
+                    guardian_parent.fadeIn();
+                } else {
+                    guardian_parent.fadeOut();
+                    $('#id_guardian_name').val('');
+                    $('#id_guardian_birth_day').val('');
+                    $("#id_guardian_code_conduct").prop('checked', false);
+                    $("#id_guardian_privacy_policy").prop('checked', false);
+                    $("#id_guardian_application_sharing").prop('checked', false);
+                    $("#id_guardian_partners_permission").prop('checked', false);
+                    $("#id_guardian_media_permission").prop('checked', false);
+                }
+            });
+            if (!showGuardianPermissions()) {
+                guardian_parent.hide()
+            }
         }
     )
 
