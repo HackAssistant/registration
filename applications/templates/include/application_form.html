@@ -113,14 +113,6 @@
             // Making projects look like required
             projects.parent().addClass('required');
 
-            var other_gender = $('#id_other_gender');
-            var gender = $('#id_gender');
-            conditional_field(other_gender, gender, function () {
-                return gender.val() === 'O';
-            });
-            // Making gender specification look like required
-            other_gender.parent().addClass('required');
-
             var other_race = $('#id_other_race');
             var race = $('#id_race');
             conditional_field(other_race, race, function () {
