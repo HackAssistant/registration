@@ -212,6 +212,10 @@ class Application(models.Model):
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
+    # Parent/Legal guardian information
+    guardian_name = models.CharField(verbose_name='Full name of Parent/Legal guardian', max_length=255, blank=True)
+    guardian_birth_day = models.DateField(verbose_name='Date of birth of Parent/Legal guardian', null=True, blank=True)
+
     @classmethod
     def annotate_vote(cls, qs):
         return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
@@ -235,7 +239,7 @@ class Application(models.Model):
 
     def under_age(self):
         delta = date.today() - self.birth_day
-        if delta < timedelta(days=(18*365+4)):
+        if delta < timedelta(days=(18 * 365 + 4)):
             return True
         else:
             return False
