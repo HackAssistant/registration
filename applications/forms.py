@@ -348,13 +348,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
 
-    def clean_other_gender(self):
-        data = self.cleaned_data['other_gender']
-        gender = self.cleaned_data['gender']
-        if gender == 'O' and not data:
-            raise forms.ValidationError("Please specify your gender")
-        return data
-
     def clean_other_race(self):
         data = self.cleaned_data['other_race']
         race = self.cleaned_data['race']
@@ -391,7 +384,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('gender', 'other_gender', 'race', 'other_race', 'birth_day',
+             {'fields': ('gender', 'race', 'other_race', 'birth_day',
                          'phone_number', 'country', 'university', 'major', 'degree', 'graduation_year',
                          'tshirt_size', 'diet', 'other_diet'),
              'description': 'Hey there, before we begin, we need to know some basics about you.', }),
@@ -496,7 +489,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
         labels = {
             'comment': 'Do you have any additional comments?',
-            'other_gender': 'What gender do you identify as?',
             'race': 'What is your race/ethnicity?',
             'other_race': 'Please specify your race/ethnicity',
             'graduation_year': 'What is your graduation year?',

@@ -44,7 +44,6 @@ GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
-    (OTHER, 'Other (please specify)'),
 ]
 
 AMERICAN = 'American Indian or Alaskan Native'
@@ -155,7 +154,6 @@ class Application(models.Model):
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
-    other_gender = models.CharField(max_length=50, blank=True, null=True)
 
     race = models.CharField(max_length=100, choices=RACES, default=NO_ANSWER)
     other_race = models.CharField(max_length=500, blank=True, null=True)
