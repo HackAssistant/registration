@@ -30,6 +30,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=True, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
 
+    country = forms.CharField(required=True,
+                              widget=forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off'}))
+
     university = forms.CharField(required=True,
                                  label='What university (or high school) do you study at?',
                                  help_text='Current or most recent school you attended.',
@@ -389,7 +392,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         self._fieldsets = [
             ('Personal Info',
              {'fields': ('gender', 'other_gender', 'race', 'other_race', 'birth_day',
-                         'phone_number', 'university', 'major', 'degree', 'graduation_year',
+                         'phone_number', 'country', 'university', 'major', 'degree', 'graduation_year',
                          'tshirt_size', 'diet', 'other_diet'),
              'description': 'Hey there, before we begin, we need to know some basics about you.', }),
             ('Job preferences',
