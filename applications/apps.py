@@ -9,4 +9,4 @@ class ApplicationsConfig(AppConfig):
     def ready(self):
         super(ApplicationsConfig, self).ready()
         from .signals import clean_draftapplication
-        clean_draftapplication
+        clean_draft_application
