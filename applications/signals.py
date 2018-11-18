@@ -6,7 +6,7 @@ from applications import models
 
 # Delete DraftApplication when application submitted
 @receiver(post_save, sender=models.Application)
-def clean_draftapplication(sender, instance, created, *args, **kwargs):
+def clean_draft_application(sender, instance, created, *args, **kwargs):
     if not created:
         return None
     # Delete draft as its no longer needed
