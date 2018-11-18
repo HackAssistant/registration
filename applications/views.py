@@ -189,7 +189,9 @@ class HackerApplication(LoginRequiredMixin, TabsView):
 def save_draft(request):
     d = models.DraftApplication()
     d.user = request.user
-    valid_keys = [field.name for field in models.Application()._meta.get_fields()]
+    form_keys = dict(forms.ApplicationForm.fields).keys()
+    valid_keys = [field.name for field in models.Application()._meta.get_fields() if
+                  field in form_keys]
     d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys and v))
     d.save()
     return JsonResponse({'saved': True})
