@@ -8,5 +8,5 @@ class ApplicationsConfig(AppConfig):
 
     def ready(self):
         super(ApplicationsConfig, self).ready()
-        from .signals import clean_draftapplication
+        from .signals import clean_draft_application
         clean_draft_application
