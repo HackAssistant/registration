@@ -19,6 +19,7 @@
 - Review applications interface for organizers (includes vote) ⚖️
 - Email verification 📨
 - Forgot password 🤔
+- Automatic progress save on draft applications ⚙️
 - Internal user role management: Hacker, Organizer, Volunteer, Director and Admin ☕️
 - Automatic control of confirmation, expiration and cancellation flows 🔄
 - Django Admin dashboard to manually edit applications, reimbursement and users 👓
@@ -227,7 +228,26 @@ server {
 - **is_director**: Allows user to send invites to hackers as well as send reimbursement.
 - **is_admin**: Allows user to enter Django Admin interface
 
+### Important SQL queries
 
+Here are several queries that may be useful during the hackathon application process. 
+
+1. `source ./env/bin/activate`
+2. `python manage.py dbshell`
+3. Run SQL query
+4. Extract results
+
+#### Missing applications emails
+
+Emails from users that have registered but have not completed the application.
+
+```sql
+SELECT u.email
+FROM user_user u
+WHERE NOT is_director AND NOT is_volunteer AND NOT is_organizer
+AND u.id NOT IN 
+(SELECT a.user_id FROM applications_application a);
+```
 
 ## Use in your hackathon
 
