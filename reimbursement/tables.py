@@ -61,6 +61,6 @@ class SendReimbursementTable(tables.Table):
         model = Reimbursement
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'assigned_money', 'hacker.email', 'origin', ]
+        fields = ['selected', 'assigned_money', 'hacker.name', 'hacker.email', 'origin', ]
 
         empty_text = 'No reimbursement match criteria'
