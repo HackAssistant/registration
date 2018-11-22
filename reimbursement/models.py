@@ -65,6 +65,9 @@ class Reimbursement(models.Model):
     public_comment = models.CharField(max_length=300, null=True, blank=True)
 
     # User controlled
+    bank = models.CharField(max_length=100, null=True, blank=True)
+    account_name = models.CharField(max_length=100, null=True, blank=True)
+    iban = models.CharField(max_length=100, null=True, blank=True)
     paypal_email = models.EmailField(null=True, blank=True)
     address = models.CharField(max_length=300, null=True, blank=True)
     venmo_user = models.CharField(max_length=40, null=True, blank=True)
