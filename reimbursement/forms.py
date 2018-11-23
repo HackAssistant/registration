@@ -74,7 +74,8 @@ class ReceiptSubmissionReceipt(BetterModelForm):
         }
 
         help_texts = {
-            'friend_emails': 'Comma separated, use emails your friends used to register'
+            'friend_emails': 'Comma separated, use emails your friends used to register',
+            'paypal_email': 'Please add either bank details or PayPal so we can send you reimbursement'
         }
 
 
