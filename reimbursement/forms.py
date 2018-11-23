@@ -6,7 +6,7 @@ from form_utils.forms import BetterModelForm
 
 from reimbursement.models import Reimbursement, check_friend_emails
 
-
+# account_name, iban, bank
 class ReceiptSubmissionReceipt(BetterModelForm):
     def __init__(self, *args, **kwargs):
         super(ReceiptSubmissionReceipt, self).__init__(*args, **kwargs)
@@ -18,15 +18,21 @@ class ReceiptSubmissionReceipt(BetterModelForm):
             try:
                 check_friend_emails(multipl_hacks, self.instance.hacker.email)
             except Exception as e:
-                raise forms.ValidationError(e.message)
+                raise forms.ValidationError(e)
         return multipl_hacks
 
     def clean_paypal_email(self):
-        venmo = self.cleaned_data.get('venmo_user', '')
+        account_name = self.cleaned_data.get('account_name', '')
+        iban = self.cleaned_data.get('iban', '')
+        bank = self.cleaned_data.get('bank', '')
+        if bank and iban and account_name:
+            bank_acc = True
+        else:
+            bank_acc = False
         paypal = self.cleaned_data.get('paypal_email', '')
-        if not venmo and not paypal:
-            raise forms.ValidationError("Please add either venmo or paypal so we can send you reimbursement")
-        return paypal
+        if not paypal and not bank_acc:
+            raise forms.ValidationError("Please add either bank details or PayPal so we can send you reimbursement")
+        return None
 
     def clean_receipt(self):
         receipt = self.cleaned_data['receipt']
@@ -46,12 +52,14 @@ class ReceiptSubmissionReceipt(BetterModelForm):
     class Meta:
         model = Reimbursement
         fields = (
-            'venmo_user', 'paypal_email', 'receipt', 'multiple_hackers', 'friend_emails', 'origin',)
+            'bank', 'account_name', 'iban', 'paypal_email', 'receipt',
+            'multiple_hackers', 'friend_emails', 'origin',)
         fieldsets = (
             ('Upload your receipt',
              {'fields': ('receipt', 'multiple_hackers', 'friend_emails'), }),
             ('From which city are you travelling to %s?' % settings.HACKATHON_NAME, {'fields': ('origin',), }),
-            ('Where should we send you the money?', {'fields': ('venmo_user', 'paypal_email',), }),
+            ('Where should we send you the money?', {'fields': ('bank', 'account_name', 'iban',
+            'paypal_email',), }),
         )
         widgets = {
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
@@ -59,11 +67,15 @@ class ReceiptSubmissionReceipt(BetterModelForm):
 
         labels = {
             'multiple_hackers': 'This receipt covers multiple hackers',
-            'friend_emails': 'Hackers emails'
+            'friend_emails': 'Hackers emails',
+            'bank': 'Bank name',
+            'account_name': 'Bank account name',
+            'iban': 'IBAN'
         }
 
         help_texts = {
-            'friend_emails': 'Comma separated, use emails your friends used to register'
+            'friend_emails': 'Comma separated, use emails your friends used to register',
+            'paypal_email': 'Please add either bank details or PayPal so we can send you reimbursement'
         }
 
 

@@ -108,7 +108,7 @@ class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TabsView):
 def get_deadline(application):
     last_updated = application.status_update_date
     if application.status == models.APP_INVITED:
-        deadline = last_updated + timedelta(days=5)
+        deadline = last_updated + timedelta(days=7)
     else:
         deadline = last_updated + timedelta(days=1)
     return deadline

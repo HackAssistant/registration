@@ -1,0 +1,17 @@
+{% extends "base_table.html" %}
+{% load django_tables2 %}
+{% block head_title %}All application{% endblock %}
+
+{% block table_footer %}
+    {% if user.is_director %}
+        <style>
+            div.table-container {
+                display: none;
+            }
+        </style>
+        <div class="panel-footer">
+            <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Export
+                CSV</a>
+        </div>
+    {% endif %}
+{% endblock %}
