@@ -49,8 +49,10 @@
                     </dt>
                     <dd></dd>
                     {% include 'include/field.html' with desc='Reimbursement money' value=reimb.reimbursement_money %}
+                    {% include 'include/field.html' with desc='Bank name' value=reimb.bank %}
+                    {% include 'include/field.html' with desc='Bank account name' value=reimb.account_name %}
+                    {% include 'include/field.html' with desc='IBAN' value=reimb.iban %}
                     {% include 'include/field.html' with desc='PayPal email' value=reimb.paypal_email %}
-                    {% include 'include/field.html' with desc='Venmo user' value=reimb.venmo_user %}
                 {% endif %}
             </dl>
         </div>

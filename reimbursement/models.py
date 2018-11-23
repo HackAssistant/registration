@@ -70,7 +70,6 @@ class Reimbursement(models.Model):
     iban = models.CharField(max_length=100, null=True, blank=True)
     paypal_email = models.EmailField(null=True, blank=True)
     address = models.CharField(max_length=300, null=True, blank=True)
-    venmo_user = models.CharField(max_length=40, null=True, blank=True)
     receipt = models.FileField(null=True, blank=True, upload_to='receipt', )
     multiple_hackers = models.BooleanField(default=False)
     friend_emails = models.CharField(null=True, blank=True, max_length=400)
