@@ -19,7 +19,7 @@ from applications.emails import send_batch_emails
 from applications.models import APP_PENDING
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter
+    AdminTeamListTable, InviteFilter, ApplicationTable
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
@@ -55,6 +55,7 @@ def organizer_tabs(user):
          ('Ranking', reverse('ranking'), False)]
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
+        t.append(('Export', reverse('export'), False))
     return t
 
 
@@ -75,6 +76,20 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
     table_class = ApplicationsListTable
     filterset_class = ApplicationFilter
     table_pagination = {'per_page': 100}
+    exclude_columns = ('detail', 'status', 'vote_avg')
+    export_name = 'applications'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.annotate_vote(models.Application.objects.all())
+
+
+class ApplicationsExportView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'export.html'
+    table_class = ApplicationTable
+    filterset_class = ApplicationFilter
     exclude_columns = ('detail', 'status', 'vote_avg')
     export_name = 'applications'
 

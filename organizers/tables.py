@@ -50,6 +50,20 @@ class ApplicationsListTable(tables.Table):
         order_by = '-vote_avg'
 
 
+class ApplicationTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
+    origin = tables.Column(accessor='origin', verbose_name='Origin')
+
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        empty_text = 'No applications available'
+        order_by = '-vote_avg'
+
+
 class AdminApplicationsListTable(tables.Table):
     selected = tables.CheckBoxColumn(accessor="pk", verbose_name='Select')
     detail = tables.TemplateColumn(
