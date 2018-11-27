@@ -40,7 +40,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
     major = forms.CharField(required=False, label='What is your major?',
-                             help_text='Your major of study at university',
+                             help_text='Your major of study at university (e.g. Computer Science or Mathematics)',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-majors', 'autocomplete': 'off'}))
 
