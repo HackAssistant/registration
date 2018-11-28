@@ -30,7 +30,7 @@
       "value":"true"
     },
     "MLH_CLIENT_SECRET": {
-      "description": "Enables MyMLH as a sign up option.",
+      "description": "Enables MyMLH as a sign up option. Format for credentials needs to follow `CLIENT_ID@SECRET` from your MyMLH app.",
       "required": false
     }
   },
