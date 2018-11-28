@@ -468,6 +468,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
             'degree': 'What\'s your major?',
+            'birth_day': 'When you click on a field, you should see a pop-up where you can \
+            choose a date.',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
