@@ -7,6 +7,8 @@ class IsHackerMixin(UserPassesTestMixin):
     raise_exception = True
 
     def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
         if not self.request.user.email_verified:
             return False
         if not self.request.user.has_usable_password():
