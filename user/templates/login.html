@@ -17,7 +17,7 @@
         {% if h_oauth_providers.mlh and h_oauth_providers.mlh.id and h_oauth_providers.mlh.auth_url %}
 
             <a class="btn btn-warning btn-block"
-               href="{{ h_oauth_providers.mlh.auth_url }}?client_id={{ h_oauth_providers.mlh.id }}&redirect_uri={{ request.scheme }}://{{ request.get_host }}{% url 'callback' 'mlh' %}&response_type=code&scope=email+event+education+phone_number">
+               href="{{ h_oauth_providers.mlh.auth_url }}?client_id={{ h_oauth_providers.mlh.id }}&redirect_uri={{ request.scheme }}://{{ request.get_host }}{% url 'callback' 'mlh' %}&response_type=code&scope={{ h_oauth_providers.mlh.scope }}">
                 Sign in with MyMLH
             </a>
         {% endif %}
