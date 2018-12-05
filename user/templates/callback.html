@@ -7,6 +7,8 @@
 {% block content %}
     {% if not error %}
     <h1>Set password for account</h1>
+        <p>Set a password for your account for extra security.
+            You will be able to use it to log in with your email ({{ email }}).</p>
     <form action="" method="post" class="form form-horizontal">
         {% csrf_token %}
         {% bootstrap_form form layout="horizontal" %}

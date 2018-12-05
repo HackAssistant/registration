@@ -1,4 +1,3 @@
-import requests
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -10,7 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 
 from app.utils import reverse
 from applications import models as a_models
-from user import forms, models, tokens
+from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.models import User
 from user.tokens import account_activation_token, password_reset_token
@@ -170,6 +169,23 @@ def verify_email_required(request):
 
 
 @login_required
+def set_password(request):
+    if request.user.has_usable_password():
+        return HttpResponseRedirect(reverse('root'))
+    if request.method == 'GET':
+        return TemplateResponse(request, 'callback.html', {'form': SetPasswordForm(), 'email': request.user.email})
+    else:
+        form = SetPasswordForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            form.save(user)
+            auth.login(request, user)
+            messages.success(request, 'Password correctly set')
+            return HttpResponseRedirect(reverse('root'))
+        return TemplateResponse(request, 'callback.html', {'form': form, 'email': request.user.email})
+
+
+@login_required
 def send_email_verification(request):
     if request.user.email_verified:
         messages.warning(request, "Your email has already been verified")
@@ -185,74 +201,41 @@ def callback(request, provider=None):
         return HttpResponseRedirect(reverse('root'))
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
-    if request.method == 'POST':
-        form = SetPasswordForm(request.POST)
-        if not form.is_valid():
-            return TemplateResponse(request, 'callback.html', {'form': form})
-        password = form.cleaned_data['new_password1']
+    code = request.GET.get('code', '')
+    if not code:
+        return HttpResponseRedirect(reverse('root'))
+    try:
+        access_token = providers.auth_mlh(code, request)
+        mlhuser = providers.get_mlh_user(access_token)
+    except ValueError as e:
+        messages.error(request, str(e))
+        return HttpResponseRedirect(reverse('root'))
 
-        # MLH provider logic
-        if provider == 'mlh':
-            conf = settings.OAUTH_PROVIDERS.get('mlh', {})
-
-            # If logic not configured, exit
-            if not conf or not conf.get('id', False):
-                return HttpResponseRedirect(reverse('root'))
-
-            # Get Auth code from GET request
-            conf['code'] = request.GET.get('code', None)
-            if not conf['code']:
-                messages.error(request, 'Missing code, please start again!')
-                return HttpResponseRedirect(reverse('root'))
-
-            # Get Bearer token
-            conf['redirect_url'] = reverse('callback', request=request, kwargs={'provider': provider})
-            token_url = '{token_url}?client_id={id}&client_secret={secret}&code={code}&' \
-                        'redirect_uri={redirect_url}&grant_type=authorization_code'.format(**conf).replace('\n', '')
-            resp = requests.post(
-                token_url
-            )
-            if resp.json().get('error', None):
-                messages.error(request, 'Authentification failed, try again please!')
-                return HttpResponseRedirect(reverse('root'))
-
-            # Get user json
-            conf['access_token'] = resp.json().get('access_token', None)
-            mlhuser = requests.get('{user_url}?access_token={access_token}'.format(**conf)).json()
-            if mlhuser.get('status', None).lower() != 'ok':
-                messages.error(request, 'Authentification failed, try again please!')
-                return HttpResponseRedirect(reverse('root'))
-
-            # Create user
-            email = mlhuser.get('data', {}).get('email', None)
-            name = mlhuser.get('data', {}).get('first_name', '') + ' ' + mlhuser.get('data', {}).get('last_name', None)
-            if models.User.objects.filter(email=email).first() is not None:
-                messages.error(request, 'An account with this email already exists')
-                return HttpResponseRedirect(reverse('root'))
-            else:
-                user = models.User.objects.create_user(email=email, password=password, name=name)
-
-            # Auth user
-            user = auth.authenticate(email=email, password=password)
-            auth.login(request, user)
-
-            # Save extra info
-            draft = a_models.DraftApplication()
-            draft.user = user
-            mlhdiet = mlhuser.get('data', {}).get('dietary_restrictions', '')
-            diet = mlhdiet if mlhdiet in dict(a_models.DIETS).keys() else 'Others'
-            draft.save_dict({
-                'degree': mlhuser.get('data', {}).get('major', ''),
-                'university': mlhuser.get('data', {}).get('school', {}).get('name', ''),
-                'phone_number': mlhuser.get('data', {}).get('phone_number', ''),
-                'tshirt_size': mlhuser.get('data', {}).get('shirt_size', ''),
-                'diet': mlhdiet,
-                'other_diet': mlhdiet if diet == 'Others' else '',
-            })
-            draft.save()
-            return HttpResponseRedirect(reverse('root'))
+    user = User.objects.filter(mlh_id=mlhuser.get('id', -1)).first()
+    if user:
+        auth.login(request, user)
+    elif User.objects.filter(email=mlhuser.get('email', None)).first():
+        messages.error(request, 'An account with this email already exists')
     else:
-        c = {'form': SetPasswordForm()}
-        if not request.GET.get('code', None):
-            c['error'] = request.GET.get('error_description', 'Callback parameters missing.')
-        return TemplateResponse(request, 'callback.html', c, status=200 if request.GET.get('code', None) else 400)
+        user = User.objects.create_mlhuser(
+            email=mlhuser.get('email', None),
+            name=mlhuser.get('first_name', '') + ' ' + mlhuser.get('last_name', None),
+            mlh_id=mlhuser.get('id', None),
+        )
+        auth.login(request, user)
+
+        # Save extra info
+        draft = a_models.DraftApplication()
+        draft.user = user
+        mlhdiet = mlhuser.get('dietary_restrictions', '')
+        diet = mlhdiet if mlhdiet in dict(a_models.DIETS).keys() else 'Others'
+        draft.save_dict({
+            'degree': mlhuser.get('major', ''),
+            'university': mlhuser.get('school', {}).get('name', ''),
+            'phone_number': mlhuser.get('phone_number', ''),
+            'tshirt_size': [k for k, v in a_models.TSHIRT_SIZES if v == mlhuser.get('shirt_size', '')][0],
+            'diet': mlhdiet,
+            'other_diet': mlhdiet if diet == 'Others' else '',
+        })
+        draft.save()
+    return HttpResponseRedirect(reverse('root'))

@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
@@ -14,7 +13,7 @@ from applications.emails import send_batch_emails
 from reimbursement import forms, models, emails
 from reimbursement.tables import ReimbursementTable, ReimbursementFilter, SendReimbursementTable, \
     SendReimbursementFilter
-from user.mixins import IsOrganizerMixin, IsDirectorMixin
+from user.mixins import IsOrganizerMixin, IsDirectorMixin, IsHackerMixin
 
 
 def organizer_tabs(user):
@@ -26,7 +25,7 @@ def organizer_tabs(user):
     return t
 
 
-class ReimbursementHacker(LoginRequiredMixin, TabsView):
+class ReimbursementHacker(IsHackerMixin, TabsView):
     template_name = 'reimbursement_hacker.html'
 
     def get_current_tabs(self):

@@ -197,7 +197,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
             'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
-            'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
         }
 

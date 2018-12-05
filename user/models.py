@@ -19,6 +19,21 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_mlhuser(self, email, name, mlh_id):
+        if not email:
+            raise ValueError('Users must have a email')
+        if not mlh_id:
+            raise ValueError('Users must have a mlh id')
+
+        user = self.model(
+            email=email,
+            name=name,
+            mlh_id=mlh_id
+        )
+        user.set_unusable_password()
+        user.save(using=self._db)
+        return user
+
     def create_superuser(self, email, name, password):
         user = self.create_user(
             email,
@@ -53,6 +68,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
+    mlh_id = models.IntegerField(blank=True, null=True, unique=True)
 
     objects = UserManager()
 
