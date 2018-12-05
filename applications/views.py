@@ -190,9 +190,8 @@ class HackerApplication(IsHackerMixin, TabsView):
 def save_draft(request):
     d = models.DraftApplication()
     d.user = request.user
-    form_keys = dict(forms.ApplicationForm.fields).keys()
-    valid_keys = [field.name for field in models.Application()._meta.get_fields() if
-                  field in form_keys]
-    d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys and v))
+    form_keys = set(dict(forms.ApplicationForm().fields).keys())
+    valid_keys = set([field.name for field in models.Application()._meta.get_fields()])
+    d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys.intersection(form_keys) and v))
     d.save()
     return JsonResponse({'saved': True})
