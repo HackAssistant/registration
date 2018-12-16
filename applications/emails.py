@@ -9,6 +9,7 @@ def create_invite_email(application, request):
     c = {
         'name': application.user.get_full_name,
         'reimb': getattr(application.user, 'reimbursement', None),
+        'visas': application.visas,
         'confirm_url': str(reverse('confirm_app', request=request, kwargs={'id': application.uuid_str})),
         'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str}))
     }

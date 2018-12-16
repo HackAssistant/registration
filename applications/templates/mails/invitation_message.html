@@ -12,6 +12,9 @@
     </p>
     {% include 'mails/include/email_button.html' with text='Confirm' url=confirm_url %}
     {% include 'mails/include/cancel.html' %}
+    {% if visas %}
+        {% include 'mails/include/visas.html' %}
+    {% endif %}
     {% if reimb.waitlisted %}
         {% include 'include/waitlisted_reimbursement.html' %}
     {% elif reimb %}
