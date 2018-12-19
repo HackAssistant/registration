@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from app.views import TabsView
+from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 
@@ -57,11 +58,17 @@ def app_stats_api(request):
     gender_count = Application.objects.all().values('gender') \
         .annotate(applications=Count('gender'))
     gender_count = map(lambda x: dict(gender_name=GENDER_DICT[x['gender']], **x), gender_count)
+    tshirt_dict = dict(a_models.TSHIRT_SIZES)
+    shirt_count = map(
+        lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
+        Application.objects.values('tshirt_size').annotate(applications=Count('tshirt_size'))
+    )
 
-    shirt_count = Application.objects.values('tshirt_size') \
-        .annotate(applications=Count('tshirt_size'))
-    shirt_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size') \
-        .annotate(applications=Count('tshirt_size'))
+    shirt_count_confirmed = map(
+        lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
+        Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size') \
+            .annotate(applications=Count('tshirt_size'))
+    )
 
     diet_count = Application.objects.values('diet') \
         .annotate(applications=Count('diet'))
