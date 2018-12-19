@@ -60,11 +60,41 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
-DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(size), size) for size in ('2017 2018 2019 2020 2021 2022 2023'.split(' '))]
-DEFAULT_YEAR = 2017
+W_XXS = 'W-XSS'
+W_XS = 'W-XS'
+W_S = 'W-S'
+W_M = 'W-M'
+W_L = 'W-L'
+W_XL = 'W-XL'
+W_XXL = 'W-XXL'
+T_XXS = 'XXS'
+T_XS = 'XS'
+T_S = 'S'
+T_M = 'M'
+T_L = 'L'
+T_XL = 'XL'
+T_XXL = 'XXL'
+TSHIRT_SIZES = [
+    (W_XXS, "Women's - XXS"),
+    (W_XS, "Women's - XS"),
+    (W_S, "Women's - S"),
+    (W_M, "Women's - M"),
+    (W_L, "Women's - L"),
+    (W_XL, "Women's - XL"),
+    (W_XXL, "Women's - XXL"),
+    (T_XXS, "Unisex - XXS"),
+    (T_XS, "Unisex - XS"),
+    (T_S, "Unisex - S"),
+    (T_M, "Unisex - M"),
+    (T_L, "Unisex - L"),
+    (T_XL, "Unisex - XL"),
+    (T_XXL, "Unisex - XXL"),
+]
+DEFAULT_TSHIRT_SIZE = T_M
+
+YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
+DEFAULT_YEAR = 2018
 
 
 class Application(models.Model):
@@ -257,7 +287,7 @@ class Application(models.Model):
 
 
 class DraftApplication(models.Model):
-    content = models.CharField(max_length=1000)
+    content = models.CharField(max_length=7000)
     user = models.OneToOneField(User, primary_key=True)
 
     def save_dict(self, d):

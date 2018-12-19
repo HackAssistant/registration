@@ -6,8 +6,7 @@ from datetime import timedelta
 
 from django import http
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -19,6 +18,7 @@ from app.slack import SlackInvitationException
 from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
+from user.mixins import IsHackerMixin, is_hacker
 
 
 def check_application_exists(user, uuid):
@@ -30,7 +30,7 @@ def check_application_exists(user, uuid):
         raise Http404
 
 
-class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
+class ConfirmApplication(IsHackerMixin, UserPassesTestMixin, View):
     def test_func(self):
         check_application_exists(self.request.user, self.kwargs.get('id', None))
         return True
@@ -56,7 +56,7 @@ class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
         return http.HttpResponseRedirect(reverse('dashboard'))
 
 
-class CancelApplication(LoginRequiredMixin, UserPassesTestMixin, TabsView):
+class CancelApplication(IsHackerMixin, UserPassesTestMixin, TabsView):
     template_name = 'cancel.html'
 
     def test_func(self):
@@ -103,7 +103,7 @@ def get_deadline(application):
     return deadline
 
 
-class HackerDashboard(LoginRequiredMixin, TabsView):
+class HackerDashboard(IsHackerMixin, TabsView):
     template_name = 'dashboard.html'
 
     def get_current_tabs(self):
@@ -152,7 +152,7 @@ class HackerDashboard(LoginRequiredMixin, TabsView):
             return render(request, self.template_name, c)
 
 
-class HackerApplication(LoginRequiredMixin, TabsView):
+class HackerApplication(IsHackerMixin, TabsView):
     template_name = 'application.html'
 
     def get_current_tabs(self):
@@ -185,7 +185,7 @@ class HackerApplication(LoginRequiredMixin, TabsView):
             return render(request, self.template_name, c)
 
 
-@login_required
+@is_hacker
 def save_draft(request):
     d = models.DraftApplication()
     d.user = request.user

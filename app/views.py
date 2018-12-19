@@ -12,6 +12,8 @@ def root_view(request):
         return HttpResponseRedirect(reverse('account_signup'))
     if not request.user.is_authenticated() and utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_login'))
+    if not request.user.has_usable_password():
+        return HttpResponseRedirect(reverse('set_password'))
     if not request.user.email_verified:
         return HttpResponseRedirect(reverse('verify_email_required'))
     if request.user.is_organizer:
