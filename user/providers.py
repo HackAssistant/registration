@@ -14,7 +14,7 @@ def auth_mlh(auth_code, request):
     # Get Auth code from GET request
     conf['code'] = auth_code
     if not conf['code']:
-        raise ValueError('Missing code, please start again!')
+        raise ValueError('Invalid URL')
 
     # Get Bearer token
     conf['redirect_url'] = reverse('callback', request=request, kwargs={'provider': 'mlh'})

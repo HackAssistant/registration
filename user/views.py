@@ -198,11 +198,13 @@ def send_email_verification(request):
 
 def callback(request, provider=None):
     if not provider:
+        messages.error(request, 'Invalid URL')
         return HttpResponseRedirect(reverse('root'))
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
     code = request.GET.get('code', '')
     if not code:
+        messages.error(request, 'Invalid URL')
         return HttpResponseRedirect(reverse('root'))
     try:
         access_token = providers.auth_mlh(code, request)
@@ -215,7 +217,7 @@ def callback(request, provider=None):
     if user:
         auth.login(request, user)
     elif User.objects.filter(email=mlhuser.get('email', None)).first():
-        messages.error(request, 'An account with this email already exists')
+        messages.error(request, 'An account with this email already exists. Sign in using your password.')
     else:
         user = User.objects.create_mlhuser(
             email=mlhuser.get('email', None),
