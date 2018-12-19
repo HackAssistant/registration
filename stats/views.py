@@ -66,8 +66,8 @@ def app_stats_api(request):
 
     shirt_count_confirmed = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
-        Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size') \
-            .annotate(applications=Count('tshirt_size'))
+        Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size')
+        .annotate(applications=Count('tshirt_size'))
     )
 
     diet_count = Application.objects.values('diet') \
