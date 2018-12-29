@@ -14,8 +14,12 @@ class CommentAdmin(admin.ModelAdmin):
 class VoteAdmin(admin.ModelAdmin):
     list_display = ('application', 'user', 'tech', 'personal', 'calculated_vote')
     list_per_page = 200
-    list_filter = ('user', 'application')
-    search_fields = ('user', 'application')
+    list_filter = ('application__status',)
+    search_fields = [
+        'user__name',
+        'user__email',
+        'application__university',
+    ]
     actions = ['delete_selected', ]
 
 
