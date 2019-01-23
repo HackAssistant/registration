@@ -39,7 +39,7 @@ def login(request):
                         pass
                 return resp
             else:
-                form.add_error(None, 'Wrong Username or Password. Please try again.')
+                form.add_error(None, 'Incorrect username or password. Please try again.')
 
     else:
         form = forms.LoginForm()
