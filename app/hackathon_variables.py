@@ -51,7 +51,7 @@ HACKATHON_DEV_EMAILS = ['dev@hackkosice.com']
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = True
 CURRENCY = '\u20ac'
-REIMBURSEMENT_EXPIRY_DAYS = 15
+REIMBURSEMENT_EXPIRY_DAYS = 25
 REIMBURSEMENT_AMOUNTS = 'We provide travel reimbursements if you are coming from abroad. ' \
                         'Up to 20\u20ac if you are coming from Czech/Poland/Hungary/Austria/Ukraine ' \
                         'and up to 50\u20ac otherwise (excluding Slovakia).'
