@@ -44,7 +44,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     reimb = forms.TypedChoiceField(
         required=False,
-        label='Do you need travel reimbursement to attend?',
+        label='Do you need a travel reimbursement to attend?',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         initial=False,
@@ -61,8 +61,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     )
 
     code_conduct = forms.BooleanField(required=False,
-                                      label='I have read and accept '
-                                            '<a href="%s" target="_blank">%s Code of conduct</a>' % (
+                                      label='I have read and accept the '
+                                            '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 settings.HACKATHON_NAME), )
 
@@ -180,11 +180,11 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     class Meta:
         model = models.Application
         help_texts = {
-            'gender': 'This is for demographic purposes. You can skip this '
+            'gender': 'This is for demographic purposes. Feel free to skip this '
                       'question if you want',
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
-            'degree': 'What\'s your major?',
+            'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
@@ -201,7 +201,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         }
 
         labels = {
-            'gender': 'What gender do you identify as?',
+            'gender': 'What gender do you associate with?',
             'graduation_year': 'What year will you graduate?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
