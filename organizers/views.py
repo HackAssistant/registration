@@ -55,6 +55,7 @@ def organizer_tabs(user):
          ('Ranking', reverse('ranking'), False)]
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
+        t.append(('Waitlist', reverse('waitlist_list'), False))
         t.append(('Export', reverse('export'), False))
     return t
 
@@ -136,6 +137,42 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
         return HttpResponseRedirect(reverse('invite_list'))
 
 
+class WaitlistListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
+    template_name = 'waitlist_list.html'
+    table_class = AdminApplicationsListTable
+    filterset_class = InviteFilter
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.annotate_vote(models.Application.objects.filter(status=APP_PENDING))
+
+    def post(self, request, *args, **kwargs):
+        ids = request.POST.getlist('selected')
+        apps = models.Application.objects.filter(pk__in=ids).all()
+        mails = []
+        errors = 0
+        for app in apps:
+            try:
+                app.reject(request)
+                m = emails.create_reject_email(app, request)
+                mails.append(m)
+            except ValidationError:
+                errors += 1
+        if mails:
+            send_batch_emails(mails)
+            messages.success(request, "%s applications wait listed" % len(mails))
+        else:
+            errorMsg = "No applications wait listed"
+            if errors != 0:
+                errorMsg = "%s applications not wait listed" % errors
+            messages.error(request, errorMsg)
+
+        return HttpResponseRedirect(reverse('waitlist_list'))
+
+
 class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
     template_name = 'application_detail.html'
 
@@ -200,6 +237,8 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         try:
             application.reject(self.request)
             messages.success(self.request, "%s application wait listed" % application.user.email)
+            m = emails.create_reject_email(application, self.request)
+            m.send()
         except ValidationError as e:
             messages.error(self.request, e.message)
 
@@ -327,3 +366,46 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_teams_list'))
+
+
+class WaitlistTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, TemplateView):
+    template_name = 'waitlist_list.html'
+    table_class = AdminTeamListTable
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.objects.filter(status=APP_PENDING).exclude(user__team__team_code__isnull=True) \
+            .values('user__team__team_code').order_by().annotate(vote_avg=Avg('vote__calculated_vote'),
+                                                                 team=F('user__team__team_code'),
+                                                                 members=Count('user', distinct=True))
+
+    def get_context_data(self, **kwargs):
+        c = super(WaitlistTeamListView, self).get_context_data(**kwargs)
+        c.update({'teams': True})
+        return c
+
+    def post(self, request, *args, **kwargs):
+        ids = request.POST.getlist('selected')
+        apps = models.Application.objects.filter(user__team__team_code__in=ids).all()
+        mails = []
+        errors = 0
+        for app in apps:
+            try:
+                app.reject(request)
+                m = emails.create_waitlist_email(app, request)
+                mails.append(m)
+            except ValidationError:
+                errors += 1
+        if mails:
+            send_batch_emails(mails)
+            messages.success(request, "%s applications wait listed" % len(mails))
+        else:
+            errorMsg = "No applications wait listed"
+            if errors != 0:
+                errorMsg = "%s applications not wait listed" % errors
+            messages.error(request, errorMsg)
+
+        return HttpResponseRedirect(reverse('waitliste_teams_list'))
