@@ -8,7 +8,7 @@
     <p>Please remember to <a href="{{ confirm_url }}">confirm</a> your spot if you will be joining us. If your plans
         have changed, please let us know by cancelling your invite <a href="{{ cancel_url }}">here</a>.
     </p>
-    {% if visas %}
+    {% if app.visas %}
         {% include 'mails/include/visas.html' %}
     {% endif %}
     {% include 'mails/include/closing.html' %}
