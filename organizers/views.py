@@ -395,7 +395,7 @@ class WaitlistTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Tem
         for app in apps:
             try:
                 app.reject(request)
-                m = emails.create_waitlist_email(app, request)
+                m = emails.create_reject_email(app, request)
                 mails.append(m)
             except ValidationError:
                 errors += 1

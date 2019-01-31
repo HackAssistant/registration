@@ -17,7 +17,7 @@ def create_invite_email(application, request):
                               application.user.email, c)
 
 
-def create_waitlist_email(application, request):
+def create_reject_email(application, request):
     c = {'name': application.user.get_full_name}
     return emails.render_mail('mails/waitlist',
                               application.user.email, c)
