@@ -73,6 +73,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         messages.success(self.request, 'Hacker checked-in! Good job! '
                                        'Nothing else to see here, '
                                        'you can move on :D')
+        print(request.META.get('HTTP_REFERER'))
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 # Create your models here.
 from django.utils.datetime_safe import datetime
+from django.utils import timezone
 
 from applications.models import APP_CONFIRMED, APP_ATTENDED
 from user.models import User
@@ -15,7 +16,7 @@ class CheckIn(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        self.update_time = datetime.now()
+        self.update_time = timezone.now()
         super(CheckIn, self).save(force_insert, force_update, using,
                                   update_fields)
         self.application.status = APP_ATTENDED

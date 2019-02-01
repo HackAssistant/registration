@@ -18,9 +18,9 @@
     <div class="panel-footer">
         {% if checkedin %}
             <h4>Let's keep this up!</h4>
-            <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
+            <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in hackers
                 manually...</a>
-            <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">... or try the QR
+            <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">...or use the QR
                 better?</a>
         {% else %}
             <form action="" method="post">
