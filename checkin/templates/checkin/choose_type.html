@@ -1,0 +1,9 @@
+{% extends "base_tabs.html" %}
+{% block head_title %}Check In {{ app.user.name }}{% endblock %}
+{% block panel %}
+
+    {% for type,info in types %}
+        <a class="btn btn-info btn-block" href="{% url 'check_in_session' type %}">{{ info }}</a>
+    {% endfor %}
+
+{% endblock %}
