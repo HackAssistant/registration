@@ -11,7 +11,7 @@ def create_reimbursement_email(reimb, request):
 def create_reject_receipt_email(reimb, request):
     app = reimb.hacker.application
     c = _get_context(app, reimb, request)
-    return emails.render_mail('mails/reject_receipt', reimb.hacker.email, c, from_email=reimb.reimbursed_by.email)
+    return emails.render_mail('mails/reject_receipt', reimb.hacker.email, c)
 
 
 def create_no_reimbursement_email(reimb, request):
