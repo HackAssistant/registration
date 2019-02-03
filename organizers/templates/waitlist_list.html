@@ -1,0 +1,21 @@
+{% extends "base_table.html" %}
+
+{% block head_title %}Waitlist {% if teams %}teams{% else %}applications{% endif %} {% endblock %}
+
+
+{% block table_title %}Invite {% if teams %}teams{% else %}applications{% endif %}{% endblock %}
+
+
+{% block table_footer %}
+    <div class="panel-footer">
+        <button name="waitlist" class="btn btn-danger btn-block"
+                value="waitlist">Wait list
+        </button>
+        {% if teams %}
+            <a href="{% url 'waitlist_list' %}" class="btn btn-default btn-block">View applications</a>
+        {% elif h_team_enabled %}
+            <a href="{% url 'waitlist_teams_list' %}" class="btn btn-default btn-block">Group by teams</a>
+        {% endif %}
+
+    </div>
+{% endblock %}

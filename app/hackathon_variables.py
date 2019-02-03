@@ -86,3 +86,6 @@ LOGGED_IN_COOKIE_KEY = 'hackkosice_logged_in'
 HARDWARE_ENABLED = False
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
+
+# Check-in type expiration time in seconds
+TYPE_EXPIRY = 3600

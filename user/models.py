@@ -31,6 +31,7 @@ class UserManager(BaseUserManager):
         user.email_verified = True
         user.is_volunteer = True
         user.is_hardware_admin = True
+        user.is_external = True
         user.save(using=self._db)
         return user
 
@@ -47,6 +48,7 @@ class User(AbstractBaseUser):
     )
     email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_external = models.BooleanField(default=False)
     is_volunteer = models.BooleanField(default=False)
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
