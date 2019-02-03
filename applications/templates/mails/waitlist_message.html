@@ -1,0 +1,38 @@
+{% extends 'base_email.html' %}
+{% block preheader %}Acceptance email for {{ h_name }}{% endblock %}
+
+{% block content %}
+    <p>
+        Dear {{ name }},
+    </p>
+    <p>
+        First of all, we want to thank you for your application to hack with us at {{ h_name }}
+        2019. We received a lot of applications from hackers all around the world,
+        whose passion and enthusiasm for innovation and development is one of the main reasons
+        why hackathons are such a great place to be!
+    </p>
+    <p>
+        However, after difficult consideration, we regretfully <strong>can not offer you a place at {{ h_name }} 2019</strong>.
+        The competition to get in was pretty harsh and only small differences decided. Due to 
+        a large number of applications we are unable to provide you individual feedback.
+        Please, keep your passion for hacking and make sure to apply for {{ h_name }} 2020!
+    </p>
+    <p>
+        Have any other question? Email us at {{ h_contact_email|urlize }}
+        {% if h_fb or h_tw %}
+            or message us on
+            {% if h_fb %}
+                <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
+                {% if h_tw %}
+                    and
+                    <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+                {% endif %}
+            {% elif h_tw %}
+                <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+            {% endif %}
+            .
+        {% endif %}
+    </p>
+    <p>We wish you all the best and hopefully see you next year!</p>
+    <p>{{ h_name }} Team</p>
+{% endblock %}

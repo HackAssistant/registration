@@ -59,6 +59,8 @@ REIMBURSEMENT_REQUIREMENTS = 'To get reimbursed, you need to attend the hackatho
                              'demo a project and submit travel receipts.'
 REIMBURSEMENT_DEADLINE = timezone.datetime(2019, 4, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
+VISA_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSeo4Ilfof9zl0k1327XeX39HmPryC2kEok8JxbZyyr557cOSw/viewform"
+
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
 HACKATHON_MAX_TEAMMATES = 4
@@ -84,3 +86,6 @@ LOGGED_IN_COOKIE_KEY = 'hackkosice_logged_in'
 HARDWARE_ENABLED = False
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
+
+# Check-in type expiration time in seconds
+TYPE_EXPIRY = 3600
