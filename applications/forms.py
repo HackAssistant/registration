@@ -133,7 +133,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     def clean_other_gender(self):
         data = self.cleaned_data['other_gender']
         gender = self.cleaned_data['gender']
-        if gender == 'O' and not data:
+        if gender == models.GENDER_OTHER and not data:
             raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
         return data
 

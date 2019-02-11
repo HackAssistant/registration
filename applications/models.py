@@ -36,7 +36,7 @@ NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
 NON_BINARY = 'NB'
-GENDER_OTHER = 'O'
+GENDER_OTHER = 'X'
 
 GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
