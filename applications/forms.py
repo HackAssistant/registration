@@ -187,8 +187,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     class Meta:
         model = models.Application
         help_texts = {
-            'gender': 'This is for demographic purposes. Feel free to skip this '
-                      'question if you want',
+            'gender': 'This is for demographic purposes.',
             'graduation_year': 'What year have you graduated on or when will '
                                'you graduate',
             'degree': 'What\'s your major/degree?',
