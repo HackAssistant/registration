@@ -116,7 +116,7 @@ class Application(models.Model):
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=23, choices=GENDERS, default=NO_ANSWER)
-    other_gender = models.CharField(max_length=20, blank=True, null=True)
+    other_gender = models.CharField(max_length=50, blank=True, null=True)
 
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
