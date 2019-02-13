@@ -207,8 +207,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         }
 
         labels = {
-            'gender': 'What do you identify as?',
-            'other_gender': 'Other',
+            'gender': 'What gender do you identify as?',
+            'other_gender': 'Self-describe',
             'graduation_year': 'What year will you graduate?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
