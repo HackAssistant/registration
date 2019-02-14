@@ -59,6 +59,11 @@
                 }
             });
 
+            var other_gender = $('#id_other_gender');
+            var gender = $('#id_gender');
+            conditional_field(other_gender, gender, () => {
+              return gender.val() === 'X';
+            })
 
             var other_diet = $('#id_other_diet');
             var diet = $('#id_diet');
