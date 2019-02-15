@@ -8,10 +8,10 @@ from django.utils import timezone
 from applications.models import Application
 from user.models import User
 
-TECH_WEIGHT = 0.4
-PERSONAL_WEIGHT = 0.3
-PASSION_WEIGHT = 0.2
-CULTURE_WEIGHT = 0.1
+TECH_WEIGHT = 0.44
+PERSONAL_WEIGHT = 0.33
+PASSION_WEIGHT = 0.23
+CULTURE_WEIGHT = 0.0
 
 VOTES = (
     (1, '1'),
