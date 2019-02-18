@@ -36,12 +36,14 @@ NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
 NON_BINARY = 'NB'
+GENDER_OTHER = 'X'
 
 GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
     (NON_BINARY, 'Non-binary'),
+    (GENDER_OTHER, 'Prefer to self-describe'),
 ]
 
 D_NONE = 'None'
@@ -113,7 +115,9 @@ class Application(models.Model):
 
     # ABOUT YOU
     # Population analysis, optional
-    gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
+    gender = models.CharField(max_length=23, choices=GENDERS, default=NO_ANSWER)
+    other_gender = models.CharField(max_length=50, blank=True, null=True)
+
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
@@ -157,7 +161,7 @@ class Application(models.Model):
     # Info for swag and food
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
-    tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+    tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
     @classmethod
     def annotate_vote(cls, qs):
