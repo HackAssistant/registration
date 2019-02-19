@@ -91,7 +91,7 @@ class ApplicationsExportView(TabsViewMixin, IsOrganizerMixin, ExportMixin, Singl
     template_name = 'export.html'
     table_class = ApplicationTable
     filterset_class = ApplicationFilter
-    exclude_columns = ('detail', 'status', 'vote_avg')
+    exclude_columns = ('detail',)
     export_name = 'applications'
 
     def get_current_tabs(self):
