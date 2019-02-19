@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^invite/$', views.InviteListView.as_view(), name="invite_list"),
     url(r'^waitlist/$', views.WaitlistListView.as_view(), name="waitlist_list"),
     url(r'^invite/teams/$', views.InviteTeamListView.as_view(), name="invite_teams_list"),
-    url(r'^waitlist/teams/$', views.WaitlistTeamListView.as_view(), name="waitlist_teams_list")
+    url(r'^waitlist/teams/$', views.WaitlistTeamListView.as_view(), name="waitlist_teams_list"),
+    url(r'^recalculate/votes/$', views.recalc, name="recalc_votes"),
 ]

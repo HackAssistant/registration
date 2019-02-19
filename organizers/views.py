@@ -60,6 +60,13 @@ def organizer_tabs(user):
     return t
 
 
+def recalc(request):
+    for app in models.Application.objects.all():
+        for vote in models.Vote.objects.filter(application=app):
+            vote.save()
+    return HttpResponseRedirect(reverse('app_list'))
+
+
 class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'ranking.html'
     table_class = RankingListTable
