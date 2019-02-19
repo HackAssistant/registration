@@ -109,8 +109,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             administration, pre- and post-event informational e-mails, \
             and occasional messages about hackathons in-line with the \
             <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. \
-            I further I agree to the terms of both the \
-            <a href="#" target="_blank">MLH Contest Terms and Conditions</a> \
+            I further agree to the terms of both the \
+            <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" \
+            target="_blank">MLH Contest Terms and Conditions</a> \
             and the \
             <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
             <span style="color: red">*</span>'
@@ -160,8 +161,9 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                 administration, pre- and post-event informational e-mails, \
                 and occasional messages about hackathons in-line with the \
                 <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. \
-                I further I agree to the terms of both the \
-                <a href="#" target="_blank">MLH Contest Terms and Conditions</a> \
+                I further agree to the terms of both the \
+                <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" \
+                target="_blank">MLH Contest Terms and Conditions</a> \
                 and the \
                 <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
                 <span style="color: red">*</span>'

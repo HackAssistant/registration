@@ -60,6 +60,13 @@ def organizer_tabs(user):
     return t
 
 
+def recalc(request):
+    for app in models.Application.objects.all():
+        for vote in models.Vote.objects.filter(application=app):
+            vote.save()
+    return HttpResponseRedirect(reverse('app_list'))
+
+
 class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'ranking.html'
     table_class = RankingListTable
@@ -91,7 +98,7 @@ class ApplicationsExportView(TabsViewMixin, IsOrganizerMixin, ExportMixin, Singl
     template_name = 'export.html'
     table_class = ApplicationTable
     filterset_class = ApplicationFilter
-    exclude_columns = ('detail', 'status', 'vote_avg')
+    exclude_columns = ('detail',)
     export_name = 'applications'
 
     def get_current_tabs(self):
