@@ -41,8 +41,8 @@
             </button>
         </form>
     {% elif application.answered_invite or application.is_invited %}
-
-
+        <p>You've already been accepted, so you don't need to join a team.</p>
+        <p>Please email us if your (future) teammates haven't been accepted, and we'll put you in their team.</p>
     {% elif not h_app_closed and not team %}
         <p>Do you have a team already? Join it below. Otherwise you can create a new team. </p>
         <form action="" method="post" class="form">
