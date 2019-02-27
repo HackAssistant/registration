@@ -1,6 +1,11 @@
 # Create your views here.
 from __future__ import print_function
 
+import os
+from django.conf import settings
+import zipfile
+import io
+
 import logging
 from datetime import timedelta
 import random
@@ -9,7 +14,7 @@ from django import http
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views import View
@@ -39,6 +44,25 @@ def new_secret_code():
         return temp_code
     else:
         return new_secret_code()
+
+
+def zipCVs(request):
+    if not request.user.is_staff:
+        return Http404
+
+    apps = models.Application.objects.filter(
+        status__in=[models.APP_ATTENDED, models.APP_CONFIRMED]
+    )
+
+    zip_io = io.BytesIO()
+    with zipfile.ZipFile(zip_io, mode='w', compression=zipfile.ZIP_DEFLATED) as backup_zip:
+        for app in apps:
+            backup_zip.write(os.path.join(settings.MEDIA_ROOT, str(app.resume)))
+
+    response = HttpResponse(zip_io.getvalue(), content_type='application/x-zip-compressed')
+    response['Content-Disposition'] = 'attachment; filename=' + 'resumes.zip'
+    response['Content-Length'] = zip_io.tell()
+    return response
 
 
 class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
