@@ -8,7 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
 
-📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu)
+📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu). [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199)
 
 ## Features
 
@@ -53,6 +53,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **PROD_MODE**(optional): Disables Django debug mode. 
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
 - **DATABASE_URL**(optional): URL to connect to the database. If not sets, defaults to django default SQLite database. See schema for different databases [here](https://github.com/kennethreitz/dj-database-url#url-schema).
+- **DATABASE_SECURE**(optional): Whether or not to use SSL to connect to the database. Defaults to `true`.
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
