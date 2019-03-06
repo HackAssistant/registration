@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^reset/done/$', views.password_reset_complete, name='password_reset_complete'),
     url(r'^verify/$', views.verify_email_required, name='verify_email_required'),
     url(r'^verify/send$', views.send_email_verification, name='send_email_verification'),
+    url(r'^data/email$', views.get_data, name='get_data'),
 ]
