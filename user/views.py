@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
@@ -176,3 +177,11 @@ def send_email_verification(request):
     msg.send()
     messages.success(request, "Verification email successfully sent")
     return HttpResponseRedirect(reverse('root'))
+
+
+@staff_member_required
+def get_data(request):
+    data = {}
+    for user in User.objects.all():
+        data[user.pk] = [str(user.name), str(user.email)]
+    return JsonResponse(data)
