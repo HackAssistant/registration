@@ -108,6 +108,11 @@
                                     <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
                                         <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
                                 {% endif %}
+                            {% else %}
+                                {% if request.user.is_external %}
+                                    <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
+                                        href="{% url 'app_list' %}">Applications</a></li>
+                                {% endif %}
                             {% endif %}
                             {% if h_hw_enabled %}
                                 {% include 'include/hardware_tab.html' %}

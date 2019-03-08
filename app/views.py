@@ -16,6 +16,8 @@ def root_view(request):
         return HttpResponseRedirect(reverse('verify_email_required'))
     if request.user.is_organizer:
         return HttpResponseRedirect(reverse('review'))
+    elif request.user.is_external:
+        return HttpResponseRedirect(reverse('app_list'))
     elif request.user.is_volunteer:
         return HttpResponseRedirect(reverse('check_in_list'))
     return HttpResponseRedirect(reverse('dashboard'))

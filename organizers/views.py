@@ -21,7 +21,7 @@ from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
     AdminTeamListTable, InviteFilter, ApplicationTable
 from teams.models import Team
-from user.mixins import IsOrganizerMixin, IsDirectorMixin
+from user.mixins import IsOrganizerMixin, IsDirectorMixin, IsExternalMixin
 from user.models import User
 
 
@@ -49,10 +49,10 @@ def add_comment(application, user, text):
 
 
 def organizer_tabs(user):
-    t = [('Applications', reverse('app_list'), False),
-         ('Review', reverse('review'),
-          'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
-         ('Ranking', reverse('ranking'), False)]
+    t = [('Applications', reverse('app_list'), False)]
+    if user.is_organizer:
+        t.append(('Review', reverse('review'), 'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''))
+        t.append(('Ranking', reverse('ranking'), False))
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
         t.append(('Waitlist', reverse('waitlist_list'), False))
@@ -79,7 +79,7 @@ class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateVie
             vote_count=Count('vote__calculated_vote')).exclude(vote_count=0)
 
 
-class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class ApplicationsListView(TabsViewMixin, IsExternalMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
     table_class = ApplicationsListTable
     filterset_class = ApplicationFilter
@@ -180,7 +180,7 @@ class WaitlistListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterV
         return HttpResponseRedirect(reverse('waitlist_list'))
 
 
-class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+class ApplicationDetailView(TabsViewMixin, IsExternalMixin, TemplateView):
     template_name = 'application_detail.html'
 
     def get_back_url(self):
