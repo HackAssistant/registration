@@ -34,7 +34,7 @@
     <small><span style="color: red">*</span>Indicates required field</small>
 
     {% if not application or application.can_be_edit %}
-        <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
+        <button id="submit" class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
             Submit application{% endif %}</button>
     {% endif %}
 </form>
@@ -45,6 +45,8 @@
 <script>
 
     $(document).ready(function () {
+
+            document.getElementById("submit").addEventListener("click", ga('send', 'event', 'SignUp', 'klik'));
 
             make_field_typeahead('university', '{% static 'schools.json' %}');
             make_field_typeahead('major', '{% static 'majors.json' %}');
