@@ -18,7 +18,6 @@ class HackerTeam(LoginRequiredMixin, TabsView):
     def get_context_data(self, **kwargs):
         c = super(HackerTeam, self).get_context_data(**kwargs)
         team = getattr(self.request.user, 'team', None)
-        print(team)
         teammates = []
         if team:
             teammates = models.Team.objects.filter(team_code=team.team_code) \
