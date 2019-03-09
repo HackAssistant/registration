@@ -129,7 +129,7 @@ def hacker_tabs(user):
     l = [('Home', reverse('dashboard'),
           'Invited' if application and user.application.needs_action() else False),]
     if user.email_verified and application and getattr(settings, 'TEAMS_ENABLED', False) \
-       and not application.answered_invite():
+       and not application.is_cancelled():
         l.append(('Team', reverse('teams'), False))
     if application:
         l.append(('Application', reverse('application'), False))

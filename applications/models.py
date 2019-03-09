@@ -348,3 +348,6 @@ class Application(models.Model):
 
     def can_confirm(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
+    def is_team_closed(self):
+        return self.status in [APP_ATTENDED, APP_EXPIRED, APP_REJECTED, APP_CANCELLED]
