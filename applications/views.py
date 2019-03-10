@@ -65,6 +65,17 @@ def zipCVs(request):
     return response
 
 
+def texCVs(request):
+    if not request.user.is_staff:
+        return Http404
+
+    apps = models.Application.objects.filter(
+        status__in=[models.APP_ATTENDED, models.APP_CONFIRMED]
+    )
+
+    return render(request, 'cv_template.html', context={'applications': apps})
+
+
 class ConfirmApplication(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):
         check_application_exists(self.request.user, self.kwargs.get('id', None))
