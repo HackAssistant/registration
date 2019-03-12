@@ -1,0 +1,39 @@
+<p>
+    {% for app in applications %}
+        \documentclass{article}<br>
+        \usepackage[utf8]{inputenc}<br>
+        \usepackage{hyperref}<br>
+        <br>
+        \title{ {{ app.user.get_full_name }} }<br>
+        \date{}<br>
+        <br>
+        \begin{document}<br>
+        <br>
+        \maketitle<br>
+        <br>
+        \section*{Personal}<br>
+        \textbf{Name: } {{ app.user.get_full_name }}\\<br>
+        \textbf{Place:} {{ app.origin }}\\<br>
+        <br>
+        \section*{Academic}<br>
+        \textbf{University:} {{ app.university }}\\<br>
+        \textbf{Major:} {{ app.major }}\\<br>
+        \textbf{Graduation:} {{ app.graduation_year }}\\<br>
+        \textbf{Degree:} {{ app.degree }}\\<br>
+        \textbf{Job preference:} {{ app.job_type }}\\<br>
+        <br>
+        \section*{Background}<br>
+        \textbf{First time at hackathon:} {% if app.first_timer %}yes{% else %}no{% endif %}\\<br>
+        \textbf{Why excited?} {{ app.description }}\\<br>
+        \textbf{Projects:} {{ app.projects }}\\<br>
+        <br>
+        \section*{Social}<br>
+        \textbf{Github:} \href{ {{ app.github }} }{ {{ app.github }} }\\<br>
+        \textbf{LinkedIn:} \href{ {{ app.linkedin }} }{ {{ app.linkedin }} }<br>
+        <br>
+        \end{document}<br>
+        <br>
+        %%%-----------------------------------------------------------------%%%<br>
+        <br>
+    {% endfor %}
+</p>
