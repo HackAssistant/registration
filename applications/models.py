@@ -20,6 +20,7 @@ APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
 APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
+APP_DUBIOUS = 'D'
 
 STATUS = [
     (APP_PENDING, 'Under review'),
@@ -30,6 +31,7 @@ STATUS = [
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
+    (APP_DUBIOUS, 'Dubious')
 ]
 
 NO_ANSWER = 'NA'
@@ -282,6 +284,9 @@ class Application(models.Model):
 
     def is_last_reminder(self):
         return self.status == APP_LAST_REMIDER
+
+    def is_dubious(self):
+        return self.status == APP_DUBIOUS
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
