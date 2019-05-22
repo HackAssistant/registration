@@ -254,6 +254,11 @@ class Application(models.Model):
         self.status_update_date = timezone.now()
         self.save()
 
+    def set_dubious(self):
+        self.status = APP_DUBIOUS
+        self.contacted = False
+        self.save()
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 

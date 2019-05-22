@@ -43,6 +43,8 @@ def add_comment(application, user, text):
     comment.save()
     return comment
 
+def set_dubious (application):
+    application.set_dubious()
 
 def organizer_tabs(user):
     t = [('Applications', reverse('app_list'), False),
@@ -305,3 +307,19 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_teams_list'))
+
+
+    class DubiousApplicationsView:
+
+        template_name = 'dubious_list.html'
+
+        def get_application(self, kwargs):
+            """
+            Django model to the rescue. This is transformed to an SQL sentence
+            that does exactly what we need
+            :return: dubious applications ordered by submission date (cause we assume that the avg vote will be None)
+            """
+            return models.Application.objects \
+                .exclude(vote__user_id=self.request.user.id) \
+                .filter(status=APP_DUBIOUS) \
+                .order_by('submission_date')
