@@ -106,6 +106,8 @@ class Application(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
+    assigned = models.ForeignKey(User, related_name='assigned_dubious_applications', blank=True, null=True)
+    contacted = models.BooleanField(default=False) #If a dubious application has been contacted yet
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -132,7 +134,7 @@ class Application(models.Model):
     origin = models.CharField(max_length=300)
 
     # Is this your first hackathon?
-    first_timer = models.BooleanField()
+    first_timer = models.BooleanField(default=False)
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
     # Explain a little bit what projects have you done lately
@@ -287,6 +289,9 @@ class Application(models.Model):
 
     def is_dubious(self):
         return self.status == APP_DUBIOUS
+
+    def is_contacted(self):
+        return self.status == APP_DUBIOUS and contacted
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
