@@ -14,7 +14,7 @@ packaging==16.8
 pyasn1==0.1.9
 pyasn1-modules==0.0.8
 pyparsing==2.1.10
-python-http-client==2.2.1
+python-http-client==3.1.0
 python-openid==2.2.5
 requests-oauthlib==0.8.0
 rsa==3.4.2
