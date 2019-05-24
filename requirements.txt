@@ -25,7 +25,7 @@ uritemplate==3.0.0
 uuid==1.30
 pytz==2017.2
 django-tables2==1.14.2
-tablib==0.12.1
+tablib==0.13.0
 dj-database-url==0.5.0
 whitenoise==3.3.1
 psycopg2==2.7.5
