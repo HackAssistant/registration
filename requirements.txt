@@ -1,5 +1,5 @@
 appdirs==1.4.0
-Django==1.11.19
+Django==1.11.20
 django-bootstrap3==8.2.3
 django-form-utils==1.0.3
 django-filter==1.0.1
