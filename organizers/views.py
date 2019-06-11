@@ -43,8 +43,10 @@ def add_comment(application, user, text):
     comment.save()
     return comment
 
-def set_dubious (application):
+
+def set_dubious(application):
     application.set_dubious()
+
 
 def organizer_tabs(user):
     t = [('Applications', reverse('app_list'), False),

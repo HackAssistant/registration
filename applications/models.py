@@ -107,7 +107,7 @@ class Application(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
     assigned = models.ForeignKey(User, related_name='assigned_dubious_applications', blank=True, null=True)
-    contacted = models.BooleanField(default=False) #If a dubious application has been contacted yet
+    contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -298,9 +298,6 @@ class Application(models.Model):
 
     def is_dubious(self):
         return self.status == APP_DUBIOUS
-
-    def is_contacted(self):
-        return self.status == APP_DUis_dubiousBIOUS and contacted
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
