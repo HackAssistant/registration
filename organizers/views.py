@@ -176,6 +176,10 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.waitlist_application(application)
         elif request.POST.get('slack') and request.user.is_organizer:
             self.slack_invite(application)
+        elif request.POST.get('set_dubious') and request.user.is_organizer:
+            application.set_dubious()
+        elif request.POST.get('unset_dubious') and request.user.is_organizer:
+            application.unset_dubious()
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 
@@ -248,12 +252,17 @@ class ReviewApplicationView(ApplicationDetailView):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
         comment_text = request.POST.get('comment_text', None)
+
         application = models.Application.objects.get(pk=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)
             elif request.POST.get('add_comment'):
                 add_comment(application, request.user, comment_text)
+            elif request.POST.get('set_dubious'):
+                application.set_dubious()
+            elif request.POST.get('unset_dubious'):
+                application.unset_dubious()
             else:
                 add_vote(application, request.user, tech_vote, pers_vote)
         # If application has already been voted -> Skip and bring next
@@ -307,19 +316,3 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_teams_list'))
-
-
-    class DubiousApplicationsView:
-
-        template_name = 'dubious_list.html'
-
-        def get_application(self, kwargs):
-            """
-            Django model to the rescue. This is transformed to an SQL sentence
-            that does exactly what we need
-            :return: dubious applications ordered by submission date (cause we assume that the avg vote will be None)
-            """
-            return models.Application.objects \
-                .exclude(vote__user_id=self.request.user.id) \
-                .filter(status=APP_DUBIOUS) \
-                .order_by('submission_date')

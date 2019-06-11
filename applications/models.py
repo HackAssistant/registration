@@ -259,6 +259,10 @@ class Application(models.Model):
         self.contacted = False
         self.save()
 
+    def unset_dubious(self):
+        self.status = APP_PENDING
+        self.save()
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
@@ -296,7 +300,7 @@ class Application(models.Model):
         return self.status == APP_DUBIOUS
 
     def is_contacted(self):
-        return self.status == APP_DUBIOUS and contacted
+        return self.status == APP_DUis_dubiousBIOUS and contacted
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
