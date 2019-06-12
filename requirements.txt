@@ -5,7 +5,7 @@ django-form-utils==1.0.3
 django-filter==1.0.2
 django-jet==1.0.4
 google-api-python-client==1.7.9
-gunicorn==19.6.0
+gunicorn==19.9.0
 httplib2==0.9.2
 Markdown==2.6.7
 oauth2client==4.0.0
