@@ -16,7 +16,7 @@ pyasn1-modules==0.0.8
 pyparsing==2.1.10
 python-http-client==2.2.1
 python-openid==2.2.5
-requests-oauthlib==0.8.0
+requests-oauthlib==1.2.0
 rsa==3.4.2
 sendgrid==3.6.3
 sendgrid-django==4.0.4
