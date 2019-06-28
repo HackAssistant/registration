@@ -16,10 +16,10 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING
+from applications.models import APP_PENDING, APP_DUBIOUS
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
@@ -44,15 +44,13 @@ def add_comment(application, user, text):
     return comment
 
 
-def set_dubious(application):
-    application.set_dubious()
-
-
 def organizer_tabs(user):
     t = [('Applications', reverse('app_list'), False),
          ('Review', reverse('review'),
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
-         ('Ranking', reverse('ranking'), False)]
+         ('Ranking', reverse('ranking'), False),
+         ('Dubious', reverse('dubious'), False)
+        ]
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
     return t
@@ -318,3 +316,29 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_teams_list'))
+
+
+class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'dubious_list.html'
+    table_class = DubiousListTable
+    filterset_class = DubiousApplicationFilter
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('status', 'vote_avg')
+    export_name = 'dubious_applications'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.objects.filter(status=APP_DUBIOUS)
+
+    def post(self, request, *args, **kwargs):
+        application = models.Application.objects.get(uuid=request.POST.get('id'))
+        if request.POST.get('set_contacted'):
+            application.set_contacted(self.request.user)
+        elif request.POST.get('unset_dubious'):
+            application.unset_dubious()
+        elif request.POST.get('reject'):
+            application.reject(request)
+        return HttpResponseRedirect(reverse('dubious'))
+

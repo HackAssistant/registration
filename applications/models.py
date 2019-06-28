@@ -106,8 +106,8 @@ class Application(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
-    assigned = models.ForeignKey(User, related_name='assigned_dubious_applications', blank=True, null=True)
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
+    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -257,11 +257,18 @@ class Application(models.Model):
     def set_dubious(self):
         self.status = APP_DUBIOUS
         self.contacted = False
+        #  self.contacted_by = None
         self.save()
 
     def unset_dubious(self):
         self.status = APP_PENDING
         self.save()
+
+    def set_contacted(self, user):
+        if not self.contacted:
+            self.contacted = True
+            self.contacted_by = user
+            self.save()
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
