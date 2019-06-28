@@ -49,8 +49,7 @@ def organizer_tabs(user):
          ('Review', reverse('review'),
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
-         ('Dubious', reverse('dubious'), False)
-        ]
+         ('Dubious', reverse('dubious'), False)]
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
     return t
@@ -341,4 +340,3 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
         elif request.POST.get('reject'):
             application.reject(request)
         return HttpResponseRedirect(reverse('dubious'))
-

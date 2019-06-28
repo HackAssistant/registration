@@ -21,9 +21,9 @@ class ApplicationFilter(django_filters.FilterSet):
         model = Application
         fields = ['search', 'status']
 
+
 class DubiousApplicationFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
-
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
@@ -61,6 +61,7 @@ class ApplicationsListTable(tables.Table):
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
+
 class DubiousListTable(tables.Table):
     mark_as_read = tables.TemplateColumn(
         """ <form action="" method="post">
@@ -86,12 +87,11 @@ class DubiousListTable(tables.Table):
         verbose_name='Actions', orderable=False)
     origin = tables.Column(accessor='origin', verbose_name='Origin')
 
-
     class Meta:
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'user.email', 'university', 'origin', 'contacted_by','contacted']
+        fields = ['user.name', 'user.email', 'university', 'origin', 'contacted_by', 'contacted']
         empty_text = 'No applications available'
         order_by = '-submission_date'
 
