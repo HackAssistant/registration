@@ -16,10 +16,10 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING
+from applications.models import APP_PENDING, APP_DUBIOUS
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 from user.models import User
@@ -48,7 +48,8 @@ def organizer_tabs(user):
     t = [('Applications', reverse('app_list'), False),
          ('Review', reverse('review'),
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
-         ('Ranking', reverse('ranking'), False)]
+         ('Ranking', reverse('ranking'), False),
+         ('Dubious', reverse('dubious'), False)]
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
     return t
@@ -174,6 +175,10 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.waitlist_application(application)
         elif request.POST.get('slack') and request.user.is_organizer:
             self.slack_invite(application)
+        elif request.POST.get('set_dubious') and request.user.is_organizer:
+            application.set_dubious()
+        elif request.POST.get('unset_dubious') and request.user.is_organizer:
+            application.unset_dubious()
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 
@@ -246,12 +251,17 @@ class ReviewApplicationView(ApplicationDetailView):
         tech_vote = request.POST.get('tech_rat', None)
         pers_vote = request.POST.get('pers_rat', None)
         comment_text = request.POST.get('comment_text', None)
+
         application = models.Application.objects.get(pk=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)
             elif request.POST.get('add_comment'):
                 add_comment(application, request.user, comment_text)
+            elif request.POST.get('set_dubious'):
+                application.set_dubious()
+            elif request.POST.get('unset_dubious'):
+                application.unset_dubious()
             else:
                 add_vote(application, request.user, tech_vote, pers_vote)
         # If application has already been voted -> Skip and bring next
@@ -305,3 +315,28 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             messages.error(request, errorMsg)
 
         return HttpResponseRedirect(reverse('invite_teams_list'))
+
+
+class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'dubious_list.html'
+    table_class = DubiousListTable
+    filterset_class = DubiousApplicationFilter
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('status', 'vote_avg')
+    export_name = 'dubious_applications'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.objects.filter(status=APP_DUBIOUS)
+
+    def post(self, request, *args, **kwargs):
+        application = models.Application.objects.get(uuid=request.POST.get('id'))
+        if request.POST.get('set_contacted'):
+            application.set_contacted(self.request.user)
+        elif request.POST.get('unset_dubious'):
+            application.unset_dubious()
+        elif request.POST.get('reject'):
+            application.reject(request)
+        return HttpResponseRedirect(reverse('dubious'))

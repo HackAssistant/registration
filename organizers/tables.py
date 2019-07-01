@@ -22,6 +22,18 @@ class ApplicationFilter(django_filters.FilterSet):
         fields = ['search', 'status']
 
 
+class DubiousApplicationFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+                               Q(university__icontains=value) | Q(origin__icontains=value))
+
+    class Meta:
+        model = Application
+        fields = ['search']
+
+
 class InviteFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
@@ -48,6 +60,40 @@ class ApplicationsListTable(tables.Table):
         fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
+
+
+class DubiousListTable(tables.Table):
+    mark_as_read = tables.TemplateColumn(
+        """ <form action="" method="post">
+                {% csrf_token %}
+                <button class="btn btn-info" value="set_contacted" name="set_contacted">Contacted</button>
+                <input  type="hidden" value="{{ record.uuid }}" name="id"></input>
+                {% csrf_token %}
+            </form>
+        """
+    )
+    conclusion = tables.TemplateColumn(
+        """ <form action="" method="post">
+                {% csrf_token %}
+                <button class="btn btn-warning" value="unset_dubious" name="unset_dubious">Not dubious</button>
+                <button class="btn btn-danger" value="reject" name="reject"> Reject </button>
+                <input type="hidden" name="id" value="{{ record.uuid }}"></input>
+                {% csrf_token %}
+            </form>
+        """
+    )
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
+    origin = tables.Column(accessor='origin', verbose_name='Origin')
+
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.name', 'user.email', 'university', 'origin', 'contacted_by', 'contacted']
+        empty_text = 'No applications available'
+        order_by = '-submission_date'
 
 
 class AdminApplicationsListTable(tables.Table):

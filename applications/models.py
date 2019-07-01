@@ -20,6 +20,7 @@ APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
 APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
+APP_DUBIOUS = 'D'
 
 STATUS = [
     (APP_PENDING, 'Under review'),
@@ -30,6 +31,7 @@ STATUS = [
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
+    (APP_DUBIOUS, 'Dubious')
 ]
 
 NO_ANSWER = 'NA'
@@ -104,6 +106,8 @@ class Application(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
+    contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
+    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -130,7 +134,7 @@ class Application(models.Model):
     origin = models.CharField(max_length=300)
 
     # Is this your first hackathon?
-    first_timer = models.BooleanField()
+    first_timer = models.BooleanField(default=False)
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
     # Explain a little bit what projects have you done lately
@@ -250,6 +254,22 @@ class Application(models.Model):
         self.status_update_date = timezone.now()
         self.save()
 
+    def set_dubious(self):
+        self.status = APP_DUBIOUS
+        self.contacted = False
+        #  self.contacted_by = None
+        self.save()
+
+    def unset_dubious(self):
+        self.status = APP_PENDING
+        self.save()
+
+    def set_contacted(self, user):
+        if not self.contacted:
+            self.contacted = True
+            self.contacted_by = user
+            self.save()
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
@@ -282,6 +302,9 @@ class Application(models.Model):
 
     def is_last_reminder(self):
         return self.status == APP_LAST_REMIDER
+
+    def is_dubious(self):
+        return self.status == APP_DUBIOUS
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
