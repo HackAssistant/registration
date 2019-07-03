@@ -8,7 +8,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
 
-📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu). [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199)
+📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu). [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199). [User Guide](USER_GUIDE.md)
 
 ## Features
 
