@@ -1,3 +1,9 @@
+# Open registration
+
+You will only be able to register if applications are open. 
+
+To open registration change the `HACKATHON_APP_DEADLINE` variable in [app/hackathon_variables.py](app/hackathon_variables.py)
+
 # Review applications
 
 1. Register using your hackathon email (ex: `*@hackupc.com`).
