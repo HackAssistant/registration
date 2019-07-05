@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -7,9 +6,10 @@ from app.utils import hacker_tabs, reverse
 from app.views import TabsView
 from teams import forms
 from teams import models
+from user.mixins import IsHackerMixin
 
 
-class HackerTeam(LoginRequiredMixin, TabsView):
+class HackerTeam(IsHackerMixin, TabsView):
     template_name = 'team.html'
 
     def get_current_tabs(self):

@@ -8,7 +8,8 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
 from app.utils import reverse
-from user import forms, models, tokens
+from applications import models as a_models
+from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.models import User
 from user.tokens import account_activation_token, password_reset_token
@@ -38,7 +39,7 @@ def login(request):
                         pass
                 return resp
             else:
-                form.add_error(None, 'Wrong Username or Password. Please try again.')
+                form.add_error(None, 'Incorrect username or password. Please try again.')
 
     else:
         form = forms.LoginForm()
@@ -168,6 +169,23 @@ def verify_email_required(request):
 
 
 @login_required
+def set_password(request):
+    if request.user.has_usable_password():
+        return HttpResponseRedirect(reverse('root'))
+    if request.method == 'GET':
+        return TemplateResponse(request, 'callback.html', {'form': SetPasswordForm(), 'email': request.user.email})
+    else:
+        form = SetPasswordForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            form.save(user)
+            auth.login(request, user)
+            messages.success(request, 'Password correctly set')
+            return HttpResponseRedirect(reverse('root'))
+        return TemplateResponse(request, 'callback.html', {'form': form, 'email': request.user.email})
+
+
+@login_required
 def send_email_verification(request):
     if request.user.email_verified:
         messages.warning(request, "Your email has already been verified")
@@ -175,4 +193,51 @@ def send_email_verification(request):
     msg = tokens.generate_verify_email(request.user)
     msg.send()
     messages.success(request, "Verification email successfully sent")
+    return HttpResponseRedirect(reverse('root'))
+
+
+def callback(request, provider=None):
+    if not provider:
+        messages.error(request, 'Invalid URL')
+        return HttpResponseRedirect(reverse('root'))
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('root'))
+    code = request.GET.get('code', '')
+    if not code:
+        messages.error(request, 'Invalid URL')
+        return HttpResponseRedirect(reverse('root'))
+    try:
+        access_token = providers.auth_mlh(code, request)
+        mlhuser = providers.get_mlh_user(access_token)
+    except ValueError as e:
+        messages.error(request, str(e))
+        return HttpResponseRedirect(reverse('root'))
+
+    user = User.objects.filter(mlh_id=mlhuser.get('id', -1)).first()
+    if user:
+        auth.login(request, user)
+    elif User.objects.filter(email=mlhuser.get('email', None)).first():
+        messages.error(request, 'An account with this email already exists. Sign in using your password.')
+    else:
+        user = User.objects.create_mlhuser(
+            email=mlhuser.get('email', None),
+            name=mlhuser.get('first_name', '') + ' ' + mlhuser.get('last_name', None),
+            mlh_id=mlhuser.get('id', None),
+        )
+        auth.login(request, user)
+
+        # Save extra info
+        draft = a_models.DraftApplication()
+        draft.user = user
+        mlhdiet = mlhuser.get('dietary_restrictions', '')
+        diet = mlhdiet if mlhdiet in dict(a_models.DIETS).keys() else 'Others'
+        draft.save_dict({
+            'degree': mlhuser.get('major', ''),
+            'university': mlhuser.get('school', {}).get('name', ''),
+            'phone_number': mlhuser.get('phone_number', ''),
+            'tshirt_size': [k for k, v in a_models.TSHIRT_SIZES if v == mlhuser.get('shirt_size', '')][0],
+            'diet': mlhdiet,
+            'other_diet': mlhdiet if diet == 'Others' else '',
+        })
+        draft.save()
     return HttpResponseRedirect(reverse('root'))

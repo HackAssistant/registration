@@ -110,7 +110,10 @@ DATABASES = {
 }
 
 if os.environ.get('DATABASE_URL', None):
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=os.environ.get('DATABASE_SECURE', 'true').lower() != 'false',
+    )
 
 if os.environ.get('PG_PWD', None):
     DATABASES = {
@@ -234,6 +237,18 @@ else:
             'LOCATION': os.path.join(BASE_DIR, 'cache'),
         }
     }
+
+OAUTH_PROVIDERS = {
+    'mlh': {
+        'auth_url': 'https://my.mlh.io/oauth/authorize',
+        'token_url': 'https://my.mlh.io/oauth/token',
+        'id': os.environ.get('MLH_CLIENT_SECRET', '').split('@')[0],
+        'secret': os.environ.get('MLH_CLIENT_SECRET', '@').split('@')[1],
+        'scope': 'email+event+education+phone_number',
+        'user_url': 'https://my.mlh.io/api/v2/user.json'
+
+    }
+}
 
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)

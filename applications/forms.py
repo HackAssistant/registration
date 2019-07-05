@@ -44,7 +44,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     reimb = forms.TypedChoiceField(
         required=False,
-        label='Do you need travel reimbursement to attend?',
+        label='Do you need a travel reimbursement to attend?',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         initial=False,
@@ -81,6 +81,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     )
 
     resume = forms.FileField(required=True)
+
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
@@ -169,6 +170,13 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
 
+    def clean_other_gender(self):
+        data = self.cleaned_data['other_gender']
+        gender = self.cleaned_data['gender']
+        if gender == models.GENDER_OTHER and not data:
+            raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -178,7 +186,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         # Fieldsets ordered and with description
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('university', 'degree', 'graduation_year', 'gender',
+             {'fields': ('university', 'degree', 'graduation_year', 'gender', 'other_gender',
                          'phone_number', 'tshirt_size', 'diet', 'other_diet',
                          'under_age', 'lennyface', 'hardware'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
@@ -232,12 +240,10 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     class Meta:
         model = models.Application
         help_texts = {
-            'gender': 'This is for demographic purposes. You can skip this '
-                      'question if you want.',
-            'graduation_year': 'What year have you graduated on or when will '
-                               'you graduate.',
-            'degree': 'What\'s your major?',
-            'other_diet': 'Please fill here in your dietary restrictions. We want to make sure we have food for you!',
+            'gender': 'This is for demographic purposes. You can skip this question if you want.',
+            'graduation_year': 'What year have you graduated on or when will you graduate',
+            'degree': 'What\'s your major/degree?',
+            'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
             'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, '
@@ -251,12 +257,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
             'description': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
-            'tshirt_size': forms.RadioSelect(),
             'graduation_year': forms.RadioSelect(),
         }
 
         labels = {
             'gender': 'What gender do you identify as?',
+            'other_gender': 'Self-describe',
             'graduation_year': 'What year will you graduate?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',

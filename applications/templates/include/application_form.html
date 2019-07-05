@@ -19,7 +19,7 @@
     {% bootstrap_form_errors form %}
     {% for fieldset in form.fieldsets %}
         <fieldset>
-            <h3>{{ fieldset.name }}<br>
+            <h3>{{ fieldset.name }}<small style="color: darkgray; font-style: italic;" class="pull-right saved-string"></small><br>
                 {% if fieldset.description %}
                     <small>{{ fieldset.description }}</small>
                 {% endif %}
@@ -29,12 +29,14 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
+
     <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
     <small><span style="color: red">*</span>Indicates required field.</small>
 
     {% if not application or application.can_be_edit %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
             Submit application{% endif %}</button>
+
     {% endif %}
 </form>
 
@@ -60,6 +62,11 @@
                 }
             });
 
+            var other_gender = $('#id_other_gender');
+            var gender = $('#id_gender');
+            conditional_field(other_gender, gender, () => {
+              return gender.val() === 'X';
+            })
 
             var other_diet = $('#id_other_diet');
             var diet = $('#id_diet');
@@ -104,6 +111,60 @@
             }, 1);
             // Making projects look like required
             projects.parent().addClass('required');
+
+            {% if not application %}
+                var timer;
+                var clear_timer;
+                var timeout = 5000; // Timout duration
+                $('input,textarea').keyup(function () {
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
+                    timer = setTimeout(saveData, timeout);
+
+                });
+                $('input[type=radio],select').change(function () {
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
+                    timer = setTimeout(saveData, timeout);
+
+                });
+
+                // Save data
+                function saveData() {
+                    if (clear_timer) {
+                        clearTimeout(clear_timer);
+                    }
+                    $('.saved-string').html('Saving...');
+                    var form_obj = {};
+                    var form_array = $('form').serializeArray();
+                    $.each(form_array, function () {
+                        if (form_obj[this.name]) {
+                            if (!form_obj[this.name].push) {
+                                form_obj[this.name] = [form_obj[this.name]];
+                            }
+                            form_obj[this.name].push(this.value || '');
+                        } else {
+                            form_obj[this.name] = this.value || '';
+                        }
+                    });
+
+
+                    // AJAX request
+                    $.ajax({
+                        url: '{% url 'save_draft' %}',
+                        type: 'post',
+                        data: form_obj,
+                        success: function (response) {
+                            $('.saved-string').html('Saved!');
+                            clear_timer = setTimeout(function () {
+                                $('.saved-string').html('');
+                            }, timeout)
+                        }
+                    });
+                }
+            {% endif %}
         }
     )
 

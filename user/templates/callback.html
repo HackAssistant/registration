@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% block head_title %}{% trans "Set passoword" %}{% endblock %}
+
+{% block content %}
+    {% if not error %}
+    <h1>Set password for account</h1>
+        <p>Set a password for your account for extra security.
+            You will be able to use it to log in with your email ({{ email }}).</p>
+    <form action="" method="post" class="form form-horizontal">
+        {% csrf_token %}
+        {% bootstrap_form form layout="horizontal" %}
+        <button class="btn btn-primary btn-block" type="submit">{% trans "Sign up" %}</button>
+    </form>
+    {% else %}
+        <h1>Invalid request</h1>
+
+        <p>
+           {{ error }} Please reach out to <a href="mailto:{{ h_contact_email }}">{{ h_contact_email }}</a> if you think this is an error.
+        </p>
+        <a class="btn btn-default btn-block"
+               href="{% url 'account_signup' %}">< Go back</a>
+    {% endif %}
+
+{% endblock %}

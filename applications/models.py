@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import json
 import uuid as uuid
 
 from django.core.exceptions import ValidationError
@@ -19,6 +20,7 @@ APP_CONFIRMED = 'C'
 APP_CANCELLED = 'X'
 APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
+APP_DUBIOUS = 'D'
 
 STATUS = [
     (APP_PENDING, 'Under review'),
@@ -29,18 +31,21 @@ STATUS = [
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
+    (APP_DUBIOUS, 'Dubious')
 ]
 
 NO_ANSWER = 'NA'
 MALE = 'M'
 FEMALE = 'F'
 NON_BINARY = 'NB'
+GENDER_OTHER = 'X'
 
 GENDERS = [
     (NO_ANSWER, 'Prefer not to answer'),
     (MALE, 'Male'),
     (FEMALE, 'Female'),
     (NON_BINARY, 'Non-binary'),
+    (GENDER_OTHER, 'Prefer to self-describe'),
 ]
 
 D_NONE = 'None'
@@ -59,11 +64,41 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
-DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(size), size) for size in ('2017 2018 2019 2020 2021 2022 2023'.split(' '))]
-DEFAULT_YEAR = 2017
+W_XXS = 'W-XSS'
+W_XS = 'W-XS'
+W_S = 'W-S'
+W_M = 'W-M'
+W_L = 'W-L'
+W_XL = 'W-XL'
+W_XXL = 'W-XXL'
+T_XXS = 'XXS'
+T_XS = 'XS'
+T_S = 'S'
+T_M = 'M'
+T_L = 'L'
+T_XL = 'XL'
+T_XXL = 'XXL'
+TSHIRT_SIZES = [
+    (W_XXS, "Women's - XXS"),
+    (W_XS, "Women's - XS"),
+    (W_S, "Women's - S"),
+    (W_M, "Women's - M"),
+    (W_L, "Women's - L"),
+    (W_XL, "Women's - XL"),
+    (W_XXL, "Women's - XXL"),
+    (T_XXS, "Unisex - XXS"),
+    (T_XS, "Unisex - XS"),
+    (T_S, "Unisex - S"),
+    (T_M, "Unisex - M"),
+    (T_L, "Unisex - L"),
+    (T_XL, "Unisex - XL"),
+    (T_XXL, "Unisex - XXL"),
+]
+DEFAULT_TSHIRT_SIZE = T_M
+
+YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
+DEFAULT_YEAR = 2018
 
 
 class Application(models.Model):
@@ -71,6 +106,8 @@ class Application(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
+    contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
+    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -82,7 +119,9 @@ class Application(models.Model):
 
     # ABOUT YOU
     # Population analysis, optional
-    gender = models.CharField(max_length=20, choices=GENDERS, default=NO_ANSWER)
+    gender = models.CharField(max_length=23, choices=GENDERS, default=NO_ANSWER)
+    other_gender = models.CharField(max_length=50, blank=True, null=True)
+
     # Personal data (asking here because we don't want to ask birthday)
     under_age = models.BooleanField()
 
@@ -95,7 +134,7 @@ class Application(models.Model):
     origin = models.CharField(max_length=300)
 
     # Is this your first hackathon?
-    first_timer = models.BooleanField()
+    first_timer = models.BooleanField(default=False)
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
     # Explain a little bit what projects have you done lately
@@ -127,7 +166,7 @@ class Application(models.Model):
     # Info for swag and food
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
-    tshirt_size = models.CharField(max_length=3, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+    tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
     # Info for hardware
     hardware = models.CharField(max_length=300, null=True, blank=True)
@@ -219,6 +258,22 @@ class Application(models.Model):
         self.status_update_date = timezone.now()
         self.save()
 
+    def set_dubious(self):
+        self.status = APP_DUBIOUS
+        self.contacted = False
+        #  self.contacted_by = None
+        self.save()
+
+    def unset_dubious(self):
+        self.status = APP_PENDING
+        self.save()
+
+    def set_contacted(self, user):
+        if not self.contacted:
+            self.contacted = True
+            self.contacted_by = user
+            self.save()
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
@@ -252,8 +307,22 @@ class Application(models.Model):
     def is_last_reminder(self):
         return self.status == APP_LAST_REMIDER
 
+    def is_dubious(self):
+        return self.status == APP_DUBIOUS
+
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
 
     def can_confirm(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
+
+class DraftApplication(models.Model):
+    content = models.CharField(max_length=7000)
+    user = models.OneToOneField(User, primary_key=True)
+
+    def save_dict(self, d):
+        self.content = json.dumps(d)
+
+    def get_dict(self):
+        return json.loads(self.content)

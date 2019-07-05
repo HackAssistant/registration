@@ -1,5 +1,6 @@
 .idea
-env
+env/
+venv/
 *.swp
 *.pyc
 /staticfiles

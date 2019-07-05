@@ -86,8 +86,9 @@ SLACK = {
 
 # Hardware configuration
 HARDWARE_ENABLED = False
-#Hardware request time length (in minutes)
+# Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
+
 
 SLACK_BOT = {
     'id' : os.environ.get('SL_BOT_ID', None),
@@ -96,3 +97,7 @@ SLACK_BOT = {
     'director1' : os.environ.get('SL_BOT_DIRECTOR1', None),
     'director2' : os.environ.get('SL_BOT_DIRECTOR2', None)
 }
+
+# Can Hackers start a request on the hardware lab?
+# HACKERS_CAN_REQUEST = False
+

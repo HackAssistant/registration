@@ -157,6 +157,13 @@
                 <button name="skip" class="btn btn-default btn-block" value="skip">Skip
                     application
                 </button>
+                {% if app.is_dubious %}
+                    <button name="unset_dubious" class="btn btn-info btn-block" value="unset_dubious">Not Dubious Application
+                    </button>
+                {% else %}
+                    <button name="set_dubious" class="btn btn-info btn-block" value="set_dubious">Dubious Application
+                    </button>
+                {% endif %}
             </form>
         </div>
     {% elif app and user.is_director %}
@@ -185,12 +192,19 @@
                     <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
                     </button>
                 {% endif %}
+
+                <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
+                </button>
+                {% if app.is_dubious %}
+                    <button name="unset_dubious" class="btn btn-info btn-block" value="unset_dubious">Not Dubious Application
+                    </button>
+                {% else %}
+                    <button name="set_dubious" class="btn btn-info btn-block" value="set_dubious">Dubious Application
+                    </button>
+                {% endif %}
+
             </form>
         </div>
 
     {% endif %}
 {% endblock %}
-
-
-
-

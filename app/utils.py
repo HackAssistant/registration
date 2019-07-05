@@ -89,7 +89,9 @@ def get_substitutions_templates():
             'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRY_DAYS', None),
             'h_r_enabled': getattr(settings, 'REIMBURSEMENT_ENABLED', False),
             'h_hw_enabled': getattr(settings, 'HARDWARE_ENABLED', False),
-            'h_b_picture': getattr(settings, 'BAGGAGE_PICTURE', False)
+            'h_b_picture': getattr(settings, 'BAGGAGE_PICTURE', False),
+            'h_oauth_providers': getattr(settings, 'OAUTH_PROVIDERS', {}),
+            'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
             }
 
 
