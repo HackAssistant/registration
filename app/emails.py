@@ -16,7 +16,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
     """
     substitutions.update(utils.get_substitutions_templates())
     subject = render_to_string('{0}_subject.txt'.format(template_prefix),
-                               context=Context(substitutions))
+                               context=substitutions)
     # remove superfluous line breaks
     subject = " ".join(subject.splitlines()).strip()
     prefix = '[' + settings.HACKATHON_NAME + ']'
@@ -30,7 +30,7 @@ def render_mail(template_prefix, recipient_email, substitutions,
         try:
             template_name = '{0}_message.{1}'.format(template_prefix, ext)
             bodies[ext] = render_to_string(template_name,
-                                           Context(substitutions)).strip()
+                                           substitutions).strip()
         except TemplateDoesNotExist:
             if ext == 'txt' and not bodies:
                 # We need at least one body
