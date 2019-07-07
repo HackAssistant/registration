@@ -29,7 +29,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 a {
-    color: #E22B57;
+    color: #B4C959;
     text-decoration: none;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
@@ -38,7 +38,7 @@ a {
 }
 
 a:hover, a:active, a:focus {
-    color: #aa002d;
+    color: #B4C959;
     text-decoration: none;
 }
 
@@ -64,7 +64,7 @@ a:hover, a:active, a:focus {
 }
 
 .btn {
-    background: #E22B57;
+    background: #B4C959;
     color: white;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
@@ -84,17 +84,17 @@ a:hover, a:active, a:focus {
 }
 
 .btn:hover, .btn:active, .btn:focus {
-    background: #aa002d !important;
+    background: #B4C959 !important;
     color: white;
 }
 
 .btn-reverse {
-    background: #4c0300;
+    background: #5F723F;
     color: white;
 }
 
 .btn-reverse:hover, .btn-reverse:active, .btn-reverse:focus {
-    background: #810500 !important;
+    background: #5F723F !important;
     color: white;
 
 }
@@ -238,7 +238,7 @@ img.icon {
 }
 
 .alert-danger {
-    background: #E22B57;
+    background: #B4C959;
     color: #FBFBFB;
 }
 
@@ -248,7 +248,7 @@ img.icon {
 }
 
 .alert-warning {
-    background: #E22B57;
+    background: #B4C959;
     color: #FBFBFB;
 }
 
@@ -285,7 +285,7 @@ img {
     padding: 0.5em 1em;
     text-align: center;
     transition: bottom 1s;
-    background-color:#E22B57;
+    background-color:#B4C959;
     z-index:1031; /*footer was set to 1030*/
     box-shadow: 0px 15px 15px 15px black;
     color:white;
@@ -306,7 +306,7 @@ img {
 }
 
 .team-info {
-    color: #e22b57;
+    color: #B4C959;
     font-size: 18px;
 }
 
