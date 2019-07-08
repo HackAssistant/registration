@@ -334,10 +334,10 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
 
     def post(self, request, *args, **kwargs):
         application = models.Application.objects.get(uuid=request.POST.get('id'))
-        if request.POST.get('set_contacted'):
+        if request.POST.get('set_contacted') and request.user.is_hx:
             application.set_contacted(self.request.user)
-        elif request.POST.get('unset_dubious'):
+        elif request.POST.get('unset_dubious') and request.user.is_hx:
             application.unset_dubious()
-        elif request.POST.get('reject'):
+        elif request.POST.get('reject') and request.user.is_hx:
             application.reject(request)
         return HttpResponseRedirect(reverse('dubious'))

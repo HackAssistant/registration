@@ -46,6 +46,7 @@ class UserManager(BaseUserManager):
         user.email_verified = True
         user.is_volunteer = True
         user.is_hardware_admin = True
+        user.is_hx = True
         user.save(using=self._db)
         return user
 
@@ -68,6 +69,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
+    is_hx = models.BooleanField(default=False)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
 
     objects = UserManager()
