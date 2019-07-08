@@ -50,7 +50,7 @@ def organizer_tabs(user):
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False)]
     if user.is_hx:
-        ('Dubious', reverse('dubious'), False)
+        t.append(('Dubious', reverse('dubious'), False))
     if user.is_director:
         t.append(('Invite', reverse('invite_list'), False))
     return t

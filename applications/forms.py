@@ -82,7 +82,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     resume = forms.FileField(required=True)
 
-
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
