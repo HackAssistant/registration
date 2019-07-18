@@ -36,27 +36,36 @@
 
         {% csrf_token %}
         <input type="hidden" name="presentation_id" value="{{ presentation.pk }}"/>
-        <h4 class="text-center">Score</h4>
-        <div class="row criteria">
-            <div class="col-md-2 col-md-offset-4">Technology</div>
-            <div class="col-md-2">Design</div>
-            <div class="col-md-2">Completion</div>
-            <div class="col-md-2">Learning</div>
-        </div>
 
-        {% for judge in "ABC" %}
-        <dl class="dl-horizontal">
-          <div class="row">
-            <div class="col-md-2"><dt>Judge {{ judge }}</dt><dd></dd></div>
-            <div class="col-md-2 col-md-offset-2">{% include 'include/number10.html' with name="tech_score_"|add:judge %}</div>
-            <div class="col-md-2">{% include 'include/number5.html' with name="design_score_"|add:judge %}</div>
-            <div class="col-md-2">{% include 'include/number5.html' with name="completion_score_"|add:judge %}</div>
-            <div class="col-md-2">{% include 'include/number5.html' with name="learning_score_"|add:judge %}</div>
+        {% if is_global_challenge_room %}
+
+          <h4 class="text-center">Score</h4>
+          <div class="row criteria">
+              <div class="col-md-2 col-md-offset-4">Technology</div>
+              <div class="col-md-2">Design</div>
+              <div class="col-md-2">Completion</div>
+              <div class="col-md-2">Learning</div>
           </div>
-        </dl>
-        {% endfor %}
 
-        <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+
+          {% for judge in "ABC" %}
+          <dl class="dl-horizontal">
+            <div class="row">
+              <div class="col-md-2"><dt>Judge {{ judge }}</dt><dd></dd></div>
+              <div class="col-md-2 col-md-offset-2">{% include 'include/number5.html' with name="tech_score_"|add:judge %}</div>
+              <div class="col-md-2">{% include 'include/number5.html' with name="design_score_"|add:judge %}</div>
+              <div class="col-md-2">{% include 'include/number5.html' with name="completion_score_"|add:judge %}</div>
+              <div class="col-md-2">{% include 'include/number5.html' with name="learning_score_"|add:judge %}</div>
+            </div>
+          </dl>
+          {% endfor %}
+
+          <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
+
+        {% else %}
+          <button name="send" class="btn btn-success btn-block" value="send">Done</button>
+        {% endif %}
+
         <button name="skip" class="btn btn-default btn-block" value="skip"
                 onclick="return confirm('Do you want to move this presentation to the end of the queue?');">Skip project
         </button>

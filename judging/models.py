@@ -13,19 +13,19 @@ class Challenge(models.Model):
 
 
 class Project(models.Model):
-    title = models.CharField(max_length=200, unique=True)
+    title = models.CharField(max_length=2000, unique=True)
     url = models.URLField(blank=True)
-    description = models.CharField(max_length=2000)
+    description = models.CharField(max_length=20000)
     video = models.URLField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     file_url = models.URLField(blank=True, null=True)
-    desired_prizes = models.CharField(max_length=400)
-    built_with = models.CharField(blank=True, null=True, max_length=400)
-    submitter_screen_name = models.CharField(blank=True, null=True, max_length=200)
-    submitter_first_name = models.CharField(blank=True, null=True, max_length=100)
-    submitter_last_name = models.CharField(blank=True, null=True, max_length=100)
-    submitter_email = models.CharField(blank=True, null=True, max_length=200)
-    university = models.CharField(blank=True, null=True, max_length=300)
+    desired_prizes = models.CharField(max_length=8000)
+    built_with = models.CharField(blank=True, null=True, max_length=20000)
+    submitter_screen_name = models.CharField(blank=True, null=True, max_length=6000)
+    submitter_first_name = models.CharField(blank=True, null=True, max_length=6000)
+    submitter_last_name = models.CharField(blank=True, null=True, max_length=6000)
+    submitter_email = models.CharField(blank=True, null=True, max_length=6000)
+    university = models.CharField(blank=True, null=True, max_length=6000)
     additional_team_member_count = models.IntegerField(default=0)
 
     def __str__(self):

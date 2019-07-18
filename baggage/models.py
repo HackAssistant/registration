@@ -58,9 +58,9 @@ class Bag(models.Model):
     # Reflects the column where the item is/was
     col = models.PositiveIntegerField(null=False)
     # Type of item
-    btype = models.CharField(max_length=10, null=False)
+    btype = models.CharField(max_length=255, null=False)
     # Primary color of the item
-    color = models.CharField(max_length=2, null=False)
+    color = models.CharField(max_length=255, null=False)
     # Description of the item
     description = models.TextField(max_length=1023, null=True, blank=True)
     # Reflects if the item is special (different behaviour then) or not
