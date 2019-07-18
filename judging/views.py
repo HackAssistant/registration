@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
+from app import settings
 from app.mixins import TabsViewMixin
 from app.utils import reverse
 from app.views import TabsView
@@ -105,7 +106,9 @@ class RoomJudgingView(TabsViewMixin, TemplateView):
             project = presentation.project if presentation else None
             c.update({'presentation': presentation,
                       'room': self.request.user.room,
-                      'project': project})
+                      'project': project,
+                      'is_global_challenge_room': presentation and presentation.room.challenge.name == settings.HACKATHON_NAME
+                      })
         return c
 
     def get(self, request, *args, **kwargs):
@@ -121,12 +124,19 @@ class RoomJudgingView(TabsViewMixin, TemplateView):
         presentation_id = request.POST.get('presentation_id')
         presentation = Presentation.objects.get(pk=presentation_id)
 
+        if presentation.room.challenge.name != settings.HACKATHON_NAME:
+            if request.POST.get('skip'):
+                skip_presentation(presentation)
+            else:
+                presentation.done = True
+                presentation.save()
+
         judge_aliases = ['A', 'B', 'C']
         for judge in judge_aliases:
-            tech = int(request.POST.get('tech_score_{}'.format(judge), None))
-            design = int(request.POST.get('design_score_{}'.format(judge), None))
-            completion = int(request.POST.get('completion_score_{}'.format(judge), None))
-            learning = int(request.POST.get('learning_score_{}'.format(judge), None))
+            tech = request.POST.get('tech_score_{}'.format(judge), None)
+            design = request.POST.get('design_score_{}'.format(judge), None)
+            completion = request.POST.get('completion_score_{}'.format(judge), None)
+            learning = request.POST.get('learning_score_{}'.format(judge), None)
 
             try:
                 if request.POST.get('skip'):

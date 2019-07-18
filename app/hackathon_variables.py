@@ -35,7 +35,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-# HACKATHON_APP_DEADLINE = timezone.datetime(2018, 2, 24, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2019, 11, 1, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = 'Registration opens at 3:00PM and closes at 6:00PM on Friday October 19th, ' \
                    'the opening ceremony will be at 7:00PM.'
@@ -62,7 +62,7 @@ DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2018, 10, 19, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_DEADLINE = timezone.datetime(2019, 9, 2, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
@@ -85,8 +85,9 @@ SLACK = {
 # LOGGED_IN_COOKIE_KEY = 'hackassistant_logged_in'
 
 # Hardware configuration
-HARDWARE_ENABLED = False
 # Hardware request time length (in minutes)
+HARDWARE_ENABLED = False
+#Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
 
