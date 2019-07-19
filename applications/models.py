@@ -79,6 +79,7 @@ T_M = 'M'
 T_L = 'L'
 T_XL = 'XL'
 T_XXL = 'XXL'
+T_XXXL = 'XXXL'
 TSHIRT_SIZES = [
     (W_XXS, "Women's - XXS"),
     (W_XS, "Women's - XS"),
@@ -87,13 +88,13 @@ TSHIRT_SIZES = [
     (W_L, "Women's - L"),
     (W_XL, "Women's - XL"),
     (W_XXL, "Women's - XXL"),
-    (T_XXS, "Unisex - XXS"),
     (T_XS, "Unisex - XS"),
     (T_S, "Unisex - S"),
     (T_M, "Unisex - M"),
     (T_L, "Unisex - L"),
     (T_XL, "Unisex - XL"),
     (T_XXL, "Unisex - XXL"),
+    (T_XXXL, "Unisex - XXXL"),
 ]
 DEFAULT_TSHIRT_SIZE = T_M
 
