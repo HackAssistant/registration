@@ -65,13 +65,6 @@ DIETS = [
 ]
 
 
-W_XXS = 'W-XSS'
-W_XS = 'W-XS'
-W_S = 'W-S'
-W_M = 'W-M'
-W_L = 'W-L'
-W_XL = 'W-XL'
-W_XXL = 'W-XXL'
 T_XXS = 'XXS'
 T_XS = 'XS'
 T_S = 'S'
@@ -81,13 +74,6 @@ T_XL = 'XL'
 T_XXL = 'XXL'
 T_XXXL = 'XXXL'
 TSHIRT_SIZES = [
-    (W_XXS, "Women's - XXS"),
-    (W_XS, "Women's - XS"),
-    (W_S, "Women's - S"),
-    (W_M, "Women's - M"),
-    (W_L, "Women's - L"),
-    (W_XL, "Women's - XL"),
-    (W_XXL, "Women's - XXL"),
     (T_XS, "Unisex - XS"),
     (T_S, "Unisex - S"),
     (T_M, "Unisex - M"),
