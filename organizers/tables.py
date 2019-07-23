@@ -93,7 +93,7 @@ class DubiousListTable(tables.Table):
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email', 'university', 'origin', 'contacted_by', 'contacted']
         empty_text = 'No applications available'
-        order_by = '-submission_date'
+        order_by = 'contacted'
 
 
 class AdminApplicationsListTable(tables.Table):
