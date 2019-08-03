@@ -21,9 +21,12 @@ APP_CANCELLED = 'X'
 APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 APP_DUBIOUS = 'D'
+APP_INVALID = 'IV'
 
+PENDING_TEXT = 'Under review'
+DUBIOUS_TEXT = 'Dubious'
 STATUS = [
-    (APP_PENDING, 'Under review'),
+    (APP_PENDING, PENDING_TEXT),
     (APP_REJECTED, 'Wait listed'),
     (APP_INVITED, 'Invited'),
     (APP_LAST_REMIDER, 'Last reminder'),
@@ -31,7 +34,8 @@ STATUS = [
     (APP_CANCELLED, 'Cancelled'),
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
-    (APP_DUBIOUS, 'Dubious')
+    (APP_DUBIOUS, DUBIOUS_TEXT),
+    (APP_INVALID, 'Invalid')
 ]
 
 NO_ANSWER = 'NA'
@@ -63,7 +67,6 @@ DIETS = [
     (D_GLUTEN_FREE, 'Gluten-free'),
     (D_OTHER, 'Others')
 ]
-
 
 W_XXS = 'W-XSS'
 W_XS = 'W-XS'
@@ -177,8 +180,8 @@ class Application(models.Model):
 
     def get_soft_status_display(self):
         text = self.get_status_display()
-        if "Not" in text or 'Rejected' in text:
-            return "Pending"
+        if DUBIOUS_TEXT in text:
+            return PENDING_TEXT
         return text
 
     def __str__(self):
@@ -237,6 +240,12 @@ class Application(models.Model):
             raise ValidationError('Unfortunately his application hasn\'t been '
                                   'invited [yet]')
 
+    def invalidate(self):
+        if self.status != APP_DUBIOUS:
+            raise ValidationError('Applications can only be marked as invalid if they are dubious first')
+        self.status = APP_INVALID
+        self.save()
+
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current '
@@ -257,7 +266,6 @@ class Application(models.Model):
     def set_dubious(self):
         self.status = APP_DUBIOUS
         self.contacted = False
-        #  self.contacted_by = None
         self.save()
 
     def unset_dubious(self):
@@ -311,6 +319,10 @@ class Application(models.Model):
 
     def can_confirm(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
+    def can_be_invited(self):
+        return self.status in [APP_INVITED, APP_LAST_REMIDER, APP_CANCELLED, APP_PENDING, APP_EXPIRED, APP_REJECTED,
+                               APP_INVALID]
 
 
 class DraftApplication(models.Model):

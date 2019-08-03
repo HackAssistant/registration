@@ -16,13 +16,13 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING, APP_DUBIOUS
+from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID
 from organizers import models
+from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
-from user.models import User
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -49,9 +49,10 @@ def organizer_tabs(user):
          ('Review', reverse('review'),
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
-         ('Dubious', reverse('dubious'), False)]
-    if user.is_director:
-        t.append(('Invite', reverse('invite_list'), False))
+         ]
+    if user.has_dubious_acces:
+        t.append(('Dubious', reverse('dubious'),
+                  'new' if models.Application.objects.filter(status=APP_DUBIOUS, contacted=False).count() else ''))
     return t
 
 
@@ -63,8 +64,10 @@ class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateVie
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return User.objects.annotate(
-            vote_count=Count('vote__calculated_vote')).exclude(vote_count=0)
+        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID]) \
+            .annotate(email=F('user__email'))\
+            .values('email').annotate(vote_count=Count('application'))\
+            .exclude(vote_count=0)
 
 
 class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
@@ -177,8 +180,12 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.slack_invite(application)
         elif request.POST.get('set_dubious') and request.user.is_organizer:
             application.set_dubious()
-        elif request.POST.get('unset_dubious') and request.user.is_organizer:
+        elif request.POST.get('contact_user') and request.user.has_dubious_acces:
+            application.set_contacted(request.user)
+        elif request.POST.get('unset_dubious') and request.user.has_dubious_acces:
             application.unset_dubious()
+        elif request.POST.get('invalidate') and request.user.has_dubious_acces:
+            application.invalidate()
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 
@@ -331,12 +338,3 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
     def get_queryset(self):
         return models.Application.objects.filter(status=APP_DUBIOUS)
 
-    def post(self, request, *args, **kwargs):
-        application = models.Application.objects.get(uuid=request.POST.get('id'))
-        if request.POST.get('set_contacted'):
-            application.set_contacted(self.request.user)
-        elif request.POST.get('unset_dubious'):
-            application.unset_dubious()
-        elif request.POST.get('reject'):
-            application.reject(request)
-        return HttpResponseRedirect(reverse('dubious'))

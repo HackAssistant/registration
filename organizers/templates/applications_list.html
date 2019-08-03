@@ -7,6 +7,8 @@
         <div class="panel-footer">
             <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Export
                 CSV</a>
+            <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Send hacker invites</a>
         </div>
+
     {% endif %}
 {% endblock %}
