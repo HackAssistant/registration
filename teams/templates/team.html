@@ -40,7 +40,7 @@
             <button class="btn btn-danger btn-block" name="leave" value="leave" type="submit">Leave team
             </button>
         </form>
-    {% elif application.answered_invite or application.is_invited %}
+    {% elif not app.can_join_team %}
 
 
     {% elif not h_app_closed and not team %}

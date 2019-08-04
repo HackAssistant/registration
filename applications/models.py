@@ -329,7 +329,7 @@ class Application(models.Model):
                                APP_INVALID]
 
     def can_join_team(self):
-        return self.status in [APP_PENDING, APP_INVITED, APP_LAST_REMIDER, APP_CONFIRMED, APP_ATTENDED, APP_DUBIOUS]
+        return self.status in [APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS]
 
 
 class DraftApplication(models.Model):
