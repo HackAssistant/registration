@@ -65,8 +65,8 @@ class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateVie
 
     def get_queryset(self):
         return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID]) \
-            .annotate(email=F('user__email'))\
-            .values('email').annotate(vote_count=Count('application'))\
+            .annotate(email=F('user__email')) \
+            .values('email').annotate(vote_count=Count('application')) \
             .exclude(vote_count=0)
 
 
@@ -341,4 +341,3 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
 
     def get_queryset(self):
         return models.Application.objects.filter(status=APP_DUBIOUS)
-
