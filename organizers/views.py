@@ -50,7 +50,7 @@ def organizer_tabs(user):
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
          ]
-    if user.has_dubious_acces:
+    if user.has_dubious_acces and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.Application.objects.filter(status=APP_DUBIOUS, contacted=False).count() else ''))
     return t
