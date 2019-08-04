@@ -59,6 +59,7 @@ def organizer_tabs(user):
 class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
     template_name = 'ranking.html'
     table_class = RankingListTable
+    table_pagination = False
 
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
