@@ -66,7 +66,9 @@ class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateVie
     def get_queryset(self):
         return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID]) \
             .annotate(email=F('user__email')) \
-            .values('email').annotate(vote_count=Count('application')) \
+            .values('email').annotate(total_count=Count('application'),
+                                      skip_count=Count('application') - Count('calculated_vote'),
+                                      vote_count=Count('calculated_vote')) \
             .exclude(vote_count=0)
 
 

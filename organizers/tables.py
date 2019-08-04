@@ -100,13 +100,15 @@ class AdminApplicationsListTable(tables.Table):
 
 
 class RankingListTable(tables.Table):
+    counter = tables.TemplateColumn('{{ row_counter|add:1 }}', verbose_name='Position')
+
     class Meta:
         model = User
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['email', 'vote_count', ]
+        fields = ['counter', 'email', 'vote_count', 'skip_count', 'total_count']
         empty_text = 'No organizers voted yet... Why? :\'('
-        order_by = '-vote_count'
+        order_by = '-total_count'
 
 
 class AdminTeamListTable(tables.Table):
