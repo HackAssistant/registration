@@ -111,7 +111,7 @@
             {% for comment in comments %}
                 <h4>{{ comment.text }}</h4>
 
-                <p style="color:gray;">by {{ comment.author.get_full_name }}
+                <p style="color:gray;">by <span title="{{ comment.author.get_full_name }}">{{ comment.author.email }}</span>
                     <small class="pull-right">{{ comment.created_at|timesince }} ago</small>
                 </p>
                 <hr>

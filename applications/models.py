@@ -270,6 +270,7 @@ class Application(models.Model):
 
     def unset_dubious(self):
         self.status = APP_PENDING
+
         self.save()
 
     def set_contacted(self, user):

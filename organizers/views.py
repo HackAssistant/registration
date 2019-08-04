@@ -183,8 +183,12 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         elif request.POST.get('contact_user') and request.user.has_dubious_acces:
             application.set_contacted(request.user)
         elif request.POST.get('unset_dubious') and request.user.has_dubious_acces:
+            add_comment(application, request.user,
+                        "Dubious review result: No problems, hacker allowed to participate in hackathon!")
             application.unset_dubious()
         elif request.POST.get('invalidate') and request.user.has_dubious_acces:
+            add_comment(application, request.user,
+                        "Dubious review result: Hacker is not allowed to participate in hackathon.")
             application.invalidate()
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
