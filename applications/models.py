@@ -306,6 +306,9 @@ class Application(models.Model):
     def is_rejected(self):
         return self.status == APP_REJECTED
 
+    def is_invalid(self):
+        return self.status == APP_INVALID
+
     def is_attended(self):
         return self.status == APP_ATTENDED
 
@@ -324,6 +327,9 @@ class Application(models.Model):
     def can_be_invited(self):
         return self.status in [APP_INVITED, APP_LAST_REMIDER, APP_CANCELLED, APP_PENDING, APP_EXPIRED, APP_REJECTED,
                                APP_INVALID]
+
+    def can_join_team(self):
+        return self.status in [APP_PENDING, APP_INVITED, APP_LAST_REMIDER, APP_CONFIRMED, APP_ATTENDED, APP_DUBIOUS]
 
 
 class DraftApplication(models.Model):
