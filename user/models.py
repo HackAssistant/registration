@@ -66,6 +66,7 @@ class User(AbstractBaseUser):
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    can_review_dubious = models.BooleanField(default=False)
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
@@ -105,3 +106,7 @@ class User(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         return self.is_admin
+
+    @property
+    def has_dubious_acces(self):
+        return self.can_review_dubious or self.is_director

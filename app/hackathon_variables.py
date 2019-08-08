@@ -79,3 +79,6 @@ HARDWARE_ENABLED = False
 HARDWARE_REQUEST_TIME = 15
 # Can Hackers start a request on the hardware lab?
 # HACKERS_CAN_REQUEST = False
+
+# Enable dubious separate pipeline (disabled by default)
+DUBIOUS_ENABLED = True

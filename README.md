@@ -24,6 +24,7 @@
 - Automatic control of confirmation, expiration and cancellation flows 🔄
 - Django Admin dashboard to manually edit applications, reimbursement and users 👓
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
+- (Optional) Separate applications from dubious hackers to manually contact them 🧐
 - (Optional) Automated slack invites on confirm #️⃣
 - (Optional) MyMLH sign up 📥
 
@@ -226,8 +227,9 @@ server {
 
 - **is_volunteer**: Allows user to check-in hackers with QR and list view
 - **is_organizer**: Allows user to vote, see voting ranking and check-in hackers.
-- **is_director**: Allows user to send invites to hackers as well as send reimbursement.
+- **is_director**: Allows user to send invites to hackers as well as send reimbursement. Also can review dubious applications.
 - **is_admin**: Allows user to enter Django Admin interface
+- **can_review_dubious**: User can review and mark as safe applications that seem weird.
 
 ### Important SQL queries
 

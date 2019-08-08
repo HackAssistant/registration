@@ -12,10 +12,11 @@
                 value="invite">Invite
         </button>
         {% if teams %}
-            <a href="{% url 'invite_list' %}" class="btn btn-default btn-block">View applications</a>
+            <a href="{% url 'invite_list' %}" class="btn btn-info btn-block">View applications</a>
         {% elif h_team_enabled %}
-            <a href="{% url 'invite_teams_list' %}" class="btn btn-default btn-block">Group by teams</a>
+            <a href="{% url 'invite_teams_list' %}" class="btn btn-info btn-block">Group by teams</a>
         {% endif %}
+        <a href="{% url 'app_list' %}" class="btn btn-default btn-block">< Back</a>
 
     </div>
 {% endblock %}

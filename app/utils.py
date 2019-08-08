@@ -88,6 +88,7 @@ def get_substitutions_templates():
             'h_hw_enabled': getattr(settings, 'HARDWARE_ENABLED', False),
             'h_oauth_providers': getattr(settings, 'OAUTH_PROVIDERS', {}),
             'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
+            'h_dubious_enabled': getattr(settings, 'DUBIOUS_ENABLED', False),
             }
 
 
@@ -126,16 +127,15 @@ def lazy_format(s, f):
 
 
 def hacker_tabs(user):
-    application = getattr(user, 'application', None)
+    app = getattr(user, 'application', None)
     l = [('Home', reverse('dashboard'),
-          'Invited' if application and user.application.needs_action() else False), ]
-    if user.email_verified and application and getattr(settings, 'TEAMS_ENABLED', False) \
-       and not application.answered_invite():
+          'Invited' if app and user.application.needs_action() else False), ]
+    if user.email_verified and app and getattr(settings, 'TEAMS_ENABLED', False) and app.can_join_team():
         l.append(('Team', reverse('teams'), False))
-    if application:
+    if app:
         l.append(('Application', reverse('application'), False))
 
-    if application and getattr(user, 'reimbursement', None) and settings.REIMBURSEMENT_ENABLED:
+    if app and getattr(user, 'reimbursement', None) and settings.REIMBURSEMENT_ENABLED:
         l.append(('Travel', reverse('reimbursement_dashboard'),
                   'Pending' if user.reimbursement.needs_action() else False))
 
