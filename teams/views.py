@@ -18,6 +18,7 @@ class HackerTeam(IsHackerMixin, TabsView):
     def get_context_data(self, **kwargs):
         c = super(HackerTeam, self).get_context_data(**kwargs)
         team = getattr(self.request.user, 'team', None)
+        app = getattr(self.request.user, 'application', None)
         teammates = []
         if team:
             teammates = models.Team.objects.filter(team_code=team.team_code) \
@@ -28,7 +29,7 @@ class HackerTeam(IsHackerMixin, TabsView):
         instance = models.Team()
         instance.team_code = ''
         form = forms.JoinTeamForm(instance=instance)
-        c.update({'team': team, 'teammates': teammates, 'form': form})
+        c.update({'team': team, 'teammates': teammates, 'app': app, 'form': form})
         return c
 
     def post(self, request, *args, **kwargs):
