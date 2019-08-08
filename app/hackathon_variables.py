@@ -102,3 +102,5 @@ SLACK_BOT = {
 # Can Hackers start a request on the hardware lab?
 # HACKERS_CAN_REQUEST = False
 
+# Enable dubious separate pipeline (disabled by default)
+DUBIOUS_ENABLED = True

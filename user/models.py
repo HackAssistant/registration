@@ -67,9 +67,9 @@ class User(AbstractBaseUser):
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    can_review_dubious = models.BooleanField(default=False)
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
-    is_hx = models.BooleanField(default=False)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
 
     objects = UserManager()
@@ -108,5 +108,6 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         return self.is_admin
 
-    def is_hackerexpirence(self):
-        return self.is_hx
+    @property
+    def has_dubious_acces(self):
+        return self.can_review_dubious or self.is_director
