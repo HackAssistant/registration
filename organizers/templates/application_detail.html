@@ -204,7 +204,7 @@
                     <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
                     </button>
                 {% endif %}
-                {% if app.is_dubious and user.has_dubious_acces and app.contacted and app.contacted_by == request.user %}
+                {% if app.is_dubious and app.contacted and app.contacted_by == request.user %}
                     <button name="unset_dubious" class="btn btn-success btn-block" value="unset_dubious">Mark as not
                         dubious
                     </button>
@@ -214,14 +214,36 @@
                     <button name="invalidate" class="btn btn-default btn-block" disabled value="invalidate">Application
                         under review by {{ app.contacted_by }}
                     </button>
-                {% elif app.is_dubious and not user.has_dubious_acces %}
-                    <button name="invalidate" class="btn btn-default btn-block" disabled value="invalidate">Application
-                        under review
-                    </button>
-                {% elif not app.contacted and user.has_dubious_acces %}
+                {% elif not app.contacted and app.is_dubious %}
                     <button name="contact_user" class="btn btn-success btn-block" value="contact_user">Mark as contacted
                     </button>
                 {% endif %}
+
+
+            </form>
+        </div>
+    {% elif app and app.is_dubious and user.can_review_dubious and not user.is_director and h_dubious_enabled %}
+        <div class="panel-footer">
+
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+
+                {% if app.is_dubious and app.contacted and app.contacted_by == request.user %}
+                    <button name="unset_dubious" class="btn btn-success btn-block" value="unset_dubious">Mark as not
+                        dubious
+                    </button>
+                    <button name="invalidate" class="btn btn-danger btn-block" value="invalidate">Mark as invalid
+                    </button>
+                {% elif app.is_dubious and app.contacted %}
+                    <button name="invalidate" class="btn btn-default btn-block" disabled value="invalidate">Application
+                        under review by {{ app.contacted_by }}
+                    </button>
+                {% elif not app.contacted and app.is_dubious %}
+                    <button name="contact_user" class="btn btn-success btn-block" value="contact_user">Mark as contacted
+                    </button>
+                {% endif %}
+
 
 
             </form>
