@@ -266,11 +266,12 @@ class Application(models.Model):
     def set_dubious(self):
         self.status = APP_DUBIOUS
         self.contacted = False
+        self.status_update_date = timezone.now()
         self.save()
 
     def unset_dubious(self):
         self.status = APP_PENDING
-
+        self.status_update_date = timezone.now()
         self.save()
 
     def set_contacted(self, user):
