@@ -12,9 +12,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
+        migrations.RemoveField(
             model_name='user',
-            old_name='is_hx',
-            new_name='can_review_dubious'
+            name='is_hx'
         ),
     ]
