@@ -79,7 +79,7 @@ class DubiousListTable(tables.Table):
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email', 'university', 'origin', 'contacted']
         empty_text = 'No dubious applications'
-        order_by = '-status_update_date'
+        order_by = 'status_update_date'
 
 
 class AdminApplicationsListTable(tables.Table):
