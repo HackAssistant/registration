@@ -41,7 +41,7 @@ HACKATHON_ARRIVE = 'Registration opens at 3:00PM and closes at 6:00PM on Friday 
                    'the opening ceremony will be at 7:00PM.'
 
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 13rd from 3:00PM to 5:00PM. ' \
+HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 13th from 3:00PM to 5:00PM. ' \
                   'However judging will be happenning in the morning from 10:30AM to 1:00PM.'
 # (OPTIONAL) Hackathon live page
 HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
