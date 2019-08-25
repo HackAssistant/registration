@@ -71,7 +71,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     cvs_edition = forms.BooleanField(
         required=False,
-        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2018 Sponsors.'
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2019 Sponsors.'
     )
 
     diet_notice = forms.BooleanField(
