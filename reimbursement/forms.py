@@ -18,7 +18,7 @@ class ReceiptSubmissionReceipt(BetterModelForm):
             try:
                 check_friend_emails(multipl_hacks, self.instance.hacker.email)
             except Exception as e:
-                raise forms.ValidationError(e.message)
+                raise forms.ValidationError(str(e))
         return multipl_hacks
 
     def clean_paypal_email(self):
