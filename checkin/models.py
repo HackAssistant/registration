@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.datetime_safe import datetime
 
 from applications.models import APP_CONFIRMED, APP_ATTENDED
+from offer.models import Code
 from user.models import User
 
 
@@ -22,6 +23,11 @@ class CheckIn(models.Model):
         super(CheckIn, self).save(force_insert, force_update, using,
                                   update_fields)
         self.application.status = APP_ATTENDED
+
+        # Assign one code per available offer to the user
+        codes = {c["offer"]: c["id"] for c in
+                 Code.objects.filter(user__isnull=True).order_by("-id").values("id", "offer")}
+        Code.objects.filter(id__in=list(codes.values())).update(user_id=self.application.user.id)
 
     def delete(self, using=None, keep_parents=False):
         self.application.status = APP_CONFIRMED

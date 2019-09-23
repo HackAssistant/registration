@@ -107,7 +107,8 @@ class RoomJudgingView(TabsViewMixin, TemplateView):
             c.update({'presentation': presentation,
                       'room': self.request.user.room,
                       'project': project,
-                      'is_global_challenge_room': presentation and presentation.room.challenge.name == settings.HACKATHON_NAME
+                      "is_global_challenge_room": presentation and
+                      presentation.room.challenge.name == settings.HACKATHON_NAME,
                       })
         return c
 
