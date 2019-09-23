@@ -7,7 +7,6 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
     {% if h_b_picture %}
-        <script src="{% static 'lib/instascan.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
     {% endif %}
     <script src="{% static 'lib/typeahead.min.js' %}"></script>
@@ -22,8 +21,8 @@
 	{% include 'include/field.html' with desc='Email' value=user.email %}
 	{% include 'include/field.html' with desc='Position' value=position %}
     </dl>
-    
-    
+
+
     <script>
         $(document).ready(function(){
             make_field_typeahead('bag_type', '{% static 'types.json' %}');
@@ -94,7 +93,7 @@
         <input type="hidden" name="user_id" value="{{ user.id }}"/>
 	<button class="btn btn-success" name="checkin">Bag check-in</button>
     </form>
-    
+
     <script>
         var room = document.getElementById("baggage-rooms");
         room.addEventListener("change", function(){
@@ -115,7 +114,7 @@
 	        }
 	    {% endfor %}
 	});
-	
+
 	var special = document.getElementById("pos_special");
 	special.addEventListener("change", function(){
 	    if(special.checked == true){
@@ -130,7 +129,7 @@
 		document.getElementById("baggage-sel-special").style.marginBottom = "5px"
 	    }
 	});
-	
+
 	var manual = document.getElementById("pos_manual");
 	manual.addEventListener("change", function(){
 	    if(manual.checked == true){
