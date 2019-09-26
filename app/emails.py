@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives, EmailMessage
-from django.template import TemplateDoesNotExist
+from django.template import TemplateDoesNotExist, Context
 from django.template.loader import render_to_string
 
 from app import utils

@@ -4,11 +4,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from applications.models import Application
-from offer.models import Offer
 from reimbursement.models import Reimbursement
 from baggage.models import Bag
 from django.shortcuts import get_object_or_404
-from future.moves.urllib.parse import quote
+from urllib.parse import quote
 from django.http import StreamingHttpResponse
 import os
 
@@ -67,9 +66,6 @@ def protectedMedia(request, file_):
         bag = get_object_or_404(Bag, image=file_)
         if request.user.is_authenticated() and (request.user.is_organizer or request.user.is_volunteer):
             downloadable_path = bag.image.path
-    elif path == "offer/logo":
-        offer = get_object_or_404(Offer, logo=file_)
-        downloadable_path = offer.logo.path
     if downloadable_path:
         response = StreamingHttpResponse(open(downloadable_path, 'rb'))
         response['Content-Type'] = ''

@@ -6,8 +6,6 @@ from django.urls import reverse as django_reverse
 from django.utils import timezone
 from django.utils.functional import keep_lazy_text
 
-from offer.models import Code
-
 
 def reverse(viewname, args=None, kwargs=None, request=None, format=None,
             **extra):
@@ -145,8 +143,5 @@ def hacker_tabs(user):
     if app and getattr(user, 'reimbursement', None) and settings.REIMBURSEMENT_ENABLED:
         l.append(('Travel', reverse('reimbursement_dashboard'),
                   'Pending' if user.reimbursement.needs_action() else False))
-
-    if app and app.is_confirmed and Code.objects.filter(user_id=user.id).exists():
-        l.append(('Offers', reverse('codes'), False))
 
     return l
