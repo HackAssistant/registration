@@ -79,7 +79,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         label='I authorize "Hackers at UPC" to use my food allergies and intolerances information to '
               'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
     )
-
+    
     resume = forms.FileField(required=True)
 
     def clean_resume(self):
