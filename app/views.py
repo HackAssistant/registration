@@ -1,4 +1,3 @@
-import os
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -9,12 +8,11 @@ from offer.models import Offer
 from reimbursement.models import Reimbursement
 from baggage.models import Bag
 from django.shortcuts import get_object_or_404
-from urllib.parse import quote
+from future.moves.urllib.parse import quote
 from django.http import StreamingHttpResponse
-from app import utils, mixins
-from future.standard_library import install_aliases
-install_aliases()
+import os
 
+from app import utils, mixins
 
 
 def root_view(request):
