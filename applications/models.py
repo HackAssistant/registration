@@ -68,6 +68,8 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
+
+
 T_XXS = 'XXS'
 T_XS = 'XS'
 T_S = 'S'
@@ -76,7 +78,6 @@ T_L = 'L'
 T_XL = 'XL'
 T_XXL = 'XXL'
 T_XXXL = 'XXXL'
-
 TSHIRT_SIZES = [
     (T_XS, "Unisex - XS"),
     (T_S, "Unisex - S"),
@@ -86,7 +87,6 @@ TSHIRT_SIZES = [
     (T_XXL, "Unisex - XXL"),
     (T_XXXL, "Unisex - XXXL"),
 ]
-
 DEFAULT_TSHIRT_SIZE = T_M
 
 YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]

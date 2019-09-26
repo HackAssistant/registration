@@ -62,7 +62,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     terms_and_conditions = forms.BooleanField(
         required=False,
-        label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
+        label='I’ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
               'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
               'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
                   settings.HACKATHON_NAME, settings.HACKATHON_NAME
