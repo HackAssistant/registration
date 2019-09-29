@@ -8,6 +8,7 @@ from checkin.models import CheckIn
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 from app.views import TabsView
+from rest_framework.views import APIView
 from django.contrib import messages
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import redirect
@@ -18,6 +19,68 @@ import time
 from user.mixins import IsVolunteerMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from app.slack import send_slack_message
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+
+def baggage_checkIn(request, bag):
+    bagtype = request.POST.get('bag_type')
+    bagcolor = request.POST.get('bag_color')
+    bagdesc = request.POST.get('bag_description')
+    bagspe = request.POST.get('bag_special')
+    userid = request.POST.get('user_id')
+    bagimage = request.POST.get('bag_image')
+
+    bag.owner = User.objects.filter(id=userid).first()
+    bag.inby = request.user
+    bag.btype = bagtype
+    bag.color = bagcolor
+    bag.description = bagdesc
+    bag.special = (bagspe == 'special')
+
+    if bagimage:
+        try:
+            bagimageformat, bagimagefile = bagimage.split(';base64,')
+            bagimageext = bagimageformat.split('/')[-1]
+            bag.image = ContentFile(base64.b64decode(bagimagefile),
+                                    name=(str(time.time()).split('.')[0] + '-' + userid + '.' + bagimageext))
+        except:
+            print("Error: Couldn't retrieve the image and decode it.")
+
+    posmanual = request.POST.get('pos_manual')
+    bagroom = request.POST.get('pos_room')
+    bagrow = request.POST.get('pos_row')
+    bagcol = request.POST.get('pos_col')
+    position = ()
+    if posmanual == 'manual' and bagspe != 'special' and bagroom and bagrow and bagcol:
+        position = (3, bagroom, bagrow, bagcol)
+        posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol).count()
+        if posempty > 0:
+            return 1 
+    else:
+        position = utils.get_position(bag.special)
+
+    if position[0] != 0:
+        bag.room = Room.objects.filter(room=position[1]).first()
+        bag.row = position[2]
+        bag.col = position[3]
+        bag.save()
+        # send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
+        #                        'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
+        #                        ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
+        #                        '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
+        return 0 
+    return 2
+
+
+def baggage_checkOut(request):
+    bagid = request.POST.get('bag_id')
+    bag = Bag.objects.filter(bid=bagid).first()
+    bag.status = BAG_REMOVED
+    bag.outby = request.user
+    bag.save()
+    # send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
+    #                     str(bagid) + '` has been checked-out :truck:!')
+    return True
 
 
 def organizer_tabs(user):
@@ -97,57 +160,17 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        bagtype = request.POST.get('bag_type')
-        bagcolor = request.POST.get('bag_color')
-        bagdesc = request.POST.get('bag_description')
-        bagspe = request.POST.get('bag_special')
-        userid = request.POST.get('user_id')
-        bagimage = request.POST.get('bag_image')
-
         bag = Bag()
-        bag.owner = User.objects.filter(id=userid).first()
-        bag.inby = request.user
-        bag.btype = bagtype
-        bag.color = bagcolor
-        bag.description = bagdesc
-        bag.special = (bagspe == 'special')
-
-        if bagimage:
-            try:
-                bagimageformat, bagimagefile = bagimage.split(';base64,')
-                bagimageext = bagimageformat.split('/')[-1]
-                bag.image = ContentFile(base64.b64decode(bagimagefile),
-                                        name=(str(time.time()).split('.')[0] + '-' + userid + '.' + bagimageext))
-            except:
-                print("Error: Couldn't retrieve the image and decode it.")
-
-        posmanual = request.POST.get('pos_manual')
-        bagroom = request.POST.get('pos_room')
-        bagrow = request.POST.get('pos_row')
-        bagcol = request.POST.get('pos_col')
-        position = ()
-        if posmanual == 'manual' and bagspe != 'special' and bagroom and bagrow and bagcol:
-            position = (3, bagroom, bagrow, bagcol)
-            posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol).count()
-            if posempty > 0:
-                messages.success(self.request, 'Error! Position is already taken!')
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        else:
-            position = utils.get_position(bag.special)
-
-        if position[0] != 0:
-            bag.room = Room.objects.filter(room=position[1]).first()
-            bag.row = position[2]
-            bag.col = position[3]
-            bag.save()
+        result = baggage_checkIn(request, bag)
+        if (result == 0):
             messages.success(self.request, 'Bag checked-in!')
-            send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
-                               'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
-                               ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
-                               '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
             return redirect('baggage_detail', id=(str(bag.bid,)), first='first/')
-        messages.success(self.request, 'Error! Couldn\'t add the bag!')
-        return redirect('baggage_list')
+        elif (result == 1):
+            messages.success(self.request, 'Error! Position is already taken!')
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        else:
+            messages.success(self.request, 'Error! Couldn\'t add the bag!')
+            return redirect('baggage_list')
 
 
 class BaggageDetail(IsVolunteerMixin, TabsView):
@@ -173,14 +196,8 @@ class BaggageDetail(IsVolunteerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        bagid = request.POST.get('bag_id')
-        bag = Bag.objects.filter(bid=bagid).first()
-        bag.status = BAG_REMOVED
-        bag.outby = request.user
-        bag.save()
+        baggage_checkOut(request)
         messages.success(self.request, 'Bag checked-out!')
-        send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
-                           str(bagid) + '` has been checked-out :truck:!')
         return redirect('baggage_search')
 
 
@@ -228,3 +245,34 @@ class BaggageCurrentHacker(LoginRequiredMixin, TabsViewMixin, SingleTableMixin, 
     def get_queryset(self):
         user = self.request.user
         return Bag.objects.filter(status=BAG_ADDED, owner=user)
+
+class BaggageAPI(APIView):
+
+    def get(self, request, format = None):
+        var_token = request.GET.get('token')
+        if var_token != settings.MEALS_TOKEN:
+            return HttpResponse(status=500)
+        var_list = request.GET.get('list')
+        if var_list == 'all':
+            return CheckIn.objects.all()
+        return Bag.objects.filter(status=BAG_ADDED)
+    
+    def post(self, request, format=None):
+        var_token = request.GET.get('token')
+        if var_token != settings.MEALS_TOKEN:
+            return HttpResponse(status=500)
+        var_action = request.GET.get('action')
+        if var_action == 'checkOut':
+            baggage_checkOut(request)
+            return JsonResponse({'code': 1, 'message': 'Baggage Checked out'})
+        checkIn_result = CheckIn(request)
+        if (checkIn_result == 0):
+            return JsonResponse({'code': 2, 'message': 'Baggage Checked in'})
+        if (checkIn_result == 1):
+            return JsonResponse({'code': 0, 'message': 'Error! Position is already taken!'})
+        return JsonResponse({'code': 0, 'message': 'Error! Couldn\'t add the bag!'})
+        
+            
+ 
+        
+        
