@@ -32,32 +32,32 @@ def checking_in_hacker(request):
     ci.application = app
     ci.qr_identifier = qrcode
     ci.save()
-    # send_slack_message(app.user.email, 'Hello ' + app.user.name + ' :wave::skin-tone-3:'
-    #                     'and welcome to *HackUPC 2018* :biene:!\nI\'m <@' +
-    #                     settings.SLACK_BOT.get('id', None) + '> and I '
-    #                     ':point_up::skin-tone-3: will be your guide '
-    #                     ':female_mage::skin-tone-3: during the hackathon. '
-    #                     'You can ask :question: me anything you need '
-    #                     ':chocolate_bar:!\n    • Opening ceremony :fast_forward: '
-    #                     'will be at 19h :clock6: on the Vèrtex building, more '
-    #                     'information on how to get there :world_map: at maps.hackupc.com. '
-    #                     'You can also watch it :tv: live at live.hackupc.com/#/streaming.\n'
-    #                     '    • Hacking :female-technologist::skin-tone-3: starts at 21h, '
-    #                     'but you can look :eyes: for your spot right now.\n'
-    #                     '    • Live schedule :mantelpiece_clock: is available at '
-    #                     'live.hackupc.com.\n    • If you need to leave your baggage '
-    #                     ':handbag:, please go to the infodesk :information_source:.\n'
-    #                     '    • Hardware :pager: will be provided, request it :memo: '
-    #                     'before going to the infodesk :information_source: at '
-    #                     'my.hackupc.com.\n    • If you need technical :three_button_mouse: '
-    #                     'help, ask a mentor :female-teacher::skin-tone-3: at '
-    #                     'mentors.hackupc.com.\nRemember that if I\'m unable to answer '
-    #                     ':speak_no_evil:, you can try with the <#' +
-    #                     settings.SLACK_BOT.get('channel', None) + '> channel '
-    #                     ':speech_balloon: or to any organizer :tshirt: around.\n'
-    #                     '*If there\'s any emergency :rotating_light: seek for any organizer, '
-    #                     'you can also ping <@' + settings.SLACK_BOT.get('director1', None) +
-    #                     '> or <@' + settings.SLACK_BOT.get('director2', None) + '>.*')
+    send_slack_message(app.user.email, 'Hello ' + app.user.name + ' :wave::skin-tone-3:'
+                        'and welcome to *HackUPC 2018* :biene:!\nI\'m <@' +
+                        settings.SLACK_BOT.get('id', None) + '> and I '
+                        ':point_up::skin-tone-3: will be your guide '
+                        ':female_mage::skin-tone-3: during the hackathon. '
+                        'You can ask :question: me anything you need '
+                        ':chocolate_bar:!\n    • Opening ceremony :fast_forward: '
+                        'will be at 19h :clock6: on the Vèrtex building, more '
+                        'information on how to get there :world_map: at maps.hackupc.com. '
+                        'You can also watch it :tv: live at live.hackupc.com/#/streaming.\n'
+                        '    • Hacking :female-technologist::skin-tone-3: starts at 21h, '
+                        'but you can look :eyes: for your spot right now.\n'
+                        '    • Live schedule :mantelpiece_clock: is available at '
+                        'live.hackupc.com.\n    • If you need to leave your baggage '
+                        ':handbag:, please go to the infodesk :information_source:.\n'
+                        '    • Hardware :pager: will be provided, request it :memo: '
+                        'before going to the infodesk :information_source: at '
+                        'my.hackupc.com.\n    • If you need technical :three_button_mouse: '
+                        'help, ask a mentor :female-teacher::skin-tone-3: at '
+                        'mentors.hackupc.com.\nRemember that if I\'m unable to answer '
+                        ':speak_no_evil:, you can try with the <#' +
+                        settings.SLACK_BOT.get('channel', None) + '> channel '
+                        ':speech_balloon: or to any organizer :tshirt: around.\n'
+                        '*If there\'s any emergency :rotating_light: seek for any organizer, '
+                        'you can also ping <@' + settings.SLACK_BOT.get('director1', None) +
+                        '> or <@' + settings.SLACK_BOT.get('director2', None) + '>.*')
     return True
 
 

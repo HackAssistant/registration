@@ -64,10 +64,10 @@ def baggage_checkIn(request, bag):
         bag.row = position[2]
         bag.col = position[3]
         bag.save()
-        # send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
-        #                        'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
-        #                        ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
-        #                        '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
+        send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
+                               'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
+                               ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
+                               '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
         return 0 
     return 2
 
@@ -78,8 +78,8 @@ def baggage_checkOut(request):
     bag.status = BAG_REMOVED
     bag.outby = request.user
     bag.save()
-    # send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
-    #                     str(bagid) + '` has been checked-out :truck:!')
+    send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
+                        str(bagid) + '` has been checked-out :truck:!')
     return True
 
 
