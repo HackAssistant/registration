@@ -20,7 +20,7 @@ from user.mixins import IsVolunteerMixin, IsOrganizerMixin
 from user.models import User
 from app.slack import send_slack_message
 
-def checking_in_hacker(request):
+def checking_in_hacker(request, web):
     appid = request.POST.get('app_id')
     qrcode = request.POST.get('qr_code')
     if qrcode is None or qrcode == '':
@@ -28,7 +28,11 @@ def checking_in_hacker(request):
     app = models.Application.objects.filter(uuid=appid).first()
     app.check_in()
     ci = CheckIn()
-    ci.user = request.user
+    if web:
+        print(request.user)
+        ci.user = request.user
+    else:
+        ci.user = models.Application.objects.filter(user=1).first().user
     ci.application = app
     ci.qr_identifier = qrcode
     ci.save()
@@ -102,7 +106,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        if checking_in_hacker(request):
+        if checking_in_hacker(request, True):
              messages.success(self.request, 'Hacker checked-in! Good job! '
                                        'Nothing else to see here, '
                                        'you can move on :D')
@@ -127,15 +131,19 @@ class CheckInAPI(APIView):
     def get(self, request, format = None):
         var_token = request.GET.get('token')
         if var_token != settings.MEALS_TOKEN:
-            return HttpResponse(status=500)
-        return models.Application.objects.exclude(status=models.APP_ATTENDED)
+            return HttpResponse(status=403) 
+        checkInData = models.Application.objects.exclude(status=models.APP_ATTENDED).all()
+        checkInDataList = []
+        for e in checkInData:
+            checkInDataList.append({'uuid': str(e.uuid), 'id': e.user.id, 'name': e.user.name, 'email': e.user.email})
+        return HttpResponse(json.dumps({'code': 1, 'content': checkInDataList}), content_type='application/json')
     
     def post(self, request, format=None):
         var_token = request.GET.get('token')
         if var_token !=  settings.MEALS_TOKEN:
             return HttpResponse(status=500)
-        if checking_in_hacker(request):
-            return JsonResponse({'code': 0, 'message': 'Invalid QR'})
-        return JsonResponse({'code': 1, 'message': 'Hacker Checked in'})
+        if checking_in_hacker(request, False):
+            return JsonResponse({'code': 1, 'message': 'Hacker Checked in'})
+        return JsonResponse({'code': 0, 'message': 'Invalid QR'})
         
         

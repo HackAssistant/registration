@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^ranking/$', views.CheckinRankingView.as_view(), name='check_in_ranking'),
     url(r'(?P<id>[\w-]+)$', views.CheckInHackerView.as_view(),
         name='check_in_hacker'),
+    url(r'^api/$', views.CheckInAPI.as_view(), name='check_in_api'),
 ]

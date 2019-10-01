@@ -22,7 +22,7 @@ from app.slack import send_slack_message
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 
-def baggage_checkIn(request, bag):
+def baggage_checkIn(request, bag, web):
     bagtype = request.POST.get('bag_type')
     bagcolor = request.POST.get('bag_color')
     bagdesc = request.POST.get('bag_description')
@@ -31,7 +31,10 @@ def baggage_checkIn(request, bag):
     bagimage = request.POST.get('bag_image')
 
     bag.owner = User.objects.filter(id=userid).first()
-    bag.inby = request.user
+    if web:
+        bag.inby = request.user
+    else:
+        bag.inby = User.objects.filter(id=1).first()
     bag.btype = bagtype
     bag.color = bagcolor
     bag.description = bagdesc
@@ -72,11 +75,14 @@ def baggage_checkIn(request, bag):
     return 2
 
 
-def baggage_checkOut(request):
+def baggage_checkOut(request, web):
     bagid = request.POST.get('bag_id')
     bag = Bag.objects.filter(bid=bagid).first()
     bag.status = BAG_REMOVED
-    bag.outby = request.user
+    if web:
+        bag.outby = request.user
+    else:
+        bag.outby = User.objects.filter(id=1).first()
     bag.save()
     send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
                         str(bagid) + '` has been checked-out :truck:!')
@@ -161,7 +167,7 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
 
     def post(self, request, *args, **kwargs):
         bag = Bag()
-        result = baggage_checkIn(request, bag)
+        result = baggage_checkIn(request, bag, True)
         if (result == 0):
             messages.success(self.request, 'Bag checked-in!')
             return redirect('baggage_detail', id=(str(bag.bid,)), first='first/')
@@ -196,7 +202,7 @@ class BaggageDetail(IsVolunteerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        baggage_checkOut(request)
+        baggage_checkOut(request, True)
         messages.success(self.request, 'Bag checked-out!')
         return redirect('baggage_search')
 
@@ -254,18 +260,28 @@ class BaggageAPI(APIView):
             return HttpResponse(status=500)
         var_list = request.GET.get('list')
         if var_list == 'all':
-            return CheckIn.objects.all()
-        return Bag.objects.filter(status=BAG_ADDED)
+            baggageData = CheckIn.objects.all()
+            baggageDataList = []
+            for e in baggageData:
+                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name, 'email': e.application.user.email})
+            return JsonResponse({'code': 1, 'content': baggageDataList})
+        bagData = Bag.objects.filter(status=BAG_ADDED).all()
+        bagDataList = []
+        for e in bagData:
+            print(bagData)
+            bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email, 'bag': {'id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col, 'btype':e.btype, 'color':e.color}})
+        return JsonResponse({'code': 1, 'content': bagDataList})
     
     def post(self, request, format=None):
-        var_token = request.GET.get('token')
+        var_token = request.POST.get('token')
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
-        var_action = request.GET.get('action')
+        var_action = request.POST.get('action')
         if var_action == 'checkOut':
-            baggage_checkOut(request)
+            baggage_checkOut(request, False)
             return JsonResponse({'code': 1, 'message': 'Baggage Checked out'})
-        checkIn_result = CheckIn(request)
+        bag = Bag()
+        checkIn_result = baggage_checkIn(request, bag, False)
         if (checkIn_result == 0):
             return JsonResponse({'code': 2, 'message': 'Baggage Checked in'})
         if (checkIn_result == 1):
