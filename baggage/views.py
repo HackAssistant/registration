@@ -263,7 +263,7 @@ class BaggageAPI(APIView):
             baggageData = CheckIn.objects.all()
             baggageDataList = []
             for e in baggageData:
-                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name, 'email': e.application.user.email})
+                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name, 'email': e.application.user.email, 'qr': e.qr_identifier})
             return JsonResponse({'code': 1, 'content': baggageDataList})
         bagData = Bag.objects.filter(status=BAG_ADDED).all()
         bagDataList = []
