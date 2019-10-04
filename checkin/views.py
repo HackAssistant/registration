@@ -38,7 +38,7 @@ def checking_in_hacker(request, web):
     ci.qr_identifier = qrcode
     ci.save()
     send_slack_message(app.user.email, 'Hello ' + app.user.name + ' :wave::skin-tone-3:'
-                                       'and welcome to *HackUPC 2018* :biene:!\nI\'m <@' +
+                                       'and welcome to *HackUPC 2018* :biene:!\n\'m <@' +
                                        settings.SLACK_BOT.get('id', None) + '> and I '
                                        ':point_up::skin-tone-3: will be your guide '
                                        ':female_mage::skin-tone-3: during the hackathon. '
