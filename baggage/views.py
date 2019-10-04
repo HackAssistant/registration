@@ -86,7 +86,7 @@ def baggage_checkOut(request, web):
         bag.outby = User.objects.filter(id=1).first()
     bag.save()
     send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
-                        str(bagid) + '` has been checked-out :truck:!')
+                       str(bagid) + '` has been checked-out :truck:!')
     return True
 
 
@@ -99,7 +99,7 @@ def organizer_tabs(user):
 
 
 def hacker_tabs(user):
-    t = [('Baggage', reverse('baggage_currenthacker'), False), ]
+    t = [('Baggage', reverse('baggage_currenthacker'), False)]
     return t
 
 
@@ -265,7 +265,7 @@ class BaggageAPI(APIView):
             baggageData = CheckIn.objects.all()
             baggageDataList = []
             for e in baggageData:
-                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name, 
+                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name,
                                         'email': e.application.user.email, 'qr': e.qr_identifier})
             return JsonResponse({'code': 1, 'content': baggageDataList})
         bagData = Bag.objects.filter(status=BAG_ADDED).all()
@@ -273,8 +273,8 @@ class BaggageAPI(APIView):
         var_id = request.GET.get('id')
         for e in bagData:
             if var_id == str(e.owner.id):
-                bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email, 
-                                    'bag': {'id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col, 
+                bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email,
+                                    'bag': {'id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col,
                                             'btype': e.btype, 'color': e.color}})
         return JsonResponse({'code': 1, 'content': bagDataList})
 
