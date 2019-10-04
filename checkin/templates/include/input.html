@@ -1,13 +1,66 @@
+{% load static %}
+
 <div class="form-group {% if request.GET.search %}has-success{% endif %}">
-    <label class="control-label" for="{{ id }}">{{ desc }}</label>
-    {% if type == 'qr' %}
-        <div>
-            <i id="{{ id }}-qr" class="button-qr fa fa-qrcode fa-2x {% if request.GET.search %}button-qr-success{% endif %}"></i>
-            <div class="input-qr">
-                <input class="form-control" id="{{ id }}" name="{{ name }}" value="{{ request.GET.search }}" type="text">
-            </div>
-        </div>
-    {% else %}
-        <input class="form-control" id="{{ id }}" name="{{ name }}" type="text">
-    {% endif %}
+  <label class="control-label" for="{{ id }}">{{ desc }}</label>
+  {% if type == 'qr' %}
+    <div>
+      <i id="{{ id }}-qr" class="button-qr fa fa-qrcode fa-2x {% if request.GET.search %}button-qr-success{% endif %}"></i>
+      <div class="input-qr">
+        <input class="form-control" id="{{ id }}" name="{{ name }}" value="{{ request.GET.search }}" type="text">
+      </div>
+    </div>
+    <div id="popup-scan" style="display: none;">
+      <video muted playsinline id="qr-video"></video>
+      <!-- <p style="display: block; margin-top: 10px; font-size: 16px; text-align: center;"><span id="{{ id }}-timestamp"></span></p> -->
+    </div>
+
+    <script type="module">
+        import QrScanner from '/static/lib/qr-scanner.min.js';
+        QrScanner.WORKER_PATH = '/static/lib/qr-scanner-worker.min.js';
+
+        // Video stream
+        const video = document.getElementById('qr-video');
+
+        // Result elements and set function
+        const camQrResult = document.getElementById('{{ id }}');
+        // const camQrResultTimestamp = document.getElementById('{{ id }}-timestamp');
+        function setResult(result) {
+            camQrResult.value = result;
+            hideQR();
+            /* camQrResultTimestamp.textContent = "Last retrieved on " + new Date().toLocaleTimeString();
+            camQrResultTimestamp.style.color = "#449d44";
+            camQrResultTimestamp.style.fontWeight = "700";
+            camQrResultTimestamp.style.fontSize = "18px";
+            setTimeout(function(){
+              camQrResultTimestamp.style.color = "";
+              camQrResultTimestamp.style.fontWeight = "";
+            camQrResultTimestamp.style.fontSize = "16px";
+            }, 2000); */
+        }
+
+        // Scan
+        const scanner = new QrScanner(video, result => setResult(result));
+
+        $("#{{ id }}-qr").click(function () {
+            let veil = document.createElement("div");
+            document.body.appendChild(veil);
+            veil.classList.add('veil');
+            veil.id = 'veil';
+            $("#popup-scan").show();
+            document.getElementById("veil").addEventListener("click", function(){
+                hideQR();
+            });
+          scanner.start();
+        });
+
+        function hideQR() {
+            $("#popup-scan").hide();
+            var el = document.getElementById("veil");
+            el.parentNode.removeChild(el);
+            scanner.stop();
+        }
+    </script>
+  {% else %}
+    <input class="form-control" id="{{ id }}" name="{{ name }}" type="text">
+  {% endif %}
 </div>
