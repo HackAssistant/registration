@@ -44,7 +44,7 @@ def checking_in_hacker(request, web):
                                        ':female_mage::skin-tone-3: during the hackathon. '
                                        'You can ask :question: me anything you need '
                                        ':chocolate_bar:!\n    - Opening ceremony :fast_forward: '
-                                       'will be at 19h :clock6: on the Vèrtex building, more '
+                                       'will be at 19h :clock6: on the Vertex building, more '
                                        'information on how to get there :world_map: at maps.hackupc.com. '
                                        'You can also watch it :tv: live at live.hackupc.com/#/streaming.\n'
                                        '    - Hacking :female-technologist::skin-tone-3: starts at 21h, '
