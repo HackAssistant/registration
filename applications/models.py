@@ -68,8 +68,6 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-
-
 T_XXS = 'XXS'
 T_XS = 'XS'
 T_S = 'S'

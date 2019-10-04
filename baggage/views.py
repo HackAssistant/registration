@@ -22,6 +22,7 @@ from app.slack import send_slack_message
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 
+
 def baggage_checkIn(request, bag, web):
     bagtype = request.POST.get('bag_type')
     bagcolor = request.POST.get('bag_color')
@@ -58,7 +59,7 @@ def baggage_checkIn(request, bag, web):
         position = (3, bagroom, bagrow, bagcol)
         posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol).count()
         if posempty > 0:
-            return 1 
+            return 1
     else:
         position = utils.get_position(bag.special)
 
@@ -68,10 +69,10 @@ def baggage_checkIn(request, bag, web):
         bag.col = position[3]
         bag.save()
         send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
-                               'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
-                               ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
-                               '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
-        return 0 
+                                            'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
+                                            ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
+                                            '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
+        return 0
     return 2
 
 
@@ -252,9 +253,10 @@ class BaggageCurrentHacker(LoginRequiredMixin, TabsViewMixin, SingleTableMixin, 
         user = self.request.user
         return Bag.objects.filter(status=BAG_ADDED, owner=user)
 
+
 class BaggageAPI(APIView):
 
-    def get(self, request, format = None):
+    def get(self, request, format=None):
         var_token = request.GET.get('token')
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
@@ -263,16 +265,19 @@ class BaggageAPI(APIView):
             baggageData = CheckIn.objects.all()
             baggageDataList = []
             for e in baggageData:
-                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name, 'email': e.application.user.email, 'qr': e.qr_identifier})
+                baggageDataList.append({'id': e.application.user.id, 'name': e.application.user.name, 
+                                        'email': e.application.user.email, 'qr': e.qr_identifier})
             return JsonResponse({'code': 1, 'content': baggageDataList})
         bagData = Bag.objects.filter(status=BAG_ADDED).all()
         bagDataList = []
         var_id = request.GET.get('id')
         for e in bagData:
             if var_id == str(e.owner.id):
-                bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email, 'bag': {'id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col, 'btype':e.btype, 'color':e.color}})
+                bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email, 
+                                    'bag': {'id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col, 
+                                            'btype': e.btype, 'color': e.color}})
         return JsonResponse({'code': 1, 'content': bagDataList})
-    
+
     def post(self, request, format=None):
         var_token = request.POST.get('token')
         if var_token != settings.MEALS_TOKEN:
@@ -288,8 +293,3 @@ class BaggageAPI(APIView):
         if (checkIn_result == 1):
             return JsonResponse({'code': 0, 'message': 'Error! Position is already taken!'})
         return JsonResponse({'code': 0, 'message': 'Error! Couldn\'t add the bag!'})
-        
-            
- 
-        
-        
