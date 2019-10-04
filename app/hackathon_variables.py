@@ -86,7 +86,7 @@ SLACK = {
 
 # Hardware configuration
 # Hardware request time length (in minutes)
-HARDWARE_ENABLED = False
+HARDWARE_ENABLED = True
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
