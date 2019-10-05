@@ -9,6 +9,10 @@ from reimbursement.models import Reimbursement
 from baggage.models import Bag
 from django.shortcuts import get_object_or_404
 from django.http import StreamingHttpResponse
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 import os
 
 from app import utils, mixins
@@ -72,7 +76,7 @@ def protectedMedia(request, file_):
     if downloadable_path:
         response = StreamingHttpResponse(open(downloadable_path, 'rb'))
         response['Content-Type'] = ''
-        response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % file_name
+        response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % quote(file_name)
         response['Content-Transfer-Encoding'] = 'binary'
         response['Expires'] = '0'
         response['Cache-Control'] = 'must-revalidate'
