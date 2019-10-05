@@ -21,9 +21,7 @@ from user.models import User
 from app.slack import send_slack_message
 
 
-def checking_in_hacker(request, web):
-    appid = request.POST.get('app_id')
-    qrcode = request.POST.get('qr_code')
+def checking_in_hacker(request, web, appid, qrcode):
     if qrcode is None or qrcode == '':
         return False
     app = models.Application.objects.filter(uuid=appid).first()
@@ -107,7 +105,9 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        if checking_in_hacker(request, True):
+        appid = request.POST.get('app_id')
+        qrcode = request.POST.get('qr_code')
+        if checking_in_hacker(request, True, appid, qrcode):
             messages.success(self.request, 'Hacker checked-in! Good job! '
                                            'Nothing else to see here, '
                                            'you can move on :D')
@@ -141,9 +141,14 @@ class CheckInAPI(APIView):
         return HttpResponse(json.dumps({'code': 1, 'content': checkInDataList}), content_type='application/json')
 
     def post(self, request, format=None):
-        var_token = request.GET.get('token')
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        content = body['content']
+        var_token = content['token']
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
-        if checking_in_hacker(request, False):
+        appid = content['app_id']
+        qrcode = content['qr_code']
+        if checking_in_hacker(request, False, appid, qrcode):
             return JsonResponse({'code': 1, 'message': 'Hacker Checked in'})
         return JsonResponse({'code': 0, 'message': 'Invalid QR'})
