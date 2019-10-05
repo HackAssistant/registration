@@ -8,8 +8,11 @@ from offer.models import Offer
 from reimbursement.models import Reimbursement
 from baggage.models import Bag
 from django.shortcuts import get_object_or_404
-from future.moves.urllib.parse import quote
 from django.http import StreamingHttpResponse
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 import os
 
 from app import utils, mixins
