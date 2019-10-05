@@ -281,7 +281,7 @@ class BaggageAPI(APIView):
         body = json.loads(body_unicode)
         content = body['content']
         var_token = content['token']
-        if var_token != "a":
+        if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
         var_action = content['action']
         if var_action == 'checkOut':
