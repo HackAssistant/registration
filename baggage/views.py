@@ -22,6 +22,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from app.slack import send_slack_message
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
+from multiprocessing import Pool
 
 
 def baggage_checkIn(request, bag, bagrow, bagcol, bagroom, posmanual, bagspe):
@@ -39,10 +40,11 @@ def baggage_checkIn(request, bag, bagrow, bagcol, bagroom, posmanual, bagspe):
         bag.row = position[2]
         bag.col = position[3]
         bag.save()
-        send_slack_message(bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
-                                            'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
-                                            ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
-                                            '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
+        pool = Pool(processes=1)
+        pool.apply_async(send_slack_message, [bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
+                                              'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
+                                              ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
+                                              '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_'])
         return 0
     return 2
 
@@ -55,9 +57,10 @@ def baggage_checkOut(request, web, bagid):
         bag.outby = request.user
     else:
         bag.outby = User.objects.filter(id=1).first()
-    bag.save()
-    send_slack_message(bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
-                       str(bagid) + '` has been checked-out :truck:!')
+        bag.save()
+        pool = Pool(processes=1)
+        pool.apply_async(send_slack_message, [bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
+                                              str(bagid) + '` has been checked-out :truck:!'])
     return True
 
 
