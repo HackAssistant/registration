@@ -1,4 +1,6 @@
-version: 2
+version: 2.1
+orbs:
+  flake8: arrai/flake8@5.0.0
 workflows:
   version: 2
   test:
@@ -17,6 +19,11 @@ jobs:
           key: deps2-{{ .Environment.CIRCLE_JOB}}-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
           command: |
+            if [ "${CIRCLE_JOB}" == "build-2.7" ]; then
+                virtualenv env
+            else
+                python3 -m venv env
+            fi
             virtualenv --always-copy env
             . env/bin/activate
             pip install -r requirements.txt
@@ -24,12 +31,12 @@ jobs:
           key: deps2-{{ .Environment.CIRCLE_JOB}}-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "env"
-      - run:
+      - django_test:
           name: Running tests
           command: |
             . env/bin/activate
             python manage.py test
-            flake8
+      - 
       - store_artifacts:
           path: test-reports/
           destination: python_app
