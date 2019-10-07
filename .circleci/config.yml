@@ -29,12 +29,12 @@ jobs:
           key: deps2-{{ .Environment.CIRCLE_JOB}}-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "env"
-      - test:
+      - run:
           name: Running tests
           command: |
             . env/bin/activate
             python manage.py test
-      - test:
+      - run:
           name: Linting code
           command: |
             . env/bin/activate
