@@ -1,6 +1,4 @@
-version: 2.1
-orbs:
-  flake8: arrai/flake8@5.0.0
+version: 2
 workflows:
   version: 2
   test:
@@ -36,7 +34,11 @@ jobs:
           command: |
             . env/bin/activate
             python manage.py test
-      - 
+      - lint:
+          name: Linting code
+          command: |
+            . env/bin/activate
+            flake8
       - store_artifacts:
           path: test-reports/
           destination: python_app
