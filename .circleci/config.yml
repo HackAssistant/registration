@@ -46,10 +46,10 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.6-jessie
-   build-3.5:
-     <<: *test-template
-     docker:
-       - image: circleci/python:3.5-jessie
+  build-3.5:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5-jessie
   build-2.7:
     <<: *test-template
     docker:
