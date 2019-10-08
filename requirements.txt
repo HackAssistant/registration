@@ -9,7 +9,7 @@ django-bootstrap3==8.2.3
 django-filter==1.0.2
 django-form-utils==1.0.3
 django-jet==1.0.8
-django-storages==1.7.2
+#django-storages==1.7.2
 django-tables2==1.14.2
 dropbox==8.7.1
 et-xmlfile==1.0.1
