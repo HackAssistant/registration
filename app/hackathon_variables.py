@@ -35,7 +35,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2019, 10, 4, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2019, 10, 6, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = 'Registration opens at 3:00PM and closes at 6:00PM on Friday October 11th, ' \
                    'the opening ceremony will be at 7:00PM.'
@@ -86,7 +86,7 @@ SLACK = {
 
 # Hardware configuration
 # Hardware request time length (in minutes)
-HARDWARE_ENABLED = False
+HARDWARE_ENABLED = True
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
