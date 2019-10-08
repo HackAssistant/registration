@@ -182,6 +182,13 @@ STATICFILES_DIRS = [
 ]
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
+# Dev emails set up
+if os.environ.get('ADMIN_EMAIL', None):
+    try:
+        HACKATHON_DEV_EMAILS.append(os.environ['ADMIN_EMAIL'])
+    except NameError:
+        HACKATHON_DEV_EMAILS = [os.environ['ADMIN_EMAIL'],]
+
 #  File upload configuration
 MEDIA_ROOT = 'files'
 MEDIA_URL = '/files/'

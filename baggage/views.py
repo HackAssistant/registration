@@ -274,9 +274,14 @@ class BaggageAPI(APIView):
         bagData = Bag.objects.filter(status=BAG_ADDED).all()
         bagDataList = []
         for e in bagData:
-            bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email,
-                                'bag_id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col,
-                                'btype': e.btype, 'color': e.color})
+            if (e.room is None):
+                bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email,
+                                    'bag_id': e.bid, 'room': '--',
+                                    'row': e.row, 'col': e.col, 'btype': e.btype, 'color': e.color})
+            else:
+                bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email,
+                                    'bag_id': e.bid, 'room': e.room.room,
+                                    'row': e.row, 'col': e.col, 'btype': e.btype, 'color': e.color})
         return JsonResponse({'code': 1, 'content': bagDataList})
 
     def post(self, request, format=None):

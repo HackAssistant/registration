@@ -16,7 +16,7 @@ Fixes #
 ## Some questions
 - [ ] I have read the contributing guidelines
 - [ ] I abide by this repository Code of Conduct
-- [ ] I understand that my PR won't be merged until Travis gives a "green light"
+- [ ] I understand that my PR won't be merged until GitHub gives a "green light"
 
 <!--You can leave this and check them once the PR has been created.-->
 

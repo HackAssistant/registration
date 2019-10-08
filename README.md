@@ -3,7 +3,7 @@
 </p>
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
-[![Build Status](https://travis-ci.org/HackAssistant/registration.svg?branch=master)](https://travis-ci.org/HackAssistant/registration)
+[![CircleCI](https://circleci.com/gh/HackAssistant/registration/tree/master.svg?style=svg)](https://circleci.com/gh/HackAssistant/registration/tree/master)
 
 
 📝 Registration for hackathons. Forked from [HackAssistant/registration](https://github.com/HackAssistant/registration). Previously known as hackupc/backend. [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199). [User Guide](USER_GUIDE.md)
