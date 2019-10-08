@@ -258,7 +258,7 @@ class BaggageAPI(APIView):
 
     def get(self, request, format=None):
         var_token = request.GET.get('token')
-        if var_token != settings.MEALS_TOKEN:
+        if var_token != 'a':
             return HttpResponse(status=500)
         var_list = request.GET.get('list')
         if var_list == 'all':
@@ -272,8 +272,8 @@ class BaggageAPI(APIView):
         bagDataList = []
         for e in bagData:
             bagDataList.append({'id': e.owner.id, 'name': e.owner.name, 'email': e.owner.email,
-                                'bag_id': e.bid, 'room': e.room, 'row': e.row, 'col': e.col,
-                                'btype': e.btype, 'color': e.color})
+                                'bag_id': e.bid, 'room': (isinstance(e.room, Room) if '--' else e.room.room),
+                                'row': e.row, 'col': e.col, 'btype': e.btype, 'color': e.color})
         return JsonResponse({'code': 1, 'content': bagDataList})
 
     def post(self, request, format=None):
