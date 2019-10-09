@@ -99,7 +99,7 @@ SLACK_BOT = {
     'director2' : os.environ.get('SL_BOT_DIRECTOR2', None)
 }
 # Enable judging tab
-JUDGING_ENABLED = False
+JUDGING_ENABLED = True
 
 # Can Hackers start a request on the hardware lab?
 # HACKERS_CAN_REQUEST = False
