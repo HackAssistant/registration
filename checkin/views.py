@@ -137,7 +137,8 @@ class CheckInAPI(APIView):
         checkInData = models.Application.objects.exclude(status=models.APP_ATTENDED).all()
         checkInDataList = []
         for e in checkInData:
-            checkInDataList.append({'uuid': str(e.uuid), 'id': e.user.id, 'name': e.user.name, 'email': e.user.email})
+            checkInDataList.append({'uuid': str(e.uuid), 'id': e.user.id, 'name': e.user.name, 'email': e.user.email,
+                                    "tSize": e.tshirt_size, "diet": e.diet})
         return HttpResponse(json.dumps({'code': 1, 'content': checkInDataList}), content_type='application/json')
 
     def post(self, request, format=None):
