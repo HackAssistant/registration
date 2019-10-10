@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from app.mixins import TabsViewMixin
 from app.views import TabsView
 from applications import models as models_app
+from applications.models import Application
 from checkin.models import CheckIn
 from meals.models import Meal, Eaten, MEAL_TYPE
 from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
@@ -262,12 +263,14 @@ class MealsApi(APIView):
             obj_checkin = CheckIn.objects.filter(qr_identifier=var_user).first()
             if obj_checkin is None:
                 return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
-            obj_application = obj_checkin.application
-            obj_user = obj_application.user
+            obj_user = obj_checkin.application_user
+            obj_application = Application.objects.filter(user=obj_user).first()
             if obj_user.diet:
                 var_diet = obj_user.diet
-            else:
+            elif obj_application:
                 var_diet = obj_application.diet
+            else:
+                var_diet = "UNKNOWN"
             var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
             if var_eatens >= var_repetitions:
                 return HttpResponse(json.dumps({'code': 2, 'message': 'Hacker alreay ate'}),

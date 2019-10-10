@@ -10,7 +10,7 @@ class ApplicationCheckinFilter(django_filters.FilterSet):
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(Q(email__icontains=value) | Q(name__icontains=value) |
-                               Q(uuid__icontains=value.replace('-', '')))
+                               Q(id__icontains=value.replace('-', '')))
 
     class Meta:
         model = User
