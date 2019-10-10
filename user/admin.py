@@ -12,9 +12,12 @@ class UserAdmin(admin.ModelAdmin):
     form = UserChangeForm
     change_password_form = AdminPasswordChangeForm
 
-    display_fields = ['email', 'name', 'is_organizer', 'is_volunteer', 'is_director', 'can_review_dubious']
-    filter_fields = ['is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified', 'can_review_dubious']
-    permission_fields = ['is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified',
+    display_fields = ['email', 'name', 'is_organizer', 'is_volunteer', 'is_director', 'is_sponsor', 'is_mentor',
+                      'is_judge', 'can_review_dubious']
+    filter_fields = ['is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'is_sponsor', 'is_mentor', 'is_judge',
+                     'email_verified', 'can_review_dubious']
+    permission_fields = ['is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified', 'is_sponsor',
+                         'is_mentor', 'is_judge',
                          'can_review_dubious']
 
     if settings.HARDWARE_ENABLED:
@@ -31,7 +34,7 @@ class UserAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('name',)}),
+        ('Personal info', {'fields': ('name', 'diet',)}),
         ('Permissions', {'fields': permission_fields}),
         ('Important dates', {'fields': ('last_login',)}),
     )

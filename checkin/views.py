@@ -13,7 +13,8 @@ from django.http import HttpResponse, JsonResponse
 from app.mixins import TabsViewMixin
 from app.utils import reverse
 from app.views import TabsView
-from applications import models
+from applications import models as appmodels
+from user import models
 from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
 from user.mixins import IsVolunteerMixin, IsOrganizerMixin
@@ -22,23 +23,23 @@ from app.slack import send_slack_message
 from multiprocessing import Pool
 
 
-def checking_in_hacker(request, web, appid, qrcode):
+def checking_in_hacker(request, web, userid, qrcode):
     if qrcode is None or qrcode == '':
         return False
-    app = models.Application.objects.filter(uuid=appid).first()
-    app.check_in()
+    user = models.User.objects.filter(id=userid).first()
+    if not user:
+        return False
     ci = CheckIn()
     if web:
-        print(request.user)
         ci.user = request.user
     else:
-        ci.user = models.Application.objects.filter(user=1).first().user
-    ci.application = app
+        ci.user = appmodels.Application.objects.filter(user=1).first().user
+    ci.application_user = user
     ci.qr_identifier = qrcode
     ci.save()
     try:
         pool = Pool(processes=1)
-        pool.apply_async(send_slack_message, [app.user.email, 'Hello ' + app.user.name + ' :wave::skin-tone-3:'
+        pool.apply_async(send_slack_message, [user.email, 'Hello ' + user.name + ' :wave::skin-tone-3:'
                                               'and welcome to *HackUPC 2019* :bee:!\n    - Opening ceremony '
                                               ':fast_forward: will be at 19h :clock6: on the Vèrtex building, more '
                                               'information on how to get there :world_map: at maps.hackupc.com. '
@@ -79,7 +80,65 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.Application.objects.exclude(status=models.APP_ATTENDED)
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        ids = [u.id for u in models.User.objects.exclude(id__in=checkins) if u.is_participant]
+        return models.User.objects.filter(id__in=ids)
+
+
+class CheckInMentorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'checkin/list.html'
+    table_class = ApplicationsCheckInTable
+    filterset_class = ApplicationCheckinFilter
+    table_pagination = {'per_page': 50}
+
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
+
+    def get_queryset(self):
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        return models.User.objects.filter(is_mentor=True).exclude(id__in=checkins)
+
+
+class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'checkin/list.html'
+    table_class = ApplicationsCheckInTable
+    filterset_class = ApplicationCheckinFilter
+    table_pagination = {'per_page': 50}
+
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
+
+    def get_queryset(self):
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        return models.User.objects.filter(is_judge=True).exclude(id__in=checkins)
+
+
+class CheckInSponsorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'checkin/list.html'
+    table_class = ApplicationsCheckInTable
+    filterset_class = ApplicationCheckinFilter
+    table_pagination = {'per_page': 50}
+
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
+
+    def get_queryset(self):
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        return models.User.objects.filter(is_sponsor=True).exclude(id__in=checkins)
+
+
+class CheckInVolunteerList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'checkin/list.html'
+    table_class = ApplicationsCheckInTable
+    filterset_class = ApplicationCheckinFilter
+    table_pagination = {'per_page': 50}
+
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
+
+    def get_queryset(self):
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        return models.User.objects.filter(is_volunteer=True).exclude(id__in=checkins)
 
 
 class CheckInHackerView(IsVolunteerMixin, TabsView):
@@ -90,24 +149,30 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
-        appid = kwargs['id']
-        app = models.Application.objects.filter(uuid=appid).first()
-        if not app:
+        id = kwargs['id']
+        user = models.User.objects.filter(id=id).first()
+        if not user:
             raise Http404
         context.update({
-            'app': app,
-            'checkedin': app.status == models.APP_ATTENDED
+            "user": user,
+            'checkedin': CheckIn.objects.filter(application_user=user).exists()
         })
+        app = appmodels.Application.objects.filter(user=user).first()
+        if app:
+            context.update({
+                'app': app,
+                'checkedin': app.status == appmodels.APP_ATTENDED
+            })
         try:
-            context.update({'checkin': CheckIn.objects.filter(application=app).first()})
+            context.update({'checkin': CheckIn.objects.filter(user=user).first()})
         except:
             pass
         return context
 
     def post(self, request, *args, **kwargs):
-        appid = request.POST.get('app_id')
+        userid = request.POST.get('user_id')
         qrcode = request.POST.get('qr_code')
-        if checking_in_hacker(request, True, appid, qrcode):
+        if checking_in_hacker(request, True, userid, qrcode):
             messages.success(self.request, 'Hacker checked-in! Good job! '
                                            'Nothing else to see here, '
                                            'you can move on :D')
@@ -134,11 +199,18 @@ class CheckInAPI(APIView):
         var_token = request.GET.get('token')
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=403)
-        checkInData = models.Application.objects.exclude(status=models.APP_ATTENDED).all()
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        ids = [u.id for u in models.User.objects.exclude(id__in=checkins) if not u.is_participant]
+        checkInData = models.User.objects.filter(id__in=ids)
         checkInDataList = []
         for e in checkInData:
-            checkInDataList.append({'uuid': str(e.uuid), 'id': e.user.id, 'name': e.user.name, 'email': e.user.email,
-                                    "tSize": e.tshirt_size, "diet": e.diet})
+            app = appmodels.Application.objects.filter(user__id=e.id).first()
+            if app:
+                checkInDataList.append({'uuid': str(e.id), 'id': e.id, 'name': e.name, 'email': e.email,
+                                        "tSize": app.tshirt_size, "diet": app.diet})
+            else:
+                checkInDataList.append({'uuid': str(e.id), 'id': e.id, 'name': e.name, 'email': e.email,
+                                        "tSize": "Unknown", "diet": "Unknown"})
         return HttpResponse(json.dumps({'code': 1, 'content': checkInDataList}), content_type='application/json')
 
     def post(self, request, format=None):
@@ -148,8 +220,8 @@ class CheckInAPI(APIView):
         var_token = content['token']
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
-        appid = content['app_id']
+        userid = content['app_id']
         qrcode = content['qr_code']
-        if checking_in_hacker(request, False, appid, qrcode):
+        if checking_in_hacker(request, False, userid, qrcode):
             return JsonResponse({'code': 1, 'message': 'Hacker Checked in'})
         return JsonResponse({'code': 0, 'message': 'Invalid QR'})

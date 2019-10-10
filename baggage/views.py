@@ -57,10 +57,10 @@ def baggage_checkOut(request, web, bagid):
         bag.outby = request.user
     else:
         bag.outby = User.objects.filter(id=1).first()
-        bag.save()
         pool = Pool(processes=1)
         pool.apply_async(send_slack_message, [bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
                                               str(bagid) + '` has been checked-out :truck:!'])
+    bag.save()
     return True
 
 

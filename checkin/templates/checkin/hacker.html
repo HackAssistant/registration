@@ -11,13 +11,21 @@
 
 {% block panel %}
     <dl class="dl-horizontal">
-        {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
-        {% include 'include/field.html' with desc='Name' value=app.user.name %}
-        {% include 'include/field.html' with desc='Email' value=app.user.email %}
-        {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
-        {% include 'include/field.html' with desc='Diet' value=app.diet %}
-        {% include 'include/field.html' with desc='Other' value=app.other_diet %}
-        {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+      {% if app %}
+          {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
+          {% include 'include/field.html' with desc='Name' value=app.user.name %}
+          {% include 'include/field.html' with desc='Email' value=app.user.email %}
+          {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
+          {% include 'include/field.html' with desc='Diet' value=app.diet %}
+          {% include 'include/field.html' with desc='Other' value=app.other_diet %}
+          {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+      {% else %}
+          {% include 'include/field.html' with desc='Name' value=user.name %}
+          {% include 'include/field.html' with desc='Email' value=user.email %}
+          {% if user.diet %}
+            {% include 'include/field.html' with desc='Diet' value=user.diet %}
+          {% endif %}
+      {% endif %}
     </dl>
 {% endblock %}
 
@@ -36,7 +44,7 @@
                 <div class="form-group">
                     {% include 'include/input.html' with type='qr' desc='QR code' name='qr_code' id='qr_code' %}
                 </div>
-                <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
+                <input type="hidden" name="user_id" value="{{ user.id }}"/>
                 <button class="btn btn-success btn-block" name="checkin">Check In</button>
             </form>
         {% endif %}

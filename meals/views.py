@@ -264,10 +264,10 @@ class MealsApi(APIView):
                 return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
             obj_application = obj_checkin.application
             obj_user = obj_application.user
-            if obj_application is None:
-                return HttpResponse(json.dumps({'code': 1, 'message': 'No application found'}),
-                                    content_type='application/json')
-            var_diet = obj_application.diet
+            if obj_user.diet:
+                var_diet = obj_user.diet
+            else:
+                var_diet = obj_application.diet
             var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
             if var_eatens >= var_repetitions:
                 return HttpResponse(json.dumps({'code': 2, 'message': 'Hacker alreay ate'}),

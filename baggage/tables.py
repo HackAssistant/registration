@@ -68,13 +68,13 @@ class BaggageListTable(tables.Table):
 
 class BaggageUsersTable(tables.Table):
     checkin = tables.TemplateColumn(
-        "<a href='{% url 'baggage_new' record.application.user.id %}'>Baggage check-in</a> ",
+        "<a href='{% url 'baggage_new' record.application_user.id %}'>Baggage check-in</a> ",
         verbose_name='Check-in', orderable=False)
     checkout = tables.TemplateColumn(
-        "<a href='{% url 'baggage_hacker' record.application.user.id %}'>Baggage check-out</a> ",
+        "<a href='{% url 'baggage_hacker' record.application_user.id %}'>Baggage check-out</a> ",
         verbose_name='Check-out', orderable=False)
-    name = tables.Column(accessor='application.user.name', verbose_name='Name')
-    email = tables.Column(accessor='application.user.email', verbose_name='Email')
+    name = tables.Column(accessor='application_user.name', verbose_name='Name')
+    email = tables.Column(accessor='application_user.email', verbose_name='Email')
 
     class Meta:
         model = CheckIn
