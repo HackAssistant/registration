@@ -132,7 +132,7 @@ class CheckInAPI(APIView):
 
     def get(self, request, format=None):
         var_token = request.GET.get('token')
-        if var_token != 'a':
+        if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=403)
         checkInData = models.Application.objects.exclude(status=models.APP_ATTENDED).all()
         checkInDataList = []
