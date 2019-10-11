@@ -192,17 +192,25 @@ class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Temp
         return User.objects.annotate(
             checkin_count=Count('checkin__application')).exclude(checkin_count=0)
 
+
 class CheckInAPI(APIView):
 
     def get(self, request, format=None):
         var_token = request.GET.get('token')
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=403)
-        checkInData = models.Application.objects.exclude(status=models.APP_ATTENDED).all()
+        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        ids = [u.id for u in models.User.objects.exclude(id__in=checkins) if not u.is_participant]
+        checkInData = models.User.objects.filter(id__in=ids)
         checkInDataList = []
         for e in checkInData:
-            checkInDataList.append({'uuid': str(e.uuid), 'id': e.user.id, 'name': e.user.name, 'email': e.user.email,
-                                    "tSize": e.tshirt_size, "diet": e.diet})
+            app = appmodels.Application.objects.filter(user__id=e.id).first()
+            if app:
+                checkInDataList.append({'uuid': str(e.id), 'id': e.id, 'name': e.name, 'email': e.email,
+                                        "tSize": app.tshirt_size, "diet": app.diet})
+            else:
+                checkInDataList.append({'uuid': str(e.id), 'id': e.id, 'name': e.name, 'email': e.email,
+                                        "tSize": "Unknown", "diet": "Unknown"})
         return HttpResponse(json.dumps({'code': 1, 'content': checkInDataList}), content_type='application/json')
 
     def post(self, request, format=None):
@@ -212,8 +220,8 @@ class CheckInAPI(APIView):
         var_token = content['token']
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=500)
-        appid = content['app_id']
+        userid = content['app_id']
         qrcode = content['qr_code']
-        if checking_in_hacker(request, False, appid, qrcode):
+        if checking_in_hacker(request, False, userid, qrcode):
             return JsonResponse({'code': 1, 'message': 'Hacker Checked in'})
         return JsonResponse({'code': 0, 'message': 'Invalid QR'})
