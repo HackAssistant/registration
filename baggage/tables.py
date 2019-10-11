@@ -39,8 +39,8 @@ class BaggageUsersFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(Q(application__user__email__icontains=value) |
-                               Q(application__user__name__icontains=value) |
+        return queryset.filter(Q(application_user__email__icontains=value) |
+                               Q(application_user__name__icontains=value) |
                                Q(qr_identifier__icontains=value))
 
     class Meta:
