@@ -39,23 +39,37 @@
 
         {% if is_global_challenge_room %}
 
-          <h4 class="text-center">Score</h4>
+          <h4 class="text-center">Principal Score</h4>
           <div class="row criteria">
               <div class="col-md-2 col-md-offset-4">Technology</div>
-              <div class="col-md-2">Design</div>
-              <div class="col-md-2">Completion</div>
+              <div class="col-md-2">Idea</div>
               <div class="col-md-2">Learning</div>
           </div>
-
 
           {% for judge in "ABC" %}
           <dl class="dl-horizontal">
             <div class="row">
               <div class="col-md-2"><dt>Judge {{ judge }}</dt><dd></dd></div>
               <div class="col-md-2 col-md-offset-2">{% include 'include/number5.html' with name="tech_score_"|add:judge %}</div>
-              <div class="col-md-2">{% include 'include/number5.html' with name="design_score_"|add:judge %}</div>
-              <div class="col-md-2">{% include 'include/number5.html' with name="completion_score_"|add:judge %}</div>
+              <div class="col-md-2">{% include 'include/number5.html' with name="idea_score_"|add:judge %}</div>
               <div class="col-md-2">{% include 'include/number5.html' with name="learning_score_"|add:judge %}</div>
+
+            </div>
+          </dl>
+          {% endfor %}
+            <h4 class="text-center">Secondary Score</h4>
+            <div class="row criteria">
+                <div class="col-md-2 col-md-offset-4">Design</div>
+                <div class="col-md-2">Usability (UX)</div>
+                <div class="col-md-2">Smoke</div>
+            </div>
+          {% for judge in  "ABC" %}
+          <dl class="dl-horizontal">
+            <div class="row">
+              <div class="col-md-2"><dt>Judge {{ judge }}</dt><dd></dd></div>
+              <div class="col-md-2 col-md-offset-2">{% include 'include/number5.html' with name="design_score_"|add:judge %}</div>
+              <div class="col-md-2">{% include 'include/number5.html' with name="ux_score_"|add:judge %}</div>
+              <div class="col-md-2">{% include 'include/number5.html' with name="smoke_score_"|add:judge %}</div>
             </div>
           </dl>
           {% endfor %}

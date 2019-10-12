@@ -22,7 +22,7 @@ class RoomAdmin(admin.ModelAdmin):
 
 class PresentationAdmin(admin.ModelAdmin):
     list_display = ('project', 'room', 'done', 'score', 'tech_score',
-                    'design_score', 'learning_score', 'completion_score')
+                    'learning_score')
     list_filter = ('room__challenge', 'room', 'done')
 
     def score(self, presentation):

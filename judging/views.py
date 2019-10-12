@@ -107,8 +107,8 @@ class RoomJudgingView(TabsViewMixin, TemplateView):
             c.update({'presentation': presentation,
                       'room': self.request.user.room,
                       'project': project,
-                      'is_global_challenge_room': presentation and
-                      presentation.room.challenge.name == settings.HACKATHON_NAME})
+                      'is_global_challenge_room': presentation and presentation.room.challenge.name == settings.HACKATHON_NAME
+                      })
         return c
 
     def get(self, request, *args, **kwargs):
@@ -134,9 +134,11 @@ class RoomJudgingView(TabsViewMixin, TemplateView):
         judge_aliases = ['A', 'B', 'C']
         for judge in judge_aliases:
             tech = request.POST.get('tech_score_{}'.format(judge), None)
-            design = request.POST.get('design_score_{}'.format(judge), None)
-            completion = request.POST.get('completion_score_{}'.format(judge), None)
+            idea = request.POST.get('idea_score_{}'.format(judge), None)
             learning = request.POST.get('learning_score_{}'.format(judge), None)
+            design = request.POST.get('design_score_{}'.format(judge), None)
+            ux = request.POST.get('ux_score_{}'.format(judge), None)
+            smoke = request.POST.get('smoke_score_{}'.format(judge), None)
 
             try:
                 if request.POST.get('skip'):
@@ -146,9 +148,11 @@ class RoomJudgingView(TabsViewMixin, TemplateView):
                         presentation=presentation,
                         judge_alias=judge,
                         tech=tech,
+                        learning=learning,
+                        idea=idea,
                         design=design,
-                        completion=completion,
-                        learning=learning
+                        ux=ux,
+                        smoke=smoke
                     )
                     presentation.done = True
                     presentation.save()

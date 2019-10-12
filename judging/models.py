@@ -97,12 +97,14 @@ class Presentation(models.Model):
 
     @classmethod
     def annotate_score(cls, qs):
-        avg_ = (F('tech_avg') + F('design_avg') + F('completion_avg') + F('learning_avg')) / 4
+        avg_ = (F('tech_avg') + F('idea_avg') + F('learning_avg')) / 3
         return qs \
             .annotate(tech_avg=Avg('presentationevaluation__tech')) \
             .annotate(design_avg=Avg('presentationevaluation__design')) \
-            .annotate(completion_avg=Avg('presentationevaluation__completion')) \
+            .annotate(idea_avg=Avg('presentationevaluation__idea')) \
             .annotate(learning_avg=Avg('presentationevaluation__learning')) \
+            .annotate(smoke_avg=Avg('presentationevaluation__smoke')) \
+            .annotate(ux_avg=Avg('presentationevaluation__ux')) \
             .annotate(score_avg=avg_)
 
 
@@ -124,10 +126,14 @@ VOTES = (
 class PresentationEvaluation(models.Model):
     presentation = models.ForeignKey(Presentation, on_delete=models.CASCADE)
     judge_alias = models.CharField(choices=JUDGE_ALIASES, max_length=1)
+    # General criteria
     tech = models.IntegerField(choices=VOTES)
-    design = models.IntegerField(choices=VOTES)
-    completion = models.IntegerField(choices=VOTES)
     learning = models.IntegerField(choices=VOTES)
+    idea = models.IntegerField(choices=VOTES)
+    # Auxiliar criteria
+    design = models.IntegerField(choices=VOTES)
+    ux = models.IntegerField(choices=VOTES)
+    smoke = models.IntegerField(choices=VOTES)
 
     class Meta:
         unique_together = (('presentation', 'judge_alias'))
