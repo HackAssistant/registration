@@ -35,7 +35,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2019, 10, 6, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2019, 11, 6, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = 'Registration opens at 4:00PM and closes at 6:45PM on Friday October 11th, ' \
                    'the opening ceremony will be at 7:00PM.'
@@ -99,7 +99,7 @@ SLACK_BOT = {
     'director2' : os.environ.get('SL_BOT_DIRECTOR2', None)
 }
 # Enable judging tab
-JUDGING_ENABLED = False 
+JUDGING_ENABLED = True 
 
 # Can Hackers start a request on the hardware lab?
 # HACKERS_CAN_REQUEST = False
