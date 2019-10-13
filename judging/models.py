@@ -2,8 +2,7 @@ from django.db import models
 from django.db.models import Count, Q, Avg, F
 
 from app import settings
-from user.models import User
-
+from user.models import User 
 
 class Challenge(models.Model):
     name = models.CharField(max_length=25)
@@ -122,6 +121,11 @@ VOTES = (
     (5, '5')
 )
 
+SECONDARY_CRITERIA = (
+        (0, '0'),
+        (1, '1')
+)
+
 
 class PresentationEvaluation(models.Model):
     presentation = models.ForeignKey(Presentation, on_delete=models.CASCADE)
@@ -131,9 +135,9 @@ class PresentationEvaluation(models.Model):
     learning = models.IntegerField(choices=VOTES)
     idea = models.IntegerField(choices=VOTES)
     # Auxiliar criteria
-    design = models.IntegerField(choices=VOTES)
-    ux = models.IntegerField(choices=VOTES)
-    smoke = models.IntegerField(choices=VOTES)
+    design = models.IntegerField(choices=SECONDARY_CRITERIA)
+    ux = models.IntegerField(choices=SECONDARY_CRITERIA)
+    smoke = models.IntegerField(choices=SECONDARY_CRITERIA)
 
     class Meta:
         unique_together = (('presentation', 'judge_alias'))
