@@ -30,34 +30,33 @@ class PresentationAdmin(admin.ModelAdmin):
 
     score.admin_order_field = 'score_avg'
 
+    # PRINCIPAL CRITERIA
+
     def tech_score(self, presentation):
         return presentation.tech_avg
-
-    def design_score(self, presentation):
-        return presentation.design_avg
-
-    def ux_score(self, presentation):
-        return presentation.ux_avg
-
-    def smoke_score(self, presentation):
-        return presentation.smoke_avg
-
     tech_score.admin_order_field = 'tech_score'
-
-    def design_score(self, presentation):
-        return presentation.design_avg
-
-    design_score.admin_order_field = 'design_score'
 
     def learning_score(self, presentation):
         return presentation.learning_avg
-
     learning_score.admin_order_field = 'learning_score'
 
-    def completion_score(self, presentation):
-        return presentation.completion_avg
+    def idea_score(self, presentation):
+        return presentation.idea_avg
+    idea_score.admin_order_field = 'idea_score'
 
-    completion_score.admin_order_field = 'completion_score'
+    # SECONDARY CRITERIA
+
+    def design_score(self, presentation):
+        return presentation.design_avg
+    design_score.admin_order_field = 'design_score'
+
+    def ux_score(self, presentation):
+        return presentation.ux_avg
+    ux_score.admin_order_field = 'ux_score'
+
+    def smoke_score(self, presentation):
+        return presentation.smoke_avg
+    smoke_score.admin_order_field = 'smoke_score'
 
     def get_queryset(self, request):
         qs = super(PresentationAdmin, self).get_queryset(request)
