@@ -22,7 +22,7 @@ class RoomAdmin(admin.ModelAdmin):
 
 class PresentationAdmin(admin.ModelAdmin):
     list_display = ('project', 'room', 'done', 'score', 'tech_score',
-                    'learning_score')
+                    'learning_score', 'design_score', 'ux_score', 'smoke_score')
     list_filter = ('room__challenge', 'room', 'done')
 
     def score(self, presentation):
@@ -32,6 +32,15 @@ class PresentationAdmin(admin.ModelAdmin):
 
     def tech_score(self, presentation):
         return presentation.tech_avg
+
+    def design_score(self, presentation):
+        return presentation.design_avg
+
+    def ux_score(self, presentation):
+        return presentation.ux_avg
+
+    def smoke_score(self, presentation):
+        return presentation.smoke_avg
 
     tech_score.admin_order_field = 'tech_score'
 
