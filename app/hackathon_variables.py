@@ -9,7 +9,7 @@ HACKATHON_APPLICATION_NAME = 'Hack Kosice registration'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Hackathon in Kosice, Slovakia: 24 hours, 150 hackers, 1 spirit. ' \
+HACKATHON_DESCRIPTION = 'Hackathon in Kosice, Slovakia: 24 hours, 250 hackers, 1 spirit. ' \
                         'Come to meet the best hackers, eat the best free food, invent something groundbreaking.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'apply-dev.hackkosice.com')
@@ -33,11 +33,11 @@ HACKATHON_GITHUB_REPO = 'https://github.com/hackkosice/registration/'
 HACKATHON_APP_DEADLINE = timezone.datetime(2020, 3, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 # Registration and Closing ceremony times (make sure we won't need to change them)
-HACKATHON_ARRIVE = 'Registration opens at 8:30 and closes at 9:30 on Saturday March 30th, ' \
+HACKATHON_ARRIVE = 'Registration opens at 8:30 and closes at 9:30 on Saturday March 28th, ' \
                    'the opening ceremony will be at 10:00.'
 
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday March 31st from 18:30 to 19:30. ' \
+HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday March 29th from 18:30 to 19:30. ' \
                   'However, the projects demo fair will be held from 15:00 to 17:00.'
 # (OPTIONAL) Hackathon live page
 HACKATHON_LIVE_PAGE = 'https://hackkosice.com/'
@@ -57,7 +57,7 @@ REIMBURSEMENT_AMOUNTS = 'We provide travel reimbursements if you are coming from
                         'and up to 50\u20ac otherwise (excluding Slovakia).'
 REIMBURSEMENT_REQUIREMENTS = 'To get reimbursed, you need to attend the hackathon, ' \
                              'demo a project and submit travel receipts.'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2019, 4, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_DEADLINE = timezone.datetime(2020, 4, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 VISA_FORM = "https://docs.google.com/forms/d/e/1FAIpQLSeo4Ilfof9zl0k1327XeX39HmPryC2kEok8JxbZyyr557cOSw/viewform"
 
