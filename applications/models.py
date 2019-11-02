@@ -97,9 +97,9 @@ JOB_TYPES = [
 TSHIRT_SIZES = [(size, size) for size in ('XS S M L XL XXL'.split(' '))]
 DEFAULT_TSHIRT_SIZE = 'M'
 
-YEARS = [(int(year), year) for year in ('2018 2019 2020 2021 2022 2023 2024 2025'.split(' '))]
+YEARS = [(int(year), year) for year in ('2019 2020 2021 2022 2023 2024 2025 2026'.split(' '))]
 YEARS.append((0, 'Not a university student'))
-DEFAULT_YEAR = 2018
+DEFAULT_YEAR = 2019
 
 
 def user_directory_path(instance, filename):

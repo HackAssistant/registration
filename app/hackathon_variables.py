@@ -12,7 +12,7 @@ TIME_ZONE = 'CET'
 HACKATHON_DESCRIPTION = 'Hackathon in Kosice, Slovakia: 24 hours, 150 hackers, 1 spirit. ' \
                         'Come to meet the best hackers, eat the best free food, invent something groundbreaking.'
 # Domain where application is deployed, can be set by env variable
-HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'apply.hackkosice.com')
+HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'apply-dev.hackkosice.com')
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
 HACKATHON_CONTACT_EMAIL = 'contact@hackkosice.com'
 # Hackathon logo url, will be used on all emails
@@ -30,7 +30,7 @@ HACKATHON_FACEBOOK_PAGE = 'hackkosice'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackkosice/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2019, 3, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2020, 3, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 # Registration and Closing ceremony times (make sure we won't need to change them)
 HACKATHON_ARRIVE = 'Registration opens at 8:30 and closes at 9:30 on Saturday March 30th, ' \

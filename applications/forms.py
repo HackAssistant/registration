@@ -90,8 +90,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     )
 
     code_conduct = forms.BooleanField(required=False,
-                                      label='I have read and accept '
-                                            '<a href="%s" target="_blank">%s Code of conduct</a>\
+                                      label='I have read and agree to the '
+                                            '<a href="%s" target="_blank">%s MLH Code of Conduct</a>.\
+											I further agree to the terms of both the \
+											<a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" \
+											target="_blank">MLH Contest Terms and Conditions</a> and the \
+											<a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
                                             <span style="color: red">*</span>' % (
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 'MLH'
@@ -104,18 +108,14 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                 settings.HACKATHON_NAME), )
     application_sharing = forms.BooleanField(
             required=False,
-            label='I authorize you to share my application/registration \
-            information for event administration, ranking, MLH \
-            administration, pre- and post-event informational e-mails, \
-            and occasional messages about hackathons in-line with the \
-            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. \
-            I further agree to the terms of both the \
-            <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" \
-            target="_blank">MLH Contest Terms and Conditions</a> \
-            and the \
-            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
+            label='I authorize you to share my application/registration information with Major League Hacking for event administration, \
+            ranking, MLH administration, and with my authorization email in-line with the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
             <span style="color: red">*</span>'
         )
+
+
+    data_sharing = forms.BooleanField(required=False,label='I authorize Major League Hacking to send me occasional messages about hackathons.<span style="color: red">*</span>')
+
     partners_permission = forms.BooleanField(
         required=False,
         label='I authorize you to share my application/registration information, including the CV, '
@@ -142,8 +142,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                          required=False,
                                          widget=forms.DateInput(attrs={'type': 'date'}))
     guardian_code_conduct = forms.BooleanField(required=False,
-                                      label='I have read and accept '
-                                            '<a href="%s" target="_blank">%s Code of conduct</a>\
+                                      label='I have read and agree to the '
+                                            '<a href="%s" target="_blank">%s MLH Code of Conduct</a>.\
+                                            I further agree to the terms of both the \
+                                            <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" \
+                                            target="_blank">MLH Contest Terms and Conditions</a> and the \
+                                            <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
                                             <span style="color: red">*</span>' % (
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 'MLH'
@@ -156,18 +160,11 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                   settings.HACKATHON_NAME), )
     guardian_application_sharing = forms.BooleanField(
         required=False,
-        label='I authorize you to share the application/registration \
-                information for event administration, ranking, MLH \
-                administration, pre- and post-event informational e-mails, \
-                and occasional messages about hackathons in-line with the \
-                <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. \
-                I further agree to the terms of both the \
-                <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" \
-                target="_blank">MLH Contest Terms and Conditions</a> \
-                and the \
-                <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
-                <span style="color: red">*</span>'
-    )
+        label='I authorize you to share application/registration information with Major League Hacking for event administration, \
+            ranking, MLH administration, and with atendee\'s authorization email in-line with the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>\
+            <span style="color: red">*</span>'
+        )
+    
     guardian_partners_permission = forms.BooleanField(
         required=False,
         label='I authorize you to share the application/registration information, including the CV, '
@@ -224,6 +221,14 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                 "To attend %s you must give us permission to share your application with MLH" % settings.HACKATHON_NAME)
         return aps
 
+    def clean_data_sharing(self):
+        ds = self.cleaned_data.get('data_sharing', False)
+        # Check if hackers agreed with data sharing
+        if not ds and not self.instance.pk:
+            raise forms.ValidationError(
+                "To attend %s you must give us permission to share your data with MLH" % settings.HACKATHON_NAME)
+        return ds
+
     def clean_media_permission(self):
         mp = self.cleaned_data.get('media_permission', False)
         # Check if hackers give us permission to publish media files asociated with them
@@ -231,6 +236,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError(
                 "To attend %s you must agree with that photos from the event can be used as described below" % settings.HACKATHON_NAME)
         return mp
+
 
     def clean_partners_permission(self):
         pp = self.cleaned_data.get('partners_permission', False)
@@ -438,6 +444,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                             'code_conduct',
                             'privacy_policy',
                             'application_sharing',
+							'data_sharing',
                             'partners_permission',
                             'media_permission',
                         ),
