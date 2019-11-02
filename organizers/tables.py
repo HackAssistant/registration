@@ -55,6 +55,7 @@ class ApplicationTable(tables.Table):
         "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
     origin = tables.Column(accessor='origin', verbose_name='Origin')
+    name = tables.Column(accessor='user.name', verbose_name='Full name')
 
     class Meta:
         model = Application
@@ -62,6 +63,7 @@ class ApplicationTable(tables.Table):
         template = 'django_tables2/bootstrap-responsive.html'
         empty_text = 'No applications available'
         order_by = '-vote_avg'
+        sequence = ('name', '...')
 
 
 class AdminApplicationsListTable(tables.Table):
