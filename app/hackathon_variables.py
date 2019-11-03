@@ -30,7 +30,7 @@ HACKATHON_FACEBOOK_PAGE = 'hackkosice'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackkosice/registration/'
 
 # (OPTIONAL) Applications opening date
-HACKATHON_APP_OPENING = timezone.datetime(2019, 30, 11, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_OPENING = timezone.datetime(2019, 11, 15, 18, 00, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) Applications deadline
 HACKATHON_APP_DEADLINE = timezone.datetime(2020, 3, 13, 0, 0, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
