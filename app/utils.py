@@ -54,6 +54,18 @@ def application_timeleft():
         return None
 
 
+def is_app_opened():
+    opening = getattr(settings, 'HACKATHON_APP_OPEN', None)
+    if opening:
+        timeleft =  opening - timezone.now()
+    else:
+        timeleft = None
+
+    if timeleft and timeleft != timezone.timedelta():
+        return timeleft < timezone.timedelta()
+    return False
+
+
 def is_app_closed():
     timeleft = application_timeleft()
     if timeleft and timeleft != timezone.timedelta():
@@ -72,6 +84,7 @@ def get_substitutions_templates():
             'h_ga': getattr(settings, 'HACKATHON_GOOGLE_ANALYTICS', None),
             'h_tw': getattr(settings, 'HACKATHON_TWITTER_ACCOUNT', None),
             'h_repo': getattr(settings, 'HACKATHON_GITHUB_REPO', None),
+            'h_app_opened': is_app_opened(),
             'h_app_closed': is_app_closed(),
             'h_app_timeleft': application_timeleft(),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
