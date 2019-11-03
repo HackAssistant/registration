@@ -55,7 +55,7 @@ def application_timeleft():
 
 
 def is_app_opened():
-    opening = getattr(settings, 'HACKATHON_APP_OPEN', None)
+    opening = getattr(settings, 'HACKATHON_APP_OPENING', None)
     if opening:
         timeleft =  opening - timezone.now()
     else:
