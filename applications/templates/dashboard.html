@@ -5,7 +5,11 @@
 
 {% block panel %}
     <div class="row">
-        {% if not application and h_app_closed %}
+        {% if not h_app_opened %}
+            <div class="col-md-12">
+                {% include 'include/applications_not_opened.html' %}
+            </div>
+        {% elif not application and h_app_closed %}
             <div class="col-md-12">
                 {% include 'include/applications_closed.html' %}
             </div>
