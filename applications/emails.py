@@ -16,6 +16,9 @@ def create_invite_email(application, request):
     return emails.render_mail('mails/invitation',
                               application.user.email, c)
 
+def create_application_email(application):
+    c = {'name': application.user.get_full_name}
+    return emails.render_mail('mails/application_submitted', application.user.email, c)
 
 def create_reject_email(application, request):
     c = {'name': application.user.get_full_name}

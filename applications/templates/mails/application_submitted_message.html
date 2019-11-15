@@ -1,0 +1,16 @@
+{% extends 'base_email.html' %}
+{% block preheader %}Application submission email for {{ h_name }}{% endblock %}
+
+{% block content %}
+    <p>
+        Well done {{ name }}!
+    </p>
+    <p><strong>Thanks for applying</strong> to <strong>{{ h_name }} 2020</strong>! You are now a step closer to this amazing adventure. We are so happy that you have decided to join us on this journey!
+            </p>
+	<p>Your application has now been successfully submitted, so it can be thoroughly reviewed by our team in the <strong>next few weeks</strong>. Once it is assessed, we will notify you of its status and ask you to confirm or cancel the invitation.</p>
+    <p>Meanwhile, here is a happy doggo for a lovely day!</p>
+    <p>{% include 'mails/include/email_image.html' with url='https://hackkosice.com/wp-content/uploads/2019/11/winking.gif' %}</p>
+    
+<p>We hope we will see ya at Hack Kosice 2020!</p>
+{% include 'mails/include/closing.html' %}
+{% endblock %}

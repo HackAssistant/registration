@@ -181,6 +181,8 @@ class HackerDashboard(LoginRequiredMixin, TabsView):
             application.user = request.user
             application.save()
             if new_application:
+                m = emails.create_application_email(application)
+                m.send()
                 messages.success(request,
                                  'We have now received your application. '
                                  'Processing your application will take some time, so please be patient.')
