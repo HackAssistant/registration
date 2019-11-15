@@ -91,6 +91,7 @@ def get_substitutions_templates():
             'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),
             'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
             'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
+            'h_ig': getattr(settings, 'HACKATHON_INSTAGRAM_PAGE', None),
             'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
             'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
             'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
