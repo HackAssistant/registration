@@ -18,7 +18,7 @@ HACKATHON_CONTACT_EMAIL = 'contact@hackkosice.com'
 # Hackathon logo url, will be used on all emails
 HACKATHON_LOGO_URL = 'https://hackkosice.com/wp-content/uploads/2018/10/logo_purpleldpi.png'
 
-HACKATHON_OG_IMAGE = 'https://hackkosice.com/wp-content/uploads/2018/11/og_image_date.png'
+HACKATHON_OG_IMAGE = 'https://hackkosice.com/wp-content/uploads/2018/11/og_image.png'
 # (OPTIONAL) Track visits on your website
 # Web Analytics code
 HACKATHON_GOOGLE_ANALYTICS = 'UA-117942945-2'
