@@ -3,7 +3,7 @@
 
 {% block content %}
 <p>    Congrats {{ app.user.get_full_name }}, you have been granted travel reimbursement for this edition of {{ h_name }}. We will
-    reimburse you <b>{{ h_currency }}{{ reimb.assigned_money }}</b> as you are coming from {{ reimb.origin }}.
+    reimburse you <b>{{ h_currency }}{{ reimb.assigned_money }}</b> as you are coming from {{ reimb.origin }}. To get reimbursed, you need to submit travel receipts, attend the hackathon and demo a project.
     <b>You have {{ h_r_days }} days to submit a receipt of your tickets.</b>
 </p>
     {% include 'mails/include/email_button.html' with text='Submit receipt' url=form_url %}
