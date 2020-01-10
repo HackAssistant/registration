@@ -87,6 +87,7 @@ def get_substitutions_templates():
             'h_app_opened': is_app_opened(),
             'h_app_closed': is_app_closed(),
             'h_app_timeleft': application_timeleft(),
+            'h_app_tutorial': getattr(settings, 'APPLICATION_TUTORIAL_LINK', None),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
             'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),
             'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
