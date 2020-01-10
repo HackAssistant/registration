@@ -480,7 +480,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'birth_day': 'When you click on the field, you should see a pop-up where you can \
             choose a date.',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
-            'resume': 'Uploading your resume significantly increases your chances of being invited to %s' % settings.HACKATHON_NAME,
+            'resume': '<font color="red">Uploading your resume significantly increases your chances of being invited to %s</font>' % settings.HACKATHON_NAME,
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': '<p>' + settings.REIMBURSEMENT_AMOUNTS + '</p><p>'
