@@ -9,13 +9,16 @@ USR_VOLUNTEER = 'V'
 USR_HACKER = 'H'
 USR_MENTOR = 'M'
 USR_SPONSOR = 'S'
+USR_UNAPPLIED = 'U'
+# User before applying as Hacker/Mentor/Volunteer
 
 USR_TYPE = [
     (USR_ORGANIZER, 'Organizer'),
     (USR_VOLUNTEER, 'Volunteer'),
     (USR_HACKER, 'Hacker'),
     (USR_MENTOR, 'Mentor'),
-    (USR_SPONSOR, 'Sponsor')
+    (USR_SPONSOR, 'Sponsor'),
+    (USR_UNAPPLIED, 'Unapplied')
 ]
 
 
@@ -82,7 +85,7 @@ class User(AbstractBaseUser):
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
 
-    type = models.CharField(choices=USR_TYPE, default=USR_HACKER, max_length=2)
+    type = models.CharField(choices=USR_TYPE, default=USR_UNAPPLIED, max_length=2)
 
     objects = UserManager()
 
