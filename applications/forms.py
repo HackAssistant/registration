@@ -216,7 +216,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
-            'resume': 'Upload your resume',
+            'resume': 'Upload your resume (PDF)',
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
                 getattr(settings, 'CURRENCY', '$'), settings.HACKATHON_NAME),
 
