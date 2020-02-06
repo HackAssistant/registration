@@ -85,7 +85,7 @@ class User(AbstractBaseUser):
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
 
-    type = models.CharField(choices=USR_TYPE, default=USR_UNAPPLIED, max_length=2)
+    type = models.CharField(choices=USR_TYPE, default=USR_UNACCEPTED, max_length=2)
 
     objects = UserManager()
 

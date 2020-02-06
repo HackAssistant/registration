@@ -11,6 +11,8 @@ from django.utils import timezone
 
 from app import utils
 from user.models import User
+from .validatiors import validate_file_extension
+
 
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
@@ -152,7 +154,7 @@ class Application(models.Model):
     lennyface = models.CharField(max_length=300, default='-.-')
 
     # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes', null=True, blank=True)
+    resume = models.FileField(upload_to='resumes', null=True, blank=True, validators=[validate_file_extension])
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
