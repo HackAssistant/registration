@@ -10,13 +10,13 @@ from app import utils, mixins
 def root_view(request):
     if not request.user.is_authenticated() and not utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_signup'))
-    if not request.user.is_authenticated() and utils.is_app_closed():
+    elif not request.user.is_authenticated() and utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_login'))
-    if not request.user.has_usable_password():
+    elif not request.user.has_usable_password():
         return HttpResponseRedirect(reverse('set_password'))
-    if not request.user.email_verified:
+    elif not request.user.email_verified:
         return HttpResponseRedirect(reverse('verify_email_required'))
-    if request.user.is_organizer:
+    elif request.user.is_organizer:
         return HttpResponseRedirect(reverse('review'))
     elif request.user.is_volunteer:
         return HttpResponseRedirect(reverse('check_in_list'))
