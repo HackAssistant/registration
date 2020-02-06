@@ -9,8 +9,8 @@ USR_VOLUNTEER = 'V'
 USR_HACKER = 'H'
 USR_MENTOR = 'M'
 USR_SPONSOR = 'S'
-USR_UNAPPLIED = 'U'
-# User before applying as Hacker/Mentor/Volunteer
+USR_UNACCEPTED = 'U'
+# User before being accepted as Hacker/Mentor/Volunteer
 
 USR_TYPE = [
     (USR_ORGANIZER, 'Organizer'),
@@ -18,7 +18,7 @@ USR_TYPE = [
     (USR_HACKER, 'Hacker'),
     (USR_MENTOR, 'Mentor'),
     (USR_SPONSOR, 'Sponsor'),
-    (USR_UNAPPLIED, 'Unapplied')
+    (USR_UNACCEPTED, 'Unaccepted')
 ]
 
 
