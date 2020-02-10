@@ -22,6 +22,7 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 APP_DUBIOUS = 'D'
 APP_INVALID = 'IV'
+APP_BLACKLISTED = 'BL'
 
 PENDING_TEXT = 'Under review'
 DUBIOUS_TEXT = 'Dubious'
@@ -279,6 +280,16 @@ class Application(models.Model):
             self.contacted = True
             self.contacted_by = user
             self.save()
+
+    def set_blacklist(self):
+        self.status = APP_BLACKLISTED
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def unset_blacklist(self):
+        self.status = APP_PENDING
+        self.status_update_date = timezone.now()
+        self.save()
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
