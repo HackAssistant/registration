@@ -47,7 +47,7 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
-def signup(request):
+def signup(request, type):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
@@ -61,7 +61,7 @@ def signup(request):
             if models.User.objects.filter(email=email).first() is not None:
                 messages.error(request, 'An account with this email already exists')
             else:
-                user = models.User.objects.create_user(email=email, password=password, name=name)
+                user = models.User.objects.create_user(email=email, password=password, name=name, type=type)
                 user = auth.authenticate(email=email, password=password)
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('root'))

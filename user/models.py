@@ -9,27 +9,33 @@ USR_VOLUNTEER = 'V'
 USR_HACKER = 'H'
 USR_MENTOR = 'M'
 USR_SPONSOR = 'S'
-USR_UNACCEPTED = 'U'
-# User before being accepted as Hacker/Mentor/Volunteer
 
 USR_TYPE = [
-    (USR_ORGANIZER, 'Organizer'),
-    (USR_VOLUNTEER, 'Volunteer'),
     (USR_HACKER, 'Hacker'),
     (USR_MENTOR, 'Mentor'),
     (USR_SPONSOR, 'Sponsor'),
-    (USR_UNACCEPTED, 'Unaccepted')
+    (USR_VOLUNTEER, 'Volunteer'),
+    (USR_ORGANIZER, 'Organizer'),
 ]
+
+USR_URL_TYPE = {
+    'hacker': USR_HACKER,
+    'volunteer': USR_VOLUNTEER,
+    'mentor': USR_MENTOR
+}
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, name, password=None, type=USR_HACKER):
         if not email:
             raise ValueError('Users must have a email')
+        if type not in USR_URL_TYPE:
+            raise ValueError('What are you trying to do?')
 
         user = self.model(
             email=email,
-            name=name
+            name=name,
+            type=USR_URL_TYPE[type]
         )
 
         user.set_password(password)
@@ -85,7 +91,7 @@ class User(AbstractBaseUser):
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
 
-    type = models.CharField(choices=USR_TYPE, default=USR_UNACCEPTED, max_length=2)
+    type = models.CharField(choices=USR_TYPE, default=USR_HACKER, max_length=2)
 
     objects = UserManager()
 
