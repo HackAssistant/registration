@@ -62,6 +62,7 @@ class UserManager(BaseUserManager):
             email,
             name=name,
             password=password,
+            type='hacker'
         )
         user.is_director = True
         user.type = USR_ORGANIZER
