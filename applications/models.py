@@ -102,6 +102,17 @@ TSHIRT_SIZES = [
 ]
 DEFAULT_TSHIRT_SIZE = T_M
 
+HACKER = 'H'
+VOLUNTEER = 'V'
+MENTOR = 'M'
+SPONSOR = 'S'
+APP_TYPE = [
+    (HACKER, 'Hacker'),
+    (VOLUNTEER, 'Volunteer'),
+    (MENTOR, 'Mentor'),
+    (SPONSOR, 'Sponsor')
+]
+
 YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
 DEFAULT_YEAR = 2018
 
@@ -113,6 +124,7 @@ class Application(models.Model):
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
+    type = models.CharField(max_length=2, choices=APP_TYPE, default=HACKER)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
