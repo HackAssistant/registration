@@ -26,6 +26,7 @@ APP_BLACKLISTED = 'BL'
 
 PENDING_TEXT = 'Under review'
 DUBIOUS_TEXT = 'Dubious'
+BLACKLIST_TEXT = 'Black Listed'
 STATUS = [
     (APP_PENDING, PENDING_TEXT),
     (APP_REJECTED, 'Wait listed'),
@@ -36,7 +37,8 @@ STATUS = [
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
     (APP_DUBIOUS, DUBIOUS_TEXT),
-    (APP_INVALID, 'Invalid')
+    (APP_INVALID, 'Invalid'),
+    (APP_BLACKLISTED, BLACKLIST_TEXT)
 ]
 
 NO_ANSWER = 'NA'
