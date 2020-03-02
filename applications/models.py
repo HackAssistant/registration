@@ -115,6 +115,8 @@ class Application(models.Model):
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
+    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
+
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
     # When was the last status update
@@ -183,7 +185,7 @@ class Application(models.Model):
 
     def get_soft_status_display(self):
         text = self.get_status_display()
-        if DUBIOUS_TEXT in text:
+        if DUBIOUS_TEXT or BLACKLIST_TEXT in text:
             return PENDING_TEXT
         return text
 
@@ -331,6 +333,9 @@ class Application(models.Model):
 
     def is_dubious(self):
         return self.status == APP_DUBIOUS
+
+    def is_blacklisted(self):
+        return self.status == APP_BLACKLISTED
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
