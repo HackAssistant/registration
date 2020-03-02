@@ -16,7 +16,7 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID
+from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
@@ -65,7 +65,7 @@ class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateVie
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID]) \
+        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED]) \
             .annotate(email=F('user__email')) \
             .values('email').annotate(total_count=Count('application'),
                                       skip_count=Count('application') - Count('calculated_vote'),
