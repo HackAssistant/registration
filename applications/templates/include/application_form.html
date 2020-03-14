@@ -3,7 +3,8 @@
 {% load form_utils %}
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
-    #id_scholarship > div, #id_reimb > div {
+    #id_scholarship > div, #id_reimb > div, #id_first_timer_extra > div, #id_attendance > div, #id_english_level > div,
+    #id_is_student > div {
         display: inline-block;
         padding-right: 20px;
         margin-bottom: 0;
@@ -58,7 +59,6 @@
                     });
                 }
             });
-
             var other_gender = $('#id_other_gender');
             var gender = $('#id_gender');
             conditional_field(other_gender, gender, () => {
@@ -104,6 +104,49 @@
             });
             // Making projects look like required
             projects.parent().addClass('required');
+
+            var is_firsttime_extra = $('input[name="first_timer_extra"][value="True"]');
+            var experienced_extra = $('input[name="first_timer_extra"][value="False"]');
+            var which_hack = $('#id_which_hack');
+            conditional_field(which_hack, is_firsttime_extra, function () {
+                return is_firsttime_extra.prop("checked");
+            });
+            conditional_field(which_hack, experienced_extra, function () {
+                return is_firsttime_extra.prop("checked");
+            });
+            // Making wich_hack look like required
+            which_hack.parent().addClass('required');
+
+            var is_student = $('input[name="is_student"][value="True"]');
+            var is_worker = $('input[name="is_student"][value="False"]');
+            var company = $('#id_company');
+            var university = $('#id_university');
+            var degree = $('#id_degree');
+            conditional_field(company, is_student, function () {
+                return is_worker.prop("checked");
+            });
+            conditional_field(company, is_worker, function () {
+                return is_worker.prop("checked");
+            });
+            if ($('#id_is_student')[0]) {
+                conditional_field(university, is_student, function () {
+                    return is_student.prop("checked");
+                });
+                conditional_field(university, is_worker, function () {
+                    return is_student.prop("checked");
+                });
+                conditional_field(degree, is_student, function () {
+                    return is_student.prop("checked");
+                });
+                conditional_field(degree, is_worker, function () {
+                    return is_student.prop("checked");
+                });
+            }
+
+            // Making projects look like required
+            company.parent().addClass('required');
+            university.parent().addClass('required');
+            degree.parent().addClass('required');
 
             {% if not application %}
                 var timer;
