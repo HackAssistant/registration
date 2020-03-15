@@ -9,13 +9,13 @@ from app.settings import MAX_VOTES
 from applications.models import Application
 from user.models import User
 
-
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
 VOTES = []
 for i in range(MAX_VOTES):
-    VOTES.append((i+1, str(i+1)))
+    VOTES.append((i + 1, str(i + 1)))
+
 
 class Vote(models.Model):
     application = models.ForeignKey(Application)
@@ -73,7 +73,7 @@ class Vote(models.Model):
         # normalization/
         personal = PERSONAL_WEIGHT * ((F('personal')) - p_avg) / p_sd
         tech = TECH_WEIGHT * ((F('tech')) - t_avg) / t_sd
-        Vote.objects.filter(user=self.user).update(calculated_vote=(personal + tech)*MAX_VOTES/10)
+        Vote.objects.filter(user=self.user).update(calculated_vote=(personal + tech) * MAX_VOTES / 10)
 
     class Meta:
         unique_together = ('application', 'user')
