@@ -5,25 +5,17 @@ from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
 
+from app.settings import MAX_VOTES
 from applications.models import Application
 from user.models import User
+
 
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
-VOTES = (
-    (1, '1'),
-    (2, '2'),
-    (3, '3'),
-    (4, '4'),
-    (5, '5'),
-    (6, '6'),
-    (7, '7'),
-    (8, '8'),
-    (9, '9'),
-    (10, '10'),
-)
-
+VOTES = []
+for i in range(MAX_VOTES):
+    VOTES.append((i+1, str(i+1)))
 
 class Vote(models.Model):
     application = models.ForeignKey(Application)
@@ -59,15 +51,14 @@ class Vote(models.Model):
         # Retrieve averages
         avgs = User.objects.filter(id=self.user_id).aggregate(
             tech=Avg('vote__tech'),
-            pers=Avg('vote__personal'))
+            pers=(Avg('vote__personal')))
         p_avg = round(avgs['pers'], 2)
         t_avg = round(avgs['tech'], 2)
 
         # Calculate standard deviation for each scores
         sds = User.objects.filter(id=self.user_id).aggregate(
             tech=Avg((F('vote__tech') - t_avg) * (F('vote__tech') - t_avg)),
-            pers=Avg((F('vote__personal') - p_avg) *
-                     (F('vote__personal') - p_avg)))
+            pers=Avg((F('vote__personal') - p_avg) * (F('vote__personal') - p_avg)))
 
         # Alternatively, if standard deviation is 0.0, set it as 1.0 to avoid
         # division by 0.0 in the update statement
@@ -80,9 +71,9 @@ class Vote(models.Model):
         #
         # See this: http://www.dataminingblog.com/standardization-vs-
         # normalization/
-        personal = PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd
-        tech = TECH_WEIGHT * (F('tech') - t_avg) / t_sd
-        Vote.objects.filter(user=self.user).update(calculated_vote=personal + tech)
+        personal = PERSONAL_WEIGHT * ((F('personal')) - p_avg) / p_sd
+        tech = TECH_WEIGHT * ((F('tech')) - t_avg) / t_sd
+        Vote.objects.filter(user=self.user).update(calculated_vote=(personal + tech)*MAX_VOTES/10)
 
     class Meta:
         unique_together = ('application', 'user')
