@@ -114,6 +114,7 @@ class HackerDashboard(IsHackerMixin, TabsView):
         try:
             draft = models.DraftApplication.objects.get(user=self.request.user)
             form = forms.ApplicationForm(instance=models.Application(**draft.get_dict()))
+            form.setType(self.request.user.type)
         except:
             form = forms.ApplicationForm()
             form.setType(self.request.user.type)

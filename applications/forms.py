@@ -3,7 +3,6 @@ from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
 from form_utils.forms import BetterModelForm
-from django.forms.widgets import HiddenInput
 
 from app.mixins import OverwriteOnlyModelFormMixin
 from app.utils import validate_url
@@ -67,10 +66,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 settings.HACKATHON_NAME), )
 
-    type = ''
-
     first_timer_extra = forms.TypedChoiceField(
-        required=True,
+        required=False,
         label='',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
@@ -78,11 +75,35 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     )
 
     is_student = forms.TypedChoiceField(
-        required=True,
+        required=False,
         label='Are you studying or working?',
         coerce=lambda x: x == 'True',
         choices=((False, 'Working'), (True, 'Studying')),
-        widget=forms.RadioSelect
+        widget=forms.RadioSelect,
+    )
+
+    english_level = forms.TypedChoiceField(
+        required=False,
+        choices=models.ENGLISH,
+        coerce=lambda x: models.ENGLISH.index(x),
+        widget=forms.RadioSelect,
+        help_text='We just want to check which of you would be comfortable communicating in English!',
+        label='How much confident are you about talking in English?'
+    )
+
+    attendance = forms.TypedChoiceField(
+        required=False,
+        choices=models.ATTENDANCE,
+        widget=forms.RadioSelect,
+        help_text="It will be a great experience to enjoy from beginning to end with lots of things to do, "
+                  "but it is ok if you can't make it the whole weekend!"
+    )
+
+    sponsor_position = forms.TypedChoiceField(
+        required=False,
+        choices=models.SPONSOR_POSITION,
+        widget=forms.RadioSelect,
+        label='What is your job position?'
     )
 
     def clean_resume(self):
@@ -162,7 +183,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return item
 
     def setType(self, type):
-        self.type = type
         self.instance.type = type
         label = ''
         if type == models.VOLUNTEER:
@@ -171,7 +191,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             self.fields['quality'].required = True
             self.fields['cool_skill'].required = True
             self.fields['fav_movie'].required = True
-            self.fields['origin'].required = False
         elif type == models.MENTOR:
             label = 'mentored'
             self.fields['quality'].required = True
@@ -185,7 +204,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     # noinspection PyTypeChecker
     def __hackerFieldsets(self):
         self._fieldsets.extend((('Hacker Info',
-                                 {'fields': ('university', 'degree', 'graduation_year')}),
+                                 {'fields': ('university', 'degree', 'graduation_year', 'lennyface')}),
                                 ('Hackathons?',
                                  {'fields': ('description', 'first_timer', 'projects'), }),
                                 ('Show us what you\'ve built',
@@ -228,8 +247,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                                  "skills."
                                   })
                                 ))
-        self.fields['origin'].widget = HiddenInput()
-        self.fields['description'].widget = HiddenInput()
 
     def __sponsorFieldsets(self):
         self._fieldsets.append((('Sponsor Info',
@@ -287,9 +304,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
             'fav_movie': 'e.g.: Interstellar, Pirates of the Caribbean, Mulan, Twilight, etc.',
-            'english_level': 'We just want to check which of you would be comfortable communicating in English!',
-            'attendance': "It will be a great experience to enjoy from beginning to end with lots of things to do, "
-                          "but it is ok if you can't make it the whole weekend!",
             'cool_skill': 'e.g: can lift 300kg deadweight, have web development skills, can read minds, '
                           'time traveler...',
             'friends': 'Remember that you all have to apply separately'
@@ -327,10 +341,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                        'should contact you in group',
             'quality': 'Tell us a quality of yourself',
             'weakness': 'Now tell us a weakness of yourself',
-            'english_level': 'How much confident are you about talking in English?',
             'fav_movie': 'Which is your favorite movie?',
             'which_hack': 'Which ones?',
-            'sponsor_position': 'What is your job position?',
             'company': 'On which company are you working?'
         }
 
