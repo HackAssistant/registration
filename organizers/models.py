@@ -12,9 +12,7 @@ from user.models import User
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
-VOTES = []
-for i in range(MAX_VOTES):
-    VOTES.append((i + 1, str(i + 1)))
+VOTES = [(i, str(i)) for i in range(1, MAX_VOTES + 1)]
 
 
 class Vote(models.Model):
