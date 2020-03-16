@@ -57,7 +57,8 @@ class Vote(models.Model):
         # Calculate standard deviation for each scores
         sds = User.objects.filter(id=self.user_id).aggregate(
             tech=Avg((F('vote__tech') - t_avg) * (F('vote__tech') - t_avg)),
-            pers=Avg((F('vote__personal') - p_avg) * (F('vote__personal') - p_avg)))
+            pers=Avg((F('vote__personal') - p_avg) *
+                     (F('vote__personal') - p_avg)))
 
         # Alternatively, if standard deviation is 0.0, set it as 1.0 to avoid
         # division by 0.0 in the update statement
