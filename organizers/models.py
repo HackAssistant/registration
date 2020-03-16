@@ -5,10 +5,11 @@ from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
 
-from app.settings import MAX_VOTES
+from django.conf import settings
 from applications.models import Application
 from user.models import User
 
+MAX_VOTES = getattr(settings, 'MAX_VOTES')
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
@@ -49,7 +50,7 @@ class Vote(models.Model):
         # Retrieve averages
         avgs = User.objects.filter(id=self.user_id).aggregate(
             tech=Avg('vote__tech'),
-            pers=(Avg('vote__personal')))
+            pers=Avg('vote__personal'))
         p_avg = round(avgs['pers'], 2)
         t_avg = round(avgs['tech'], 2)
 
@@ -69,8 +70,8 @@ class Vote(models.Model):
         #
         # See this: http://www.dataminingblog.com/standardization-vs-
         # normalization/
-        personal = PERSONAL_WEIGHT * ((F('personal')) - p_avg) / p_sd
-        tech = TECH_WEIGHT * ((F('tech')) - t_avg) / t_sd
+        personal = PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd
+        tech = TECH_WEIGHT * (F('tech') - t_avg) / t_sd
         Vote.objects.filter(user=self.user).update(calculated_vote=(personal + tech) * MAX_VOTES / 10)
 
     class Meta:
