@@ -10,29 +10,52 @@ from applications import models
 
 
 class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
-    github = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control',
-               'placeholder': 'https://github.com/johnBiene'}))
-    devpost = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control',
-               'placeholder': 'https://devpost.com/JohnBiene'}))
-    linkedin = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control',
-               'placeholder': 'https://www.linkedin.com/in/john_biene'}))
-    site = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
-    phone_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': '+#########'}))
-    university = forms.CharField(required=True,
-                                 label='What university do you study at?',
-                                 help_text='Current or most recent school you attended.',
-                                 widget=forms.TextInput(
-                                     attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
+    github = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'placeholder': 'https://github.com/johnBiene'})
+    )
 
-    degree = forms.CharField(required=True, label='What\'s your major/degree?',
-                             help_text='Current or most recent degree you\'ve received',
-                             widget=forms.TextInput(
-                                 attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
+    devpost = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'placeholder': 'https://devpost.com/JohnBiene'})
+    )
+
+    linkedin = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'placeholder': 'https://www.linkedin.com/in/john_biene'})
+    )
+
+    site = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'https://biene.space'})
+    )
+
+    phone_number = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': '+#########'})
+    )
+
+    university = forms.CharField(
+        required=True,
+        label='What university do you study at?',
+        help_text='Current or most recent school you attended.',
+        widget=forms.TextInput(
+            attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
+
+    degree = forms.CharField(
+        required=True,
+        label='What\'s your major/degree?',
+        help_text='Current or most recent degree you\'ve received',
+        widget=forms.TextInput(
+            attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
     first_timer = forms.TypedChoiceField(
         required=True,
@@ -60,11 +83,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
-    code_conduct = forms.BooleanField(required=False,
-                                      label='I have read and accept the '
-                                            '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
-                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
-                                                settings.HACKATHON_NAME), )
+    code_conduct = forms.BooleanField(
+        required=False,
+        label='I have read and accept the '
+              '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
+                  getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
+                  settings.HACKATHON_NAME), )
 
     first_timer_extra = forms.TypedChoiceField(
         required=False,
@@ -85,7 +109,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     english_level = forms.TypedChoiceField(
         required=False,
         choices=models.ENGLISH,
-        coerce=lambda x: models.ENGLISH.index(x),
         widget=forms.RadioSelect,
         help_text='We just want to check which of you would be comfortable communicating in English!',
         label='How much confident are you about talking in English?'
