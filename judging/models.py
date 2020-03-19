@@ -2,7 +2,8 @@ from django.db import models
 from django.db.models import Count, Q, Avg, F
 
 from app import settings
-from user.models import User 
+from user.models import User
+
 
 class Challenge(models.Model):
     name = models.CharField(max_length=25)
@@ -122,8 +123,8 @@ VOTES = (
 )
 
 SECONDARY_CRITERIA = (
-        (0, '0'),
-        (1, '1')
+    (0, '0'),
+    (1, '1')
 )
 
 
