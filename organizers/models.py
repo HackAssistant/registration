@@ -5,24 +5,15 @@ from django.db import models
 from django.db.models import Avg, F
 from django.utils import timezone
 
+from django.conf import settings
 from applications.models import Application
 from user.models import User
 
+MAX_VOTES = getattr(settings, 'MAX_VOTES', 5)
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
-VOTES = (
-    (1, '1'),
-    (2, '2'),
-    (3, '3'),
-    (4, '4'),
-    (5, '5'),
-    (6, '6'),
-    (7, '7'),
-    (8, '8'),
-    (9, '9'),
-    (10, '10'),
-)
+VOTES = [(i, str(i)) for i in range(1, MAX_VOTES + 1)]
 
 
 class Vote(models.Model):
@@ -82,7 +73,7 @@ class Vote(models.Model):
         # normalization/
         personal = PERSONAL_WEIGHT * (F('personal') - p_avg) / p_sd
         tech = TECH_WEIGHT * (F('tech') - t_avg) / t_sd
-        Vote.objects.filter(user=self.user).update(calculated_vote=personal + tech)
+        Vote.objects.filter(user=self.user).update(calculated_vote=(personal + tech) * MAX_VOTES / 10)
 
     class Meta:
         unique_together = ('application', 'user')
