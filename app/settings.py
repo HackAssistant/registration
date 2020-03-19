@@ -263,4 +263,4 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Maximum file upload size for forms
 MAX_UPLOAD_SIZE = 5242880
 
-MAX_VOTES = 10
+MAX_VOTES = 5
