@@ -1,0 +1,32 @@
+{% extends "base_tabs.html" %}
+{% block head_title %}Check-out bag {{ bag.bid }}{% endblock %}
+{% block panel %}
+    <dl class="dl-horizontal" style="margin-bottom: 0;">
+        {% include 'include/field.html' with desc='Bag id' value=bag.bid %}
+        {% include 'include/field.html' with desc='Room' value=bag.room %}
+        {% include 'include/field.html' with desc='Position' value=position %}
+        {% include 'include/field.html' with desc='Owner' value=bag.owner %}
+        {% include 'include/field.html' with desc='Type' value=bag.get_btype_display %}
+        {% include 'include/field.html' with desc='Color' value=bag.get_color_display %}
+        {% include 'include/field.html' with desc='Description' value=bag.description %}
+        {% include 'include/field.html' with desc='Time added' value=bag.time %}
+        {% include 'include/field.html' with desc='Time updated' value=bag.updated %}
+        {% if h_b_picture %}
+            {% include 'include/image.html' with desc='Image' value=bag.image %}
+        {% endif %}
+    </dl>
+{% endblock %}
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+{% block out_panel %}
+    <div class="panel-footer">
+        {% if checkedout or first %}
+            <a class="btn btn-default btn-block" href="{% url 'baggage_search' %}">Search another user</a>
+        {% else %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="bag_id" value="{{ bag.bid }}"/>
+                <button class="btn btn-success btn-block" name="checkout">Check-out this bag</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base_table.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+
+{% block head_title %}Baggage check-out{% endblock %}
+
+{% block panel %}
+    <dl class="dl-horizontal" style="margin-bottom: 0;">
+	{% include 'include/field.html' with desc='Name' value=user.name %}
+	{% include 'include/field.html' with desc='Email' value=user.email %}
+    </dl>
+    
+    
+    <script>
+        $(document).ready(function(){
+            make_field_typeahead('bag_type', '{% static 'types.json' %}');
+            make_field_typeahead('bag_color', '{% static 'colors.json' %}');
+        })
+    </script>
+{% endblock %}

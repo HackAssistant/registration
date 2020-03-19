@@ -68,13 +68,6 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-W_XXS = 'W-XSS'
-W_XS = 'W-XS'
-W_S = 'W-S'
-W_M = 'W-M'
-W_L = 'W-L'
-W_XL = 'W-XL'
-W_XXL = 'W-XXL'
 T_XXS = 'XXS'
 T_XS = 'XS'
 T_S = 'S'
@@ -82,22 +75,18 @@ T_M = 'M'
 T_L = 'L'
 T_XL = 'XL'
 T_XXL = 'XXL'
+T_XXXL = 'XXXL'
+
 TSHIRT_SIZES = [
-    (W_XXS, "Women's - XXS"),
-    (W_XS, "Women's - XS"),
-    (W_S, "Women's - S"),
-    (W_M, "Women's - M"),
-    (W_L, "Women's - L"),
-    (W_XL, "Women's - XL"),
-    (W_XXL, "Women's - XXL"),
-    (T_XXS, "Unisex - XXS"),
     (T_XS, "Unisex - XS"),
     (T_S, "Unisex - S"),
     (T_M, "Unisex - M"),
     (T_L, "Unisex - L"),
     (T_XL, "Unisex - XL"),
     (T_XXL, "Unisex - XXL"),
+    (T_XXXL, "Unisex - XXXL"),
 ]
+
 DEFAULT_TSHIRT_SIZE = T_M
 
 YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
@@ -153,6 +142,7 @@ class Application(models.Model):
 
     # Giv me a resume here!
     resume = models.FileField(upload_to='resumes', null=True, blank=True)
+    cvs_edition = models.BooleanField(default=False)
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
@@ -169,6 +159,9 @@ class Application(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+    # Info for hardware
+    hardware = models.CharField(max_length=300, null=True, blank=True)
 
     @classmethod
     def annotate_vote(cls, qs):

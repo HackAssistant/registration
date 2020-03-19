@@ -1,0 +1,15 @@
+{% extends "base_table.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
+{% endblock %}
+
+{% block head_title %}Baggage check-out{% endblock %}
+
+{% block panel %}
+    <h3>Current checked-in bags</h3>
+    <p class="image-info"><i class="fa fa-info-circle"></i> If you want or need to leave your baggage, please take it to the <a href="http://maps.hackupc.com/#/infodesk" target="_blank">infodesk</a>.</p>
+{% endblock %}

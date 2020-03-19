@@ -6,6 +6,8 @@ from django.urls import reverse as django_reverse
 from django.utils import timezone
 from django.utils.functional import keep_lazy_text
 
+from offer.models import Code
+
 
 def reverse(viewname, args=None, kwargs=None, request=None, format=None,
             **extra):
@@ -78,6 +80,9 @@ def get_substitutions_templates():
             'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),
             'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
             'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
+            'h_ig': getattr(settings, 'HACKATHON_INSTAGRAM_ACCOUNT', None),
+            'h_yt': getattr(settings, 'HACKATHON_YOUTUBE_PAGE', None),
+            'h_me': getattr(settings, 'HACKATHON_MEDIUM_ACCOUNT', None),
             'h_live': getattr(settings, 'HACKATHON_LIVE_PAGE', None),
             'h_theme_color': getattr(settings, 'HACKATHON_THEME_COLOR', None),
             'h_og_image': getattr(settings, 'HACKATHON_OG_IMAGE', None),
@@ -86,7 +91,9 @@ def get_substitutions_templates():
             'h_r_days': getattr(settings, 'REIMBURSEMENT_EXPIRY_DAYS', None),
             'h_r_enabled': getattr(settings, 'REIMBURSEMENT_ENABLED', False),
             'h_hw_enabled': getattr(settings, 'HARDWARE_ENABLED', False),
+            'h_b_picture': getattr(settings, 'BAGGAGE_PICTURE', False),
             'h_oauth_providers': getattr(settings, 'OAUTH_PROVIDERS', {}),
+            'h_judging': getattr(settings, 'JUDGING_ENABLED', {}),
             'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
             'h_dubious_enabled': getattr(settings, 'DUBIOUS_ENABLED', False),
             }
@@ -138,5 +145,8 @@ def hacker_tabs(user):
     if app and getattr(user, 'reimbursement', None) and settings.REIMBURSEMENT_ENABLED:
         l.append(('Travel', reverse('reimbursement_dashboard'),
                   'Pending' if user.reimbursement.needs_action() else False))
+
+    if app and app.is_confirmed and Code.objects.filter(user_id=user.id).exists():
+        l.append(('Offers', reverse('codes'), False))
 
     return l

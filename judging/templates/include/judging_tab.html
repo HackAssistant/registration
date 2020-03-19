@@ -1,0 +1,5 @@
+{% if request.user.is_organizer and h_judging %}
+<li><a href="{% url 'import_projects' %}">Judging</a></li>
+{% elif h_judging %}
+  <li><a href="{% url 'judge_projects' %}">Judging</a></li>
+{% endif %}

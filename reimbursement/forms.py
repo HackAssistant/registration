@@ -22,10 +22,9 @@ class ReceiptSubmissionReceipt(BetterModelForm):
         return multipl_hacks
 
     def clean_paypal_email(self):
-        venmo = self.cleaned_data.get('venmo_user', '')
         paypal = self.cleaned_data.get('paypal_email', '')
-        if not venmo and not paypal:
-            raise forms.ValidationError("Please add either venmo or paypal so we can send you reimbursement")
+        if not paypal:
+            raise forms.ValidationError("Please add PayPal so we can send you reimbursement")
         return paypal
 
     def clean_receipt(self):
@@ -46,11 +45,11 @@ class ReceiptSubmissionReceipt(BetterModelForm):
     class Meta:
         model = Reimbursement
         fields = (
-            'venmo_user', 'paypal_email', 'receipt', 'multiple_hackers', 'friend_emails', 'origin',)
+            'paypal_email', 'receipt', 'multiple_hackers', 'friend_emails', 'origin',)
         fieldsets = (
             ('Upload your receipt',
              {'fields': ('receipt', 'multiple_hackers', 'friend_emails'), }),
-            ('Where should we send you the monies?', {'fields': ('venmo_user', 'paypal_email',), }),
+            ('Where should we send you the monies?', {'fields': ('paypal_email',), }),
             ('Where are you joining us from?', {'fields': ('origin',), }),
         )
         widgets = {
@@ -59,7 +58,8 @@ class ReceiptSubmissionReceipt(BetterModelForm):
 
         labels = {
             'multiple_hackers': 'This receipt covers multiple hackers',
-            'friend_emails': 'Hackers emails'
+            'friend_emails': 'Hackers emails',
+            'paypal_email': 'PayPal email'
         }
 
         help_texts = {
