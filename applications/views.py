@@ -197,5 +197,5 @@ def save_draft(request):
     form_keys = set(dict(forms.ApplicationForm().fields).keys())
     valid_keys = set([field.name for field in models.Application()._meta.get_fields()])
     d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys.intersection(form_keys) and v))
-    #d.save()
+    # d.save()
     return JsonResponse({'saved': True})
