@@ -253,7 +253,7 @@ class ReviewApplicationView(ApplicationDetailView):
         max_votes_per_app = getattr(settings, 'MAX_VOTES_PER_APP', 50)
         return models.Application.objects \
             .exclude(vote__user_id=self.request.user.id) \
-            .exclude(user_id=self.request.user.id) \
+            .exclude(vote__user_id=self.request.user.id, user_id=self.request.user.id) \
             .filter(status=APP_PENDING) \
             .annotate(count=Count('vote__calculated_vote')) \
             .filter(count__lte=max_votes_per_app) \
