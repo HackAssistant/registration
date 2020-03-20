@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
+from user import models
 
 User = get_user_model()
 
@@ -38,7 +39,7 @@ class Command(BaseCommand):
                         user.set_password(password)
                     else:
                         print('Updating permissions for user {0}.'.format(email))
-                    user.is_volunteer = True
+                    user.type = models.USR_VOLUNTEER
                     user.save()
                     assert authenticate(email=email, password=password)
 

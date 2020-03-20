@@ -11,6 +11,8 @@ from django.utils import timezone
 
 from app import utils
 from user.models import User
+from .validatiors import validate_file_extension
+
 
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
@@ -100,8 +102,43 @@ TSHIRT_SIZES = [
 ]
 DEFAULT_TSHIRT_SIZE = T_M
 
+HACKER = 'H'
+VOLUNTEER = 'V'
+MENTOR = 'M'
+SPONSOR = 'S'
+APP_TYPE = [
+    (HACKER, 'Hacker'),
+    (VOLUNTEER, 'Volunteer'),
+    (MENTOR, 'Mentor'),
+    (SPONSOR, 'Sponsor')
+]
+
 YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
 DEFAULT_YEAR = 2018
+
+ENGLISH = [
+    ('1', 'Low'),
+    ('2', 'Intermediate low'),
+    ('3', 'Intermediate'),
+    ('4', 'Intermediate high'),
+    ('5', 'High')
+]
+DEFAULT_ENGLISH = '3'
+
+ATTENDANCE = [
+    ('1', 'Few hours'),
+    ('2', 'Half event'),
+    ('3', 'Whole event')
+]
+DEFAULT_ATTENDANCE = '1'
+
+SPONSOR_POSITION = [
+    ('DE', 'Developer'),
+    ('DI', 'Director'),
+    ('R', 'Recruiter'),
+    ('M', 'Mentor')
+]
+DEFAULT_SPONSOR_POSITION = 'DE'
 
 
 class Application(models.Model):
@@ -111,6 +148,7 @@ class Application(models.Model):
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
+    type = models.CharField(max_length=2, choices=APP_TYPE, default=HACKER)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -133,13 +171,13 @@ class Application(models.Model):
                                                                message="Phone number must be entered in the format: \
                                                                   '+#########'. Up to 15 digits allowed.")])
 
-    # Where is this person coming from?
-    origin = models.CharField(max_length=300)
+    # Where is this person coming from? Which sponsor is?
+    origin = models.CharField(max_length=300, null=True)
 
     # Is this your first hackathon?
     first_timer = models.BooleanField(default=False)
     # Why do you want to come to X?
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=500, null=True)
     # Explain a little bit what projects have you done lately
     projects = models.TextField(max_length=500, blank=True, null=True)
 
@@ -149,15 +187,15 @@ class Application(models.Model):
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
     # Random lenny face
-    lennyface = models.CharField(max_length=300, default='-.-')
+    lennyface = models.CharField(max_length=300, default='-.-', null=True)
 
     # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes', null=True, blank=True)
+    resume = models.FileField(upload_to='resumes', null=True, blank=True, validators=[validate_file_extension])
 
     # University
-    graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
-    university = models.CharField(max_length=300)
-    degree = models.CharField(max_length=300)
+    graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR, null=True)
+    university = models.CharField(max_length=300, null=True)
+    degree = models.CharField(max_length=300, null=True)
 
     # URLs
     github = models.URLField(blank=True, null=True)
@@ -169,6 +207,40 @@ class Application(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+    # First time mentor/volunteer
+    first_timer_extra = models.BooleanField(default=False)
+
+    # English level for volunteer & mentor
+    english_level = models.CharField(choices=ENGLISH, default=DEFAULT_ENGLISH, max_length=2)
+
+    # Attendance to the event for volunteer, sponsor & mentor
+    attendance = models.CharField(choices=ATTENDANCE, default=DEFAULT_ATTENDANCE, max_length=2)
+
+    # Volunteer optional attributes
+    fav_movie = models.CharField(max_length=100, blank=True, null=True)
+    friends = models.CharField(max_length=300, blank=True, null=True)
+
+    # Quality of volunteer/Fluent language mentor
+    quality = models.CharField(max_length=500, blank=True, null=True)
+
+    # Volunteer weakness
+    weakness = models.CharField(max_length=500, blank=True, null=True)
+
+    # Mentor is student/worker
+    is_student = models.BooleanField(default=True)
+
+    # Sponsor position
+    sponsor_position = models.CharField(choices=SPONSOR_POSITION, default=DEFAULT_SPONSOR_POSITION, max_length=3)
+
+    # Cool skill volunteer
+    cool_skill = models.CharField(max_length=500, blank=True, null=True)
+
+    # Which hack has the volunteer attended
+    which_hack = models.CharField(max_length=500, blank=True, null=True)
+
+    # Which company is the sponsor or mentor
+    company = models.CharField(max_length=300, blank=True, null=True)
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -331,6 +403,22 @@ class Application(models.Model):
 
     def can_join_team(self):
         return self.status in [APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS]
+
+    @property
+    def is_volunteer(self):
+        return self.type == VOLUNTEER
+
+    @property
+    def is_hacker(self):
+        return self.type == HACKER
+
+    @property
+    def is_mentor(self):
+        return self.type == MENTOR
+
+    @property
+    def is_sponsor(self):
+        return self.type == SPONSOR
 
 
 class DraftApplication(models.Model):
