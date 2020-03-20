@@ -4,38 +4,15 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 
-USR_ORGANIZER = 'O'
-USR_VOLUNTEER = 'V'
-USR_HACKER = 'H'
-USR_MENTOR = 'M'
-USR_SPONSOR = 'S'
-
-USR_TYPE = [
-    (USR_HACKER, 'Hacker'),
-    (USR_MENTOR, 'Mentor'),
-    (USR_SPONSOR, 'Sponsor'),
-    (USR_VOLUNTEER, 'Volunteer'),
-    (USR_ORGANIZER, 'Organizer'),
-]
-
-USR_URL_TYPE = {
-    'hacker': USR_HACKER,
-    'volunteer': USR_VOLUNTEER,
-    'mentor': USR_MENTOR
-}
-
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None, type=USR_HACKER):
+    def create_user(self, email, name, password=None):
         if not email:
             raise ValueError('Users must have a email')
-        if type not in USR_URL_TYPE:
-            raise ValueError('What are you trying to do?')
 
         user = self.model(
             email=email,
-            name=name,
-            type=USR_URL_TYPE[type]
+            name=name
         )
 
         user.set_password(password)
@@ -62,12 +39,12 @@ class UserManager(BaseUserManager):
             email,
             name=name,
             password=password,
-            type='hacker'
         )
         user.is_director = True
-        user.type = USR_ORGANIZER
+        user.is_organizer = True
         user.is_admin = True
         user.email_verified = True
+        user.is_volunteer = True
         user.is_hardware_admin = True
         user.save(using=self._db)
         return user
@@ -85,14 +62,14 @@ class User(AbstractBaseUser):
     )
     email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_volunteer = models.BooleanField(default=False)
+    is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     can_review_dubious = models.BooleanField(default=False)
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
-
-    type = models.CharField(choices=USR_TYPE, default=USR_HACKER, max_length=2)
 
     objects = UserManager()
 
@@ -133,23 +110,3 @@ class User(AbstractBaseUser):
     @property
     def has_dubious_acces(self):
         return self.can_review_dubious or self.is_director
-
-    @property
-    def is_organizer(self):
-        return self.type == USR_ORGANIZER
-
-    @property
-    def is_volunteer(self):
-        return self.type == USR_VOLUNTEER
-
-    @property
-    def is_hacker(self):
-        return self.type == USR_HACKER
-
-    @property
-    def is_mentor(self):
-        return self.type == USR_MENTOR
-
-    @property
-    def is_sponsor(self):
-        return self.type == USR_SPONSOR

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from user import tokens, models
+from user import tokens
 from user.models import User
 
 REGEX_PATTERN = getattr(settings, 'REGEX_HACKATHON_ORGANIZER_EMAIL', None)
@@ -18,7 +18,7 @@ def user_organizer(sender, instance, created, *args, **kwargs):
         return None
 
     if REGEX_PATTERN and re.match(REGEX_PATTERN, instance.email):
-        instance.type = models.USR_ORGANIZER
+        instance.is_organizer = True
         instance.save()
 
     if DEV_EMAILS and instance.email in DEV_EMAILS:
