@@ -3,7 +3,7 @@
   "description": "Hackathon registration server",
   "env": {
      "DOMAIN": {
-      "description": "Custom domain where app will be running",
+      "description": "Custom domain where app will be running (ignore if deploying using Heroku default domain)",
       "required": false
     },
     "SECRET": {
