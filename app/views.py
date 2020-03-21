@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -74,14 +74,22 @@ def protectedMedia(request, file_):
         offer = get_object_or_404(Offer, logo=file_)
         downloadable_path = offer.logo.path
     if downloadable_path:
-        response = StreamingHttpResponse(open(downloadable_path, 'rb'))
-        response['Content-Type'] = ''
-        response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % quote(file_name)
-        response['Content-Transfer-Encoding'] = 'binary'
-        response['Expires'] = '0'
-        response['Cache-Control'] = 'must-revalidate'
-        response['Pragma'] = 'public'
-        return response
+        (_, doc_extension) = file_name.split('.')
+        if doc_extension == 'pdf':
+            with open(downloadable_path, 'rb') as doc:
+                response = HttpResponse(doc.read(), content_type='application/pdf')
+                response['Content-Disposition'] = 'inline;filename=%s' % quote(file_name)
+                return response
+            doc.closed
+        else:
+            response = StreamingHttpResponse(open(downloadable_path, 'rb'))
+            response['Content-Type'] = ''
+            response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % quote(file_name)
+            response['Content-Transfer-Encoding'] = 'binary'
+            response['Expires'] = '0'
+            response['Cache-Control'] = 'must-revalidate'
+            response['Pragma'] = 'public'
+            return response
     return HttpResponseRedirect(reverse('account_login'))
 
 
