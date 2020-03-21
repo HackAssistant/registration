@@ -114,10 +114,8 @@ class HackerDashboard(IsHackerMixin, TabsView):
         try:
             draft = models.DraftApplication.objects.get(user=self.request.user)
             form = forms.ApplicationForm(instance=models.Application(**draft.get_dict()))
-            form.setType(self.request.user.type)
         except:
             form = forms.ApplicationForm()
-            form.setType(self.request.user.type)
         context.update({'form': form})
         try:
             application = models.Application.objects.get(user=self.request.user)
@@ -132,8 +130,6 @@ class HackerDashboard(IsHackerMixin, TabsView):
     def post(self, request, *args, **kwargs):
         new_application = True
         try:
-            draft = models.DraftApplication.objects.get(user=self.request.user)
-            draft.delete()
             form = forms.ApplicationForm(request.POST, request.FILES, instance=request.user.application)
             new_application = False
         except:
@@ -141,7 +137,6 @@ class HackerDashboard(IsHackerMixin, TabsView):
         if form.is_valid():
             application = form.save(commit=False)
             application.user = request.user
-            application.type = request.user.type
             application.save()
             if new_application:
                 messages.success(request,
@@ -197,5 +192,5 @@ def save_draft(request):
     form_keys = set(dict(forms.ApplicationForm().fields).keys())
     valid_keys = set([field.name for field in models.Application()._meta.get_fields()])
     d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys.intersection(form_keys) and v))
-    # d.save()
+    d.save()
     return JsonResponse({'saved': True})
