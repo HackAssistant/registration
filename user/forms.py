@@ -2,8 +2,10 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.password_validation import validate_password, password_validators_help_texts
+from django.conf import settings
 
 from user.models import User
+from user import models
 
 
 class UserChangeForm(forms.ModelForm):
@@ -38,6 +40,10 @@ class RegisterForm(LoginForm):
 
     field_order = ['name', 'email', 'password', 'password2']
 
+    def __init__(self, *args, **kwargs):
+        self._type = kwargs.pop('type', None)
+        super().__init__(*args, **kwargs)
+
     def clean_password2(self):
         # Check that the two password entries match
         password = self.cleaned_data.get("password")
@@ -46,6 +52,26 @@ class RegisterForm(LoginForm):
             raise forms.ValidationError("Passwords don't match")
         validate_password(password)
         return password2
+
+    def clean(self):
+        # Check if the parameter of the url is one of our user types
+        if self._type not in models.USR_URL_TYPE:
+            raise forms.ValidationError("Unexpected type. Are you trying to hack us?")
+        return self.cleaned_data
+
+
+class RegisterSponsorForm(RegisterForm):
+    token = forms.CharField(label='Registration code', max_length=50)
+    field_order = ['name', 'email', 'password', 'password2', 'token']
+
+    def clean_token(self):
+        token = self.cleaned_data.get("token")
+        if token != settings.SPONSOR_TOKEN:
+            raise forms.ValidationError("Invalid registration code")
+        return token
+
+    def clean(self):
+        return self.cleaned_data
 
 
 class PasswordResetForm(forms.Form):
