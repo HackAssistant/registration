@@ -2,6 +2,11 @@
   "name": "HackAssistant Registration",
   "description": "Hackathon registration server",
   "env": {
+     "DOMAIN": {
+      "description": "Domain where app will be running",
+      "value": "{SET THIS}.herokuapp.com",
+      "required": false
+    },
     "SECRET": {
       "description": "A secret key for verifying the integrity of signed cookies.",
       "generator": "secret"
