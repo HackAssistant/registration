@@ -216,7 +216,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
-            'resume': 'Upload your resume (%s)' % ', '.join(settings.SUPPORTED_RESUME_EXTENSIONS),
+            'resume': 'Upload your resume %s' % ('' if not settings.SUPPORTED_RESUME_EXTENSIONS
+                                                 else '(%s)' % ', '.join(settings.SUPPORTED_RESUME_EXTENSIONS)),
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
                 getattr(settings, 'CURRENCY', '$'), settings.HACKATHON_NAME),
 
