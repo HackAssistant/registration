@@ -6,7 +6,7 @@ from user.models import User
 
 
 class Challenge(models.Model):
-    name = models.CharField(max_length=25)
+    name = models.CharField(max_length=250)
 
     def __str__(self):
         return self.name
