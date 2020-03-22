@@ -2,10 +2,9 @@
   "name": "HackAssistant Registration",
   "description": "Hackathon registration server",
   "env": {
-     "DOMAIN": {
-      "description": "Custom domain where app will be running (ignore if deploying using Heroku default domain)",
-      "value": "{SET THIS}.herokuapp.com",
-      "required": false
+    "DOMAIN": {
+      "description": "Domain where app will be running",
+      "value": ".herokuapp.com"
     },
     "SECRET": {
       "description": "A secret key for verifying the integrity of signed cookies.",
