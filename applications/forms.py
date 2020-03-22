@@ -186,7 +186,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     class Meta:
         model = models.Application
-        extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', [])
+        extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
 
         help_texts = {
             'gender': 'This is for demographic purposes.',
