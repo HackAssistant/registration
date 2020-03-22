@@ -9,7 +9,7 @@ from django.conf import settings
 from applications.models import Application
 from user.models import User
 
-MAX_VOTES = getattr(settings, 'MAX_VOTES', 10)
+MAX_VOTES = getattr(settings, 'MAX_VOTES', 5)
 TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 

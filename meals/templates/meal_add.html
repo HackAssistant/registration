@@ -1,0 +1,72 @@
+{% extends "base_tabs.html" %}
+{% block head_title %}Add meal{% endblock %}
+{% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+{% block out_panel %}
+    <form id="meal-form" action="" method="post">
+	{% csrf_token %}
+	<div class="form-group">
+	    <label class="control-label" for="meal_name">Name</label>
+	    <input type="text" class="form-control" name="meal_name" />
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="meal_name">Type</label>
+	    <select class="form-control" name="meal_type">
+	    {% for type in types %}
+	        <option value="{{ type.0 }}">{{ type.1 }}</option>
+	    {% endfor %}
+	    </select>
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="meal_starts">Starting time</label>
+	    <input type="text" class="form-control" name="meal_starts" value="{{ time1 }}" />
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="meal_ends">Ending time</label>
+	    <input type="text" class="form-control" name="meal_ends" value="{{ time2 }}" />
+	</div>
+	<div class="form-group">
+	    <label class="control-label" for="meal_times">Times a hacker can eat</label>
+	    <input type="number" class="form-control" name="meal_times" value="{{ meal.times }}" step="1" min="1" />
+	</div>
+	<div class="form-group">
+	    <input type="checkbox" name="meal_opened" value="opened"> Active
+	</div>
+        <input type="hidden" name="meal_id" value="{{ meal.id }}"/>
+	<button class="btn btn-success" name="update">Add meal</button>
+    </form>
+    
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <script>
+
+        $(document).ready(function () {
+                var exp_time = $('input[name="meal_starts"]');
+                exp_time.daterangepicker({
+                    timePicker: true,
+                    singleDatePicker: true,
+                    timePicker24Hour: true,
+                    timePickerIncrement: 5,
+                    startDate: moment(exp_time.val()),
+                    locale: {
+                        firstDay: 1,
+                        format: 'YYYY-MM-DD H:mm:ss'
+                    }
+                });
+                var exp_time2 = $('input[name="meal_ends"]');
+                exp_time2.daterangepicker({
+                    timePicker: true,
+                    singleDatePicker: true,
+                    timePicker24Hour: true,
+                    timePickerIncrement: 5,
+                    startDate: moment(exp_time2.val()),
+                    locale: {
+                        firstDay: 1,
+                        format: 'YYYY-MM-DD H:mm:ss'
+                    }
+                });
+            }
+        );
+    </script>
+{% endblock %}

@@ -1,76 +1,42 @@
 {% extends 'base_tabs.html' %}
 {% load static %}
-{% block head_title %}Code of conduct{% endblock %}
+{% block head_title %}Code of Conduct{% endblock %}
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 {% endblock %}
 
 {% block panel %}
+    <h1>{{ h_name }} Code of Conduct</h1>
+    <p>This is the Code of Conduct that we expect all HackUPC participants to abide. This is a customized version of the Code of Conduct used at MLH Member Hackathons. If you have a suggestion for this code of conduct or a question about them, please submit an issue <a href="https://github.com/hackupc/rules/issues" target="_blank">here</a>.</p>
 
-    <h3>
-        {{ h_name }} Code of Conduct: Quick Version
-    </h3>
-    <p>Our hackathon is dedicated to providing a harassment-free experience for everyone, regardless
-        of the following.</p>
-    <ul>
-        <li>gender</li>
-        <li>gender identity and expression</li>
-        <li>age</li>
-        <li>sexual orientation</li>
-        <li>disability</li>
-        <li>physical appearance</li>
-        <li>body size</li>
-        <li>race</li>
-        <li>ethnicity</li>
-        <li>nationality</li>
-        <li>religion</li>
-        <li>previous hackathon attendance or lack of</li>
-        <li>computing experience or lack of</li>
-        <li>chosen programming language or tech stack</li>
-    </ul>
-    <p>We do not tolerate harassment of hackathon participants in any form. Sexual language and
-        imagery is not appropriate at any hackathon venue, this includes the following.</p>
-    <ul>
-        <li>hacks</li>
-        <li>talks, presentations, or demos</li>
-        <li>workshops</li>
-        <li>any parties associated to the hackathon</li>
-        <li>social media</li>
-        <li>any other online media</li>
-    </ul>
-    <p>Hackathon participants violating these rules may be sanctioned or expelled from the hackathon
-        without a refund (if applicable) at the discretion of the hackathon organisers.</p>
     <hr>
-    <h3> {{ h_name }} Code of Conduct: Less Quick Version</h3>
-    <p>Harassment includes offensive verbal comments related to gender, gender identity and expression,
-        age, sexual orientation, disability, physical appearance, body size, race, ethnicity,
-        nationality, or religion, sexual images in public spaces, deliberate intimidation, stalking,
-        following, photography or audio/video recording against reasonable consent, sustained disruption
-        of talks or other events, inappropriate physical contact, and unwelcome sexual attention.</p>
-    <p>Photography is encouraged, but other participants must be given a reasonable chance to opt out
-        from being photographed. If they object to the taking of their photograph, comply with their
-        request. It is inappropriate to take photographs in contexts where people have a reasonable
-        expectation of privacy (in bathrooms or where participants are sleeping).</p>
+    <h3>TL;DR</h3>
+    <p>Be respectful. Harassment and abuse are never tolerated.</p>
+
+    <hr>
+    <h3>The Code of Conduct</h3>
+    <p>At Hackers@UPC we believe that every participant has the right to hack in a safe and welcoming environment.</p>
+    <p>Harassment includes but is not limited to offensive verbal or written comments related to gender, age, sexual orientation, disability, physical appearance, body size, race, religion, social class, economic status, veteran status, sexual images, deliberate intimidation, stalking, following, harassing photography or recording, sustained disruption of talks or other events, inappropriate physical contact, and unwelcome sexual attention. If what you’re doing is making someone feel uncomfortable, that counts as harassment and is enough reason to stop doing it.</p>
     <p>Participants asked to stop any harassing behavior are expected to comply immediately.</p>
-    <p>As this is a hackathon, we like to explicitly note that the hacks created at our hackathon are
-        equally subject to the anti-harassment policy.</p>
-    <p>Sponsors and partners are also subject to the anti-harassment policy. In particular, sponsors
-        should not use sexualised images, activities, or other material. Sponsor representatives
-        (including volunteers) should not use sexualised clothing/uniforms/costumes, or otherwise create
-        a sexualised environment.</p>
-    <p>If you are being harassed, notice that someone else is being harassed, or have any other
-        concerns, please contact a member of hackathon staff immediately.</p>
-    <p>Hackathon staff will be happy to help participants contact any local security or local law
-        enforcement, provide escorts, or otherwise assist those experiencing harassment to feel safe for
-        the duration of the hackathon. We value your attendance.
-    </p>
-    <p>If a participant engages in harassing behavior, the hackathon organisers may take any action they
-        deem appropriate. This includes warning the offender, expulsion from the hackathon with no
-        refund (if applicable), or reporting their behaviour to local law enforcement.</p>
-    <p>We expect participants to follow these rules at hackathon and workshop venues and
-        hackathon-related social events.</p>
+    <p>Sponsors, judges, mentors, volunteers, organizers, and anyone else at the event are also subject to the anti-harassment policy. In particular, attendees should not use sexualised images, activities, or other material both in their hacks and during the event. Booth staff (including volunteers) should not use sexualised clothing/uniforms/costumes, or otherwise create a sexualised environment.</p>
+    <p>If a participant engages in harassing behavior, Hackers@UPC may take any action it deems appropriate, including warning the offender or expulsion from the event with no eligibility for reimbursement or refund of any type.</p>
+    <p>If you are being harassed, notice that someone else is being harassed, or have any other concerns, please contact Hackers@UPC using the reporting procedures defined below.</p>
+    <p>Event organizers will be happy to help participants contact campus security or local law enforcement, provide escorts, or otherwise assist those experiencing harassment to feel safe for the duration of the event. We value your attendance.</p>
+    <p>We expect participants to follow these rules at all hackathon venues, online interactions in relation to the event, hackathon-related social events, and on hackathon supplied transportation.</p>
+
     <hr>
-    <p>Our code of conduct is based on the <a target="_blank" href="https://hackcodeofconduct.org">Hack Code of
-        Conduct</a></p>
+    <h3>Reporting Procedures</h3>
+    <p>If you feel uncomfortable or think there may be a potential violation of the code of conduct, please report it immediately using one of the following methods. All reporters have the right to remain anonymous.</p>
+    <p>By sending us an email to contact@hackupc.com, your report will be received by our organizers. If you want to remain anonymous please send us an email through an anonymous email service or create a temporary email account.</p>
+    <p>If you need to contact a team member directly, please contact one of our organizers below.</p>
+    <ul style="padding-left: 1em;">
+        <li>Marina Ramon, @marina in Slack, <a href="mailto:marina@hackupc.com" target="_blank">marina@hackupc.com</a>.</li>
+        <li>Fàlix Arribas, @felix in Slack, <a href="mailto:felix@hackupc.com" target="_blank">felix@hackupc.com</a>.</li>
+        <li>Oscar Faixat, @faix in Slack, <a href="mailto:oscar@hackupc.com" target="_blank">oscar@hackupc.com</a>.</li>
+    </ul>
+    <p>Hackers@UPC reserves the right to revise, make exceptions to, or otherwise amend these policies in whole or in part.</p>
+
+    <hr>
+    <p>Last Reviewed: July 11, 2018.</p>
 {% endblock %}

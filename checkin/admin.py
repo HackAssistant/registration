@@ -7,7 +7,7 @@ from checkin import models
 
 class CheckinAdmin(admin.ModelAdmin):
     list_display = (
-        'user', 'application', 'update_time'
+        'user', 'application_user', 'update_time'
     )
     search_fields = list_display
     date_hierarchy = 'update_time'

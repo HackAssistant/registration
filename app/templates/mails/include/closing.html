@@ -3,17 +3,17 @@
     {% if h_fb or h_tw %}
         or message us on
         {% if h_fb %}
-            <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
             {% if h_tw %}
+                <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>
                 and
-                <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+                <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>.
+            {% else %}
+                <a href="https://facebook.com/{{ h_fb }}" target="_blank">Facebook</a>.
             {% endif %}
         {% elif h_tw %}
-            <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>
+            <a href="https://twitter.com/{{ h_tw }}" target="_blank">Twitter</a>.
         {% endif %}
-        .
     {% endif %}
 </p>
 <p>We hope to see you at {{ h_name }}!</p>
-<p>Best,</p>
-<p>{{ h_name }} Team</p>
+<p>Best, {{ h_name }} Team.</p>

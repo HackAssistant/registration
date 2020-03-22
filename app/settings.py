@@ -49,7 +49,13 @@ INSTALLED_APPS = [
     'teams',
     'stats',
     'storages',
+    'meals',
+    'judging',
+    'offer',
 ]
+
+if BAGGAGE_ENABLED:
+    INSTALLED_APPS.append('baggage')
 
 if REIMBURSEMENT_ENABLED:
     INSTALLED_APPS.append('reimbursement')
@@ -266,3 +272,5 @@ MAX_UPLOAD_SIZE = 5242880
 MAX_VOTES = 10
 
 MAX_VOTES_TO_APP = 50
+
+MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)

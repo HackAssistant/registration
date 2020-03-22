@@ -5,6 +5,14 @@ from django.db import models
 from django.utils import timezone
 
 
+USER_TYPE = [
+    ("PARTICIPANT", "Hacker"),
+    ("SPONSOR", 'Sponsor'),
+    ("MENTOR", 'Mentor'),
+    ("JUDGE", 'Judge'),
+]
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
@@ -46,8 +54,26 @@ class UserManager(BaseUserManager):
         user.email_verified = True
         user.is_volunteer = True
         user.is_hardware_admin = True
+        user.is_hx = True
         user.save(using=self._db)
         return user
+
+
+D_NONE = 'None'
+D_VEGETERIAN = 'Vegeterian'
+D_VEGAN = 'Vegan'
+D_NO_PORK = 'No pork'
+D_GLUTEN_FREE = 'Gluten-free'
+D_OTHER = 'Others'
+
+DIETS = [
+    (D_NONE, 'No requirements'),
+    (D_VEGETERIAN, 'Vegeterian'),
+    (D_VEGAN, 'Vegan'),
+    (D_NO_PORK, 'No pork'),
+    (D_GLUTEN_FREE, 'Gluten-free'),
+    (D_OTHER, 'Others')
+]
 
 
 class User(AbstractBaseUser):
@@ -63,6 +89,9 @@ class User(AbstractBaseUser):
     email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_volunteer = models.BooleanField(default=False)
+    is_judge = models.BooleanField(default=False)
+    is_mentor = models.BooleanField(default=False)
+    is_sponsor = models.BooleanField(default=False)
     is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
@@ -70,6 +99,8 @@ class User(AbstractBaseUser):
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
+
+    diet = models.CharField(max_length=300, choices=DIETS, blank=True, null=True)
 
     objects = UserManager()
 
@@ -84,6 +115,11 @@ class User(AbstractBaseUser):
     def get_short_name(self):
         # The user is identified by their email address
         return self.email
+
+    @property
+    def is_participant(self):
+        return not self.is_sponsor and not self.is_mentor and not self.is_judge and not self.is_volunteer and not \
+            self.is_organizer
 
     def __str__(self):
         return self.email
