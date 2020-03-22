@@ -63,7 +63,8 @@ def app_stats_api(request):
         .annotate(applications=Count('origin')) \
         .filter(applications__gte=2)
     origin_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('origin') \
-        .annotate(applications=Count('origin'))
+        .annotate(applications=Count('origin')) \
+        .filter(applications__gte=2)
 
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
     shirt_count = map(
