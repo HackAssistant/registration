@@ -1,0 +1,35 @@
+{% extends "base_tabs.html" %}
+
+{% load i18n %}
+{% load bootstrap3 %}
+{% load static %}
+{% load form_utils %}
+{% block head_title %}Import devpost projects{% endblock %}
+
+{%  block panel %}
+
+<form class="import" enctype="multipart/form-data" id="import_form" method="post" action="">
+    {% csrf_token %}
+    {% bootstrap_form_errors form %}
+    {% for fieldset in form.fieldsets %}
+        <fieldset>
+            <h3>{{ fieldset.name }}<br>
+                {% if fieldset.description %}
+                    <small>{{ fieldset.description }}</small>
+                {% endif %}
+            </h3>
+            {% for field in fieldset %}
+                {% bootstrap_field field %}
+            {% endfor %}
+        </fieldset>
+    {% endfor %}
+    <small><span style="color: red">*</span>Indicates required field</small>
+
+    <button class="btn btn-success btn-block" type="submit">Submit devpost projects</button>
+</form>
+
+
+<script src="{% static 'lib/typeahead.min.js' %}"></script>
+<script src="{% static 'js/form_modifiers.js' %}"></script>
+
+{% endblock %}

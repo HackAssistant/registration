@@ -4,6 +4,7 @@
   "env": {
      "DOMAIN": {
       "description": "Custom domain where app will be running (ignore if deploying using Heroku default domain)",
+      "value": "{SET THIS}.herokuapp.com",
       "required": false
     },
     "SECRET": {

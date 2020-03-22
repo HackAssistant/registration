@@ -13,7 +13,8 @@
         {% bootstrap_form form %}
 
         <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
-        <button class="btn btn-primary btn-block" type="submit">{% trans "Sign In" %}</button>
+
+        <button class="btn btn-primary btn-block" type="submit">{% trans "Log In" %}</button>
         {% if h_oauth_providers.mlh and h_oauth_providers.mlh.id and h_oauth_providers.mlh.auth_url %}
 
             <a class="btn btn-warning btn-block"
@@ -21,9 +22,10 @@
                 Sign in with MyMLH
             </a>
         {% endif %}
+
         {% if not h_app_closed %}
             <a class="btn btn-block"
-               href="{% url 'account_signup' %}">{% trans "...or sign up if you don't have an account" %}</a>
+               href="{% url 'account_signup' %}">{% trans "Sign up" %}</a>
         {% endif %}
 
     </form>
