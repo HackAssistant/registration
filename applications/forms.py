@@ -199,7 +199,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
-            'resume': 'Accepted file formats: (%s)' % ', '.join(extensions) if extensions else ''
+            'resume': 'Accepted file formats: %s' % ', '.join(extensions) if extensions else ''
         }
 
         widgets = {
