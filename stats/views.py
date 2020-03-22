@@ -58,6 +58,13 @@ def app_stats_api(request):
     gender_count = Application.objects.all().values('gender') \
         .annotate(applications=Count('gender'))
     gender_count = map(lambda x: dict(gender_name=GENDER_DICT[x['gender']], **x), gender_count)
+
+    origin_count = Application.objects.all().values('origin') \
+        .annotate(applications=Count('origin')) \
+        .filter(applications__gte=2)
+    origin_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('origin') \
+        .annotate(applications=Count('origin'))
+
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
     shirt_count = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
@@ -87,6 +94,8 @@ def app_stats_api(request):
             'shirt_count_confirmed': list(shirt_count_confirmed),
             'timeseries': list(timeseries),
             'gender': list(gender_count),
+            'origin': list(origin_count),
+            'origin_confirmed': list(origin_count_confirmed),
             'diet': list(diet_count),
             'diet_confirmed': list(diet_count_confirmed),
             'other_diet': '<br>'.join([el['other_diet'] for el in other_diets if el['other_diet']])
