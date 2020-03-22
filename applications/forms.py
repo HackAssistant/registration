@@ -238,8 +238,6 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     class Meta:
         model = models.Application
-        extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
-
         help_texts = {
             'gender': 'This is for demographic purposes. You can skip this question if you want.',
             'graduation_year': 'What year have you graduated on or when will you graduate',
@@ -251,8 +249,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                         'but at least we\'ll try!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
-            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
-            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any')
+            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited.'
         }
 
         widgets = {
