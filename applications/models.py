@@ -11,7 +11,7 @@ from django.utils import timezone
 
 from app import utils
 from user.models import User
-from .validators import validate_file_extension
+from applications.validators import validate_file_extension
 
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
