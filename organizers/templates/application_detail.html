@@ -120,8 +120,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.pk }}"/>
                 <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
-                          rows="3"
-                          required></textarea>
+                          rows="3" required maxlength="500"></textarea>
                 <button name="add_comment" class="btn btn-block btn-default" value="comment">Add comment
                 </button>
             </form>
