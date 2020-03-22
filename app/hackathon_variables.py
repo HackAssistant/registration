@@ -87,3 +87,5 @@ HARDWARE_REQUEST_TIME = 15
 
 # Enable dubious separate pipeline (disabled by default)
 DUBIOUS_ENABLED = True
+
+SUPPORTED_RESUME_EXTENSIONS = []
