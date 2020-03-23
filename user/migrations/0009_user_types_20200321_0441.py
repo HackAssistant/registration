@@ -12,6 +12,17 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='user',
+            name='type',
+            field=models.CharField(
+                choices=[('H', 'Hacker'), ('M', 'Mentor'), ('S', 'Sponsor'), ('V', 'Volunteer'), ('O', 'Organizer')],
+                default='H', max_length=2),
+        ),
+        migrations.RunSQL(
+            ["UPDATE user u SET u.type='O' where u.is_organizer"],
+            ["UPDATE user u SET u.type='V' where u.is_volunteer"],
+        ),
         migrations.RemoveField(
             model_name='user',
             name='is_organizer',
@@ -19,10 +30,5 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='user',
             name='is_volunteer',
-        ),
-        migrations.AddField(
-            model_name='user',
-            name='type',
-            field=models.CharField(choices=[('H', 'Hacker'), ('M', 'Mentor'), ('S', 'Sponsor'), ('V', 'Volunteer'), ('O', 'Organizer')], default='H', max_length=2),
         ),
     ]
