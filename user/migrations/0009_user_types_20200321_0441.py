@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 default='H', max_length=2),
         ),
         migrations.RunSQL(
-            ["UPDATE user u SET u.type='O' where u.is_organizer=true"],
-            ["UPDATE user u SET u.type='V' where u.is_volunteer=true"],
+            ["UPDATE user u SET u.type='O' where u.is_organizer=true;"],
+            ["UPDATE user u SET u.type='V' where u.is_volunteer=true;"],
         ),
         migrations.RemoveField(
             model_name='user',
