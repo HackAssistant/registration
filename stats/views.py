@@ -66,6 +66,13 @@ def app_stats_api(request):
         .annotate(applications=Count('origin')) \
         .order_by('-applications')[:10]
 
+    university_count = Application.objects.all().values('university') \
+        .annotate(applications=Count('university')) \
+        .order_by('-applications')[:10]
+    university_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('university') \
+        .annotate(applications=Count('university')) \
+        .order_by('-applications')[:10]
+
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
     shirt_count = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
@@ -95,6 +102,8 @@ def app_stats_api(request):
             'shirt_count_confirmed': list(shirt_count_confirmed),
             'timeseries': list(timeseries),
             'gender': list(gender_count),
+            'university': list(university_count),
+            'university_confirmed': list(university_count_confirmed),
             'origin': list(origin_count),
             'origin_confirmed': list(origin_count_confirmed),
             'diet': list(diet_count),
