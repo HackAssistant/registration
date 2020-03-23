@@ -12,7 +12,12 @@ TIME_ZONE = 'MST'
 HACKATHON_DESCRIPTION = 'HackAssistant is an organization to mantain ' \
                         'a few open-source projects related with hackathon management'
 # Domain where application is deployed, can be set by env variable
-HACKATHON_DOMAIN = os.environ.get('DOMAIN', 'localhost:8000')
+HACKATHON_DOMAIN = os.environ.get('DOMAIN', None)
+HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME', None)
+if HEROKU_APP_NAME and not HACKATHON_DOMAIN:
+    HACKATHON_DOMAIN = '%s.herokuapp.com' % HEROKU_APP_NAME
+elif not HACKATHON_DOMAIN:
+    HACKATHON_DOMAIN = 'localhost:8000'
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
 HACKATHON_CONTACT_EMAIL = 'contact@gerard.space'
 # Hackathon logo url, will be used on all emails
@@ -82,3 +87,5 @@ HARDWARE_REQUEST_TIME = 15
 
 # Enable dubious separate pipeline (disabled by default)
 DUBIOUS_ENABLED = True
+
+SUPPORTED_RESUME_EXTENSIONS = []
