@@ -19,8 +19,10 @@ class Migration(migrations.Migration):
                 choices=[('H', 'Hacker'), ('M', 'Mentor'), ('S', 'Sponsor'), ('V', 'Volunteer'), ('O', 'Organizer')],
                 default='H', max_length=2),
         ),
-        migrations.RunSQL(["UPDATE user_user SET type='V' where is_volunteer;"]),
-        migrations.RunSQL(["UPDATE user_user SET type='O' where is_organizer;"]),
+        migrations.RunSQL(["UPDATE user_user SET type='V' where is_volunteer;"],
+                          ["UPDATE user_user SET is_volunteer = 0 where type='V';"]),
+        migrations.RunSQL(["UPDATE user_user SET type='O' where is_organizer;"],
+                          ["UPDATE user_user SET is_organizer = 1 where type='O';"]),
         migrations.RemoveField(
             model_name='user',
             name='is_organizer',
