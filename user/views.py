@@ -51,11 +51,11 @@ def signup(request, u_type):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
+    form_by_user = {
+        models.USR_URL_SPONSOR: forms.RegisterSponsorForm,
+    }
     if request.method == 'POST':
-        if u_type == models.USR_URL_SPONSOR:
-            form = forms.RegisterSponsorForm(request.POST, type=u_type)
-        else:
-            form = forms.RegisterForm(request.POST, type=u_type)
+        form = form_by_user.get(u_type, forms.RegisterForm)(request.POST, type=u_type)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
@@ -69,10 +69,7 @@ def signup(request, u_type):
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('root'))
     else:
-        if u_type == models.USR_URL_SPONSOR:
-            form = forms.RegisterSponsorForm()
-        else:
-            form = forms.RegisterForm()
+        form = form_by_user.get(u_type, forms.RegisterForm)()
 
     return render(request, 'signup.html', {'form': form})
 

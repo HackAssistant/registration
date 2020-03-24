@@ -66,7 +66,8 @@ class RegisterSponsorForm(RegisterForm):
 
     def clean_token(self):
         token = self.cleaned_data.get("token")
-        if token != settings.SPONSOR_TOKEN:
+        sponsor_token = getattr(settings, 'SPONSOR_TOKEN', '')
+        if token != sponsor_token:
             raise forms.ValidationError("Invalid registration code")
         return token
 
