@@ -45,6 +45,19 @@
             <div id="university_stats_confirmed"></div>
         </div>
     </div>
+    </div>
+    <h2>Graduation year</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>All</h3>
+            <div id="graduation_year_stats"></div>
+        </div>
+        <div class="col-md-6">
+            <h3>Confirmed only</h3>
+            <div id="graduation_year_stats_confirmed"></div>
+        </div>
+    </div>
     <h2>T-Shirts sizes</h2>
 
     <div class="row">
@@ -282,6 +295,48 @@
                 axis: {
                     x: {
                         type: 'category'
+                    }
+                }
+            });
+            var grad_year_data = {};
+            var grad_years = [];
+            $(data['graduation_year']).each(function (c, e) {
+                grad_years.push(e.graduation_year);
+                grad_year_data[e.graduation_year] = e.applications;
+            });
+            c3.generate({
+                bindto: '#graduation_year_stats',
+                data: {
+                    json: grad_year_data,
+                    type: 'donut'
+
+                },
+                donut: {
+                    label: {
+                        format: function (value, ratio, id) {
+                            return value;
+                        }
+                    }
+                }
+            });
+            var grad_year_confirmed_data = {};
+            var grad_years_confirmed = [];
+            $(data['graduation_year_confirmed']).each(function (c, e) {
+                grad_years_confirmed.push(e.graduation_year);
+                grad_year_confirmed_data[e.graduation_year] = e.applications;
+            });
+            c3.generate({
+                bindto: '#graduation_year_stats_confirmed',
+                data: {
+                    json: grad_year_confirmed_data,
+                    type: 'donut'
+
+                },
+                donut: {
+                    label: {
+                        format: function (value, ratio, id) {
+                            return value;
+                        }
                     }
                 }
             });
