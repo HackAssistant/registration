@@ -78,6 +78,13 @@ def app_stats_api(request):
     grad_year_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('graduation_year') \
         .annotate(applications=Count('graduation_year'))
 
+    degree_count = Application.objects.all().values('degree') \
+        .annotate(applications=Count('degree')) \
+        .order_by('-applications')[:10]
+    degree_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('degree') \
+        .annotate(applications=Count('degree')) \
+        .order_by('-applications')[:10]
+
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
     shirt_count = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
@@ -111,6 +118,8 @@ def app_stats_api(request):
             'university_confirmed': list(university_count_confirmed),
             'graduation_year': list(grad_year_count),
             'graduation_year_confirmed': list(grad_year_count_confirmed),
+            'degree': list(degree_count),
+            'degree_confirmed': list(degree_count_confirmed),
             'origin': list(origin_count),
             'origin_confirmed': list(origin_count_confirmed),
             'diet': list(diet_count),
