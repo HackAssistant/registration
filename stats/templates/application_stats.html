@@ -58,6 +58,18 @@
             <div id="graduation_year_stats_confirmed"></div>
         </div>
     </div>
+    <h2>Degree</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>All</h3>
+            <div id="degree_stats"></div>
+        </div>
+        <div class="col-md-6">
+            <h3>Confirmed only</h3>
+            <div id="degree_stats_confirmed"></div>
+        </div>
+    </div>
     <h2>T-Shirts sizes</h2>
 
     <div class="row">
@@ -337,6 +349,42 @@
                         format: function (value, ratio, id) {
                             return value;
                         }
+                    }
+                }
+            });
+            c3.generate({
+                bindto: '#degree_stats',
+                data: {
+                    json: data['degree'],
+                    keys: {
+                        x: 'degree',
+                        value: ['applications']
+                    },
+                    type: 'bar'
+
+                },
+
+                axis: {
+                    x: {
+                        type: 'category'
+                    }
+                }
+            });
+            c3.generate({
+                bindto: '#degree_stats_confirmed',
+                data: {
+                    json: data['degree_confirmed'],
+                    keys: {
+                        x: 'degree',
+                        value: ['applications']
+                    },
+                    type: 'bar'
+
+                },
+
+                axis: {
+                    x: {
+                        type: 'category'
                     }
                 }
             });
