@@ -4,15 +4,43 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 from django.utils import timezone
 
+USR_ORGANIZER = 'O'
+USR_VOLUNTEER = 'V'
+USR_HACKER = 'H'
+USR_MENTOR = 'M'
+USR_SPONSOR = 'S'
+USR_HACKER_NAME = 'Hacker'
+USR_MENTOR_NAME = 'Mentor'
+USR_SPONSOR_NAME = 'Sponsor'
+USR_VOLUNTEER_NAME = 'Volunteer'
+USR_ORGANIZER_NAME = 'Organizer'
+
+USR_TYPE = [
+    (USR_HACKER, USR_HACKER_NAME),
+    (USR_MENTOR, USR_MENTOR_NAME),
+    (USR_SPONSOR, USR_SPONSOR_NAME),
+    (USR_VOLUNTEER, USR_VOLUNTEER_NAME),
+    (USR_ORGANIZER, USR_ORGANIZER_NAME),
+]
+
+USR_URL_SPONSOR = USR_SPONSOR_NAME.lower()
+USR_URL_TYPE = {
+    USR_HACKER_NAME.lower(): USR_HACKER,
+    USR_VOLUNTEER_NAME.lower(): USR_VOLUNTEER,
+    USR_MENTOR_NAME.lower(): USR_MENTOR,
+    USR_URL_SPONSOR: USR_SPONSOR
+}
+
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, name, password=None, u_type=None):
         if not email:
             raise ValueError('Users must have a email')
 
         user = self.model(
             email=email,
-            name=name
+            name=name,
+            type=USR_URL_TYPE[u_type]
         )
 
         user.set_password(password)
@@ -60,10 +88,11 @@ class User(AbstractBaseUser):
         verbose_name='Full name',
         max_length=255,
     )
+
+    type = models.CharField(choices=USR_TYPE, default=USR_HACKER, max_length=2)
+
     email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    is_volunteer = models.BooleanField(default=False)
-    is_organizer = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     can_review_dubious = models.BooleanField(default=False)
@@ -110,3 +139,11 @@ class User(AbstractBaseUser):
     @property
     def has_dubious_acces(self):
         return self.can_review_dubious or self.is_director
+
+    @property
+    def is_organizer(self):
+        return self.type == USR_ORGANIZER
+
+    @property
+    def is_volunteer(self):
+        return self.type == USR_VOLUNTEER

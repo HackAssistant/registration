@@ -60,6 +60,8 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
 - **DROPBOX_OAUTH2_TOKEN**(optional): Enables Dropbox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
 - **MLH_CLIENT_SECRET**(optional): Enables MyMLH as a sign up option. Format is `client_id@client_secret` (See "Set up MyMLH" below)
+- **SPONSOR_TOKEN**: Registration code needed to sign up as sponsor. If this token is None, nobody can signup as sponsor.
+
 
 
 ## Server
