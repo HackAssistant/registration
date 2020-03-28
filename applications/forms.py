@@ -186,6 +186,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     class Meta:
         model = models.Application
+        extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
+
         help_texts = {
             'gender': 'This is for demographic purposes.',
             'graduation_year': 'What year have you graduated on or when will '
@@ -196,7 +198,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                          ' http://textsmili.es/</a>',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
-            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited'
+            'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
+            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any')
         }
 
         widgets = {
@@ -216,7 +219,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
-            'resume': 'Upload your resume (%s)' % ', '.join(settings.SUPPORTED_RESUME_EXTENSIONS),
+            'resume': 'Upload your resume',
             'reimb_amount': 'How much money (%s) would you need to afford traveling to %s?' % (
                 getattr(settings, 'CURRENCY', '$'), settings.HACKATHON_NAME),
 
