@@ -38,7 +38,7 @@ class Command(BaseCommand):
                         user.set_password(password)
                     else:
                         print('Updating permissions for user {0}.'.format(email))
-                    user.check_is_volunteer = True
+                    user.is_volunteer = True
                     user.save()
                     assert authenticate(email=email, password=password)
 

@@ -50,7 +50,7 @@ def organizer_tabs(user):
           'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
          ]
-    if user.has_dubious_acces and getattr(settings, 'DUBIOUS_ENABLED', False):
+    if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.Application.objects.filter(status=APP_DUBIOUS, contacted=False).count() else ''))
     return t
@@ -183,13 +183,13 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.slack_invite(application)
         elif request.POST.get('set_dubious') and request.user.check_is_organizer:
             application.set_dubious()
-        elif request.POST.get('contact_user') and request.user.check_has_dubious_access:
+        elif request.POST.get('contact_user') and request.user.has_dubious_access:
             application.set_contacted(request.user)
-        elif request.POST.get('unset_dubious') and request.user.check_has_dubious_access:
+        elif request.POST.get('unset_dubious') and request.user.has_dubious_access:
             add_comment(application, request.user,
                         "Dubious review result: No problems, hacker allowed to participate in hackathon!")
             application.unset_dubious()
-        elif request.POST.get('invalidate') and request.user.check_has_dubious_access:
+        elif request.POST.get('invalidate') and request.user.has_dubious_access:
             add_comment(application, request.user,
                         "Dubious review result: Hacker is not allowed to participate in hackathon.")
             application.invalidate()

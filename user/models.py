@@ -138,7 +138,7 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     @property
-    def has_dubious_acces(self):
+    def has_dubious_access(self):
         return self.can_review_dubious or self.is_director
 
     @property
