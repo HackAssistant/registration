@@ -67,6 +67,7 @@ class UserManager(BaseUserManager):
             email,
             name=name,
             password=password,
+            u_type='hacker'
         )
         user.is_director = True
         user.is_organizer = True
@@ -118,12 +119,12 @@ class User(AbstractBaseUser):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
+        """Does the user have a specific permission?"""
         # Simplest possible answer: Yes, always
         return True
 
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
+        """Does the user have permissions to view the app `app_label`?"""
         # Simplest possible answer: Yes, always
         return True
 
@@ -133,7 +134,7 @@ class User(AbstractBaseUser):
 
     @property
     def is_staff(self):
-        "Is the user a member of staff?"
+        """Is the user a member of staff?"""
         return self.is_admin
 
     @property
@@ -141,9 +142,9 @@ class User(AbstractBaseUser):
         return self.can_review_dubious or self.is_director
 
     @property
-    def is_organizer(self):
+    def check_is_organizer(self):
         return self.type == USR_ORGANIZER
 
     @property
-    def is_volunteer(self):
+    def check_is_volunteer(self):
         return self.type == USR_VOLUNTEER

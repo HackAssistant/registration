@@ -179,17 +179,17 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.cancel_application(application)
         elif request.POST.get('waitlist') and request.user.is_director:
             self.waitlist_application(application)
-        elif request.POST.get('slack') and request.user.is_organizer:
+        elif request.POST.get('slack') and request.user.check_is_organizer:
             self.slack_invite(application)
-        elif request.POST.get('set_dubious') and request.user.is_organizer:
+        elif request.POST.get('set_dubious') and request.user.check_is_organizer:
             application.set_dubious()
-        elif request.POST.get('contact_user') and request.user.has_dubious_acces:
+        elif request.POST.get('contact_user') and request.user.check_has_dubious_access:
             application.set_contacted(request.user)
-        elif request.POST.get('unset_dubious') and request.user.has_dubious_acces:
+        elif request.POST.get('unset_dubious') and request.user.check_has_dubious_access:
             add_comment(application, request.user,
                         "Dubious review result: No problems, hacker allowed to participate in hackathon!")
             application.unset_dubious()
-        elif request.POST.get('invalidate') and request.user.has_dubious_acces:
+        elif request.POST.get('invalidate') and request.user.check_has_dubious_access:
             add_comment(application, request.user,
                         "Dubious review result: Hacker is not allowed to participate in hackathon.")
             application.invalidate()

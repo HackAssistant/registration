@@ -18,7 +18,7 @@ def user_organizer(sender, instance, created, *args, **kwargs):
         return None
 
     if REGEX_PATTERN and re.match(REGEX_PATTERN, instance.email):
-        instance.is_organizer = True
+        instance.check_is_organizer = True
         instance.save()
 
     if DEV_EMAILS and instance.email in DEV_EMAILS:
