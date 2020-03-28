@@ -101,6 +101,12 @@ TSHIRT_SIZES = [
 ]
 DEFAULT_TSHIRT_SIZE = T_M
 
+ATTENDANCE = [
+    (0, "Friday"),
+    (1, "Saturday"),
+    (2, "Sunday")
+]
+
 YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
 DEFAULT_YEAR = 2018
 
@@ -177,7 +183,7 @@ class VolunteerMentorApplication(models.Model):
 
 
 class VolunteerMentorSponsorApplication(models.Model):
-    attendance = models.CharField(null=False)
+    attendance = models.CharField(max_length=200, null=False)
 
 
 class MentorSponsorApplication(models.Model):
@@ -367,11 +373,11 @@ class MentorApplication(
     VolunteerMentorApplication,
     VolunteerMentorSponsorApplication
 ):
-    why_mentor = models.CharField(null=False)
+    why_mentor = models.CharField(max_length=500, null=False)
     first_time_mentor = models.BooleanField(null=False)
-    fluent = models.CharField(null=False)
-    experience = models.CharField(null=False)
-    study_work = models.CharField(null=False)
+    fluent = models.CharField(max_length=150, null=False)
+    experience = models.CharField(max_length=300, null=False)
+    study_work = models.CharField(max_length=300, null=False)
 
 
 class VolunteerApplication(
@@ -379,19 +385,19 @@ class VolunteerApplication(
     VolunteerMentorApplication,
     HackerMentorVolunteerApplication
 ):
-    cool_skill = models.CharField(null=False)
+    cool_skill = models.CharField(max_length=100, null=False)
     first_time_volunteer = models.BooleanField(null=False)
-    quality = models.CharField(null=False)
-    weakness = models.CharField(null=False)
-    fav_movie = models.CharField(null=True)
-    friends = models.CharField(null=True)
+    quality = models.CharField(max_length=150, null=False)
+    weakness = models.CharField(max_length=150, null=False)
+    fav_movie = models.CharField(max_length=60, null=True)
+    friends = models.CharField(max_length=100, null=True)
 
 
 class SponsorApplication(
     VolunteerMentorSponsorApplication,
     MentorSponsorApplication
 ):
-    position = models.CharField(null=False)
+    position = models.CharField(max_length=50, null=False)
 
 
 class DraftApplication(models.Model):
