@@ -20,7 +20,7 @@ from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID, APP_BLACK
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, BlacklistListTable, BlacklistApplicationFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 
@@ -53,6 +53,9 @@ def organizer_tabs(user):
     if user.has_dubious_acces and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.Application.objects.filter(status=APP_DUBIOUS, contacted=False).count() else ''))
+    if user.has_blacklist_acces and getattr(settings, 'BLACKLIST_ENABLED', False):
+        t.append(('Blacklist', reverse('blacklist'),
+                  'new' if models.Application.objects.filter(status=APP_BLACKLISTED, contacted=False).count() else ''))
     return t
 
 
@@ -193,6 +196,16 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             add_comment(application, request.user,
                         "Dubious review result: Hacker is not allowed to participate in hackathon.")
             application.invalidate()
+        elif request.POST.get('set_blacklist') and request.user.is_organizer:
+            application.set_blacklist(request.user)
+        elif request.POST.get('unset_blacklist') and request.user.has_blacklist_acces:
+            add_comment(application, request.user,
+                        "Blacklist review result: No problems, hacker allowed to participate in hackathon!")
+            application.unset_blacklist()
+        elif request.POST.get('confirm_blacklist') and request.user.has_blacklist_acces:
+            add_comment(application, request.user,
+                        "Blacklist review result: Hacker is not allowed to participate in hackathon.")
+            application.confirm_blacklist(request.user)
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 
@@ -276,6 +289,12 @@ class ReviewApplicationView(ApplicationDetailView):
                 application.set_dubious()
             elif request.POST.get('unset_dubious'):
                 application.unset_dubious()
+            elif request.POST.get('set_blacklist') and request.user.is_organizer:
+                application.set_blacklist(request.user)
+            elif request.POST.get('unset_blacklist') and request.user.has_blacklist_acces:
+                add_comment(application, request.user,
+                            "Blacklist review result: No problems, hacker allowed to participate in hackathon!")
+                application.unset_blacklist()
             else:
                 add_vote(application, request.user, tech_vote, pers_vote)
         # If application has already been voted -> Skip and bring next
@@ -344,3 +363,18 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
 
     def get_queryset(self):
         return models.Application.objects.filter(status=APP_DUBIOUS)
+
+
+class BlacklistApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'blacklist_list.html'
+    table_class = BlacklistListTable
+    filterset_class = BlacklistApplicationFilter
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('status', 'vote_avg')
+    export_name = 'blacklist_applications'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.Application.objects.filter(status=APP_BLACKLISTED)

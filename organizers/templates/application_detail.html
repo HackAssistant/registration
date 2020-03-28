@@ -171,6 +171,11 @@
                         Dubious Application
                     </button>
                 {% endif %}
+                {% if h_blacklist_enabled %}
+                    <button name="set_blacklist" class="btn btn-warning btn-block" value="set_blacklist">
+                        Blacklist Application
+                    </button>
+                {% endif %}
             </form>
         </div>
     {% elif app and user.is_director %}
@@ -180,11 +185,17 @@
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.pk }}"/>
                 {% if  app.is_pending %}
-                    <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">Wait list
+                    <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">
+                        Wait list
                     </button>
                     {% if h_dubious_enabled %}
                         <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious">
                             Dubious Application
+                        </button>
+                    {% endif %}
+                    {% if h_blacklist_enabled %}
+                        <button name="set_blacklist" class="btn btn-warning btn-block" value="set_blacklist">
+                            Blacklist Application
                         </button>
                     {% endif %}
                 {% endif %}
@@ -202,6 +213,14 @@
                         </button>
                     {% endif %}
                     <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
+                    </button>
+                {% endif %}
+                {% if app.is_blacklisted %}
+                    <button name="unset_blacklist" class="btn btn-success btn-block" value="unset_blacklist">Mark as not
+                        blacklisted
+                    </button>
+                    <button name="confirm_blacklist" class="btn btn-danger btn-block" value="confirm_blacklist">Confirm the application 
+                        as blacklisted
                     </button>
                 {% endif %}
                 {% if app.is_dubious and app.contacted and app.contacted_by == request.user %}
@@ -244,10 +263,22 @@
                     </button>
                 {% endif %}
 
-
-
             </form>
         </div>
+    {% elif app and app.is_blacklisted and user.can_review_blacklist and not user.is_director and h_blacklist_enabled %}
+        <div class="panel-footer">
 
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+
+                <button name="unset_blacklist" class="btn btn-success btn-block" value="unset_blacklist">Mark as not
+                    blacklisted
+                </button>
+                <button name="confirm_blacklist" class="btn btn-danger btn-block" value="confirm_blacklist">Confirm the application 
+                    as blacklisted
+                </button>
+            </form>
+        </div>
     {% endif %}
 {% endblock %}

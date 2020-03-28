@@ -10,7 +10,7 @@ from django.db.models import Avg
 from django.utils import timezone
 
 from app import utils
-from user.models import User
+from user.models import User, BlacklistUser
 
 APP_PENDING = 'P'
 APP_REJECTED = 'R'
@@ -26,7 +26,7 @@ APP_BLACKLISTED = 'BL'
 
 PENDING_TEXT = 'Under review'
 DUBIOUS_TEXT = 'Dubious'
-BLACKLIST_TEXT = 'Black Listed'
+BLACKLIST_TEXT = 'Blacklisted'
 STATUS = [
     (APP_PENDING, PENDING_TEXT),
     (APP_REJECTED, 'Wait listed'),
@@ -115,6 +115,7 @@ class Application(models.Model):
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
+    reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
     blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
 
     # When was the application submitted
@@ -251,6 +252,18 @@ class Application(models.Model):
         self.status = APP_INVALID
         self.save()
 
+    def confirm_blacklist(self, user):
+        if self.status != APP_BLACKLISTED:
+            raise ValidationError('Applications can only be confirmed as blacklisted if they are blacklisted first')
+        self.status = APP_INVALID
+        if not self.blacklisted_by:
+            self.blacklisted_by = user
+        blacklist_user = BlacklistUser.objects.filter(email=self.user.email).first()
+        if not blacklist_user:
+            blacklist_user = BlacklistUser.objects.create_blacklist_user(self.user, "User reviewed and confirmed as blacklisted user.")
+        blacklist_user.save()
+        self.save()
+
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current '
@@ -285,8 +298,9 @@ class Application(models.Model):
             self.contacted_by = user
             self.save()
 
-    def set_blacklist(self):
+    def set_blacklist(self, user):
         self.status = APP_BLACKLISTED
+        self.blacklisted_by = user
         self.status_update_date = timezone.now()
         self.save()
 
