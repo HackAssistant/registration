@@ -105,20 +105,22 @@ YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.spl
 DEFAULT_YEAR = 2018
 
 
-class Application(models.Model):
-    # META
+class BaseApplication(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
-    contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
-    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
+
+    type = models.CharField(max_length=10, null=False, blank=False)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
+
     # When was the last status update
     status_update_date = models.DateTimeField(blank=True, null=True)
+
     # Application status
-    status = models.CharField(choices=STATUS, default=APP_PENDING,
+    status = models.CharField(choices=STATUS,
+                              default=APP_PENDING,
                               max_length=2)
 
     # ABOUT YOU
@@ -132,33 +134,33 @@ class Application(models.Model):
     phone_number = models.CharField(blank=True, null=True, max_length=16,
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                                                message="Phone number must be entered in the format: \
-                                                                  '+#########'. Up to 15 digits allowed.")])
+                                                                      '+#########'. Up to 15 digits allowed.")])
 
+    # Info for swag and food
+    diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
+    other_diet = models.CharField(max_length=600, blank=True, null=True)
+    tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+
+class HackerMentorVolunteerApplication(models.Model):
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
 
     # Is this your first hackathon?
     first_timer = models.BooleanField(default=False)
-    # Why do you want to come to X?
-    description = models.TextField(max_length=500)
-    # Explain a little bit what projects have you done lately
-    projects = models.TextField(max_length=500, blank=True, null=True)
-
-    # Reimbursement
-    reimb = models.BooleanField(default=False)
-    reimb_amount = models.FloatField(blank=True, null=True, validators=[
-        MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
     # Random lenny face
     lennyface = models.CharField(max_length=300, default='-.-')
-
-    # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes', null=True, blank=True, validators=[validate_file_extension])
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
+
+
+class HackerMentorApplication(models.Model):
+    # Explain a little bit what projects have you done lately
+    projects = models.TextField(max_length=500, blank=True, null=True)
 
     # URLs
     github = models.URLField(blank=True, null=True)
@@ -166,10 +168,34 @@ class Application(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     site = models.URLField(blank=True, null=True)
 
-    # Info for swag and food
-    diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
-    other_diet = models.CharField(max_length=600, blank=True, null=True)
-    tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+    # Giv me a resume here!
+    resume = models.FileField(upload_to='resumes', null=True, blank=True, validators=[validate_file_extension])
+
+
+class VolunteerMentorApplication(models.Model):
+    english_level = models.IntegerField(default=0, null=False)
+
+
+class VolunteerMentorSponsorApplication(models.Model):
+    attendance = models.CharField(null=False)
+
+
+class MentorSponsorApplication(models.Model):
+    company = models.CharField(max_length=100, null=False)
+
+
+class HackerApplication(BaseApplication, HackerMentorVolunteerApplication):
+    # META
+    contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
+    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
+
+    # Why do you want to come to X?
+    description = models.TextField(max_length=500)
+
+    # Reimbursement
+    reimb = models.BooleanField(default=False)
+    reimb_amount = models.FloatField(blank=True, null=True, validators=[
+        MinValueValidator(0, "Negative? Really? Please put a positive value")])
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -190,7 +216,7 @@ class Application(models.Model):
 
     def save(self, **kwargs):
         self.status_update_date = timezone.now()
-        super(Application, self).save(**kwargs)
+        super(HackerApplication, self).save(**kwargs)
 
     def invite(self, user):
         # We can re-invite someone invited
@@ -332,6 +358,40 @@ class Application(models.Model):
 
     def can_join_team(self):
         return self.status in [APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS]
+
+
+class MentorApplication(
+    MentorSponsorApplication,
+    HackerMentorApplication,
+    HackerMentorVolunteerApplication,
+    VolunteerMentorApplication,
+    VolunteerMentorSponsorApplication
+):
+    why_mentor = models.CharField(null=False)
+    first_time_mentor = models.BooleanField(null=False)
+    fluent = models.CharField(null=False)
+    experience = models.CharField(null=False)
+    study_work = models.CharField(null=False)
+
+
+class VolunteerApplication(
+    VolunteerMentorSponsorApplication,
+    VolunteerMentorApplication,
+    HackerMentorVolunteerApplication
+):
+    cool_skill = models.CharField(null=False)
+    first_time_volunteer = models.BooleanField(null=False)
+    quality = models.CharField(null=False)
+    weakness = models.CharField(null=False)
+    fav_movie = models.CharField(null=True)
+    friends = models.CharField(null=True)
+
+
+class SponsorApplication(
+    VolunteerMentorSponsorApplication,
+    MentorSponsorApplication
+):
+    position = models.CharField(null=False)
 
 
 class DraftApplication(models.Model):
