@@ -112,6 +112,12 @@ DEFAULT_YEAR = 2018
 
 
 class BaseApplication(models.Model):
+
+    class Meta:
+        abstract = True
+
+    id = models.AutoField(primary_key=True)
+
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, primary_key=True)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
@@ -149,6 +155,10 @@ class BaseApplication(models.Model):
 
 
 class HackerMentorVolunteerApplication(models.Model):
+
+    class Meta:
+        abstract = True
+
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
 
@@ -165,6 +175,10 @@ class HackerMentorVolunteerApplication(models.Model):
 
 
 class HackerMentorApplication(models.Model):
+
+    class Meta:
+        abstract = True
+
     # Explain a little bit what projects have you done lately
     projects = models.TextField(max_length=500, blank=True, null=True)
 
@@ -179,18 +193,33 @@ class HackerMentorApplication(models.Model):
 
 
 class VolunteerMentorApplication(models.Model):
+
+    class Meta:
+        abstract = True
+
     english_level = models.IntegerField(default=0, null=False)
 
 
 class VolunteerMentorSponsorApplication(models.Model):
+
+    class Meta:
+        abstract = True
+
     attendance = models.CharField(max_length=200, null=False)
 
 
 class MentorSponsorApplication(models.Model):
+
+    class Meta:
+        abstract = True
+
     company = models.CharField(max_length=100, null=False)
 
 
-class HackerApplication(BaseApplication, HackerMentorVolunteerApplication):
+class HackerApplication(
+    BaseApplication,
+    HackerMentorVolunteerApplication
+):
     # META
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
