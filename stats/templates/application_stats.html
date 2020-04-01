@@ -69,6 +69,18 @@
             <div id="degree_stats_confirmed"></div>
         </div>
     </div>
+  <h2>First timer</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>All</h3>
+            <div id="first_timer_stats"></div>
+        </div>
+        <div class="col-md-6">
+            <h3>Confirmed only</h3>
+            <div id="first_timer_stats_confirmed"></div>
+        </div>
+    </div>
     <h2>T-Shirts sizes</h2>
 
     <div class="row">
@@ -384,6 +396,48 @@
                 axis: {
                     x: {
                         type: 'category'
+                    }
+                }
+            });
+            var first_timer_data = {};
+            var first_timers = [];
+            $(data['first_timer']).each(function (c, e) {
+                first_timers.push(e.first_timer);
+                first_timer_data[e.first_timer] = e.applications;
+            });
+            c3.generate({
+                bindto: '#first_timer_stats',
+                data: {
+                    json: first_timer_data,
+                    type: 'donut'
+
+                },
+                donut: {
+                    label: {
+                        format: function (value, ratio, id) {
+                            return value;
+                        }
+                    }
+                }
+            });
+            var first_timer_confirmed_data = {};
+            var first_timers_confirmed = [];
+            $(data['first_timer_confirmed']).each(function (c, e) {
+                first_timers_confirmed.push(e.first_timer);
+                first_timer_confirmed_data[e.first_timer] = e.applications;
+            });
+            c3.generate({
+                bindto: '#first_timer_stats_confirmed',
+                data: {
+                    json: first_timer_confirmed_data,
+                    type: 'donut'
+
+                },
+                donut: {
+                    label: {
+                        format: function (value, ratio, id) {
+                            return value;
+                        }
                     }
                 }
             });
