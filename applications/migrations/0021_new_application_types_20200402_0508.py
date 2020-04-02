@@ -13,14 +13,63 @@ def forwards_func(apps, schema_editor):
     Application = apps.get_model("applications", "Application")
     HackerApplication = apps.get_model("applications", "HackerApplication")
     for application in Application.objects.all():
-        HackerApplication(application).save()
+        HackerApplication(
+            uuid=application.uuid,
+            user=application.user,
+            type='H',
+            submission_date=application.submission_date,
+            status_update_date=application.status_update_date,
+            status=application.status,
+            gender=application.gender,
+            other_gender=application.other_gender,
+            under_age=application.under_age,
+            phone_number=application.phone_number,
+            diet=application.diet,
+            other_diet=application.other_diet,
+            tshirt_size=application.tshirt_size,
+            origin=application.origin,
+            first_timer=application.first_timer,
+            lennyface=application.lennyface,
+            graduation_year=application.graduation_year,
+            university=application.university,
+            degree=application.degree,
+            contacted=application.contacted,
+            description=application.description,
+            reimb=application.reimb,
+            contacted_by=application.contacted_by,
+            invited_by=application.invited_by,
+        ).save()
 
 
 def reverse_func(apps, schema_editor):
     Application = apps.get_model("applications", "Application")
     HackerApplication = apps.get_model("applications", "HackerApplication")
-    for hackerApplication in HackerApplication.objects.all():
-        Application(hackerApplication).save()
+    for application in HackerApplication.objects.all():
+        Application(
+            uuid=application.uuid,
+            user=application.user,
+            submission_date=application.submission_date,
+            status_update_date=application.status_update_date,
+            status=application.status,
+            gender=application.gender,
+            other_gender=application.other_gender,
+            under_age=application.under_age,
+            phone_number=application.phone_number,
+            diet=application.diet,
+            other_diet=application.other_diet,
+            tshirt_size=application.tshirt_size,
+            origin=application.origin,
+            first_timer=application.first_timer,
+            lennyface=application.lennyface,
+            graduation_year=application.graduation_year,
+            university=application.university,
+            degree=application.degree,
+            contacted=application.contacted,
+            description=application.description,
+            reimb=application.reimb,
+            contacted_by=application.contacted_by,
+            invited_by=application.invited_by,
+        ).save()
 
 
 class Migration(migrations.Migration):
