@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         fourdaysago = timezone.now() - timedelta(days=4)
         self.stdout.write('Checking reminders...')
-        reminders = models.Application.objects.filter(
+        reminders = models.HackerApplication.objects.filter(
             status_update_date__lte=fourdaysago, status=models.APP_INVITED)
         self.stdout.write('Checking reminders...%s found' % reminders.count())
         self.stdout.write('Sending reminders...')
@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
         onedayago = timezone.now() - timedelta(days=1)
         self.stdout.write('Checking expired...')
-        expired = models.Application.objects.filter(
+        expired = models.HackerApplication.objects.filter(
             status_update_date__lte=onedayago, status=models.APP_LAST_REMIDER)
         self.stdout.write('Checking expired...%s found' % expired.count())
         self.stdout.write('Setting expired...')

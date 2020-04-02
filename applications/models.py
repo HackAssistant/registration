@@ -119,7 +119,7 @@ class BaseApplication(models.Model):
     id = models.AutoField(primary_key=True)
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User)
     invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
 
     type = models.CharField(max_length=10, null=False, blank=False)
