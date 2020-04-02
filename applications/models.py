@@ -116,13 +116,9 @@ class BaseApplication(models.Model):
     class Meta:
         abstract = True
 
-    id = models.AutoField(primary_key=True)
-
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User)
-    invited_by = models.ForeignKey(User, related_name='invited_applications', blank=True, null=True)
-
-    type = models.CharField(max_length=10, null=False, blank=False)
+    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
+    invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -154,7 +150,7 @@ class BaseApplication(models.Model):
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
 
-class HackerMentorVolunteerApplication(models.Model):
+class _HackerMentorVolunteerApplication(models.Model):
 
     class Meta:
         abstract = True
@@ -174,7 +170,7 @@ class HackerMentorVolunteerApplication(models.Model):
     degree = models.CharField(max_length=300)
 
 
-class HackerMentorApplication(models.Model):
+class _HackerMentorApplication(models.Model):
 
     class Meta:
         abstract = True
@@ -192,7 +188,7 @@ class HackerMentorApplication(models.Model):
     resume = models.FileField(upload_to='resumes', null=True, blank=True, validators=[validate_file_extension])
 
 
-class VolunteerMentorApplication(models.Model):
+class _VolunteerMentorApplication(models.Model):
 
     class Meta:
         abstract = True
@@ -200,7 +196,7 @@ class VolunteerMentorApplication(models.Model):
     english_level = models.IntegerField(default=0, null=False)
 
 
-class VolunteerMentorSponsorApplication(models.Model):
+class _VolunteerMentorSponsorApplication(models.Model):
 
     class Meta:
         abstract = True
@@ -208,7 +204,7 @@ class VolunteerMentorSponsorApplication(models.Model):
     attendance = models.CharField(max_length=200, null=False)
 
 
-class MentorSponsorApplication(models.Model):
+class _MentorSponsorApplication(models.Model):
 
     class Meta:
         abstract = True
@@ -218,7 +214,8 @@ class MentorSponsorApplication(models.Model):
 
 class HackerApplication(
     BaseApplication,
-    HackerMentorVolunteerApplication
+    _HackerMentorVolunteerApplication,
+    _HackerMentorApplication
 ):
     # META
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
@@ -396,11 +393,12 @@ class HackerApplication(
 
 
 class MentorApplication(
-    MentorSponsorApplication,
-    HackerMentorApplication,
-    HackerMentorVolunteerApplication,
-    VolunteerMentorApplication,
-    VolunteerMentorSponsorApplication
+    BaseApplication,
+    _MentorSponsorApplication,
+    _HackerMentorApplication,
+    _HackerMentorVolunteerApplication,
+    _VolunteerMentorApplication,
+    _VolunteerMentorSponsorApplication
 ):
     why_mentor = models.CharField(max_length=500, null=False)
     first_time_mentor = models.BooleanField(null=False)
@@ -410,9 +408,10 @@ class MentorApplication(
 
 
 class VolunteerApplication(
-    VolunteerMentorSponsorApplication,
-    VolunteerMentorApplication,
-    HackerMentorVolunteerApplication
+    BaseApplication,
+    _VolunteerMentorSponsorApplication,
+    _VolunteerMentorApplication,
+    _HackerMentorVolunteerApplication
 ):
     cool_skill = models.CharField(max_length=100, null=False)
     first_time_volunteer = models.BooleanField(null=False)
@@ -423,8 +422,9 @@ class VolunteerApplication(
 
 
 class SponsorApplication(
-    VolunteerMentorSponsorApplication,
-    MentorSponsorApplication
+    BaseApplication,
+    _VolunteerMentorSponsorApplication,
+    _MentorSponsorApplication
 ):
     position = models.CharField(max_length=50, null=False)
 
