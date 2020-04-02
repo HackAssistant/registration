@@ -30,7 +30,7 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.Application.objects.exclude(status=models.APP_ATTENDED)
+        return models.HackerApplication.objects.exclude(status=models.APP_ATTENDED)
 
 
 class QRView(IsVolunteerMixin, TabsView):
@@ -49,7 +49,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
-        app = models.Application.objects.filter(uuid=appid).first()
+        app = models.HackerApplication.objects.filter(uuid=appid).first()
         if not app:
             raise Http404
         context.update({
@@ -64,7 +64,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
 
     def post(self, request, *args, **kwargs):
         appid = request.POST.get('app_id')
-        app = models.Application.objects.filter(uuid=appid).first()
+        app = models.HackerApplication.objects.filter(uuid=appid).first()
         app.check_in()
         ci = CheckIn()
         ci.user = request.user

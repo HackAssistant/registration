@@ -9,7 +9,7 @@ from user.models import User
 
 
 class CheckIn(models.Model):
-    application = models.OneToOneField('applications.Application')
+    application = models.OneToOneField('applications.HackerApplication')
     user = models.ForeignKey(User)
     update_time = models.DateTimeField()
 

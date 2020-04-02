@@ -4,7 +4,7 @@ from django import forms
 from django.conf import settings
 from django.db.models import Q
 
-from applications.models import Application, STATUS
+from applications.models import HackerApplication, STATUS
 from user.models import User
 
 
@@ -18,7 +18,7 @@ class ApplicationFilter(django_filters.FilterSet):
                                Q(university__icontains=value) | Q(origin__icontains=value))
 
     class Meta:
-        model = Application
+        model = HackerApplication
         fields = ['search', 'status']
 
 
@@ -35,7 +35,7 @@ class DubiousApplicationFilter(django_filters.FilterSet):
                                Q(university__icontains=value) | Q(origin__icontains=value))
 
     class Meta:
-        model = Application
+        model = HackerApplication
         fields = ['search', 'contacted']
 
 
@@ -47,7 +47,7 @@ class InviteFilter(django_filters.FilterSet):
                                Q(university__icontains=value) | Q(origin__icontains=value))
 
     class Meta:
-        model = Application
+        model = HackerApplication
         fields = ['search', 'first_timer', 'reimb'] if getattr(settings, 'REIMBURSEMENT_ENABLED', False) else \
             ['search', 'first_timer']
 
@@ -59,7 +59,7 @@ class ApplicationsListTable(tables.Table):
     origin = tables.Column(accessor='origin', verbose_name='Origin')
 
     class Meta:
-        model = Application
+        model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin']
@@ -74,7 +74,7 @@ class DubiousListTable(tables.Table):
     origin = tables.Column(accessor='origin', verbose_name='Origin')
 
     class Meta:
-        model = Application
+        model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email', 'university', 'origin', 'contacted']
@@ -89,7 +89,7 @@ class AdminApplicationsListTable(tables.Table):
         verbose_name='Actions', orderable=False)
 
     class Meta:
-        model = Application
+        model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['selected', 'user.name', 'vote_avg', 'reimb_amount', 'university', 'origin'] \
@@ -115,7 +115,7 @@ class AdminTeamListTable(tables.Table):
     selected = tables.CheckBoxColumn(accessor="team", verbose_name='Select')
 
     class Meta:
-        model = Application
+        model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['selected', 'team', 'vote_avg', 'members']

@@ -2,7 +2,7 @@ import django_filters
 import django_tables2 as tables
 from django.db.models import Q
 
-from applications.models import Application
+from applications.models import HackerApplication
 from user.models import User
 
 
@@ -13,7 +13,7 @@ class ApplicationCheckinFilter(django_filters.FilterSet):
         return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value))
 
     class Meta:
-        model = Application
+        model = HackerApplication
         fields = ['search', ]
 
 
@@ -23,7 +23,7 @@ class ApplicationsCheckInTable(tables.Table):
         verbose_name='Actions', )
 
     class Meta:
-        model = Application
+        model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email']

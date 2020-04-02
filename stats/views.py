@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from app.views import TabsView
 from applications import models as a_models
-from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
+from applications.models import HackerApplication, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 
 STATUS_DICT = dict(STATUS)
@@ -30,7 +30,7 @@ def reimb_stats_api(request):
         .annotate(reimbursements=Count('status'))
     status_count = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), status_count)
 
-    total_apps = Application.objects.count()
+    total_apps = HackerApplication.objects.count()
     reimb_count = Reimbursement.objects.count()
 
     amounts = Reimbursement.objects.all().exclude(status=RE_DRAFT).values('status') \
@@ -51,42 +51,52 @@ def reimb_stats_api(request):
 @is_organizer
 def app_stats_api(request):
     # Status analysis
-    status_count = Application.objects.all().values('status') \
+    status_count = HackerApplication.objects.all().values('status') \
         .annotate(applications=Count('status'))
     status_count = map(lambda x: dict(status_name=STATUS_DICT[x['status']], **x), status_count)
 
-    gender_count = Application.objects.all().values('gender') \
+    gender_count = HackerApplication.objects.all().values('gender') \
         .annotate(applications=Count('gender'))
     gender_count = map(lambda x: dict(gender_name=GENDER_DICT[x['gender']], **x), gender_count)
+
+    origin_count = HackerApplication.objects.all().values('origin') \
+        .annotate(applications=Count('origin')) \
+        .order_by('-applications')[:10]
+    origin_count_confirmed = HackerApplication.objects.filter(status=APP_CONFIRMED).values('origin') \
+        .annotate(applications=Count('origin')) \
+        .order_by('-applications')[:10]
+
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
     shirt_count = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
-        Application.objects.values('tshirt_size').annotate(applications=Count('tshirt_size'))
+        HackerApplication.objects.values('tshirt_size').annotate(applications=Count('tshirt_size'))
     )
 
     shirt_count_confirmed = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
-        Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size')
+        HackerApplication.objects.filter(status=APP_CONFIRMED).values('tshirt_size')
         .annotate(applications=Count('tshirt_size'))
     )
 
-    diet_count = Application.objects.values('diet') \
+    diet_count = HackerApplication.objects.values('diet') \
         .annotate(applications=Count('diet'))
-    diet_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('diet') \
+    diet_count_confirmed = HackerApplication.objects.filter(status=APP_CONFIRMED).values('diet') \
         .annotate(applications=Count('diet'))
-    other_diets = Application.objects.filter(status=APP_CONFIRMED).values('other_diet')
+    other_diets = HackerApplication.objects.filter(status=APP_CONFIRMED).values('other_diet')
 
-    timeseries = Application.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
+    timeseries = HackerApplication.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
     return JsonResponse(
         {
             'update_time': timezone.now(),
-            'app_count': Application.objects.count(),
+            'app_count': HackerApplication.objects.count(),
             'status': list(status_count),
             'shirt_count': list(shirt_count),
             'shirt_count_confirmed': list(shirt_count_confirmed),
             'timeseries': list(timeseries),
             'gender': list(gender_count),
+            'origin': list(origin_count),
+            'origin_confirmed': list(origin_count_confirmed),
             'diet': list(diet_count),
             'diet_confirmed': list(diet_count_confirmed),
             'other_diet': '<br>'.join([el['other_diet'] for el in other_diets if el['other_diet']])

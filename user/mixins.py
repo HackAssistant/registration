@@ -26,7 +26,7 @@ class IsOrganizerMixin(UserPassesTestMixin):
             return False
         if not self.request.user.has_usable_password():
             return False
-        return self.request.user.is_authenticated and self.request.user.is_organizer
+        return self.request.user.is_authenticated and self.request.user.check_is_organizer
 
 
 class IsVolunteerMixin(UserPassesTestMixin):
@@ -40,7 +40,8 @@ class IsVolunteerMixin(UserPassesTestMixin):
         if not self.request.user.has_usable_password():
             return False
         return \
-            self.request.user.is_authenticated and (self.request.user.is_volunteer or self.request.user.is_organizer)
+            self.request.user.is_authenticated and \
+            (self.request.user.check_is_volunteer or self.request.user.check_is_organizer)
 
 
 class IsDirectorMixin(UserPassesTestMixin):
@@ -67,7 +68,7 @@ class IsHardwareAdminMixin(UserPassesTestMixin):
             return False
         if not self.request.user.has_usable_password():
             return False
-        return self.request.user.is_hardware_admin or self.request.user.is_organizer
+        return self.request.user.is_hardware_admin or self.request.user.check_is_organizer
 
 
 def is_organizer(f, raise_exception=True):
@@ -76,7 +77,7 @@ def is_organizer(f, raise_exception=True):
     """
 
     def check_perms(user):
-        if user.is_authenticated and user.email_verified and user.is_organizer and user.has_usable_password():
+        if user.is_authenticated and user.email_verified and user.check_is_organizer and user.has_usable_password():
             return True
         # In case the 403 handler should be called raise the exception
         if raise_exception:
