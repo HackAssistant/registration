@@ -120,7 +120,7 @@ class HackerDashboard(IsHackerMixin, TabsView):
         try:
             application = models.HackerApplication.objects.get(user=self.request.user)
             deadline = get_deadline(application)
-            context.update({'invite_timeleft': deadline - timezone.now()})
+            context.update({'invite_timeleft': deadline - timezone.now(), 'application': application})
         except:
             # We ignore this as we are okay if the user has not created an application yet
             pass
@@ -130,7 +130,8 @@ class HackerDashboard(IsHackerMixin, TabsView):
     def post(self, request, *args, **kwargs):
         new_application = True
         try:
-            form = forms.ApplicationForm(request.POST, request.FILES, instance=request.user.application)
+            form = forms.ApplicationForm(request.POST, request.FILES,
+                                         instance=request.user.hackerapplication_application)
             new_application = False
         except:
             form = forms.ApplicationForm(request.POST, request.FILES)
@@ -168,7 +169,8 @@ class HackerApplication(IsHackerMixin, TabsView):
 
     def post(self, request, *args, **kwargs):
         try:
-            form = forms.ApplicationForm(request.POST, request.FILES, instance=request.user.application)
+            form = forms.ApplicationForm(request.POST, request.FILES,
+                                         instance=request.user.hackerapplication_application)
         except:
             form = forms.ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
