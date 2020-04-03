@@ -19,6 +19,16 @@ from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
 from user.mixins import IsHackerMixin, is_hacker
+from user import models as userModels
+
+
+VIEW_APPLICATION_TYPE = {
+    userModels.USR_HACKER: models.HackerApplication,
+}
+
+VIEW_APPLICATION_FORM_TYPE = {
+    userModels.USR_HACKER: forms.HackerApplicationForm,
+}
 
 
 def check_application_exists(user, uuid):
@@ -36,7 +46,8 @@ class ConfirmApplication(IsHackerMixin, UserPassesTestMixin, View):
         return True
 
     def get(self, request, *args, **kwargs):
-        application = models.HackerApplication.objects.get(user=request.user)
+        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        application = Application.objects.get(user=request.user)
         msg = None
         if application.can_confirm():
             msg = emails.create_confirmation_email(application, self.request)
@@ -69,7 +80,9 @@ class CancelApplication(IsHackerMixin, UserPassesTestMixin, TabsView):
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
 
-        application = models.HackerApplication.objects.get(user=self.request.user)
+        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+
+        application = Application.objects.get(user=self.request.user)
         context.update({'application': application, })
         if application.status == models.APP_CANCELLED:
             context.update({'error': "Thank you for responding. We're sorry you won't be able to make it."
@@ -85,7 +98,9 @@ class CancelApplication(IsHackerMixin, UserPassesTestMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        application = models.HackerApplication.objects.get(user=self.request.user)
+        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+
+        application = Application.objects.get(user=self.request.user)
         try:
             application.cancel()
         except ValidationError:
@@ -111,14 +126,16 @@ class HackerDashboard(IsHackerMixin, TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
+        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
         try:
             draft = models.DraftApplication.objects.get(user=self.request.user)
-            form = forms.ApplicationForm(instance=models.HackerApplication(**draft.get_dict()))
+            form = ApplicationForm(instance=Application(**draft.get_dict()))
         except:
-            form = forms.ApplicationForm()
+            form = ApplicationForm()
         context.update({'form': form})
         try:
-            application = models.HackerApplication.objects.get(user=self.request.user)
+            application = Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
             context.update({'invite_timeleft': deadline - timezone.now(), 'application': application})
         except:
@@ -128,13 +145,16 @@ class HackerDashboard(IsHackerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
+        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
+
         new_application = True
         try:
-            form = forms.ApplicationForm(request.POST, request.FILES,
-                                         instance=request.user.hackerapplication_application)
+            form = ApplicationForm(request.POST, request.FILES,
+                                         instance=request.user.application)
             new_application = False
         except:
-            form = forms.ApplicationForm(request.POST, request.FILES)
+            form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
             application.user = request.user
@@ -161,18 +181,23 @@ class HackerApplication(IsHackerMixin, TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(HackerApplication, self).get_context_data(**kwargs)
-        application = get_object_or_404(models.HackerApplication, user=self.request.user)
+
+        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
+
+        application = get_object_or_404(Application, user=self.request.user)
         deadline = get_deadline(application)
         context.update(
-            {'invite_timeleft': deadline - timezone.now(), 'form': forms.ApplicationForm(instance=application)})
+            {'invite_timeleft': deadline - timezone.now(), 'form': ApplicationForm(instance=application)})
         return context
 
     def post(self, request, *args, **kwargs):
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
         try:
-            form = forms.ApplicationForm(request.POST, request.FILES,
-                                         instance=request.user.hackerapplication_application)
+            form = ApplicationForm(request.POST, request.FILES,
+                                         instance=request.user.application)
         except:
-            form = forms.ApplicationForm(request.POST, request.FILES)
+            form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
             application.user = request.user

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 from django.utils import timezone
+from applications import models as applicationModels
 
 USR_ORGANIZER = 'O'
 USR_VOLUNTEER = 'V'
@@ -148,4 +149,23 @@ class User(AbstractBaseUser):
 
     @property
     def check_is_volunteer(self):
-        return self.type == USR_VOLUNTEER
+        if self.type == USR_VOLUNTEER:
+            try:
+                return self.volunteerapplication_application.status == applicationModels.APP_ATTENDED
+            except applicationModels.VolunteerApplication.DoesNotExist:
+                pass
+        return False
+
+    @property
+    def application(self):
+        try:
+            if self.type == USR_HACKER:
+                return self.hackerapplication_application
+            if self.type == USR_VOLUNTEER:
+                return self.volunteerapplication_application
+            if self.type == USR_MENTOR:
+                return self.mentorapplication_application
+            if self.type == USR_SPONSOR:
+                return self.sponsorapplication_application
+        except:
+            pass
