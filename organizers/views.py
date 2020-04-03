@@ -52,7 +52,8 @@ def organizer_tabs(user):
          ]
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
-                  'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS, contacted=False).count() else ''))
+                  'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
+                                                                   contacted=False).count() else ''))
     return t
 
 
@@ -299,10 +300,11 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.objects.filter(status=APP_PENDING).exclude(user__team__team_code__isnull=True) \
-            .values('user__team__team_code').order_by().annotate(vote_avg=Avg('vote__calculated_vote'),
-                                                                 team=F('user__team__team_code'),
-                                                                 members=Count('user', distinct=True))
+        return models.HackerApplication.objects.filter(status=APP_PENDING) \
+            .exclude(user__team__team_code__isnull=True).values('user__team__team_code').order_by() \
+            .annotate(vote_avg=Avg('vote__calculated_vote'),
+                      team=F('user__team__team_code'),
+                      members=Count('user', distinct=True))
 
     def get_context_data(self, **kwargs):
         c = super(InviteTeamListView, self).get_context_data(**kwargs)
