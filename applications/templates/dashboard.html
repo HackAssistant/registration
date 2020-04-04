@@ -126,7 +126,7 @@
                         View{% if application.can_be_edit %}/Edit{% endif %} application
                     </a>
                 </div>
-            {%  if h_team_enabled %}
+            {%  if h_team_enabled and application.can_join_team %}
                 <div class="col-md-offset-2 col-md-5 no-padding">
                     <a href="{% url 'teams' %}" class="btn  btn-info btn-block">
                         {% if user.team %}

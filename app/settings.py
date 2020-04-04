@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'teams',
     'stats',
     'storages',
+    'multiselectfield',
 ]
 
 if REIMBURSEMENT_ENABLED:

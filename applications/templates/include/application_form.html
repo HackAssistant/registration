@@ -3,7 +3,8 @@
 {% load form_utils %}
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
-    #id_scholarship > div, #id_reimb > div {
+    #id_scholarship > div, #id_reimb > div, #id_first_time_volunteer > div, #id_which_hack > div, #id_attendance > div,
+    #id_english_level > div {
         display: inline-block;
         padding-right: 20px;
         margin-bottom: 0;
@@ -104,6 +105,18 @@
             });
             // Making projects look like required
             projects.parent().addClass('required');
+
+            var is_firsttime_volunteer = $('input[name="first_time_volunteer"][value="True"]');
+            var experienced_volunteer = $('input[name="first_time_volunteer"][value="False"]');
+            var which_hack = $('#id_which_hack');
+            conditional_field(which_hack, is_firsttime_volunteer, function () {
+                return is_firsttime_volunteer.prop("checked");
+            });
+            conditional_field(which_hack, experienced_volunteer, function () {
+                return is_firsttime_volunteer.prop("checked");
+            });
+            // Making projects look like required
+            which_hack.parent().addClass('required');
 
             {% if not application %}
                 var timer;

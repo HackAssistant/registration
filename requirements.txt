@@ -9,6 +9,7 @@ django-bootstrap3==8.2.3
 django-filter==1.0.2
 django-form-utils==1.0.3
 django-jet==1.0.8
+django-multiselectfield==0.1.12
 django-storages==1.7.2
 django-tables2==1.14.2
 dropbox==8.7.1
@@ -28,6 +29,7 @@ oauthlib==2.0.2
 odfpy==1.4.0
 openpyxl==2.6.4
 packaging==16.8
+pkg-resources==0.0.0
 psycopg2==2.7.5
 psycopg2-binary==2.8.3
 pyasn1==0.1.9

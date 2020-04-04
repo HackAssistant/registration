@@ -8,9 +8,12 @@ from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.utils import timezone
+from multiselectfield import MultiSelectField
 
-from app import utils
+from app import utils, hackathon_variables
+from app.hackathon_variables import HACKATHON_NAME
 from user.models import User
+from user import models as userModels
 from applications.validators import validate_file_extension
 
 APP_PENDING = 'P'
@@ -106,9 +109,14 @@ ATTENDANCE = [
     (1, "Saturday"),
     (2, "Sunday")
 ]
+HACK_NAME = getattr(hackathon_variables, HACKATHON_NAME, "HackAssistant")
+EXTRA_NAME = [' 2016', ' 2017', ' 2018', ' 2019']
+PREVIOUS_HACKS = [(i, HACK_NAME + EXTRA_NAME[i]) for i in range(0, len(EXTRA_NAME))]
 
 YEARS = [(int(size), size) for size in ('2018 2019 2020 2021 2022 2023 2024'.split(' '))]
 DEFAULT_YEAR = 2018
+
+ENGLISH_LEVEL = [(i, str(i)) for i in range(1, 5 + 1)]
 
 
 class BaseApplication(models.Model):
@@ -148,6 +156,69 @@ class BaseApplication(models.Model):
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
+
+    def get_soft_status_display(self):
+        text = self.get_status_display()
+        if DUBIOUS_TEXT in text:
+            return PENDING_TEXT
+        return text
+
+    def is_confirmed(self):
+        return self.status == APP_CONFIRMED
+
+    def is_cancelled(self):
+        return self.status == APP_CANCELLED
+
+    def answered_invite(self):
+        return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
+
+    def needs_action(self):
+        return self.status == APP_INVITED
+
+    def is_pending(self):
+        return self.status == APP_PENDING
+
+    def can_be_edit(self):
+        return self.status == APP_PENDING
+
+    def is_invited(self):
+        return self.status == APP_INVITED
+
+    def is_expired(self):
+        return self.status == APP_EXPIRED
+
+    def is_rejected(self):
+        return self.status == APP_REJECTED
+
+    def is_invalid(self):
+        return self.status == APP_INVALID
+
+    def is_attended(self):
+        return self.status == APP_ATTENDED
+
+    def is_last_reminder(self):
+        return self.status == APP_LAST_REMIDER
+
+    def is_dubious(self):
+        return self.status == APP_DUBIOUS
+
+    def can_be_cancelled(self):
+        return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
+
+    def can_confirm(self):
+        return self.status in [APP_INVITED, APP_LAST_REMIDER]
+
+    def can_be_invited(self):
+        return self.status in [APP_INVITED, APP_LAST_REMIDER, APP_CANCELLED, APP_PENDING, APP_EXPIRED, APP_REJECTED,
+                               APP_INVALID]
+
+    def can_join_team(self):
+        return self.user.type == userModels.USR_HACKER and self.status in [APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS]
+
+    def check_in(self):
+        self.status = APP_ATTENDED
+        self.status_update_date = timezone.now()
+        self.save()
 
 
 class _HackerMentorVolunteerApplication(models.Model):
@@ -193,7 +264,7 @@ class _VolunteerMentorApplication(models.Model):
     class Meta:
         abstract = True
 
-    english_level = models.IntegerField(default=0, null=False)
+    english_level = models.IntegerField(default=0, null=False, choices=ENGLISH_LEVEL)
 
 
 class _VolunteerMentorSponsorApplication(models.Model):
@@ -201,7 +272,8 @@ class _VolunteerMentorSponsorApplication(models.Model):
     class Meta:
         abstract = True
 
-    attendance = models.CharField(max_length=200, null=False)
+    attendance = MultiSelectField(choices=ATTENDANCE)
+    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True)
 
 
 class _MentorSponsorApplication(models.Model):
@@ -236,12 +308,6 @@ class HackerApplication(
     @property
     def uuid_str(self):
         return str(self.uuid)
-
-    def get_soft_status_display(self):
-        text = self.get_status_display()
-        if DUBIOUS_TEXT in text:
-            return PENDING_TEXT
-        return text
 
     def __str__(self):
         return self.user.email
@@ -317,11 +383,6 @@ class HackerApplication(
             if reimb:
                 reimb.delete()
 
-    def check_in(self):
-        self.status = APP_ATTENDED
-        self.status_update_date = timezone.now()
-        self.save()
-
     def set_dubious(self):
         self.status = APP_DUBIOUS
         self.contacted = False
@@ -339,57 +400,8 @@ class HackerApplication(
             self.contacted_by = user
             self.save()
 
-    def is_confirmed(self):
-        return self.status == APP_CONFIRMED
-
-    def is_cancelled(self):
-        return self.status == APP_CANCELLED
-
-    def answered_invite(self):
-        return self.status in [APP_CONFIRMED, APP_CANCELLED, APP_ATTENDED]
-
-    def needs_action(self):
-        return self.status == APP_INVITED
-
-    def is_pending(self):
-        return self.status == APP_PENDING
-
     def can_be_edit(self):
         return self.status == APP_PENDING and not self.vote_set.exists() and not utils.is_app_closed()
-
-    def is_invited(self):
-        return self.status == APP_INVITED
-
-    def is_expired(self):
-        return self.status == APP_EXPIRED
-
-    def is_rejected(self):
-        return self.status == APP_REJECTED
-
-    def is_invalid(self):
-        return self.status == APP_INVALID
-
-    def is_attended(self):
-        return self.status == APP_ATTENDED
-
-    def is_last_reminder(self):
-        return self.status == APP_LAST_REMIDER
-
-    def is_dubious(self):
-        return self.status == APP_DUBIOUS
-
-    def can_be_cancelled(self):
-        return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER
-
-    def can_confirm(self):
-        return self.status in [APP_INVITED, APP_LAST_REMIDER]
-
-    def can_be_invited(self):
-        return self.status in [APP_INVITED, APP_LAST_REMIDER, APP_CANCELLED, APP_PENDING, APP_EXPIRED, APP_REJECTED,
-                               APP_INVALID]
-
-    def can_join_team(self):
-        return self.status in [APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS]
 
 
 class MentorApplication(
@@ -419,6 +431,10 @@ class VolunteerApplication(
     weakness = models.CharField(max_length=150, null=False)
     fav_movie = models.CharField(max_length=60, null=True)
     friends = models.CharField(max_length=100, null=True)
+
+    def save(self, **kwargs):
+        self.status_update_date = timezone.now()
+        super(VolunteerApplication, self).save(**kwargs)
 
 
 class SponsorApplication(
