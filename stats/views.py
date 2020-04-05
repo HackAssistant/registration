@@ -51,27 +51,28 @@ def reimb_stats_api(request):
 @is_organizer
 def app_stats_api(request):
     # Status analysis
-    status_count = Application.objects.all().values('status') \
-        .annotate(applications=Count('status'))
-    status_count = map(lambda x: dict(status_name=STATUS_DICT[x['status']], **x), status_count)
+    applications = list(Application.objects.all())
+    status_count = {x: 0 for x in STATUS_DICT.values()}
+    gender_count = {x: 0 for x in GENDER_DICT.values()}
+    origin_count = {}
+    origin_count_confirmed = {}
+    for a in applications:
+        status_count[STATUS_DICT[a.status]] += 1
+        gender_count[GENDER_DICT[a.gender]] += 1
+        origin_count[a.origin] = origin_count.get(a.origin, 0) + 1
+        if a.status == APP_CONFIRMED:
+            origin_count_confirmed[a.origin] = origin_count_confirmed.get(a.origin, 0) + 1
 
-    gender_count = Application.objects.all().values('gender') \
-        .annotate(applications=Count('gender'))
-    gender_count = map(lambda x: dict(gender_name=GENDER_DICT[x['gender']], **x), gender_count)
-
-    origin_count = Application.objects.all().values('origin') \
-        .annotate(applications=Count('origin')) \
-        .order_by('-applications')[:10]
-    origin_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('origin') \
-        .annotate(applications=Count('origin')) \
-        .order_by('-applications')[:10]
+    origin_count = {x: v for (x, v) in sorted(origin_count.items(), key=lambda item: item[1])[:5]}
+    origin_count_confirmed = {x: v for (x, v) in sorted(origin_count_confirmed.items(), key=lambda item: item[1])[:5]}
 
     university_count = Application.objects.all().values('university') \
-        .annotate(applications=Count('university')) \
-        .order_by('-applications')[:10]
+                           .annotate(applications=Count('university')) \
+                           .order_by('-applications')[:10]
+    university_count = list(university_count)
     university_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('university') \
-        .annotate(applications=Count('university')) \
-        .order_by('-applications')[:10]
+                                     .annotate(applications=Count('university')) \
+                                     .order_by('-applications')[:10]
 
     grad_year_count = Application.objects.all().values('graduation_year') \
         .annotate(applications=Count('graduation_year'))
@@ -79,11 +80,11 @@ def app_stats_api(request):
         .annotate(applications=Count('graduation_year'))
 
     degree_count = Application.objects.all().values('degree') \
-        .annotate(applications=Count('degree')) \
-        .order_by('-applications')[:10]
+                       .annotate(applications=Count('degree')) \
+                       .order_by('-applications')[:10]
     degree_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('degree') \
-        .annotate(applications=Count('degree')) \
-        .order_by('-applications')[:10]
+                                 .annotate(applications=Count('degree')) \
+                                 .order_by('-applications')[:10]
 
     first_timer_count = Application.objects.all().values('first_timer') \
         .annotate(applications=Count('first_timer'))
@@ -99,7 +100,7 @@ def app_stats_api(request):
     shirt_count_confirmed = map(
         lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
         Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size')
-        .annotate(applications=Count('tshirt_size'))
+            .annotate(applications=Count('tshirt_size'))
     )
 
     diet_count = Application.objects.values('diet') \
@@ -113,12 +114,12 @@ def app_stats_api(request):
     return JsonResponse(
         {
             'update_time': timezone.now(),
-            'app_count': Application.objects.count(),
-            'status': list(status_count),
+            'app_count': len(applications),
+            'status': status_count,
             'shirt_count': list(shirt_count),
             'shirt_count_confirmed': list(shirt_count_confirmed),
             'timeseries': list(timeseries),
-            'gender': list(gender_count),
+            'gender': gender_count,
             'university': list(university_count),
             'university_confirmed': list(university_count_confirmed),
             'graduation_year': list(grad_year_count),
@@ -127,8 +128,8 @@ def app_stats_api(request):
             'degree_confirmed': list(degree_count_confirmed),
             'first_timer': list(first_timer_count),
             'first_timer_confirmed': list(first_timer_count_confirmed),
-            'origin': list(origin_count),
-            'origin_confirmed': list(origin_count_confirmed),
+            'origin': origin_count,
+            'origin_confirmed': origin_count_confirmed,
             'diet': list(diet_count),
             'diet_confirmed': list(diet_count_confirmed),
             'other_diet': '<br>'.join([el['other_diet'] for el in other_diets if el['other_diet']])
