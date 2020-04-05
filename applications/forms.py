@@ -9,6 +9,19 @@ from app.utils import validate_url
 from applications import models
 
 
+def set_field_html_name(cls, new_name):
+    """
+    This creates wrapper around the normal widget rendering,
+    allowing for a custom field name (new_name).
+    """
+    old_render = cls.widget.render
+
+    def _widget_render_wrapper(name, value, attrs=None):
+        return old_render(new_name, value, attrs)
+
+    cls.widget.render = _widget_render_wrapper
+
+
 class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
@@ -162,7 +175,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
               'description': 'Some of our sponsors may use this information for recruitment purposes,'
-              'so please include as much as you can.'}),
+                             'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
@@ -233,15 +246,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         }
 
 
-class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
-    reimb = forms.TypedChoiceField(
-        required=False,
-        label='Do you need a travel reimbursement to attend?',
-        coerce=lambda x: x == 'True',
-        choices=((False, 'No'), (True, 'Yes')),
-        initial=False,
-        widget=forms.RadioSelect
-    )
+class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerApplicationForm):
     first_time_volunteer = forms.TypedChoiceField(
         required=True,
         label='Have you volunteered at %s before?' % settings.HACKATHON_NAME,
@@ -336,4 +341,102 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationFor
             'cool_skill': 'Do you have any cool skills we should know about?',
             'fav_movie': 'Which is your favorite movie?',
             'friends': 'If you are applying with some of your friends, please mention their names'
+        }
+
+
+class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
+    first_time_mentor = forms.TypedChoiceField(
+        required=True,
+        label='Have you mentored at %s before?' % settings.HACKATHON_NAME,
+        coerce=lambda x: x == 'True',
+        choices=((False, 'No'), (True, 'Yes')),
+        widget=forms.RadioSelect)
+
+    study_work = forms.TypedChoiceField(
+        required=True,
+        label='Are you studying or working?',
+        coerce=lambda x: x == 'True',
+        choices=((False, 'Working'), (True, 'Studying')),
+        widget=forms.RadioSelect)
+
+    company = forms.CharField(required=False,
+                              help_text='Current or most recent company you attended.',
+                              label='Where are you working at?')
+
+    university = forms.CharField(required=False,
+                                 label='What university do you study at?',
+                                 help_text='Current or most recent school you attended.',
+                                 widget=forms.TextInput(
+                                     attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
+
+    degree = forms.CharField(required=False, label='What\'s your major/degree?',
+                             help_text='Current or most recent degree you\'ve received',
+                             widget=forms.TextInput(
+                                 attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
+
+    def mentor(self):
+        return True
+
+    def fieldsets(self):
+        # Fieldsets ordered and with description
+        self._fieldsets = [
+            ('Personal Info',
+             {'fields': ('origin', 'study_work', 'company', 'university', 'degree', 'graduation_year', 'gender',
+                         'other_gender', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'under_age',
+                         'lennyface'),
+              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
+            ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'which_hack', 'attendance',
+                                          'english_level', 'fluent', 'experience')}),
+            ('Show us what you\'ve built',
+             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume')}),
+        ]
+        # Fields that we only need the first time the hacker fills the application
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not self.instance.pk:
+            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+        return super(MentorApplicationForm, self).fieldsets
+
+    class Meta(_BaseApplicationForm.Meta):
+        model = models.MentorApplication
+        extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
+
+        help_texts = {
+            'gender': 'This is for demographic purposes.',
+            'graduation_year': 'What year have you graduated on or when will '
+                               'you graduate',
+            'degree': 'What\'s your major/degree?',
+            'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
+            'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
+                         ' http://textsmili.es/</a>',
+            'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
+                        '(we love links) Show us your passion! :D',
+            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any'),
+        }
+
+        widgets = {
+            'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
+            'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'graduation_year': forms.RadioSelect(),
+            'english_level': forms.RadioSelect(),
+            'fluent': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'experience': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'why_mentor': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+        }
+
+        labels = {
+            'gender': 'What gender do you identify as?',
+            'other_gender': 'Self-describe',
+            'graduation_year': 'What year will you graduate?',
+            'tshirt_size': 'What\'s your t-shirt size?',
+            'diet': 'Dietary requirements',
+            'lennyface': 'Describe yourself in one "lenny face"?',
+            'origin': 'Where are you joining us from?',
+            'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
+            'projects': 'What projects have you worked on?',
+            'resume': 'Upload your resume',
+            'which_hack': 'Why do you want to participate as mentor?',
+            'attendance': 'Will you be attending HackUPC for the whole event?',
+            'english_level': 'How much confident are you about talking in English?',
+            'fluent': 'What program languages are you fluent on?',
+            'experience': 'Which program languages have you experience on?'
         }

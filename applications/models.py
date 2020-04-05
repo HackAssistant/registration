@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import json
 import uuid as uuid
+from django.core import serializers
 
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator
@@ -163,6 +164,10 @@ class BaseApplication(models.Model):
             return PENDING_TEXT
         return text
 
+    def save(self, **kwargs):
+        self.status_update_date = timezone.now()
+        super(BaseApplication, self).save(**kwargs)
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
@@ -312,10 +317,6 @@ class HackerApplication(
     def __str__(self):
         return self.user.email
 
-    def save(self, **kwargs):
-        self.status_update_date = timezone.now()
-        super(HackerApplication, self).save(**kwargs)
-
     def invite(self, user):
         # We can re-invite someone invited
         if self.status in [APP_CONFIRMED, APP_ATTENDED]:
@@ -431,10 +432,6 @@ class VolunteerApplication(
     weakness = models.CharField(max_length=150, null=False)
     fav_movie = models.CharField(max_length=60, null=True)
     friends = models.CharField(max_length=100, null=True)
-
-    def save(self, **kwargs):
-        self.status_update_date = timezone.now()
-        super(VolunteerApplication, self).save(**kwargs)
 
 
 class SponsorApplication(
