@@ -138,10 +138,6 @@
                 bindto: '#shirts_stats_confirmed',
                 data: {
                     json: data['shirt_count_confirmed'],
-                    keys: {
-                        x: 'tshirt_size',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -186,10 +182,6 @@
                 bindto: '#shirts_stats',
                 data: {
                     json: data['shirt_count'],
-                    keys: {
-                        x: 'tshirt_size',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -204,10 +196,6 @@
                 bindto: '#diet_stats',
                 data: {
                     json: data['diet'],
-                    keys: {
-                        x: 'diet',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -222,10 +210,6 @@
                 bindto: '#diet_stats_confirmed',
                 data: {
                     json: data['diet_confirmed'],
-                    keys: {
-                        x: 'diet',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -268,10 +252,6 @@
                 bindto: '#university_stats',
                 data: {
                     json: data['university'],
-                    keys: {
-                        x: 'university',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -286,10 +266,6 @@
                 bindto: '#university_stats_confirmed',
                 data: {
                     json: data['university_confirmed'],
-                    keys: {
-                        x: 'university',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -300,16 +276,10 @@
                     }
                 }
             });
-            var grad_year_data = {};
-            var grad_years = [];
-            $(data['graduation_year']).each(function (c, e) {
-                grad_years.push(e.graduation_year);
-                grad_year_data[e.graduation_year] = e.applications;
-            });
             c3.generate({
                 bindto: '#graduation_year_stats',
                 data: {
-                    json: grad_year_data,
+                    json: data['graduation_year'],
                     type: 'donut'
 
                 },
@@ -321,16 +291,10 @@
                     }
                 }
             });
-            var grad_year_confirmed_data = {};
-            var grad_years_confirmed = [];
-            $(data['graduation_year_confirmed']).each(function (c, e) {
-                grad_years_confirmed.push(e.graduation_year);
-                grad_year_confirmed_data[e.graduation_year] = e.applications;
-            });
             c3.generate({
                 bindto: '#graduation_year_stats_confirmed',
                 data: {
-                    json: grad_year_confirmed_data,
+                    json: data['graduation_year_confirmed'],
                     type: 'donut'
 
                 },
@@ -346,10 +310,6 @@
                 bindto: '#degree_stats',
                 data: {
                     json: data['degree'],
-                    keys: {
-                        x: 'degree',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -364,10 +324,6 @@
                 bindto: '#degree_stats_confirmed',
                 data: {
                     json: data['degree_confirmed'],
-                    keys: {
-                        x: 'degree',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -378,16 +334,10 @@
                     }
                 }
             });
-            var first_timer_data = {};
-            var first_timers = [];
-            $(data['first_timer']).each(function (c, e) {
-                first_timers.push(e.first_timer);
-                first_timer_data[e.first_timer] = e.applications;
-            });
             c3.generate({
                 bindto: '#first_timer_stats',
                 data: {
-                    json: first_timer_data,
+                    json: data['first_timer'],
                     type: 'donut'
 
                 },
@@ -399,16 +349,10 @@
                     }
                 }
             });
-            var first_timer_confirmed_data = {};
-            var first_timers_confirmed = [];
-            $(data['first_timer_confirmed']).each(function (c, e) {
-                first_timers_confirmed.push(e.first_timer);
-                first_timer_confirmed_data[e.first_timer] = e.applications;
-            });
             c3.generate({
                 bindto: '#first_timer_stats_confirmed',
                 data: {
-                    json: first_timer_confirmed_data,
+                    json: data['first_timer_confirmed'],
                     type: 'donut'
 
                 },
