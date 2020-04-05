@@ -152,17 +152,10 @@
                     }
                 }
             });
-
-            var status_data = {};
-            var sites = [];
-            $(data['status']).each(function (c, e) {
-                sites.push(e.status_name);
-                status_data[e.status_name] = e.applications;
-            });
             c3.generate({
                 bindto: '#applications_stats',
                 data: {
-                    json: status_data,
+                    json: data['status'],
                     type: 'donut'
 
                 },
@@ -174,16 +167,10 @@
                     }
                 }
             });
-            var gender_data = {};
-            var genders = [];
-            $(data['gender']).each(function (c, e) {
-                genders.push(e.gender_name);
-                gender_data[e.gender_name] = e.applications;
-            });
             c3.generate({
                 bindto: '#gender_stats',
                 data: {
-                    json: gender_data,
+                    json: data['gender'],
                     type: 'donut'
 
                 },
@@ -253,10 +240,6 @@
                 bindto: '#origin_stats',
                 data: {
                     json: data['origin'],
-                    keys: {
-                        x: 'origin',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
@@ -271,10 +254,6 @@
                 bindto: '#origin_stats_confirmed',
                 data: {
                     json: data['origin_confirmed'],
-                    keys: {
-                        x: 'origin',
-                        value: ['applications']
-                    },
                     type: 'bar'
 
                 },
