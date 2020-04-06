@@ -138,8 +138,11 @@
                 bindto: '#shirts_stats_confirmed',
                 data: {
                     json: data['shirt_count_confirmed'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'tshirt',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -182,8 +185,11 @@
                 bindto: '#shirts_stats',
                 data: {
                     json: data['shirt_count'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'tshirt',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -196,8 +202,11 @@
                 bindto: '#diet_stats',
                 data: {
                     json: data['diet'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'diet',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -210,8 +219,11 @@
                 bindto: '#diet_stats_confirmed',
                 data: {
                     json: data['diet_confirmed'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'diet',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -224,6 +236,10 @@
                 bindto: '#origin_stats',
                 data: {
                     json: data['origin'],
+                    keys: {
+                          x: 'origin',
+                          value: ['applications']
+                    },
                     type: 'bar'
 
                 },
@@ -238,8 +254,11 @@
                 bindto: '#origin_stats_confirmed',
                 data: {
                     json: data['origin_confirmed'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'origin',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -252,8 +271,11 @@
                 bindto: '#university_stats',
                 data: {
                     json: data['university'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'university',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -266,8 +288,11 @@
                 bindto: '#university_stats_confirmed',
                 data: {
                     json: data['university_confirmed'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'university',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
@@ -310,13 +335,15 @@
                 bindto: '#degree_stats',
                 data: {
                     json: data['degree'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'degree',
+                          value: ['applications']
+                    },
                 },
-
                 axis: {
                     x: {
-                        type: 'category'
+                        type: 'category',
                     }
                 }
             });
@@ -324,8 +351,11 @@
                 bindto: '#degree_stats_confirmed',
                 data: {
                     json: data['degree_confirmed'],
-                    type: 'bar'
-
+                    type: 'bar',
+                    keys: {
+                          x: 'degree',
+                          value: ['applications']
+                    },
                 },
 
                 axis: {
