@@ -93,21 +93,20 @@ def app_stats_api(request):
             if a.diet == a_models.D_OTHER and a.other_diet:
                 other_diet.append(a.other_diet)
 
-
     origin_count = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count.items(),
-                                                                          key=lambda item: item[1])[:10]]
+                                                                          key=lambda item: item[1])[-10:]]
     origin_count_confirmed = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count_confirmed.items(),
-                                                                                    key=lambda item: item[1])[:10]]
+                                                                                    key=lambda item: item[1])[-10:]]
 
     university_count = [{'university': x, 'applications': v} for (x, v) in sorted(university_count.items(),
-                                                                                  key=lambda item: item[1])[:10]]
+                                                                                  key=lambda item: item[1])[-10:]]
     university_count_confirmed = [{'university': x, 'applications': v} for (x, v) in
-                                  sorted(university_count_confirmed.items(), key=lambda item: item[1])[:10]]
+                                  sorted(university_count_confirmed.items(), key=lambda item: item[1])[-10:]]
 
     degree_count = [{'degree': x, 'applications': v} for (x, v) in
-                    sorted(degree_count.items(), key=lambda item: item[1])[:10]]
+                    sorted(degree_count.items(), key=lambda item: item[1])[-10:]]
     degree_count_confirmed = [{'degree': x, 'applications': v} for (x, v) in
-                              sorted(degree_count_confirmed.items(), key=lambda item: item[1])[:10]]
+                              sorted(degree_count_confirmed.items(), key=lambda item: item[1])[-10:]]
 
     shirt_count = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count.items()]
     shirt_count_confirmed = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count_confirmed.items()]
@@ -120,12 +119,12 @@ def app_stats_api(request):
 
     return JsonResponse(
         {
+            'timeseries': list(timeseries),
             'update_time': timezone.now(),
             'app_count': len(applications),
             'status': status_count,
-            'shirt_count': shirt_count,
-            'shirt_count_confirmed': shirt_count_confirmed,
-            'timeseries': list(timeseries),
+            'tshirt': shirt_count,
+            'tshirt_confirmed': shirt_count_confirmed,
             'gender': gender_count,
             'university': university_count,
             'university_confirmed': university_count_confirmed,
