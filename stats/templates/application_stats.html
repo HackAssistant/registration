@@ -30,7 +30,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="origin_stats_confirmed"></div>
+            <div id="origin_confirmed_stats"></div>
         </div>
     </div>
     <h2>University</h2>
@@ -42,7 +42,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="university_stats_confirmed"></div>
+            <div id="university_confirmed_stats"></div>
         </div>
     </div>
     <h2>Graduation year</h2>
@@ -66,7 +66,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="degree_stats_confirmed"></div>
+            <div id="degree_confirmed_stats"></div>
         </div>
     </div>
   <h2>First timer</h2>
@@ -90,7 +90,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="tshirt_stats_confirmed"></div>
+            <div id="tshirt_confirmed_stats"></div>
         </div>
     </div>
     <h2>Dietary restrictions</h2>
@@ -102,7 +102,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="diet_stats_confirmed"></div>
+            <div id="diet_confirmed_stats"></div>
         </div>
         <div class="col-md-12">
             <p><b>Confirmed extra diet requirements:</b><br> <span id="other_diet"></span></p>
@@ -115,7 +115,8 @@
 {% block c3script %}
     <script>
         $.getJSON('{% url 'api_app_stats' %}', function (data) {
-          var bar_stats = ['tshirt', 'diet', 'origin', 'university', 'degree'];
+          var bar_stats = ['tshirt', 'tshirt_confirmed', 'diet', 'diet_confirmed', 'origin', 'origin_confirmed',
+            'university', 'university_confirmed', 'degree', 'degree_confirmed'];
           var donut_stats = ['status', 'gender', 'graduation_year', 'first_timer', 'first_timer_confirmed', 'graduation_year_confirmed'];
           bar_stats.forEach(function (element) {
                   c3.generate({
@@ -124,24 +125,7 @@
                       json: data[element],
                       type: 'bar',
                       keys: {
-                        x: element,
-                        value: ['applications']
-                      },
-                    },
-
-                    axis: {
-                      x: {
-                        type: 'category'
-                      }
-                    }
-                  });
-                  c3.generate({
-                    bindto: '#'+element+'_stats_confirmed',
-                    data: {
-                      json: data[element+'_confirmed'],
-                      type: 'bar',
-                      keys: {
-                        x: element,
+                        x: element.substr(0, element.lastIndexOf('_')),
                         value: ['applications']
                       },
                     },
