@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-md-6">
             <h3>Status</h3>
-            <div id="applications_stats"></div>
+            <div id="status_stats"></div>
             <p><b>Application count:</b> <span id="app_count"></span></p>
         </div>
         <div class="col-md-6">
@@ -54,7 +54,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="graduation_year_stats_confirmed"></div>
+            <div id="graduation_year_confirmed_stats"></div>
         </div>
     </div>
     <h2>Degree</h2>
@@ -78,7 +78,7 @@
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="first_timer_stats_confirmed"></div>
+            <div id="first_timer_confirmed_stats"></div>
         </div>
     </div>
     <h2>T-Shirts sizes</h2>
@@ -86,11 +86,11 @@
     <div class="row">
         <div class="col-md-6">
             <h3>All</h3>
-            <div id="shirts_stats"></div>
+            <div id="tshirt_stats"></div>
         </div>
         <div class="col-md-6">
             <h3>Confirmed only</h3>
-            <div id="shirts_stats_confirmed"></div>
+            <div id="tshirt_stats_confirmed"></div>
         </div>
     </div>
     <h2>Dietary restrictions</h2>
@@ -115,46 +115,49 @@
 {% block c3script %}
     <script>
         $.getJSON('{% url 'api_app_stats' %}', function (data) {
-            c3.generate({
-                bindto: '#timeseries',
-                data: {
-                    json: data['timeseries'],
-                    keys: {
-                        x: 'date',
+          var bar_stats = ['tshirt', 'diet', 'origin', 'university', 'degree'];
+          var donut_stats = ['status', 'gender', 'graduation_year', 'first_timer', 'first_timer_confirmed', 'graduation_year_confirmed'];
+          bar_stats.forEach(function (element) {
+                  c3.generate({
+                    bindto: '#'+element+'_stats',
+                    data: {
+                      json: data[element],
+                      type: 'bar',
+                      keys: {
+                        x: element,
                         value: ['applications']
-                    }
-                },
-
-                axis: {
-                    x: {
-                        type: 'timeseries',
-                        tick: {
-                            format: '%Y-%m-%d'
-                        }
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#shirts_stats_confirmed',
-                data: {
-                    json: data['shirt_count_confirmed'],
-                    type: 'bar',
-                    keys: {
-                          x: 'tshirt',
-                          value: ['applications']
+                      },
                     },
-                },
 
-                axis: {
-                    x: {
+                    axis: {
+                      x: {
                         type: 'category'
+                      }
                     }
-                }
-            });
-            c3.generate({
-                bindto: '#applications_stats',
-                data: {
-                    json: data['status'],
+                  });
+                  c3.generate({
+                    bindto: '#'+element+'_stats_confirmed',
+                    data: {
+                      json: data[element+'_confirmed'],
+                      type: 'bar',
+                      keys: {
+                        x: element,
+                        value: ['applications']
+                      },
+                    },
+
+                    axis: {
+                      x: {
+                        type: 'category'
+                      }
+                    }
+                  });
+          });
+          donut_stats.forEach(element =>
+                  c3.generate({
+                    bindto: '#'+element+'_stats',
+                    data: {
+                    json: data[element],
                     type: 'donut'
 
                 },
@@ -165,240 +168,32 @@
                         }
                     }
                 }
-            });
-            c3.generate({
-                bindto: '#gender_stats',
-                data: {
-                    json: data['gender'],
-                    type: 'donut'
+           }));
 
-                },
-                donut: {
-                    label: {
-                        format: function (value, ratio, id) {
-                            return value;
-                        }
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#shirts_stats',
-                data: {
-                    json: data['shirt_count'],
-                    type: 'bar',
-                    keys: {
-                          x: 'tshirt',
-                          value: ['applications']
-                    },
-                },
+         c3.generate({
+              bindto: '#timeseries',
+              data: {
+                  json: data['timeseries'],
+                  keys: {
+                      x: 'date',
+                      value: ['applications']
+                  }
+              },
 
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#diet_stats',
-                data: {
-                    json: data['diet'],
-                    type: 'bar',
-                    keys: {
-                          x: 'diet',
-                          value: ['applications']
-                    },
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#diet_stats_confirmed',
-                data: {
-                    json: data['diet_confirmed'],
-                    type: 'bar',
-                    keys: {
-                          x: 'diet',
-                          value: ['applications']
-                    },
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#origin_stats',
-                data: {
-                    json: data['origin'],
-                    keys: {
-                          x: 'origin',
-                          value: ['applications']
-                    },
-                    type: 'bar'
-
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#origin_stats_confirmed',
-                data: {
-                    json: data['origin_confirmed'],
-                    type: 'bar',
-                    keys: {
-                          x: 'origin',
-                          value: ['applications']
-                    },
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#university_stats',
-                data: {
-                    json: data['university'],
-                    type: 'bar',
-                    keys: {
-                          x: 'university',
-                          value: ['applications']
-                    },
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#university_stats_confirmed',
-                data: {
-                    json: data['university_confirmed'],
-                    type: 'bar',
-                    keys: {
-                          x: 'university',
-                          value: ['applications']
-                    },
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#graduation_year_stats',
-                data: {
-                    json: data['graduation_year'],
-                    type: 'donut'
-
-                },
-                donut: {
-                    label: {
-                        format: function (value, ratio, id) {
-                            return value;
-                        }
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#graduation_year_stats_confirmed',
-                data: {
-                    json: data['graduation_year_confirmed'],
-                    type: 'donut'
-
-                },
-                donut: {
-                    label: {
-                        format: function (value, ratio, id) {
-                            return value;
-                        }
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#degree_stats',
-                data: {
-                    json: data['degree'],
-                    type: 'bar',
-                    keys: {
-                          x: 'degree',
-                          value: ['applications']
-                    },
-                },
-                axis: {
-                    x: {
-                        type: 'category',
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#degree_stats_confirmed',
-                data: {
-                    json: data['degree_confirmed'],
-                    type: 'bar',
-                    keys: {
-                          x: 'degree',
-                          value: ['applications']
-                    },
-                },
-
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#first_timer_stats',
-                data: {
-                    json: data['first_timer'],
-                    type: 'donut'
-
-                },
-                donut: {
-                    label: {
-                        format: function (value, ratio, id) {
-                            return value;
-                        }
-                    }
-                }
-            });
-            c3.generate({
-                bindto: '#first_timer_stats_confirmed',
-                data: {
-                    json: data['first_timer_confirmed'],
-                    type: 'donut'
-
-                },
-                donut: {
-                    label: {
-                        format: function (value, ratio, id) {
-                            return value;
-                        }
-                    }
-                }
+              axis: {
+                  x: {
+                      type: 'timeseries',
+                      tick: {
+                          format: '%Y-%m-%d'
+                      }
+                  }
+              }
             });
             $('#other_diet').html(data['other_diet']);
             $('#update_date').html(data['update_time']);
             $('#app_count').html(data['app_count']);
-        })
-        ;
+         });
+
 
     </script>
 {% endblock %}
