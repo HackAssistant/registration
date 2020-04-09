@@ -10,6 +10,8 @@ from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 
+from collections import defaultdict
+
 STATUS_DICT = dict(STATUS)
 GENDER_DICT = dict(GENDERS)
 
@@ -54,50 +56,50 @@ def app_stats_api(request):
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
     diets_dict = dict(a_models.DIETS)
     applications = list(Application.objects.all())
-    status_count = {x: 0 for x in STATUS_DICT.values()}
-    gender_count = {x: 0 for x in GENDER_DICT.values()}
-    origin_count = {}
-    origin_count_confirmed = {}
-    university_count = {}
-    university_count_confirmed = {}
-    grad_year_count = {}
-    grad_year_count_confirmed = {}
-    degree_count = {}
-    degree_count_confirmed = {}
-    first_timer_count = {}
-    first_timer_count_confirmed = {}
-    shirt_count = {x: 0 for x in tshirt_dict.values()}
-    shirt_count_confirmed = {x: 0 for x in tshirt_dict.values()}
-    diet_count = {x: 0 for x in diets_dict.values()}
-    diet_count_confirmed = {x: 0 for x in diets_dict.values()}
-    lennyface_count = {}
-    lennyface_count_confirmed = {}
-    resume_count = {'Resume': 0, 'No resume': 0}
-    resume_count_confirmed = {'Resume': 0, 'No resume': 0}
+    status_count = defaultdict(int)
+    gender_count = defaultdict(int)
+    origin_count = defaultdict(int)
+    origin_count_confirmed = defaultdict(int)
+    university_count = defaultdict(int)
+    university_count_confirmed = defaultdict(int)
+    grad_year_count = defaultdict(int)
+    grad_year_count_confirmed = defaultdict(int)
+    degree_count = defaultdict(int)
+    degree_count_confirmed = defaultdict(int)
+    first_timer_count = defaultdict(int)
+    first_timer_count_confirmed = defaultdict(int)
+    shirt_count = defaultdict(int)
+    shirt_count_confirmed = defaultdict(int)
+    diet_count = defaultdict(int)
+    diet_count_confirmed = defaultdict(int)
+    lennyface_count = defaultdict(int)
+    lennyface_count_confirmed = defaultdict(int)
+    resume_count = defaultdict(int)
+    resume_count_confirmed = defaultdict(int)
     other_diet = []
     for a in applications:
         status_count[STATUS_DICT[a.status]] += 1
         gender_count[GENDER_DICT[a.gender]] += 1
-        origin_count[a.origin] = origin_count.get(a.origin, 0) + 1
-        university_count[a.university] = university_count.get(a.university, 0) + 1
-        grad_year_count[a.graduation_year] = grad_year_count.get(a.graduation_year, 0) + 1
-        degree_count[a.degree] = degree_count.get(a.degree, 0) + 1
-        first_timer_count[a.first_timer] = first_timer_count.get(a.first_timer, 0) + 1
+        origin_count[a.origin] += 1
+        university_count[a.university] += 1
+        grad_year_count[a.graduation_year] += 1
+        degree_count[a.degree] += 1
+        first_timer_count[a.first_timer] += 1
         shirt_count[tshirt_dict[a.tshirt_size]] += 1
         diet_count[diets_dict[a.diet]] += 1
-        lennyface_count[a.lennyface] = lennyface_count.get(a.lennyface, 0) + 1
+        lennyface_count[a.lennyface] += 1
         resume_count['Resume'] += a.resume != ""
         resume_count['No resume'] += a.resume == ""
 
         if a.status == APP_CONFIRMED:
-            origin_count_confirmed[a.origin] = origin_count_confirmed.get(a.origin, 0) + 1
-            university_count_confirmed[a.university] = university_count_confirmed.get(a.university, 0) + 1
-            grad_year_count_confirmed[a.graduation_year] = grad_year_count_confirmed.get(a.graduation_year, 0) + 1
-            degree_count_confirmed[a.degree] = degree_count_confirmed.get(a.degree, 0) + 1
-            first_timer_count_confirmed[a.first_timer] = first_timer_count_confirmed.get(a.first_timer, 0) + 1
+            origin_count_confirmed[a.origin] += 1
+            university_count_confirmed[a.university] += 1
+            grad_year_count_confirmed[a.graduation_year] += 1
+            degree_count_confirmed[a.degree] += 1
+            first_timer_count_confirmed[a.first_timer] += 1
             shirt_count_confirmed[tshirt_dict[a.tshirt_size]] += 1
             diet_count_confirmed[diets_dict[a.diet]] += 1
-            lennyface_count_confirmed[a.lennyface] = lennyface_count_confirmed.get(a.lennyface, 0) + 1
+            lennyface_count_confirmed[a.lennyface] += 1
             resume_count_confirmed['Resume'] += a.resume != ""
             resume_count_confirmed['No resume'] += a.resume == ""
             if a.diet == a_models.D_OTHER and a.other_diet:
