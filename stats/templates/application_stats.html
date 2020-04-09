@@ -109,15 +109,37 @@
         </div>
 
     </div>
-
+    <h2>Lennyface</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>All</h3>
+            <div id="lennyface_stats"></div>
+        </div>
+        <div class="col-md-6">
+            <h3>Confirmed only</h3>
+            <div id="lennyface_confirmed_stats"></div>
+        </div>
+    </div>
+    <h2>Resume</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>All</h3>
+            <div id="resume_stats"></div>
+        </div>
+        <div class="col-md-6">
+            <h3>Confirmed only</h3>
+            <div id="resume_confirmed_stats"></div>
+        </div>
+    </div>
 
 {% endblock %}
 {% block c3script %}
     <script>
         $.getJSON('{% url 'api_app_stats' %}', function (data) {
           var bar_stats = ['tshirt', 'tshirt_confirmed', 'diet', 'diet_confirmed', 'origin', 'origin_confirmed',
-            'university', 'university_confirmed', 'degree', 'degree_confirmed'];
-          var donut_stats = ['status', 'gender', 'graduation_year', 'first_timer', 'first_timer_confirmed', 'graduation_year_confirmed'];
+            'university', 'university_confirmed', 'degree', 'degree_confirmed', 'lennyface', 'lennyface_confirmed'];
+          var donut_stats = ['status', 'gender', 'graduation_year', 'first_timer', 'first_timer_confirmed',
+            'graduation_year_confirmed', 'resume', 'resume_confirmed'];
           bar_stats.forEach(function (element) {
                   c3.generate({
                     bindto: '#'+element+'_stats',
@@ -125,7 +147,7 @@
                       json: data[element],
                       type: 'bar',
                       keys: {
-                        x: element.substr(0, element.lastIndexOf('_')),
+                        x: element.includes('_') ? element.substr(0, element.lastIndexOf('_')): element,
                         value: ['applications']
                       },
                     },
