@@ -127,7 +127,7 @@ def app_stats_api(request):
     lennyface_count = [{'lennyface': x, 'applications': v} for (x, v) in
                        sorted(lennyface_count.items(), key=lambda item: item[1])[-5:]]
     lennyface_count_confirmed = [{'lennyface': x, 'applications': v} for (x, v) in
-                       sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
+                                 sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
 
     timeseries = Application.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
