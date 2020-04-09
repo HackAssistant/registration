@@ -10,6 +10,8 @@ from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 
+from collections import defaultdict
+
 STATUS_DICT = dict(STATUS)
 GENDER_DICT = dict(GENDERS)
 
@@ -51,71 +53,113 @@ def reimb_stats_api(request):
 @is_organizer
 def app_stats_api(request):
     # Status analysis
-    status_count = Application.objects.all().values('status') \
-        .annotate(applications=Count('status'))
-    status_count = map(lambda x: dict(status_name=STATUS_DICT[x['status']], **x), status_count)
-
-    gender_count = Application.objects.all().values('gender') \
-        .annotate(applications=Count('gender'))
-    gender_count = map(lambda x: dict(gender_name=GENDER_DICT[x['gender']], **x), gender_count)
-
-    origin_count = Application.objects.all().values('origin') \
-        .annotate(applications=Count('origin')) \
-        .order_by('-applications')[:10]
-    origin_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('origin') \
-        .annotate(applications=Count('origin')) \
-        .order_by('-applications')[:10]
-
-    university_count = Application.objects.all().values('university') \
-        .annotate(applications=Count('university')) \
-        .order_by('-applications')[:10]
-    university_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('university') \
-        .annotate(applications=Count('university')) \
-        .order_by('-applications')[:10]
-
-    grad_year_count = Application.objects.all().values('graduation_year') \
-        .annotate(applications=Count('graduation_year'))
-    grad_year_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('graduation_year') \
-        .annotate(applications=Count('graduation_year'))
-
     tshirt_dict = dict(a_models.TSHIRT_SIZES)
-    shirt_count = map(
-        lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
-        Application.objects.values('tshirt_size').annotate(applications=Count('tshirt_size'))
-    )
+    diets_dict = dict(a_models.DIETS)
+    applications = list(Application.objects.all())
+    status_count = defaultdict(int)
+    gender_count = defaultdict(int)
+    origin_count = defaultdict(int)
+    origin_count_confirmed = defaultdict(int)
+    university_count = defaultdict(int)
+    university_count_confirmed = defaultdict(int)
+    grad_year_count = defaultdict(int)
+    grad_year_count_confirmed = defaultdict(int)
+    degree_count = defaultdict(int)
+    degree_count_confirmed = defaultdict(int)
+    first_timer_count = defaultdict(int)
+    first_timer_count_confirmed = defaultdict(int)
+    shirt_count = defaultdict(int)
+    shirt_count_confirmed = defaultdict(int)
+    diet_count = defaultdict(int)
+    diet_count_confirmed = defaultdict(int)
+    lennyface_count = defaultdict(int)
+    lennyface_count_confirmed = defaultdict(int)
+    resume_count = defaultdict(int)
+    resume_count_confirmed = defaultdict(int)
+    other_diet = []
+    for a in applications:
+        status_count[STATUS_DICT[a.status]] += 1
+        gender_count[GENDER_DICT[a.gender]] += 1
+        origin_count[a.origin] += 1
+        university_count[a.university] += 1
+        grad_year_count[a.graduation_year] += 1
+        degree_count[a.degree] += 1
+        first_timer_count[a.first_timer] += 1
+        shirt_count[tshirt_dict[a.tshirt_size]] += 1
+        diet_count[diets_dict[a.diet]] += 1
+        lennyface_count[a.lennyface] += 1
+        resume_count['Resume'] += a.resume != ""
+        resume_count['No resume'] += a.resume == ""
 
-    shirt_count_confirmed = map(
-        lambda x: {'tshirt_size': tshirt_dict.get(x['tshirt_size'], 'Unknown'), 'applications': x['applications']},
-        Application.objects.filter(status=APP_CONFIRMED).values('tshirt_size')
-        .annotate(applications=Count('tshirt_size'))
-    )
+        if a.status == APP_CONFIRMED:
+            origin_count_confirmed[a.origin] += 1
+            university_count_confirmed[a.university] += 1
+            grad_year_count_confirmed[a.graduation_year] += 1
+            degree_count_confirmed[a.degree] += 1
+            first_timer_count_confirmed[a.first_timer] += 1
+            shirt_count_confirmed[tshirt_dict[a.tshirt_size]] += 1
+            diet_count_confirmed[diets_dict[a.diet]] += 1
+            lennyface_count_confirmed[a.lennyface] += 1
+            resume_count_confirmed['Resume'] += a.resume != ""
+            resume_count_confirmed['No resume'] += a.resume == ""
+            if a.diet == a_models.D_OTHER and a.other_diet:
+                other_diet.append(a.other_diet)
 
-    diet_count = Application.objects.values('diet') \
-        .annotate(applications=Count('diet'))
-    diet_count_confirmed = Application.objects.filter(status=APP_CONFIRMED).values('diet') \
-        .annotate(applications=Count('diet'))
-    other_diets = Application.objects.filter(status=APP_CONFIRMED).values('other_diet')
+    origin_count = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count.items(),
+                                                                          key=lambda item: item[1])[-10:]]
+    origin_count_confirmed = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count_confirmed.items(),
+                                                                                    key=lambda item: item[1])[-10:]]
+
+    university_count = [{'university': x, 'applications': v} for (x, v) in sorted(university_count.items(),
+                                                                                  key=lambda item: item[1])[-10:]]
+    university_count_confirmed = [{'university': x, 'applications': v} for (x, v) in
+                                  sorted(university_count_confirmed.items(), key=lambda item: item[1])[-10:]]
+
+    degree_count = [{'degree': x, 'applications': v} for (x, v) in
+                    sorted(degree_count.items(), key=lambda item: item[1])[-10:]]
+    degree_count_confirmed = [{'degree': x, 'applications': v} for (x, v) in
+                              sorted(degree_count_confirmed.items(), key=lambda item: item[1])[-10:]]
+
+    shirt_count = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count.items()]
+    shirt_count_confirmed = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count_confirmed.items()]
+
+    diet_count = [{'diet': x, 'applications': v} for (x, v) in diet_count.items()]
+    diet_count_confirmed = [{'diet': x, 'applications': v} for (x, v) in diet_count_confirmed.items()]
+
+    lennyface_count = [{'lennyface': x, 'applications': v} for (x, v) in
+                       sorted(lennyface_count.items(), key=lambda item: item[1])[-5:]]
+    lennyface_count_confirmed = [{'lennyface': x, 'applications': v} for (x, v) in
+                                 sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
 
     timeseries = Application.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
+
     return JsonResponse(
         {
-            'update_time': timezone.now(),
-            'app_count': Application.objects.count(),
-            'status': list(status_count),
-            'shirt_count': list(shirt_count),
-            'shirt_count_confirmed': list(shirt_count_confirmed),
             'timeseries': list(timeseries),
-            'gender': list(gender_count),
-            'university': list(university_count),
-            'university_confirmed': list(university_count_confirmed),
-            'graduation_year': list(grad_year_count),
-            'graduation_year_confirmed': list(grad_year_count_confirmed),
-            'origin': list(origin_count),
-            'origin_confirmed': list(origin_count_confirmed),
-            'diet': list(diet_count),
-            'diet_confirmed': list(diet_count_confirmed),
-            'other_diet': '<br>'.join([el['other_diet'] for el in other_diets if el['other_diet']])
+            'update_time': timezone.now(),
+            'app_count': len(applications),
+            'status': status_count,
+            'tshirt': shirt_count,
+            'tshirt_confirmed': shirt_count_confirmed,
+            'gender': gender_count,
+            'university': university_count,
+            'university_confirmed': university_count_confirmed,
+            'graduation_year': grad_year_count,
+            'graduation_year_confirmed': grad_year_count_confirmed,
+            'degree': degree_count,
+            'degree_confirmed': degree_count_confirmed,
+            'first_timer': first_timer_count,
+            'first_timer_confirmed': first_timer_count_confirmed,
+            'origin': origin_count,
+            'origin_confirmed': origin_count_confirmed,
+            'diet': diet_count,
+            'diet_confirmed': diet_count_confirmed,
+            'lennyface': lennyface_count,
+            'lennyface_confirmed': lennyface_count_confirmed,
+            'resume': resume_count,
+            'resume_confirmed': resume_count_confirmed,
+            'other_diet': '<br>'.join([el for el in other_diet])
         }
     )
 
