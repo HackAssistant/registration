@@ -70,6 +70,10 @@ def app_stats_api(request):
     shirt_count_confirmed = {x: 0 for x in tshirt_dict.values()}
     diet_count = {x: 0 for x in diets_dict.values()}
     diet_count_confirmed = {x: 0 for x in diets_dict.values()}
+    lennyface_count = {}
+    lennyface_count_confirmed = {}
+    resume_count = {'Resume': 0, 'No resume': 0}
+    resume_count_confirmed = {'Resume': 0, 'No resume': 0}
     other_diet = []
     for a in applications:
         status_count[STATUS_DICT[a.status]] += 1
@@ -81,6 +85,9 @@ def app_stats_api(request):
         first_timer_count[a.first_timer] = first_timer_count.get(a.first_timer, 0) + 1
         shirt_count[tshirt_dict[a.tshirt_size]] += 1
         diet_count[diets_dict[a.diet]] += 1
+        lennyface_count[a.lennyface] = lennyface_count.get(a.lennyface, 0) + 1
+        resume_count['Resume'] += a.resume != ""
+        resume_count['No resume'] += a.resume == ""
 
         if a.status == APP_CONFIRMED:
             origin_count_confirmed[a.origin] = origin_count_confirmed.get(a.origin, 0) + 1
@@ -90,6 +97,9 @@ def app_stats_api(request):
             first_timer_count_confirmed[a.first_timer] = first_timer_count_confirmed.get(a.first_timer, 0) + 1
             shirt_count_confirmed[tshirt_dict[a.tshirt_size]] += 1
             diet_count_confirmed[diets_dict[a.diet]] += 1
+            lennyface_count_confirmed[a.lennyface] = lennyface_count_confirmed.get(a.lennyface, 0) + 1
+            resume_count_confirmed['Resume'] += a.resume != ""
+            resume_count_confirmed['No resume'] += a.resume == ""
             if a.diet == a_models.D_OTHER and a.other_diet:
                 other_diet.append(a.other_diet)
 
@@ -113,6 +123,11 @@ def app_stats_api(request):
 
     diet_count = [{'diet': x, 'applications': v} for (x, v) in diet_count.items()]
     diet_count_confirmed = [{'diet': x, 'applications': v} for (x, v) in diet_count_confirmed.items()]
+
+    lennyface_count = [{'lennyface': x, 'applications': v} for (x, v) in
+                       sorted(lennyface_count.items(), key=lambda item: item[1])[-5:]]
+    lennyface_count_confirmed = [{'lennyface': x, 'applications': v} for (x, v) in
+                       sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
 
     timeseries = Application.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
@@ -138,6 +153,10 @@ def app_stats_api(request):
             'origin_confirmed': origin_count_confirmed,
             'diet': diet_count,
             'diet_confirmed': diet_count_confirmed,
+            'lennyface': lennyface_count,
+            'lennyface_confirmed': lennyface_count_confirmed,
+            'resume': resume_count,
+            'resume_confirmed': resume_count_confirmed,
             'other_diet': '<br>'.join([el for el in other_diet])
         }
     )
