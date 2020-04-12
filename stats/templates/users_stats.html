@@ -6,9 +6,13 @@
     <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
     <div class="row">
         <div class="col-md-6">
-            <h3>All</h3>
+            <h3>All users</h3>
             <div id="users_stats"></div>
             <p><b>Users count:</b> <span id="users_count"></span></p>
+        </div>
+    <div class="col-md-6">
+            <h3>Email verified</h3>
+            <div id="email_verified_stats"></div>
         </div>
     </div>
 {% endblock %}
@@ -16,9 +20,9 @@
     <script>
         $.getJSON('{% url 'api_users_stats' %}', function (data) {
             c3.generate({
-                    bindto: '#users_stats',
-                    data: {
-                      json: data['users'],
+                bindto: '#users_stats',
+                data: {
+                    json: data['users'],
                       type: 'bar',
                       keys: {
                         x: 'user_type',
@@ -31,7 +35,22 @@
                         type: 'category'
                       }
                     }
-                  });
+            });
+            c3.generate({
+                bindto: '#email_verified_stats',
+                data: {
+                    json: data['email_verified'],
+                    type: 'donut'
+
+                },
+                donut: {
+                    label: {
+                        format: function (value, ratio, id) {
+                            return value;
+                        }
+                    }
+                }
+            });
             $('#update_date').html(data['update_time']);
             $('#users_count').html(data['users_count']);
         })
