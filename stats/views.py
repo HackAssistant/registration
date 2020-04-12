@@ -169,11 +169,14 @@ def app_stats_api(request):
 def users_stats_api(request):
     users = list(User.objects.all())
     users_count = defaultdict(int)
+    email_verified_count = defaultdict(int)
     for u in users:
         users_count["Volunteers"] += u.is_volunteer
         users_count["Directors"] += u.is_director
         users_count["Organizers"] += u.is_organizer
         users_count["Hackers"] += not (u.is_volunteer or u.is_director or u.is_organizer)
+        email_verified_count["True"] += u.email_verified
+        email_verified_count["False"] += not u.email_verified
 
     users_count = [{'user_type': x, 'Users': v} for (x, v) in users_count.items()]
 
@@ -181,7 +184,8 @@ def users_stats_api(request):
         {
             'update_time': timezone.now(),
             'users': users_count,
-            'users_count': len(users)
+            'users_count': len(users),
+            'email_verified': email_verified_count
         }
     )
 
