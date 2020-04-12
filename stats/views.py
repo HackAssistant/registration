@@ -169,9 +169,6 @@ def app_stats_api(request):
 def users_stats_api(request):
     users = list(User.objects.all())
     users_count = defaultdict(int)
-    hacker_count = defaultdict(int)
-    volunteer_count = defaultdict(int)
-    organizer_count = defaultdict(int)
     for u in users:
         users_count["Volunteers"] += u.is_volunteer
         users_count["Directors"] += u.is_director
