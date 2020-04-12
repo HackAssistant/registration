@@ -9,6 +9,7 @@ from app.views import TabsView
 from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
+from user.models import User
 
 from collections import defaultdict
 
@@ -17,7 +18,7 @@ GENDER_DICT = dict(GENDERS)
 
 
 def stats_tabs():
-    tabs = [('Applications', reverse('app_stats'), False), ]
+    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False)]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
@@ -164,6 +165,27 @@ def app_stats_api(request):
     )
 
 
+@is_organizer
+def users_stats_api(request):
+    users = list(User.objects.all())
+    users_count = defaultdict(int)
+    for u in users:
+        users_count["Volunteers"] += u.is_volunteer
+        users_count["Directors"] += u.is_director
+        users_count["Organizers"] += u.is_organizer
+        users_count["Hackers"] += not (u.is_volunteer or u.is_director or u.is_organizer)
+
+    users_count = [{'user_type': x, 'Users': v} for (x, v) in users_count.items()]
+
+    return JsonResponse(
+        {
+            'update_time': timezone.now(),
+            'users': users_count,
+            'users_count': len(users)
+        }
+    )
+
+
 class AppStats(IsOrganizerMixin, TabsView):
     template_name = 'application_stats.html'
 
@@ -173,6 +195,13 @@ class AppStats(IsOrganizerMixin, TabsView):
 
 class ReimbStats(IsOrganizerMixin, TabsView):
     template_name = 'reimbursement_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class UsersStats(IsOrganizerMixin, TabsView):
+    template_name = 'users_stats.html'
 
     def get_current_tabs(self):
         return stats_tabs()
