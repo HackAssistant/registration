@@ -47,12 +47,13 @@ def add_comment(application, user, text):
 def organizer_tabs(user):
     t = [('Applications', reverse('app_list'), False),
          ('Review', reverse('review'),
-          'new' if models.Application.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
+          'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
          ]
-    if user.has_dubious_acces and getattr(settings, 'DUBIOUS_ENABLED', False):
+    if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
-                  'new' if models.Application.objects.filter(status=APP_DUBIOUS, contacted=False).count() else ''))
+                  'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
+                                                                   contacted=False).count() else ''))
     return t
 
 
@@ -85,7 +86,7 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.Application.annotate_vote(models.Application.objects.all())
+        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.all())
 
 
 class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
@@ -98,11 +99,11 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.Application.annotate_vote(models.Application.objects.filter(status=APP_PENDING))
+        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
-        apps = models.Application.objects.filter(pk__in=ids).all()
+        apps = models.HackerApplication.objects.filter(pk__in=ids).all()
         mails = []
         errors = 0
         for app in apps:
@@ -145,7 +146,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
                     mate['is_me'] = True
                     continue
 
-                mate_app = models.Application.objects.filter(user=mate['user']).first()
+                mate_app = models.HackerApplication.objects.filter(user=mate['user']).first()
                 if mate_app:
                     mate['app_uuid_str'] = mate_app.uuid_str
 
@@ -158,7 +159,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         application_id = kwargs.get('id', None)
         if not application_id:
             raise Http404
-        application = models.Application.objects.filter(uuid=application_id).first()
+        application = models.HackerApplication.objects.filter(uuid=application_id).first()
         if not application:
             raise Http404
 
@@ -166,7 +167,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         id_ = request.POST.get('app_id')
-        application = models.Application.objects.get(pk=id_)
+        application = models.HackerApplication.objects.get(pk=id_)
 
         comment_text = request.POST.get('comment_text', None)
         if request.POST.get('add_comment'):
@@ -179,17 +180,17 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.cancel_application(application)
         elif request.POST.get('waitlist') and request.user.is_director:
             self.waitlist_application(application)
-        elif request.POST.get('slack') and request.user.is_organizer:
+        elif request.POST.get('slack') and request.user.check_is_organizer:
             self.slack_invite(application)
-        elif request.POST.get('set_dubious') and request.user.is_organizer:
+        elif request.POST.get('set_dubious') and request.user.check_is_organizer:
             application.set_dubious()
-        elif request.POST.get('contact_user') and request.user.has_dubious_acces:
+        elif request.POST.get('contact_user') and request.user.has_dubious_access:
             application.set_contacted(request.user)
-        elif request.POST.get('unset_dubious') and request.user.has_dubious_acces:
+        elif request.POST.get('unset_dubious') and request.user.has_dubious_access:
             add_comment(application, request.user,
                         "Dubious review result: No problems, hacker allowed to participate in hackathon!")
             application.unset_dubious()
-        elif request.POST.get('invalidate') and request.user.has_dubious_acces:
+        elif request.POST.get('invalidate') and request.user.has_dubious_access:
             add_comment(application, request.user,
                         "Dubious review result: Hacker is not allowed to participate in hackathon.")
             application.invalidate()
@@ -251,7 +252,7 @@ class ReviewApplicationView(ApplicationDetailView):
         user and that has less votes and its older
         """
         max_votes_to_app = getattr(settings, 'MAX_VOTES_TO_APP', 50)
-        return models.Application.objects \
+        return models.HackerApplication.objects \
             .exclude(vote__user_id=self.request.user.id, user_id=self.request.user.id) \
             .filter(status=APP_PENDING) \
             .annotate(count=Count('vote__calculated_vote')) \
@@ -268,7 +269,7 @@ class ReviewApplicationView(ApplicationDetailView):
         pers_vote = request.POST.get('pers_rat', None)
         comment_text = request.POST.get('comment_text', None)
 
-        application = models.Application.objects.get(pk=request.POST.get('app_id'))
+        application = models.HackerApplication.objects.get(pk=request.POST.get('app_id'))
         try:
             if request.POST.get('skip'):
                 add_vote(application, request.user, None, None)
@@ -299,10 +300,11 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.Application.objects.filter(status=APP_PENDING).exclude(user__team__team_code__isnull=True) \
-            .values('user__team__team_code').order_by().annotate(vote_avg=Avg('vote__calculated_vote'),
-                                                                 team=F('user__team__team_code'),
-                                                                 members=Count('user', distinct=True))
+        return models.HackerApplication.objects.filter(status=APP_PENDING) \
+            .exclude(user__team__team_code__isnull=True).values('user__team__team_code').order_by() \
+            .annotate(vote_avg=Avg('vote__calculated_vote'),
+                      team=F('user__team__team_code'),
+                      members=Count('user', distinct=True))
 
     def get_context_data(self, **kwargs):
         c = super(InviteTeamListView, self).get_context_data(**kwargs)
@@ -311,7 +313,7 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
-        apps = models.Application.objects.filter(user__team__team_code__in=ids).all()
+        apps = models.HackerApplication.objects.filter(user__team__team_code__in=ids).all()
         mails = []
         errors = 0
         for app in apps:
@@ -345,4 +347,4 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.Application.objects.filter(status=APP_DUBIOUS)
+        return models.HackerApplication.objects.filter(status=APP_DUBIOUS)

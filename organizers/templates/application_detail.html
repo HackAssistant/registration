@@ -54,7 +54,7 @@
                 {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects|safe|urlize %}
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                 {% include 'include/field.html' with desc='Excited about' value=app.excited %}
-                {% if request.user.has_dubious_acces  and app.is_dubious %}
+                {% if request.user.has_dubious_access  and app.is_dubious %}
                     <hr>
                     <dt>
                     <h3>Dubious info</h3>

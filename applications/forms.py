@@ -185,7 +185,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return super(ApplicationForm, self).fieldsets
 
     class Meta:
-        model = models.Application
+        model = models.HackerApplication
         extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
 
         help_texts = {

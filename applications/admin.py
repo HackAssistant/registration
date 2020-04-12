@@ -40,10 +40,10 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(ApplicationAdmin, self).get_queryset(request)
-        return models.Application.annotate_vote(qs)
+        return models.HackerApplication.annotate_vote(qs)
 
 
-admin.site.register(models.Application, admin_class=ApplicationAdmin)
+admin.site.register(models.HackerApplication, admin_class=ApplicationAdmin)
 admin.site.site_header = '%s Admin' % settings.HACKATHON_NAME
 admin.site.site_title = '%s Admin' % settings.HACKATHON_NAME
 admin.site.index_title = 'Home'

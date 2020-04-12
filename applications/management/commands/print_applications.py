@@ -13,7 +13,7 @@ class Command(BaseCommand):
                             help='filter by state')
 
     def handle(self, *args, **options):
-        applications = models.Application.objects.all()
+        applications = models.HackerApplication.objects.all()
 
         if options['state']:
             applications = applications.filter(status=options['state'])
