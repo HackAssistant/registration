@@ -1,15 +1,18 @@
 from django.conf import settings
-from django.db.models import Count, Sum
-from django.db.models.functions import TruncDate
+from django.db.models import Count, Sum, TimeField
+from django.db.models.functions import TruncDate, TruncHour, ExtractHour
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
+import pytz
 
+from app.hackathon_variables import TIME_ZONE
 from app.views import TabsView
 from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
+from checkin.models import CheckIn
 
 from collections import defaultdict
 
@@ -18,7 +21,7 @@ GENDER_DICT = dict(GENDERS)
 
 
 def stats_tabs():
-    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False)]
+    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False)]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
@@ -169,14 +172,12 @@ def app_stats_api(request):
 def users_stats_api(request):
     users = list(User.objects.all())
     users_count = defaultdict(int)
-    email_verified_count = defaultdict(int)
+
     for u in users:
         users_count["Volunteers"] += u.is_volunteer
         users_count["Directors"] += u.is_director
         users_count["Organizers"] += u.is_organizer
         users_count["Hackers"] += not (u.is_volunteer or u.is_director or u.is_organizer)
-        email_verified_count["True"] += u.email_verified
-        email_verified_count["False"] += not u.email_verified
 
     users_count = [{'user_type': x, 'Users': v} for (x, v) in users_count.items()]
 
@@ -185,7 +186,20 @@ def users_stats_api(request):
             'update_time': timezone.now(),
             'users': users_count,
             'users_count': len(users),
-            'email_verified': email_verified_count
+        }
+    )
+
+
+@is_organizer
+def checkin_stats_api(request):
+    tzone = pytz.timezone(TIME_ZONE)
+    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time', tzinfo=tzone)) \
+        .values('hour').annotate(checkins=Count('hour'))
+
+    return JsonResponse(
+        {
+            'update_time': timezone.now(),
+            'timeseries': list(timeseries),
         }
     )
 
@@ -206,6 +220,13 @@ class ReimbStats(IsOrganizerMixin, TabsView):
 
 class UsersStats(IsOrganizerMixin, TabsView):
     template_name = 'users_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class CheckinStats(IsOrganizerMixin, TabsView):
+    template_name = 'checkin_stats.html'
 
     def get_current_tabs(self):
         return stats_tabs()
