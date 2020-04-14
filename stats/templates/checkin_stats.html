@@ -1,0 +1,49 @@
+{% extends 'c3_base.html' %}
+
+{% block head_title %}Check-in stats{% endblock %}
+{% block panel %}
+    <h1>Check-in stats</h1>
+    <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="timeseries"></div>
+            <!--p><b>Users count:</b> <span id="users_count"></span></p-->
+        </div>
+    </div>
+{% endblock %}
+{% block c3script %}
+    <script>
+        $.getJSON('{% url 'api_checkin_stats' %}', function (data) {
+            var timeseries_dict = []
+            data['timeseries'].forEach(element => {
+                timeseries_dict.push({
+                    hours: new Date(element['hour']),
+                    checkins: element['checkins']
+                });
+            });
+            c3.generate({
+                bindto: '#timeseries',
+                data: {
+                    json: timeseries_dict,
+                    keys: {
+                        x: 'hours',
+                        xFormat: '%Y-%m-%d %H:%M:%S',
+                        value: ['checkins']
+                    }
+                },
+
+                axis: {
+                    x: {
+                        type: 'timeseries',
+                        tick: {
+                            format: '%H:%M:%S'
+                        }
+                    }
+                }
+            });
+            $('#update_date').html(data['update_time']);
+            //$('#users_count').html(data['users_count']);
+        });
+
+    </script>
+{% endblock %}
