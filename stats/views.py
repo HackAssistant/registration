@@ -1,6 +1,6 @@
 from django.conf import settings
-from django.db.models import Count, Sum, TimeField
-from django.db.models.functions import TruncDate, TruncHour, ExtractHour
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -21,7 +21,8 @@ GENDER_DICT = dict(GENDERS)
 
 
 def stats_tabs():
-    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False)]
+    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
+            ('Check-in', reverse('checkin_stats'), False)]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
