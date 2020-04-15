@@ -4,9 +4,7 @@ from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
-import pytz
 
-from app.hackathon_variables import TIME_ZONE
 from app.views import TabsView
 from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
@@ -192,8 +190,7 @@ def users_stats_api(request):
 
 @is_organizer
 def checkin_stats_api(request):
-    tzone = pytz.timezone(TIME_ZONE)
-    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time', tzinfo=tzone)) \
+    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
         .values('hour').annotate(checkins=Count('hour'))
     checkin_count = len(CheckIn.objects.all())
 
