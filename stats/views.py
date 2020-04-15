@@ -195,11 +195,13 @@ def checkin_stats_api(request):
     tzone = pytz.timezone(TIME_ZONE)
     timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time', tzinfo=tzone)) \
         .values('hour').annotate(checkins=Count('hour'))
+    checkin_count = len(CheckIn.objects.all())
 
     return JsonResponse(
         {
             'update_time': timezone.now(),
             'timeseries': list(timeseries),
+            'checkin_count': checkin_count
         }
     )
 
