@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12">
             <div id="timeseries"></div>
-            <!--p><b>Users count:</b> <span id="users_count"></span></p-->
+            <p><b>Checkin count:</b> <span id="checkin_count"></span></p>
         </div>
     </div>
 {% endblock %}
@@ -36,13 +36,13 @@
                     x: {
                         type: 'timeseries',
                         tick: {
-                            format: '%H:%M:%S'
+                            format: 'Day %d, %Hh'
                         }
                     }
                 }
             });
             $('#update_date').html(data['update_time']);
-            //$('#users_count').html(data['users_count']);
+            $('#checkin_count').html(data['checkin_count']);
         });
 
     </script>
