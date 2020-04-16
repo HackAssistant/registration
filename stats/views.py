@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db.models import Count, Sum
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -10,6 +10,7 @@ from applications import models as a_models
 from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
+from checkin.models import CheckIn
 
 from collections import defaultdict
 
@@ -18,7 +19,8 @@ GENDER_DICT = dict(GENDERS)
 
 
 def stats_tabs():
-    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False)]
+    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
+            ('Check-in', reverse('checkin_stats'), False)]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
@@ -181,7 +183,22 @@ def users_stats_api(request):
         {
             'update_time': timezone.now(),
             'users': users_count,
-            'users_count': len(users)
+            'users_count': len(users),
+        }
+    )
+
+
+@is_organizer
+def checkin_stats_api(request):
+    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
+        .values('hour').annotate(checkins=Count('hour'))
+    checkin_count = len(CheckIn.objects.all())
+
+    return JsonResponse(
+        {
+            'update_time': timezone.now(),
+            'timeseries': list(timeseries),
+            'checkin_count': checkin_count
         }
     )
 
@@ -202,6 +219,13 @@ class ReimbStats(IsOrganizerMixin, TabsView):
 
 class UsersStats(IsOrganizerMixin, TabsView):
     template_name = 'users_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class CheckinStats(IsOrganizerMixin, TabsView):
+    template_name = 'checkin_stats.html'
 
     def get_current_tabs(self):
         return stats_tabs()
