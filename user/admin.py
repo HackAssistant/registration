@@ -52,7 +52,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class BlacklistUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'name', 'motive_of_ban', 'date_of_ban')
+    list_display = ('email', 'name', 'date_of_ban')
     list_per_page = 20
     list_filter = ('email', 'name')
     search_fields = ('email', 'name')

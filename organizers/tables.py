@@ -104,7 +104,7 @@ class BlacklistListTable(tables.Table):
         model = Application
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'user.email', 'university', 'origin', 'blacklisted_by']
+        fields = ['user.name', 'user.email', 'university', 'origin']
         empty_text = 'No blacklisted applications'
         order_by = 'status_update_date'
 

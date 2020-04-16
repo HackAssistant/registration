@@ -20,7 +20,8 @@ from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID, APP_BLACK
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, BlacklistListTable, BlacklistApplicationFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, BlacklistListTable, \
+    BlacklistApplicationFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 

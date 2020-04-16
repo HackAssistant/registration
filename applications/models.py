@@ -256,11 +256,11 @@ class Application(models.Model):
         if self.status != APP_BLACKLISTED:
             raise ValidationError('Applications can only be confirmed as blacklisted if they are blacklisted first')
         self.status = APP_INVALID
-        if not self.blacklisted_by:
-            self.blacklisted_by = user
+        self.set_blacklisted_by(user)
         blacklist_user = BlacklistUser.objects.filter(email=self.user.email).first()
         if not blacklist_user:
-            blacklist_user = BlacklistUser.objects.create_blacklist_user(self.user, "User reviewed and confirmed as blacklisted user.")
+            blacklist_user = BlacklistUser.objects.create_blacklist_user(
+                self.user, "User reviewed and confirmed as blacklisted user.")
         blacklist_user.save()
         self.save()
 
@@ -298,9 +298,8 @@ class Application(models.Model):
             self.contacted_by = user
             self.save()
 
-    def set_blacklist(self, user):
+    def set_blacklist(self):
         self.status = APP_BLACKLISTED
-        self.blacklisted_by = user
         self.status_update_date = timezone.now()
         self.save()
 
@@ -308,6 +307,10 @@ class Application(models.Model):
         self.status = APP_PENDING
         self.status_update_date = timezone.now()
         self.save()
+
+    def set_blacklisted_by(self, user):
+        if not self.blacklisted_by:
+            self.blacklisted_by = user
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED

@@ -118,11 +118,10 @@ class User(AbstractBaseUser):
 
 
 class BlacklistUserManager(models.Manager):
-    def create_blacklist_user(self, user, motive_of_ban):
+    def create_blacklist_user(self, user):
         blacklist_user = self.create(
             email=user.email,
             name=user.name,
-            motive_of_ban=motive_of_ban,
             date_of_ban=timezone.now()
         )
         return blacklist_user
@@ -138,7 +137,7 @@ class BlacklistUser(models.Model):
         verbose_name='Full name',
         max_length=255,
     )
-    motive_of_ban = models.CharField(max_length=500)
+
     date_of_ban = models.DateTimeField()
 
     objects = BlacklistUserManager()

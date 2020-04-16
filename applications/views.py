@@ -137,6 +137,8 @@ class HackerDashboard(IsHackerMixin, TabsView):
         if form.is_valid():
             application = form.save(commit=False)
             application.user = request.user
+            if user_is_in_blacklist(application.user):
+                application.set_blacklist()
             application.save()
             if new_application:
                 messages.success(request,
@@ -194,3 +196,13 @@ def save_draft(request):
     d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys.intersection(form_keys) and v))
     d.save()
     return JsonResponse({'saved': True})
+
+
+def user_is_in_blacklist(user):
+    result = True
+    blacklist_user = models.BlacklistUser.objects.filter(email=user.email).first()
+    if not blacklist_user:
+        blacklist_user = models.BlacklistUser.objects.filter(name=user.name).first()
+        if not blacklist_user:
+            result = False
+    return result
