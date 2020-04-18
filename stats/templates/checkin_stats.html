@@ -10,6 +10,12 @@
             <p><b>Checkin count:</b> <span id="checkin_count"></span></p>
         </div>
     </div>
+  <h2>Attrition rate</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="attrition_rate"></div>
+        </div>
+    </div>
 {% endblock %}
 {% block c3script %}
     <script>
@@ -40,6 +46,19 @@
                         }
                     }
                 }
+            });
+            c3.generate({
+                bindto: '#attrition_rate',
+                data: {
+                    json: data['attrition_rate'],
+                    type: 'gauge',
+                },
+                color: {
+                  pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'],
+                  threshold: {
+                    values: [30, 60, 90, 100]
+                  }
+                },
             });
             $('#update_date').html(data['update_time']);
             $('#checkin_count').html(data['checkin_count']);
