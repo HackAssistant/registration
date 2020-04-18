@@ -173,6 +173,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         application = models.Application.objects.get(pk=id_)
 
         comment_text = request.POST.get('comment_text', None)
+        motive_of_ban = request.POST.get('motive_of_ban', None)
         if request.POST.get('add_comment'):
             add_comment(application, request.user, comment_text)
         elif request.POST.get('invite') and request.user.is_director:
@@ -198,15 +199,16 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
                         "Dubious review result: Hacker is not allowed to participate in hackathon.")
             application.invalidate()
         elif request.POST.get('set_blacklist') and request.user.is_organizer:
-            application.set_blacklist(request.user)
+            application.set_blacklist()
         elif request.POST.get('unset_blacklist') and request.user.has_blacklist_acces:
             add_comment(application, request.user,
                         "Blacklist review result: No problems, hacker allowed to participate in hackathon!")
             application.unset_blacklist()
         elif request.POST.get('confirm_blacklist') and request.user.has_blacklist_acces:
             add_comment(application, request.user,
-                        "Blacklist review result: Hacker is not allowed to participate in hackathon.")
-            application.confirm_blacklist(request.user)
+                        "Blacklist review result: Hacker is not allowed to participate in hackathon. " +
+                            "Motive of ban: " + motive_of_ban)
+            application.confirm_blacklist(request.user, motive_of_ban)
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
 
@@ -291,7 +293,7 @@ class ReviewApplicationView(ApplicationDetailView):
             elif request.POST.get('unset_dubious'):
                 application.unset_dubious()
             elif request.POST.get('set_blacklist') and request.user.is_organizer:
-                application.set_blacklist(request.user)
+                application.set_blacklist()
             elif request.POST.get('unset_blacklist') and request.user.has_blacklist_acces:
                 add_comment(application, request.user,
                             "Blacklist review result: No problems, hacker allowed to participate in hackathon!")

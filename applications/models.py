@@ -252,7 +252,7 @@ class Application(models.Model):
         self.status = APP_INVALID
         self.save()
 
-    def confirm_blacklist(self, user):
+    def confirm_blacklist(self, user, motive_of_ban):
         if self.status != APP_BLACKLISTED:
             raise ValidationError('Applications can only be confirmed as blacklisted if they are blacklisted first')
         self.status = APP_INVALID
@@ -260,7 +260,7 @@ class Application(models.Model):
         blacklist_user = BlacklistUser.objects.filter(email=self.user.email).first()
         if not blacklist_user:
             blacklist_user = BlacklistUser.objects.create_blacklist_user(
-                self.user, "User reviewed and confirmed as blacklisted user.")
+                self.user, motive_of_ban)
         blacklist_user.save()
         self.save()
 

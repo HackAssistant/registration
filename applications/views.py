@@ -137,8 +137,6 @@ class HackerDashboard(IsHackerMixin, TabsView):
         if form.is_valid():
             application = form.save(commit=False)
             application.user = request.user
-            if user_is_in_blacklist(application.user):
-                application.set_blacklist()
             application.save()
             if new_application:
                 messages.success(request,
@@ -146,6 +144,8 @@ class HackerDashboard(IsHackerMixin, TabsView):
                                  'Processing your application will take some time, so please be patient.')
             else:
                 messages.success(request, 'Application changes saved successfully!')
+            if user_is_in_blacklist(application.user):
+                application.set_blacklist()
 
             return HttpResponseRedirect(reverse('root'))
         else:
