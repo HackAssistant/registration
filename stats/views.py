@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from app.views import TabsView
 from applications import models as a_models
-from applications.models import Application, STATUS, APP_CONFIRMED, GENDERS
+from applications.models import Application, STATUS, APP_ATTENDED, APP_CONFIRMED, GENDERS
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
 from checkin.models import CheckIn
@@ -193,12 +193,22 @@ def checkin_stats_api(request):
     timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
         .values('hour').annotate(checkins=Count('hour'))
     checkin_count = len(CheckIn.objects.all())
+    applications = list(Application.objects.all())
+    attended = 0
+    confirmed = 0
+    for a in applications:
+        if a.status == APP_CONFIRMED:
+            confirmed += 1
+        if a.status == APP_ATTENDED:
+            attended += 1
+    attrition_rate = {'Attrition rate': attended * 100 / (confirmed + attended)}
 
     return JsonResponse(
         {
             'update_time': timezone.now(),
             'timeseries': list(timeseries),
-            'checkin_count': checkin_count
+            'checkin_count': checkin_count,
+            'attrition_rate': attrition_rate
         }
     )
 
