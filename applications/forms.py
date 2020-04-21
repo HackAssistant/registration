@@ -137,6 +137,12 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
         return data
 
+    def clean_origin(self):
+        data = self.cleaned_data['origin']
+        if data.count(',') != 2:
+            data = "Others"
+        return data
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
