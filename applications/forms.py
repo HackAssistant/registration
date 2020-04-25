@@ -168,7 +168,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
               'description': 'Some of our sponsors may use this information for recruitment purposes,'
-                             'so please include as much as you can.'}),
+              'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
