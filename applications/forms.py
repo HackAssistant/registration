@@ -8,6 +8,8 @@ from app.mixins import OverwriteOnlyModelFormMixin
 from app.utils import validate_url
 from applications import models
 
+import requests
+
 
 class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
@@ -138,10 +140,16 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return data
 
     def clean_origin(self):
-        data = self.cleaned_data['origin']
-        if data.count(',') != 2:
-            data = "Others"
-        return data
+        origin = self.cleaned_data['origin']
+        response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
+        data = response.json()['_embedded']['city:search-results']
+        if origin == "Others":
+            origin_verified = origin
+        elif not data:
+            raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
+        else:
+            origin_verified = data[0]['matching_full_name']
+        return origin_verified
 
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
@@ -160,7 +168,7 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             ('Show us what you\'ve built',
              {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
               'description': 'Some of our sponsors may use this information for recruitment purposes,'
-              'so please include as much as you can.'}),
+                             'so please include as much as you can.'}),
         ]
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
