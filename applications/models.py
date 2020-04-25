@@ -158,6 +158,13 @@ class BaseApplication(models.Model):
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
+    def __str__(self):
+        return self.user.email
+
+    @property
+    def uuid_str(self):
+        return str(self.uuid)
+
     def get_soft_status_display(self):
         text = self.get_status_display()
         if DUBIOUS_TEXT in text:
@@ -270,6 +277,7 @@ class _VolunteerMentorApplication(models.Model):
         abstract = True
 
     english_level = models.IntegerField(default=0, null=False, choices=ENGLISH_LEVEL)
+    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True)
 
 
 class _VolunteerMentorSponsorApplication(models.Model):
@@ -278,7 +286,6 @@ class _VolunteerMentorSponsorApplication(models.Model):
         abstract = True
 
     attendance = MultiSelectField(choices=ATTENDANCE)
-    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True)
 
 
 class _MentorSponsorApplication(models.Model):
@@ -309,13 +316,6 @@ class HackerApplication(
     @classmethod
     def annotate_vote(cls, qs):
         return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
-
-    @property
-    def uuid_str(self):
-        return str(self.uuid)
-
-    def __str__(self):
-        return self.user.email
 
     def invite(self, user):
         # We can re-invite someone invited
@@ -440,6 +440,9 @@ class SponsorApplication(
     _MentorSponsorApplication
 ):
     position = models.CharField(max_length=50, null=False)
+
+    def confirm(self):
+        self.status = APP_CONFIRMED
 
 
 class DraftApplication(models.Model):

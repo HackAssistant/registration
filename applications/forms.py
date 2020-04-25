@@ -440,3 +440,43 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'fluent': 'What program languages are you fluent on?',
             'experience': 'Which program languages have you experience on?'
         }
+
+
+class SponsorForm(_BaseApplicationForm):
+
+    def fieldsets(self):
+        self._fieldsets = [
+            ('Personal Info',
+             {'fields': ('gender', 'other_gender', 'under_age', 'phone_number', 'tshirt_size', 'diet', 'other_diet'),
+              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
+            ('Sponsor Info',
+             {'fields': ('company', 'position', 'attendance')})
+        ]
+        # Fields that we only need the first time the hacker fills the application
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not self.instance.pk:
+            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+        return super(SponsorForm, self).fieldsets
+
+    def save(self, commit=True):
+        application = super(SponsorForm, self).save(commit=False)
+        application.confirm()
+        if commit:
+            application.save()
+        return application
+
+    class Meta(_BaseApplicationForm.Meta):
+        model = models.SponsorApplication
+        help_texts = {
+            'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
+            'gender': 'This is for demographic purposes.',
+        }
+        labels = {
+            'gender': 'What gender do you identify as?',
+            'other_gender': 'Self-describe',
+            'tshirt_size': 'What\'s your t-shirt size?',
+            'diet': 'Dietary requirements',
+            'attendance': 'What availability will you have during the event?',
+            'company': 'On behalf of which company are you coming?',
+            'position': 'What is your job position?',
+        }
