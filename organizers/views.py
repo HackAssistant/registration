@@ -20,7 +20,7 @@ from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter, VolunteerListTable
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 
@@ -49,6 +49,7 @@ def organizer_tabs(user):
          ('Review', reverse('review'),
           'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
+         ('Volunteers', reverse('volunteer_list'), False)
          ]
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
@@ -348,3 +349,53 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
+
+
+class VolunteerApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'applications_list.html'
+    table_class = VolunteerListTable
+    filterset_class = VolunteerFilter
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('detail', 'status')
+    export_name = 'applications'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return models.VolunteerApplication.objects.all()
+
+
+class ReviewVolunteerApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+    template_name = 'other_application_detail.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.VolunteerApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
+        return application
+
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        application = models.VolunteerApplication.objects.get(pk=id_)
+        if request.POST.get('invite') and request.user.check_is_organizer:
+            application.invite(request.user)
+            application.save()
+        elif request.POST.get('noinvite') and request.user.check_is_organizer:
+            application.reject(request)
+            application.save()
+
+        return HttpResponseRedirect(reverse('volunteer_detail', kwargs={'id': application.uuid_str}))
+
+    def get_back_url(self):
+        return reverse('volunteer_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewVolunteerApplicationView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        return context

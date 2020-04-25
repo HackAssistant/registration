@@ -152,7 +152,7 @@ class User(AbstractBaseUser):
     is_organizer.boolean = True
 
     @property
-    def check_is_volunteer(self):
+    def check_is_volunteer_accepted(self):
         if self.type == USR_VOLUNTEER:
             try:
                 return self.volunteerapplication_application.status == applicationModels.APP_ATTENDED
@@ -160,9 +160,21 @@ class User(AbstractBaseUser):
                 pass
         return False
 
+    def is_volunteer_accepted(self):
+        return self.check_is_volunteer_accepted
+    is_volunteer_accepted.boolean = True
+
     def is_volunteer(self):
-        return self.check_is_volunteer
-    is_volunteer.boolean = True
+        return self.type == USR_VOLUNTEER
+
+    def is_mentor(self):
+        return self.type == USR_MENTOR
+
+    def is_sponsor(self):
+        return self.type == USR_SPONSOR
+
+    def is_hacker(self):
+        return self.type == USR_HACKER
 
     @property
     def application(self):

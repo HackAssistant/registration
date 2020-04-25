@@ -41,7 +41,7 @@ class IsVolunteerMixin(UserPassesTestMixin):
             return False
         return \
             self.request.user.is_authenticated and \
-            (self.request.user.check_is_volunteer or self.request.user.check_is_organizer)
+            (self.request.user.check_is_volunteer_accepted or self.request.user.check_is_organizer)
 
 
 class IsDirectorMixin(UserPassesTestMixin):

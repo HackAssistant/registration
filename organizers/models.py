@@ -6,7 +6,7 @@ from django.db.models import Avg, F
 from django.utils import timezone
 
 from django.conf import settings
-from applications.models import HackerApplication
+from applications.models import HackerApplication, VolunteerApplication
 from user.models import User
 
 MAX_VOTES = getattr(settings, 'MAX_VOTES', 10)

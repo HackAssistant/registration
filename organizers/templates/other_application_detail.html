@@ -1,0 +1,101 @@
+{% extends "base_tabs.html" %}
+{% load humanize %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head_title %}{% if vote %}Review applications{% else %}{{ app.user.name }}'s application{% endif %}
+{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+{% block panel %}
+    {% if app %}
+        <div class="col-md-8 margin-right">
+            <dl class="dl-horizontal">
+                <dt>
+                <h3>Personal</h3>
+                </dt>
+                <dd></dd>
+                {% include 'include/field.html' with desc='Name' value=app.user.name %}
+                {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
+                {% include 'include/field.html' with desc='Phone' value=app.phone_number %}
+                {% include 'include/field.html' with desc='Origin' value=app.origin %}
+                {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
+                {% include 'include/field.html' with desc='Email' value=app.user.email %}
+                {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
+                {% if app.user.is_volunteer or app.user.is_mentor %}
+                    <hr>
+                    <dt>
+                    <h3>Academic</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='University' value=app.university %}
+                    {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
+                    {% include 'include/field.html' with desc='Degree' value=app.degree %}
+                    {% include 'include/field.html' with desc='English Level' value=app.english_level %}
+                {% endif %}
+                {% if app.user.is_volunteer %}
+                    <hr>
+                    <dt>
+                    <h3>Volunteer Info</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='First Time Volunteer' value=app.first_time_volunteer|yesno %}
+                    {% if not app.first_time_volunteer %}
+                      {% include 'include/field.html' with desc='Which Hackathons' value=app.which_hack %}
+                    {% endif %}
+                    {% include 'include/field.html' with desc='Quality' value=app.quality %}
+                    {% include 'include/field.html' with desc='Weakness' value=app.weakness %}
+                    {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
+                    {% include 'include/field.html' with desc='Friends' value=app.friends %}
+                    <hr>
+                    <dt>
+                    <h3>Extra</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='Lennyface' value=app.lennyface %}
+                    {% include 'include/field.html' with desc='Favorite movie' value=app.fav_movie %}
+                    {% include 'include/field.html' with desc='Cool skill' value=app.cool_skill %}
+
+                {% endif %}
+            </dl>
+
+            {% if app.github or app.linkedin or app.site or app.devpost %}
+                <h4 class="text-center">Social</h4>
+
+                <p class="text-center">
+                    {% if app.github %}
+                        <a target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
+                    {% endif %}
+                    {% if app.linkedin %}
+                        <a target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
+                    {% endif %}
+                    {% if app.site %}
+                        <a target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
+                    {% endif %}
+                    {% if app.devpost %}
+                        <a target="_blank" href="{{ app.devpost }}" class="icon">
+                            <img class="icon" src="{% static 'img/devpost.svg' %}"/>
+                        </a>
+                    {% endif %}
+                </p>
+            {% endif %}
+
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block out_panel %}
+    {% if app and not app.user.is_sponsor %}
+        <div class="panel-footer">
+
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                <button name="invite" class="btn btn-success btn-block" value="invite">Invite</button>
+                <button name="noinvite" class="btn btn-danger btn-block" value="noinvite">Don't invite</button>
+            </form>
+        </div>
+
+    {% endif %}
+{% endblock %}
