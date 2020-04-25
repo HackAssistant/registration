@@ -147,6 +147,10 @@ class User(AbstractBaseUser):
     def check_is_organizer(self):
         return self.type == USR_ORGANIZER
 
+    def is_organizer(self):
+        return self.check_is_organizer
+    is_organizer.boolean = True
+
     @property
     def check_is_volunteer(self):
         if self.type == USR_VOLUNTEER:
@@ -155,6 +159,10 @@ class User(AbstractBaseUser):
             except applicationModels.VolunteerApplication.DoesNotExist:
                 pass
         return False
+
+    def is_volunteer(self):
+        return self.check_is_volunteer
+    is_volunteer.boolean = True
 
     @property
     def application(self):
