@@ -141,14 +141,15 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
 
     def clean_origin(self):
         origin = self.cleaned_data['origin']
-        response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
-        data = response.json()['_embedded']['city:search-results']
         if origin == "Others":
             origin_verified = origin
-        elif not data:
-            raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
         else:
-            origin_verified = data[0]['matching_full_name']
+            response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
+            data = response.json()['_embedded']['city:search-results']
+            if not data:
+                raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
+            else:
+                origin_verified = data[0]['matching_full_name']
         return origin_verified
 
     def __getitem__(self, name):
@@ -213,7 +214,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
-            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any')
+            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any'),
+            'origin': "Please select one of the dropdown options or write 'Others'"
         }
 
         widgets = {
