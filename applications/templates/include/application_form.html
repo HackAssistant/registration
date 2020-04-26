@@ -54,6 +54,9 @@
                         var cities = jQuery.map(data._embedded["city:search-results"], function (c) {
                             return c.matching_full_name;
                         });
+                        if ("others".includes(query.toLowerCase())){
+                          cities.push("Others");
+                        }
                         return process(cities);
                     });
                 }
