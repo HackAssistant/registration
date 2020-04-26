@@ -8,6 +8,8 @@ from app.mixins import OverwriteOnlyModelFormMixin
 from app.utils import validate_url
 from applications import models
 
+import requests
+
 
 class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
@@ -137,6 +139,19 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
         return data
 
+    def clean_origin(self):
+        origin = self.cleaned_data['origin']
+        if origin == "Others":
+            origin_verified = origin
+        else:
+            response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
+            data = response.json()['_embedded']['city:search-results']
+            if not data:
+                raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
+            else:
+                origin_verified = data[0]['matching_full_name']
+        return origin_verified
+
     def __getitem__(self, name):
         item = super(ApplicationForm, self).__getitem__(name)
         item.field.disabled = not self.instance.can_be_edit()
@@ -199,7 +214,8 @@ class ApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
-            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any')
+            'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any'),
+            'origin': "Please select one of the dropdown options or write 'Others'"
         }
 
         widgets = {
