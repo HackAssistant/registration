@@ -1,0 +1,41 @@
+{% extends 'c3_base.html' %}
+
+{% block head_title %}Users stats{% endblock %}
+{% block panel %}
+    <h1>Users stats</h1>
+    <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>All</h3>
+            <div id="users_stats"></div>
+            <p><b>Users count:</b> <span id="users_count"></span></p>
+        </div>
+    </div>
+{% endblock %}
+{% block c3script %}
+    <script>
+        $.getJSON('{% url 'api_users_stats' %}', function (data) {
+            c3.generate({
+                    bindto: '#users_stats',
+                    data: {
+                      json: data['users'],
+                      type: 'bar',
+                      keys: {
+                        x: 'user_type',
+                        value: ['Users']
+                      },
+                    },
+
+                    axis: {
+                      x: {
+                        type: 'category'
+                      }
+                    }
+                  });
+            $('#update_date').html(data['update_time']);
+            $('#users_count').html(data['users_count']);
+        })
+        ;
+
+    </script>
+{% endblock %}

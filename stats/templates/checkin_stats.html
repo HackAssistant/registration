@@ -1,0 +1,68 @@
+{% extends 'c3_base.html' %}
+
+{% block head_title %}Check-in stats{% endblock %}
+{% block panel %}
+    <h1>Check-in stats</h1>
+    <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="timeseries"></div>
+            <p><b>Checkin count:</b> <span id="checkin_count"></span></p>
+        </div>
+    </div>
+  <h2>Attrition rate</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="attrition_rate"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block c3script %}
+    <script>
+        $.getJSON('{% url 'api_checkin_stats' %}', function (data) {
+            var timeseries_dict = []
+            data['timeseries'].forEach(element => {
+                timeseries_dict.push({
+                    hours: new Date(element['hour']),
+                    checkins: element['checkins']
+                });
+            });
+            c3.generate({
+                bindto: '#timeseries',
+                data: {
+                    json: timeseries_dict,
+                    keys: {
+                        x: 'hours',
+                        xFormat: '%Y-%m-%d %H:%M:%S',
+                        value: ['checkins']
+                    }
+                },
+
+                axis: {
+                    x: {
+                        type: 'timeseries',
+                        tick: {
+                            format: 'Day %d, %Hh'
+                        }
+                    }
+                }
+            });
+            c3.generate({
+                bindto: '#attrition_rate',
+                data: {
+                    json: data['attrition_rate'],
+                    type: 'gauge',
+                },
+                color: {
+                  pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'],
+                  threshold: {
+                    values: [30, 60, 90, 100]
+                  }
+                },
+            });
+            $('#update_date').html(data['update_time']);
+            $('#checkin_count').html(data['checkin_count']);
+        });
+
+    </script>
+{% endblock %}
