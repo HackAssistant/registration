@@ -266,10 +266,12 @@ class ReviewApplicationView(ApplicationDetailView):
         :return: pending aplication that has not been voted by the current
         user and that has less votes and its older
         """
+        max_votes_to_app = getattr(settings, 'MAX_VOTES_TO_APP', 50)
         return models.Application.objects \
-            .exclude(vote__user_id=self.request.user.id) \
+            .exclude(vote__user_id=self.request.user.id, user_id=self.request.user.id) \
             .filter(status=APP_PENDING) \
             .annotate(count=Count('vote__calculated_vote')) \
+            .filter(count__lte=max_votes_to_app) \
             .order_by('count', 'submission_date') \
             .first()
 
