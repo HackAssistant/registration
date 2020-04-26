@@ -207,7 +207,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         elif request.POST.get('confirm_blacklist') and request.user.has_blacklist_acces:
             add_comment(application, request.user,
                         "Blacklist review result: Hacker is not allowed to participate in hackathon. " +
-                            "Motive of ban: " + motive_of_ban)
+                        "Motive of ban: " + motive_of_ban)
             application.confirm_blacklist(request.user, motive_of_ban)
 
         return HttpResponseRedirect(reverse('app_detail', kwargs={'id': application.uuid_str}))
