@@ -20,7 +20,8 @@ from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter, VolunteerListTable
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter, VolunteerListTable, \
+    MentorListTable, MentorFilter, SponsorListTable, SponsorFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin
 
@@ -49,7 +50,9 @@ def organizer_tabs(user):
          ('Review', reverse('review'),
           'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
          ('Ranking', reverse('ranking'), False),
-         ('Volunteers', reverse('volunteer_list'), False)
+         ('Volunteers', reverse('volunteer_list'), False),
+         ('Mentors', reverse('mentor_list'), False),
+         ('Sponsor', reverse('sponsor_list'), False),
          ]
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
@@ -351,10 +354,8 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
         return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
 
 
-class VolunteerApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class _OtherApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
-    table_class = VolunteerListTable
-    filterset_class = VolunteerFilter
     table_pagination = {'per_page': 100}
     exclude_columns = ('detail', 'status')
     export_name = 'applications'
@@ -362,8 +363,29 @@ class VolunteerApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
 
+
+class VolunteerApplicationsListView(_OtherApplicationsListView):
+    table_class = VolunteerListTable
+    filterset_class = VolunteerFilter
+
     def get_queryset(self):
         return models.VolunteerApplication.objects.all()
+
+
+class SponsorApplicationsListView(_OtherApplicationsListView):
+    table_class = SponsorListTable
+    filterset_class = SponsorFilter
+
+    def get_queryset(self):
+        return models.SponsorApplication.objects.all()
+
+
+class MentorApplicationsListView(_OtherApplicationsListView):
+    table_class = MentorListTable
+    filterset_class = MentorFilter
+
+    def get_queryset(self):
+        return models.MentorApplication.objects.all()
 
 
 class ReviewVolunteerApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
@@ -396,6 +418,64 @@ class ReviewVolunteerApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateVi
 
     def get_context_data(self, **kwargs):
         context = super(ReviewVolunteerApplicationView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        return context
+
+
+class ReviewSponsorApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+    template_name = 'other_application_detail.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.SponsorApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
+        return application
+
+    def get_back_url(self):
+        return reverse('sponsor_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewSponsorApplicationView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        return context
+
+
+class ReviewMentorApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+    template_name = 'other_application_detail.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.MentorApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
+        return application
+
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        application = models.MentorApplication.objects.get(pk=id_)
+        if request.POST.get('invite') and request.user.check_is_organizer:
+            application.invite(request.user)
+            application.save()
+        elif request.POST.get('noinvite') and request.user.check_is_organizer:
+            application.reject(request)
+            application.save()
+
+        return HttpResponseRedirect(reverse('mentor_detail', kwargs={'id': application.uuid_str}))
+
+    def get_back_url(self):
+        return reverse('mentor_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewMentorApplicationView, self).get_context_data(**kwargs)
         application = self.get_application(kwargs)
         context['app'] = application
         return context
