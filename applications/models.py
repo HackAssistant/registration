@@ -158,6 +158,13 @@ class BaseApplication(models.Model):
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
+    def __str__(self):
+        return self.user.email
+
+    @property
+    def uuid_str(self):
+        return str(self.uuid)
+
     def get_soft_status_display(self):
         text = self.get_status_display()
         if DUBIOUS_TEXT in text:
@@ -225,6 +232,54 @@ class BaseApplication(models.Model):
         self.status_update_date = timezone.now()
         self.save()
 
+    def reject(self, request):
+        if self.status == APP_ATTENDED:
+            raise ValidationError('Application has already attended. '
+                                  'Current status: %s' % self.status)
+        self.status = APP_REJECTED
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def invite(self, user):
+        # We can re-invite someone invited
+        if self.status in [APP_CONFIRMED, APP_ATTENDED]:
+            raise ValidationError('Application has already answered invite. '
+                                  'Current status: %s' % self.status)
+        self.status = APP_INVITED
+        if not self.invited_by:
+            self.invited_by = user
+        self.last_invite = timezone.now()
+        self.last_reminder = None
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def confirm(self):
+        if self.status == APP_CANCELLED:
+            raise ValidationError('This invite has been cancelled.')
+        elif self.status == APP_EXPIRED:
+            raise ValidationError('Unfortunately your invite has expired.')
+        elif self.status in [APP_INVITED, APP_LAST_REMIDER]:
+            self.status = APP_CONFIRMED
+            self.status_update_date = timezone.now()
+            self.save()
+        elif self.status in [APP_CONFIRMED, APP_ATTENDED]:
+            return None
+        else:
+            raise ValidationError('Unfortunately his application hasn\'t been '
+                                  'invited [yet]')
+
+    def cancel(self):
+        if not self.can_be_cancelled():
+            raise ValidationError('Application can\'t be cancelled. Current '
+                                  'status: %s' % self.status)
+        if self.status != APP_CANCELLED:
+            self.status = APP_CANCELLED
+            self.status_update_date = timezone.now()
+            self.save()
+            reimb = getattr(self.user, 'reimbursement', None)
+            if reimb:
+                reimb.delete()
+
 
 class _HackerMentorVolunteerApplication(models.Model):
 
@@ -251,9 +306,6 @@ class _HackerMentorApplication(models.Model):
     class Meta:
         abstract = True
 
-    # Explain a little bit what projects have you done lately
-    projects = models.TextField(max_length=500, blank=True, null=True)
-
     # URLs
     github = models.URLField(blank=True, null=True)
     devpost = models.URLField(blank=True, null=True)
@@ -270,6 +322,7 @@ class _VolunteerMentorApplication(models.Model):
         abstract = True
 
     english_level = models.IntegerField(default=0, null=False, choices=ENGLISH_LEVEL)
+    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True, blank=True)
 
 
 class _VolunteerMentorSponsorApplication(models.Model):
@@ -278,15 +331,6 @@ class _VolunteerMentorSponsorApplication(models.Model):
         abstract = True
 
     attendance = MultiSelectField(choices=ATTENDANCE)
-    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True)
-
-
-class _MentorSponsorApplication(models.Model):
-
-    class Meta:
-        abstract = True
-
-    company = models.CharField(max_length=100, null=False)
 
 
 class HackerApplication(
@@ -294,6 +338,9 @@ class HackerApplication(
     _HackerMentorVolunteerApplication,
     _HackerMentorApplication
 ):
+    # Explain a little bit what projects have you done lately
+    projects = models.TextField(max_length=500, blank=True, null=True)
+
     # META
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
@@ -310,26 +357,6 @@ class HackerApplication(
     def annotate_vote(cls, qs):
         return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
 
-    @property
-    def uuid_str(self):
-        return str(self.uuid)
-
-    def __str__(self):
-        return self.user.email
-
-    def invite(self, user):
-        # We can re-invite someone invited
-        if self.status in [APP_CONFIRMED, APP_ATTENDED]:
-            raise ValidationError('Application has already answered invite. '
-                                  'Current status: %s' % self.status)
-        self.status = APP_INVITED
-        if not self.invited_by:
-            self.invited_by = user
-        self.last_invite = timezone.now()
-        self.last_reminder = None
-        self.status_update_date = timezone.now()
-        self.save()
-
     def last_reminder(self):
         if self.status != APP_INVITED:
             raise ValidationError('Reminder can\'t be sent to non-pending '
@@ -343,46 +370,11 @@ class HackerApplication(
         self.status = APP_EXPIRED
         self.save()
 
-    def reject(self, request):
-        if self.status == APP_ATTENDED:
-            raise ValidationError('Application has already attended. '
-                                  'Current status: %s' % self.status)
-        self.status = APP_REJECTED
-        self.status_update_date = timezone.now()
-        self.save()
-
-    def confirm(self):
-        if self.status == APP_CANCELLED:
-            raise ValidationError('This invite has been cancelled.')
-        elif self.status == APP_EXPIRED:
-            raise ValidationError('Unfortunately your invite has expired.')
-        elif self.status in [APP_INVITED, APP_LAST_REMIDER]:
-            self.status = APP_CONFIRMED
-            self.status_update_date = timezone.now()
-            self.save()
-        elif self.status in [APP_CONFIRMED, APP_ATTENDED]:
-            return None
-        else:
-            raise ValidationError('Unfortunately his application hasn\'t been '
-                                  'invited [yet]')
-
     def invalidate(self):
         if self.status != APP_DUBIOUS:
             raise ValidationError('Applications can only be marked as invalid if they are dubious first')
         self.status = APP_INVALID
         self.save()
-
-    def cancel(self):
-        if not self.can_be_cancelled():
-            raise ValidationError('Application can\'t be cancelled. Current '
-                                  'status: %s' % self.status)
-        if self.status != APP_CANCELLED:
-            self.status = APP_CANCELLED
-            self.status_update_date = timezone.now()
-            self.save()
-            reimb = getattr(self.user, 'reimbursement', None)
-            if reimb:
-                reimb.delete()
 
     def set_dubious(self):
         self.status = APP_DUBIOUS
@@ -407,17 +399,20 @@ class HackerApplication(
 
 class MentorApplication(
     BaseApplication,
-    _MentorSponsorApplication,
     _HackerMentorApplication,
     _HackerMentorVolunteerApplication,
     _VolunteerMentorApplication,
     _VolunteerMentorSponsorApplication
 ):
+    company = models.CharField(max_length=100, null=True, blank=True)
     why_mentor = models.CharField(max_length=500, null=False)
     first_time_mentor = models.BooleanField(null=False)
     fluent = models.CharField(max_length=150, null=False)
     experience = models.CharField(max_length=300, null=False)
-    study_work = models.CharField(max_length=300, null=False)
+    study_work = models.BooleanField(max_length=300, null=False)
+    university = models.CharField(max_length=300, null=True, blank=True)
+    degree = models.CharField(max_length=300, null=True, blank=True)
+    participated = models.TextField(max_length=500, blank=True, null=True)
 
 
 class VolunteerApplication(
@@ -437,9 +432,12 @@ class VolunteerApplication(
 class SponsorApplication(
     BaseApplication,
     _VolunteerMentorSponsorApplication,
-    _MentorSponsorApplication
 ):
     position = models.CharField(max_length=50, null=False)
+    company = models.CharField(max_length=100, null=False)
+
+    def confirm(self):
+        self.status = APP_CONFIRMED
 
 
 class DraftApplication(models.Model):

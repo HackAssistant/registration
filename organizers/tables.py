@@ -4,7 +4,7 @@ from django import forms
 from django.conf import settings
 from django.db.models import Q
 
-from applications.models import HackerApplication, STATUS
+from applications.models import HackerApplication, STATUS, VolunteerApplication, MentorApplication, SponsorApplication
 from user.models import User
 
 
@@ -121,3 +121,63 @@ class AdminTeamListTable(tables.Table):
         fields = ['selected', 'team', 'vote_avg', 'members']
         empty_text = 'No pending teams'
         order_by = '-vote_avg'
+
+
+class VolunteerFilter(ApplicationFilter):
+    class Meta:
+        model = VolunteerApplication
+        fields = ['search', 'status']
+
+
+class VolunteerListTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'volunteer_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
+
+    class Meta:
+        model = VolunteerApplication
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.name', 'user.email', 'status']
+        empty_text = 'No Volunteer Application available'
+        order_by = '-submission_date'
+
+
+class MentorFilter(ApplicationFilter):
+    class Meta:
+        model = MentorApplication
+        fields = ['search', 'status']
+
+
+class MentorListTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'mentor_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
+
+    class Meta:
+        model = MentorApplication
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.name', 'user.email', 'status']
+        empty_text = 'No Mentor Application available'
+        order_by = '-submission_date'
+
+
+class SponsorFilter(ApplicationFilter):
+    class Meta:
+        model = SponsorApplication
+        fields = ['search', 'status']
+
+
+class SponsorListTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'sponsor_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
+
+    class Meta:
+        model = SponsorApplication
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.name', 'user.email', 'status']
+        empty_text = 'No Sponsor Application available'
+        order_by = '-submission_date'

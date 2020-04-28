@@ -261,6 +261,17 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         choices=models.PREVIOUS_HACKS
     )
 
+    def clean(self):
+        data = self.cleaned_data['which_hack']
+        volunteer = self.cleaned_data['first_time_volunteer']
+        if volunteer and not data:
+            self.add_error('which_hack', "Choose the hackathons you volunteered")
+
+        return super(VolunteerApplicationForm, self).clean()
+
+    def volunteer(self):
+        return True
+
     def clean_reimb_amount(self):
         data = self.cleaned_data['reimb_amount']
         reimb = self.cleaned_data.get('reimb', False)
@@ -386,16 +397,35 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                          'other_gender', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'under_age',
                          'lennyface'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'attendance',
-                                          'english_level', 'fluent', 'experience')}),
+            ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'which_hack',
+                                          'participated', 'attendance', 'english_level', 'fluent', 'experience')}),
             ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume')}),
+             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume',)}),
         ]
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
         return super(MentorApplicationForm, self).fieldsets
+
+    def clean(self):
+        data = self.cleaned_data['which_hack']
+        mentor = self.cleaned_data['first_time_mentor']
+        if mentor and not data:
+            self.add_error('which_hack', "Choose the hackathons you mentored")
+        study = self.cleaned_data['study_work']
+        if study:
+            if not self.cleaned_data['university']:
+                self.add_error('university', 'Type your university, please')
+            if not self.cleaned_data['degree']:
+                self.add_error('degree', 'Type your degree, please')
+            if not self.cleaned_data['graduation_year']:
+                self.add_error('graduation_year', 'Choose your graduation year, please')
+        else:
+            if not self.cleaned_data['company']:
+                self.add_error('company', 'Type your company, please')
+
+        return super(MentorApplicationForm, self).clean()
 
     class Meta(_BaseApplicationForm.Meta):
         model = models.MentorApplication
@@ -416,14 +446,13 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
-            'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
-                        '(we love links) Show us your passion! :D',
+            'participated': 'You can talk about about past hackathons or any other events. ',
             'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any'),
         }
 
         widgets = {
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
-            'projects': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
+            'participated': forms.Textarea(attrs={'rows': 3, 'cols': 40}),
             'graduation_year': forms.RadioSelect(),
             'english_level': forms.RadioSelect(),
             'fluent': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
@@ -440,11 +469,52 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
-            'projects': 'What projects have you worked on?',
+            'participated': 'Have you participated as mentor in other hackathons or tech events?',
             'resume': 'Upload your resume',
-            'which_hack': 'Why do you want to participate as mentor?',
+            'why_mentor': 'Why do you want to participate as mentor?',
+            'which_hack': 'Which editions have you mentored?',
             'attendance': 'Will you be attending HackUPC for the whole event?',
             'english_level': 'How much confident are you about talking in English?',
             'fluent': 'What program languages are you fluent on?',
             'experience': 'Which program languages have you experience on?'
+        }
+
+
+class SponsorForm(_BaseApplicationForm):
+
+    def fieldsets(self):
+        self._fieldsets = [
+            ('Personal Info',
+             {'fields': ('gender', 'other_gender', 'under_age', 'phone_number', 'tshirt_size', 'diet', 'other_diet'),
+              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
+            ('Sponsor Info',
+             {'fields': ('company', 'position', 'attendance')})
+        ]
+        # Fields that we only need the first time the hacker fills the application
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not self.instance.pk:
+            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+        return super(SponsorForm, self).fieldsets
+
+    def save(self, commit=True):
+        application = super(SponsorForm, self).save(commit=False)
+        application.confirm()
+        if commit:
+            application.save()
+        return application
+
+    class Meta(_BaseApplicationForm.Meta):
+        model = models.SponsorApplication
+        help_texts = {
+            'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
+            'gender': 'This is for demographic purposes.',
+        }
+        labels = {
+            'gender': 'What gender do you identify as?',
+            'other_gender': 'Self-describe',
+            'tshirt_size': 'What\'s your t-shirt size?',
+            'diet': 'Dietary requirements',
+            'attendance': 'What availability will you have during the event?',
+            'company': 'On behalf of which company are you coming?',
+            'position': 'What is your job position?',
         }

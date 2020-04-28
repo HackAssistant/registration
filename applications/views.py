@@ -26,19 +26,22 @@ VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
     userModels.USR_VOLUNTEER: models.VolunteerApplication,
     userModels.USR_MENTOR: models.MentorApplication,
+    userModels.USR_SPONSOR: models.SponsorApplication,
 }
 
 VIEW_APPLICATION_FORM_TYPE = {
     userModels.USR_HACKER: forms.HackerApplicationForm,
     userModels.USR_VOLUNTEER: forms.VolunteerApplicationForm,
     userModels.USR_MENTOR: forms.MentorApplicationForm,
+    userModels.USR_SPONSOR: forms.SponsorForm,
 }
 
 
 def check_application_exists(user, uuid):
     try:
-        application = models.HackerApplication.objects.get(user=user)
-    except models.HackerApplication.DoesNotExist:
+        application = VIEW_APPLICATION_TYPE.get(user.type, models.HackerApplication).objects.get(user=user)
+    except models.HackerApplication.DoesNotExist or models.VolunteerApplication.DoesNotExist or \
+           models.SponsorApplication.DoesNotExist or models.MentorApplication.DoesNotExist:
         raise Http404
     if not application or uuid != application.uuid_str:
         raise Http404

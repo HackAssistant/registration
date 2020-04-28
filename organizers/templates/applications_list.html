@@ -1,14 +1,30 @@
 {% extends "base_table.html" %}
 {% load django_tables2 %}
 {% block head_title %}All application{% endblock %}
+{% block extra_head %}
+  <script>
+    function copy_mails() {
+      var copyText = document.getElementById('copy');
+      copyText.style.display = 'block';
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+      document.execCommand("copy");
+      copyText.style.display = 'none';
+    }
+  </script>
+{% endblock %}
 
 {% block table_footer %}
-    {% if user.is_director %}
+    {% if not otherApplication and user.is_director %}
         <div class="panel-footer">
             <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Export
                 CSV</a>
             <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Send hacker invites</a>
         </div>
-
+    {% elif otherApplication %}
+      <div class="panel-footer">
+        <input style="display: none" id='copy' type="text" value={{ emails }}/>
+        <a onclick="copy_mails()" class="btn-block btn btn-info">Copy mails</a>
+      </div>
     {% endif %}
 {% endblock %}

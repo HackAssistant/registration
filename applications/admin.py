@@ -43,12 +43,11 @@ class ApplicationAdmin(admin.ModelAdmin):
         return models.HackerApplication.annotate_vote(qs)
 
 
-class VolunteerApplicationAdmin(admin.ModelAdmin):
+class OtherApplicationAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'status', 'status_last_updated', 'diet')
-    list_filter = ('status', 'first_timer', 'graduation_year',
-                   'university', 'origin', 'under_age', 'diet')
+    list_filter = ('status', 'under_age', 'diet')
     list_per_page = 200
-    search_fields = ('user__name', 'user__email', 'description',)
+    search_fields = ('user__name', 'user__email',)
     ordering = ('submission_date',)
     date_hierarchy = 'submission_date'
 
@@ -56,7 +55,7 @@ class VolunteerApplicationAdmin(admin.ModelAdmin):
         return obj.user.get_full_name() + ' (' + obj.user.email + ')'
 
     name.admin_order_field = 'user__name'  # Allows column order sorting
-    name.short_description = 'Volunteer info'  # Renames column head
+    name.short_description = 'User info'  # Renames column head
 
     def status_last_updated(self, app):
         if not app.status_update_date:
@@ -64,10 +63,6 @@ class VolunteerApplicationAdmin(admin.ModelAdmin):
         return timesince(app.status_update_date)
 
     status_last_updated.admin_order_field = 'status_update_date'
-
-    def get_queryset(self, request):
-        qs = super(VolunteerApplicationAdmin, self).get_queryset(request)
-        return models.VolunteerApplication.objects.all()
 
 
 class MentorApplicationAdmin(admin.ModelAdmin):
@@ -106,13 +101,11 @@ class DraftApplicationAdmin(admin.ModelAdmin):
     def name(self, obj):
         return obj.user.get_full_name() + ' (' + obj.user.email + ')'
 
-    def get_queryset(self, request):
-        qs = super(DraftApplicationAdmin, self).get_queryset(request)
-        return models.DraftApplication.objects.all()
-
 
 admin.site.register(models.HackerApplication, admin_class=ApplicationAdmin)
-admin.site.register(models.VolunteerApplication, admin_class=VolunteerApplicationAdmin)
+admin.site.register(models.VolunteerApplication, admin_class=OtherApplicationAdmin)
+admin.site.register(models.MentorApplication, admin_class=OtherApplicationAdmin)
+admin.site.register(models.SponsorApplication, admin_class=OtherApplicationAdmin)
 admin.site.register(models.DraftApplication, admin_class=DraftApplicationAdmin)
 admin.site.register(models.MentorApplication, admin_class=MentorApplicationAdmin)
 admin.site.site_header = '%s Admin' % settings.HACKATHON_NAME
