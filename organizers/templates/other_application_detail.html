@@ -80,7 +80,9 @@
                     {% include 'include/field.html' with desc='Position' value=app.position %}
                     {% include 'include/field.html' with desc='Fisrt hack?' value=app.first_timer|yesno %}
                     {% include 'include/field.html' with desc='Experienced mentor?' value=app.first_time_mentor|yesno %}
-                    {% include 'include/field.html' with desc='Which hackathons' value=app.which_hack %}
+                    {% if app.first_time_mentor %}
+                      {% include 'include/field.html' with desc='Which hackathons' value=app.which_hack %}
+                    {% endif %}
                     {% include 'include/field.html' with desc='Other events' value=app.participated %}
                     {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
                     {% include 'include/field.html' with desc='Motivation' value=app.why_mentor %}
