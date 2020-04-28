@@ -431,13 +431,6 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         model = models.MentorApplication
         extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
 
-        exclude = (
-            'which_hack',
-            'submission_date',
-            'status',
-            'user',
-        )
-
         help_texts = {
             'gender': 'This is for demographic purposes.',
             'graduation_year': 'What year have you graduated on or when will '
