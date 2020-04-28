@@ -356,6 +356,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
 
 
 class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
+
     first_time_mentor = forms.TypedChoiceField(
         required=True,
         label='Have you mentored at %s before?' % settings.HACKATHON_NAME,
@@ -429,6 +430,13 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
     class Meta(_BaseApplicationForm.Meta):
         model = models.MentorApplication
         extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
+
+        exclude = (
+            'which_hack',
+            'submission_date',
+            'status',
+            'user',
+        )
 
         help_texts = {
             'gender': 'This is for demographic purposes.',
