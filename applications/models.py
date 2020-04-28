@@ -306,9 +306,6 @@ class _HackerMentorApplication(models.Model):
     class Meta:
         abstract = True
 
-    # Explain a little bit what projects have you done lately
-    projects = models.TextField(max_length=500, blank=True, null=True)
-
     # URLs
     github = models.URLField(blank=True, null=True)
     devpost = models.URLField(blank=True, null=True)
@@ -341,6 +338,9 @@ class HackerApplication(
     _HackerMentorVolunteerApplication,
     _HackerMentorApplication
 ):
+    # Explain a little bit what projects have you done lately
+    projects = models.TextField(max_length=500, blank=True, null=True)
+
     # META
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
@@ -412,6 +412,7 @@ class MentorApplication(
     study_work = models.BooleanField(max_length=300, null=False)
     university = models.CharField(max_length=300, null=True, blank=True)
     degree = models.CharField(max_length=300, null=True, blank=True)
+    participated = models.TextField(max_length=500, blank=True, null=True)
 
 
 class VolunteerApplication(
