@@ -325,7 +325,7 @@ class _VolunteerMentorApplication(models.Model):
         abstract = True
 
     english_level = models.IntegerField(default=0, null=False, choices=ENGLISH_LEVEL)
-    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True)
+    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True, blank=True)
 
 
 class _VolunteerMentorSponsorApplication(models.Model):
@@ -334,14 +334,6 @@ class _VolunteerMentorSponsorApplication(models.Model):
         abstract = True
 
     attendance = MultiSelectField(choices=ATTENDANCE)
-
-
-class _MentorSponsorApplication(models.Model):
-
-    class Meta:
-        abstract = True
-
-    company = models.CharField(max_length=100, null=False)
 
 
 class HackerApplication(
@@ -407,17 +399,19 @@ class HackerApplication(
 
 class MentorApplication(
     BaseApplication,
-    _MentorSponsorApplication,
     _HackerMentorApplication,
     _HackerMentorVolunteerApplication,
     _VolunteerMentorApplication,
     _VolunteerMentorSponsorApplication
 ):
+    company = models.CharField(max_length=100, null=True, blank=True)
     why_mentor = models.CharField(max_length=500, null=False)
     first_time_mentor = models.BooleanField(null=False)
     fluent = models.CharField(max_length=150, null=False)
     experience = models.CharField(max_length=300, null=False)
-    study_work = models.CharField(max_length=300, null=False)
+    study_work = models.BooleanField(max_length=300, null=False)
+    university = models.CharField(max_length=300, null=True, blank=True)
+    degree = models.CharField(max_length=300, null=True, blank=True)
 
 
 class VolunteerApplication(
@@ -437,9 +431,9 @@ class VolunteerApplication(
 class SponsorApplication(
     BaseApplication,
     _VolunteerMentorSponsorApplication,
-    _MentorSponsorApplication
 ):
     position = models.CharField(max_length=50, null=False)
+    company = models.CharField(max_length=100, null=False)
 
     def confirm(self):
         self.status = APP_CONFIRMED

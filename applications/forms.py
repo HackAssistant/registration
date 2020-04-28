@@ -388,7 +388,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'which_hack', 'attendance',
                                           'english_level', 'fluent', 'experience')}),
             ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume')}),
+             {'fields': ('projects', 'github', 'devpost', 'linkedin', 'site', 'resume',)}),
         ]
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance

@@ -23,7 +23,7 @@
                 {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                 {% include 'include/field.html' with desc='Email' value=app.user.email %}
                 {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
-                {% if app.user.is_volunteer or app.user.is_mentor %}
+                {% if app.user.is_volunteer %}
                     <hr>
                     <dt>
                     <h3>Academic</h3>
@@ -33,8 +33,6 @@
                     {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
                     {% include 'include/field.html' with desc='Degree' value=app.degree %}
                     {% include 'include/field.html' with desc='English Level' value=app.english_level %}
-                {% endif %}
-                {% if app.user.is_volunteer %}
                     <hr>
                     <dt>
                     <h3>Volunteer Info</h3>
@@ -56,6 +54,47 @@
                     {% include 'include/field.html' with desc='Lennyface' value=app.lennyface %}
                     {% include 'include/field.html' with desc='Favorite movie' value=app.fav_movie %}
                     {% include 'include/field.html' with desc='Cool skill' value=app.cool_skill %}
+
+                {% endif %}
+                {% if app.user.is_sponsor %}
+                    <hr>
+                    <dt>
+                    <h3>Sponsor</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
+                    {% include 'include/field.html' with desc='Company' value=app.company %}
+                    {% include 'include/field.html' with desc='Position' value=app.position %}
+                {% endif %}
+                {% if app.user.is_mentor %}
+                    <hr>
+                    <dt>
+                    <h3>Mentor</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='Study?' value=app.study_work|yesno %}
+                    {% include 'include/field.html' with desc='University' value=app.university %}
+                    {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
+                    {% include 'include/field.html' with desc='Degree' value=app.degree %}
+                    {% include 'include/field.html' with desc='Company' value=app.company %}
+                    {% include 'include/field.html' with desc='Position' value=app.position %}
+                    {% include 'include/field.html' with desc='Fisrt hack?' value=app.first_timer|yesno %}
+                    {% include 'include/field.html' with desc='Experienced mentor?' value=app.first_time_mentor|yesno %}
+                    {% include 'include/field.html' with desc='Which hackathons' value=app.which_hack %}
+                    {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
+                    {% include 'include/field.html' with desc='Motivation' value=app.why_mentor %}
+                    <hr>
+                    <dt>
+                    <h3>Experience</h3>
+                    </dt>
+                    <dd></dd>
+                    {% include 'include/field.html' with desc='Fluent languages' value=app.fluent %}
+                    {% include 'include/field.html' with desc='Experienced languages' value=app.experience %}
+                    {% include 'include/field.html' with desc='Projects' value=app.projects %}
+                    {% include 'include/field.html' with desc='English Level' value=app.english_level %}
+                    {% if app.resume %}
+                      {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
+                    {% endif %}
 
                 {% endif %}
             </dl>
@@ -92,7 +131,9 @@
             <form action="" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                {% if not app.is_invited %}
                 <button name="invite" class="btn btn-success btn-block" value="invite">Invite</button>
+                {% endif %}
                 <button name="noinvite" class="btn btn-danger btn-block" value="noinvite">Don't invite</button>
             </form>
         </div>

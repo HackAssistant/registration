@@ -92,6 +92,11 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
     def get_queryset(self):
         return models.HackerApplication.annotate_vote(models.HackerApplication.objects.all())
 
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationsListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = False
+        return context
+
 
 class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
     template_name = 'invite_list.html'
@@ -362,6 +367,15 @@ class _OtherApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, S
 
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(_OtherApplicationsListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        list_email = ""
+        for u in self.object_list.values('user__email'):
+            list_email += "%s, " % u['user__email']
+        context['emails'] = list_email
+        return context
 
 
 class VolunteerApplicationsListView(_OtherApplicationsListView):
