@@ -261,6 +261,14 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         choices=models.PREVIOUS_HACKS
     )
 
+    def clean(self):
+        data = self.cleaned_data['which_hack']
+        volunteer = self.cleaned_data['first_time_volunteer']
+        if volunteer and not data:
+            self.add_error('which_hack', "Choose the hackathons you volunteered")
+
+        return super(VolunteerApplicationForm, self).clean()
+
     def volunteer(self):
         return True
 
