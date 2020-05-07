@@ -102,6 +102,10 @@ class User(AbstractBaseUser):
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
+    can_review_volunteers = models.BooleanField(default=False)
+    can_review_mentors = models.BooleanField(default=False)
+    can_review_sponsors = models.BooleanField(default=False)
+
 
     objects = UserManager()
 
@@ -142,6 +146,18 @@ class User(AbstractBaseUser):
     @property
     def has_dubious_access(self):
         return self.can_review_dubious or self.is_director
+
+    @property
+    def has_volunteer_access(self):
+        return self.can_review_volunteers or self.is_director
+
+    @property
+    def has_mentor_access(self):
+        return self.can_review_mentors or self.is_director
+
+    @property
+    def has_sponsor_access(self):
+        return self.can_review_sponsors or self.is_director
 
     @property
     def check_is_organizer(self):

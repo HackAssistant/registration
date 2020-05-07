@@ -23,7 +23,8 @@ from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApp
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter, VolunteerListTable, \
     MentorListTable, MentorFilter, SponsorListTable, SponsorFilter
 from teams.models import Team
-from user.mixins import IsOrganizerMixin, IsDirectorMixin
+from user.mixins import IsOrganizerMixin, IsDirectorMixin, HaveDubiousPermissionMixin, HaveVolunteerPermissionMixin, \
+    HaveSponsorPermissionMixin, HaveMentorPermissionMixin
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -48,12 +49,14 @@ def add_comment(application, user, text):
 def organizer_tabs(user):
     t = [('Hackers', reverse('app_list'), False),
          ('Review', reverse('review'),
-          'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
-         ('Ranking', reverse('ranking'), False),
-         ('Volunteers', reverse('volunteer_list'), False),
-         ('Mentors', reverse('mentor_list'), False),
-         ('Sponsor', reverse('sponsor_list'), False),
-         ]
+          'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else '')]
+    if user.has_volunteer_access:
+        t.append(('Volunteers', reverse('volunteer_list'), False))
+    if user.has_mentor_access:
+        t.append(('Mentors', reverse('mentor_list'), False))
+    if user.has_sponsor_access:
+        t.append(('Sponsor', reverse('sponsor_list'), False))
+    t.append(('Ranking', reverse('ranking'), False))
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
@@ -344,7 +347,7 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return HttpResponseRedirect(reverse('invite_teams_list'))
 
 
-class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'dubious_list.html'
     table_class = DubiousListTable
     filterset_class = DubiousApplicationFilter
@@ -359,7 +362,7 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
         return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
 
 
-class _OtherApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
     table_pagination = {'per_page': 100}
     exclude_columns = ('detail', 'status')
@@ -378,7 +381,7 @@ class _OtherApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, S
         return context
 
 
-class VolunteerApplicationsListView(_OtherApplicationsListView):
+class VolunteerApplicationsListView(HaveVolunteerPermissionMixin, _OtherApplicationsListView):
     table_class = VolunteerListTable
     filterset_class = VolunteerFilter
 
@@ -386,7 +389,7 @@ class VolunteerApplicationsListView(_OtherApplicationsListView):
         return models.VolunteerApplication.objects.all()
 
 
-class SponsorApplicationsListView(_OtherApplicationsListView):
+class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplicationsListView):
     table_class = SponsorListTable
     filterset_class = SponsorFilter
 
@@ -394,7 +397,7 @@ class SponsorApplicationsListView(_OtherApplicationsListView):
         return models.SponsorApplication.objects.all()
 
 
-class MentorApplicationsListView(_OtherApplicationsListView):
+class MentorApplicationsListView(HaveMentorPermissionMixin, _OtherApplicationsListView):
     table_class = MentorListTable
     filterset_class = MentorFilter
 
@@ -402,7 +405,7 @@ class MentorApplicationsListView(_OtherApplicationsListView):
         return models.MentorApplication.objects.all()
 
 
-class ReviewVolunteerApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin, TemplateView):
     template_name = 'other_application_detail.html'
 
     def get_application(self, kwargs):
@@ -437,7 +440,7 @@ class ReviewVolunteerApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateVi
         return context
 
 
-class ReviewSponsorApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+class ReviewSponsorApplicationView(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
     template_name = 'other_application_detail.html'
 
     def get_application(self, kwargs):
@@ -460,7 +463,7 @@ class ReviewSponsorApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView
         return context
 
 
-class ReviewMentorApplicationView(TabsViewMixin, IsOrganizerMixin, TemplateView):
+class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, TemplateView):
     template_name = 'other_application_detail.html'
 
     def get_application(self, kwargs):

@@ -11,17 +11,21 @@ from app.views import TabsView
 from applications import models
 from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
-from user.mixins import IsVolunteerMixin, IsOrganizerMixin
+from user.mixins import IsVolunteerMixin, IsOrganizerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
+    HaveSponsorPermissionMixin
 from user.models import User
 
 
 def user_tabs(user):
     tab = [('Hackers', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False)]
     if user.is_organizer():
-        tab.extend([('Volunteer', reverse('check_in_volunteer_list'), False),
-                    ('Mentor', reverse('check_in_mentor_list'), False),
-                    ('Sponsor', reverse('check_in_sponsor_list'), False),
-                    ('Ranking', reverse('check_in_ranking'), False)])
+        if user.has_volunteer_access:
+            tab.append(('Volunteer', reverse('check_in_volunteer_list'), False))
+        if user.has_mentor_access:
+            tab.append(('Mentor', reverse('check_in_mentor_list'), False))
+        if user.has_sponsor_access:
+            tab.append(('Sponsor', reverse('check_in_sponsor_list'), False))
+        tab.append(('Ranking', reverse('check_in_ranking'), False))
     return tab
 
 
@@ -108,7 +112,7 @@ class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Temp
             checkin_count=Count('checkin__application')).exclude(checkin_count=0)
 
 
-class CheckinOtherUserList(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
+class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, TemplateView):
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
@@ -118,16 +122,16 @@ class CheckinOtherUserList(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Te
         return user_tabs(self.request.user)
 
 
-class CheckinVolunteerList(CheckinOtherUserList):
+class CheckinVolunteerList(HaveVolunteerPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
         return models.VolunteerApplication.objects.filter(status=models.APP_CONFIRMED)
 
 
-class CheckinMentorList(CheckinOtherUserList):
+class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
         return models.MentorApplication.objects.filter(status=models.APP_CONFIRMED)
 
 
-class CheckinSponsorList(CheckinOtherUserList):
+class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
         return models.SponsorApplication.objects.filter(status=models.APP_CONFIRMED)
