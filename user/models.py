@@ -164,6 +164,10 @@ class User(AbstractBaseUser):
         return self.check_is_volunteer_accepted
     is_volunteer_accepted.boolean = True
 
+    def have_application(self):
+        return self.application is not None
+    have_application.boolean = True
+
     def is_volunteer(self):
         return self.type == USR_VOLUNTEER
 

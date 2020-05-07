@@ -16,12 +16,12 @@ from user.models import User
 
 
 def user_tabs(user):
-    tab = [('Hackers', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False),
-           ('Ranking', reverse('check_in_ranking'), False)]
+    tab = [('Hackers', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False)]
     if user.is_organizer():
         tab.extend([('Volunteer', reverse('check_in_volunteer_list'), False),
                     ('Mentor', reverse('check_in_mentor_list'), False),
-                    ('Sponsor', reverse('check_in_sponsor_list'), False)])
+                    ('Sponsor', reverse('check_in_sponsor_list'), False),
+                    ('Ranking', reverse('check_in_ranking'), False)])
     return tab
 
 

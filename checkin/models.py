@@ -54,8 +54,9 @@ class CheckIn(models.Model):
             raise ValueError
 
     def delete(self, using=None, keep_parents=False):
-        self.application.status = APP_CONFIRMED
-        self.application.save()
+        app = self.application
+        app.status = APP_CONFIRMED
+        app.save()
         super(CheckIn, self).delete(using, keep_parents)
 
     def type(self):

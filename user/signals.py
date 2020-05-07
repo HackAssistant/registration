@@ -37,7 +37,7 @@ def user_verify_email(sender, instance, created, *args, **kwargs):
 @receiver(pre_save, sender=User)
 def change_type(sender, instance, *args, **kwargs):
     old_user = sender.objects.get(pk=instance.id)
-    if old_user and old_user.type != instance.type:
+    if old_user and old_user.application and old_user.type != instance.type:
         if old_user.is_volunteer():
             instance.volunteerapplication_application.delete()
         if old_user.is_mentor():
