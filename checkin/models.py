@@ -9,16 +9,36 @@ from user.models import User
 
 
 class CheckIn(models.Model):
-    application = models.OneToOneField('applications.HackerApplication')
+    hacker = models.OneToOneField('applications.HackerApplication', null=True)
+    mentor = models.OneToOneField('applications.MentorApplication', null=True)
+    volunteer = models.OneToOneField('applications.VolunteerApplication', null=True)
+    sponsor = models.OneToOneField('applications.SponsorApplication', null=True)
     user = models.ForeignKey(User)
     update_time = models.DateTimeField()
 
+    def application(self):
+        if self.hacker:
+            return self.hacker
+        if self.mentor:
+            return self.mentor
+        if self.volunteer:
+            return self.volunteer
+        if self.sponsor:
+            return self.sponsor
+        return 0
+
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        self.update_time = datetime.now()
-        super(CheckIn, self).save(force_insert, force_update, using,
-                                  update_fields)
-        self.application.status = APP_ATTENDED
+        if (self.hacker and self.sponsor is None and self.volunteer is None and self.mentor is None) or \
+           (self.hacker is None and self.sponsor and self.volunteer is None and self.mentor is None) or \
+           (self.hacker is None and self.sponsor is None and self.volunteer and self.mentor is None) or \
+           (self.hacker is None and self.sponsor is None and self.volunteer is None and self.mentor):
+            self.update_time = datetime.now()
+            super(CheckIn, self).save(force_insert, force_update, using,
+                                      update_fields)
+            self.application.status = APP_ATTENDED
+        else:
+            raise ValueError
 
     def delete(self, using=None, keep_parents=False):
         self.application.status = APP_CONFIRMED
