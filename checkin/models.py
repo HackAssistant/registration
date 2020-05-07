@@ -16,6 +16,7 @@ class CheckIn(models.Model):
     user = models.ForeignKey(User)
     update_time = models.DateTimeField()
 
+    @property
     def application(self):
         if self.hacker:
             return self.hacker
@@ -25,7 +26,19 @@ class CheckIn(models.Model):
             return self.volunteer
         if self.sponsor:
             return self.sponsor
-        return 0
+        return None
+
+    def set_application(self, app):
+        if app.user.is_hacker():
+            self.hacker = app
+        elif app.user.is_volunteer():
+            self.volunteer = app
+        elif app.user.is_mentor():
+            self.mentor = app
+        elif app.user.is_sponsor():
+            self.sponsor = app
+        else:
+            raise ValueError
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

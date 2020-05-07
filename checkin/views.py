@@ -68,7 +68,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         app.check_in()
         ci = CheckIn()
         ci.user = request.user
-        ci.application = app
+        ci.set_application(app)
         ci.save()
         messages.success(self.request, 'Hacker checked-in! Good job! '
                                        'Nothing else to see here, '
