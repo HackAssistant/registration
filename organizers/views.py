@@ -23,7 +23,7 @@ from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApp
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, BlacklistListTable, \
     BlacklistApplicationFilter
 from teams.models import Team
-from user.mixins import IsOrganizerMixin, IsDirectorMixin
+from user.mixins import IsOrganizerMixin, IsDirectorMixin, IsBlacklistAdminMixin
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -370,7 +370,7 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
         return models.Application.objects.filter(status=APP_DUBIOUS)
 
 
-class BlacklistApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class BlacklistApplicationsListView(TabsViewMixin, IsBlacklistAdminMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'blacklist_list.html'
     table_class = BlacklistListTable
     filterset_class = BlacklistApplicationFilter
