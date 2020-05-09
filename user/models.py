@@ -208,4 +208,4 @@ class User(AbstractBaseUser):
             if self.type == USR_SPONSOR:
                 return self.sponsorapplication_application
         except:
-            pass
+            return None

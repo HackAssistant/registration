@@ -109,7 +109,7 @@ class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Temp
 
     def get_queryset(self):
         return User.objects.annotate(
-            checkin_count=Count('checkin__application')).exclude(checkin_count=0)
+            checkin_count=Count('checkin')).exclude(checkin_count=0)
 
 
 class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, TemplateView):
