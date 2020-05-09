@@ -483,8 +483,10 @@ class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, Temp
             application.invite(request.user)
             application.save()
         elif request.POST.get('noinvite') and request.user.check_is_organizer:
-            application.reject(request)
+            application.reject()
             application.save()
+        elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
+            application.move_to_pending()
 
         return HttpResponseRedirect(reverse('mentor_detail', kwargs={'id': application.uuid_str}))
 

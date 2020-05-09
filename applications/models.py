@@ -232,7 +232,12 @@ class BaseApplication(models.Model):
         self.status_update_date = timezone.now()
         self.save()
 
-    def reject(self, request):
+    def move_to_pending(self):
+        self.status = APP_PENDING
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def reject(self):
         if self.status == APP_ATTENDED:
             raise ValidationError('Application has already attended. '
                                   'Current status: %s' % self.status)
