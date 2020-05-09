@@ -39,6 +39,18 @@ class DubiousApplicationFilter(django_filters.FilterSet):
         fields = ['search', 'contacted']
 
 
+class BlacklistApplicationFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+                               Q(university__icontains=value) | Q(origin__icontains=value))
+
+    class Meta:
+        model = Application
+        fields = ['search']
+
+
 class InviteFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
@@ -79,6 +91,21 @@ class DubiousListTable(tables.Table):
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email', 'university', 'origin', 'contacted']
         empty_text = 'No dubious applications'
+        order_by = 'status_update_date'
+
+
+class BlacklistListTable(tables.Table):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
+    origin = tables.Column(accessor='origin', verbose_name='Origin')
+
+    class Meta:
+        model = Application
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['user.name', 'user.email', 'university', 'origin']
+        empty_text = 'No blacklisted applications'
         order_by = 'status_update_date'
 
 

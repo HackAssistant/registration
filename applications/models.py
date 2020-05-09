@@ -10,7 +10,7 @@ from django.db.models import Avg
 from django.utils import timezone
 
 from app import utils
-from user.models import User
+from user.models import User, BlacklistUser
 from applications.validators import validate_file_extension
 
 APP_PENDING = 'P'
@@ -23,9 +23,11 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 APP_DUBIOUS = 'D'
 APP_INVALID = 'IV'
+APP_BLACKLISTED = 'BL'
 
 PENDING_TEXT = 'Under review'
 DUBIOUS_TEXT = 'Dubious'
+BLACKLIST_TEXT = 'Blacklisted'
 STATUS = [
     (APP_PENDING, PENDING_TEXT),
     (APP_REJECTED, 'Wait listed'),
@@ -36,7 +38,8 @@ STATUS = [
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
     (APP_DUBIOUS, DUBIOUS_TEXT),
-    (APP_INVALID, 'Invalid')
+    (APP_INVALID, 'Invalid'),
+    (APP_BLACKLISTED, BLACKLIST_TEXT)
 ]
 
 NO_ANSWER = 'NA'
@@ -113,6 +116,9 @@ class Application(models.Model):
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
+    reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
+    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
+
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
     # When was the last status update
@@ -181,7 +187,7 @@ class Application(models.Model):
 
     def get_soft_status_display(self):
         text = self.get_status_display()
-        if DUBIOUS_TEXT in text:
+        if DUBIOUS_TEXT or BLACKLIST_TEXT in text:
             return PENDING_TEXT
         return text
 
@@ -247,6 +253,18 @@ class Application(models.Model):
         self.status = APP_INVALID
         self.save()
 
+    def confirm_blacklist(self, user, motive_of_ban):
+        if self.status != APP_BLACKLISTED:
+            raise ValidationError('Applications can only be confirmed as blacklisted if they are blacklisted first')
+        self.status = APP_INVALID
+        self.set_blacklisted_by(user)
+        blacklist_user = BlacklistUser.objects.filter(email=self.user.email).first()
+        if not blacklist_user:
+            blacklist_user = BlacklistUser.objects.create_blacklist_user(
+                self.user, motive_of_ban)
+        blacklist_user.save()
+        self.save()
+
     def cancel(self):
         if not self.can_be_cancelled():
             raise ValidationError('Application can\'t be cancelled. Current '
@@ -280,6 +298,20 @@ class Application(models.Model):
             self.contacted = True
             self.contacted_by = user
             self.save()
+
+    def set_blacklist(self):
+        self.status = APP_BLACKLISTED
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def unset_blacklist(self):
+        self.status = APP_PENDING
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def set_blacklisted_by(self, user):
+        if not self.blacklisted_by:
+            self.blacklisted_by = user
 
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
@@ -319,6 +351,9 @@ class Application(models.Model):
 
     def is_dubious(self):
         return self.status == APP_DUBIOUS
+
+    def is_blacklisted(self):
+        return self.status == APP_BLACKLISTED
 
     def can_be_cancelled(self):
         return self.status == APP_CONFIRMED or self.status == APP_INVITED or self.status == APP_LAST_REMIDER

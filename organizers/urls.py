@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^all/$', views.ApplicationsListView.as_view(), name="app_list"),
     url(r'^all/invite/$', views.InviteListView.as_view(), name="invite_list"),
     url(r'^all/invite/teams/$', views.InviteTeamListView.as_view(), name="invite_teams_list"),
-    url(r'^dubious/$', views.DubiousApplicationsListView.as_view(), name="dubious")
+    url(r'^dubious/$', views.DubiousApplicationsListView.as_view(), name="dubious"),
+    url(r'^blacklist/$', views.BlacklistApplicationsListView.as_view(), name="blacklist"),
 ]
