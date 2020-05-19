@@ -46,20 +46,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_sposor(self, email, name, password=None):
-        if not email:
-            raise ValueError('Users must have a email')
-
-        user = self.model(
-            email=email,
-            name=name,
-            sponsor_password_changed=False
-        )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
     def create_mlhuser(self, email, name, mlh_id):
         if not email:
             raise ValueError('Users must have a email')
@@ -117,7 +103,6 @@ class User(AbstractBaseUser):
     can_review_volunteers = models.BooleanField(default=False)
     can_review_mentors = models.BooleanField(default=False)
     can_review_sponsors = models.BooleanField(default=False)
-    sponsor_password_changed = models.BooleanField(default=True)
 
     objects = UserManager()
 
@@ -204,9 +189,6 @@ class User(AbstractBaseUser):
 
     def is_sponsor(self):
         return self.type == USR_SPONSOR
-
-    def is_sponsor_unchanged(self):
-        return self.is_sponsor() and not self.sponsor_password_changed
 
     def is_hacker(self):
         return self.type == USR_HACKER

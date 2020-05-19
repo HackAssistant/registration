@@ -60,21 +60,6 @@ class RegisterForm(LoginForm):
         return self.cleaned_data
 
 
-class RegisterSponsorForm(RegisterForm):
-    token = forms.CharField(label='Registration code', max_length=50)
-    field_order = ['name', 'email', 'password', 'password2', 'token']
-
-    def clean_token(self):
-        token = self.cleaned_data.get("token")
-        sponsor_token = getattr(settings, 'SPONSOR_TOKEN', '')
-        if token != sponsor_token:
-            raise forms.ValidationError("Invalid registration code")
-        return token
-
-    def clean(self):
-        return self.cleaned_data
-
-
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=254)
 
