@@ -24,12 +24,10 @@ USR_TYPE = [
     (USR_ORGANIZER, USR_ORGANIZER_NAME),
 ]
 
-USR_URL_SPONSOR = USR_SPONSOR_NAME.lower()
 USR_URL_TYPE = {
     USR_HACKER_NAME.lower(): USR_HACKER,
     USR_VOLUNTEER_NAME.lower(): USR_VOLUNTEER,
-    USR_MENTOR_NAME.lower(): USR_MENTOR,
-    USR_URL_SPONSOR: USR_SPONSOR
+    USR_MENTOR_NAME.lower(): USR_MENTOR
 }
 
 
@@ -42,6 +40,20 @@ class UserManager(BaseUserManager):
             email=email,
             name=name,
             type=USR_URL_TYPE[u_type]
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_sposor(self, email, name, password=None):
+        if not email:
+            raise ValueError('Users must have a email')
+
+        user = self.model(
+            email=email,
+            name=name,
+            sponsor_password_changed=False
         )
 
         user.set_password(password)
@@ -105,7 +117,7 @@ class User(AbstractBaseUser):
     can_review_volunteers = models.BooleanField(default=False)
     can_review_mentors = models.BooleanField(default=False)
     can_review_sponsors = models.BooleanField(default=False)
-
+    sponsor_password_changed = models.BooleanField(default=True)
 
     objects = UserManager()
 
@@ -193,6 +205,9 @@ class User(AbstractBaseUser):
     def is_sponsor(self):
         return self.type == USR_SPONSOR
 
+    def is_sponsor_unchanged(self):
+        return self.is_sponsor() and not self.sponsor_password_changed
+
     def is_hacker(self):
         return self.type == USR_HACKER
 
@@ -205,7 +220,5 @@ class User(AbstractBaseUser):
                 return self.volunteerapplication_application
             if self.type == USR_MENTOR:
                 return self.mentorapplication_application
-            if self.type == USR_SPONSOR:
-                return self.sponsorapplication_application
         except:
             return None
