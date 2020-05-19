@@ -181,3 +181,24 @@ class SponsorListTable(tables.Table):
         fields = ['user.name', 'user.email', 'status']
         empty_text = 'No Sponsor Application available'
         order_by = '-submission_date'
+
+
+class SponsorUserFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(email__icontains=value) | Q(name__icontains=value))
+
+    class Meta:
+        model = User
+        fields = ['search']
+
+
+class SponsorUserListTable(tables.Table):
+
+    class Meta:
+        model = SponsorApplication
+        attrs = {'class': 'table table-hover'}
+        template = 'django_tables2/bootstrap-responsive.html'
+        fields = ['name', 'email', 'max_applications']
+        empty_text = 'No Sponsor available'

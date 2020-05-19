@@ -10,5 +10,6 @@ urlpatterns = [
         name='cancel_app'),
     url(r'^dashboard/$', views.HackerDashboard.as_view(), name='dashboard'),
     url(r'^application/$', views.HackerApplication.as_view(), name='application'),
-    url(r'^application/draft/$', views.save_draft, name='save_draft')
+    url(r'^application/draft/$', views.save_draft, name='save_draft'),
+    url(r'^sponsor/$', views.SponsorApplicationView.as_view(), name='sponsor_app'),
 ]

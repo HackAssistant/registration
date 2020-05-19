@@ -26,14 +26,12 @@ VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
     userModels.USR_VOLUNTEER: models.VolunteerApplication,
     userModels.USR_MENTOR: models.MentorApplication,
-    userModels.USR_SPONSOR: models.SponsorApplication,
 }
 
 VIEW_APPLICATION_FORM_TYPE = {
     userModels.USR_HACKER: forms.HackerApplicationForm,
     userModels.USR_VOLUNTEER: forms.VolunteerApplicationForm,
     userModels.USR_MENTOR: forms.MentorApplicationForm,
-    userModels.USR_SPONSOR: forms.SponsorForm,
 }
 
 
@@ -213,6 +211,33 @@ class HackerApplication(IsHackerMixin, TabsView):
             messages.success(request, 'Application changes saved successfully!')
 
             return HttpResponseRedirect(reverse('application'))
+        else:
+            c = self.get_context_data()
+            c.update({'form': form})
+            return render(request, self.template_name, c)
+
+
+class SponsorApplicationView(IsHackerMixin, TabsView):
+    template_name = 'dashboard.html'
+
+    def get_current_tabs(self):
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super(SponsorApplicationView, self).get_context_data(**kwargs)
+        form = forms.SponsorForm()
+        context.update({'form': form})
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = forms.SponsorForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+            messages.success(request, 'We have now received your application. ')
+            return HttpResponseRedirect(reverse('root'))
         else:
             c = self.get_context_data()
             c.update({'form': form})

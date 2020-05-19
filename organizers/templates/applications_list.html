@@ -16,15 +16,19 @@
 
 {% block table_footer %}
     {% if not otherApplication and user.is_director %}
-        <div class="panel-footer">
+        <div>
             <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Export
                 CSV</a>
             <a href="{% url 'invite_list' %}" class="btn-block btn btn-default">Send hacker invites</a>
         </div>
-    {% elif otherApplication %}
-      <div class="panel-footer">
+    {% elif otherApplication and emailCopy %}
+      <div>
         <input style="display: none" id='copy' type="text" value={{ emails }}/>
         <a onclick="copy_mails()" class="btn-block btn btn-info">Copy mails</a>
+      </div>
+    {% elif createUser %}
+      <div>
+        <a class="btn-block btn btn-info" href={% url 'sponsor_signup' %}>Create new Sponsor</a>
       </div>
     {% endif %}
 {% endblock %}

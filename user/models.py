@@ -46,6 +46,21 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_sponsor(self, email, name, password=None, n_max=1):
+        if not email:
+            raise ValueError('Users must have a email')
+
+        user = self.model(
+            email=email,
+            name=name,
+            type=USR_SPONSOR,
+            max_applications=n_max
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
     def create_mlhuser(self, email, name, mlh_id):
         if not email:
             raise ValueError('Users must have a email')
@@ -103,6 +118,7 @@ class User(AbstractBaseUser):
     can_review_volunteers = models.BooleanField(default=False)
     can_review_mentors = models.BooleanField(default=False)
     can_review_sponsors = models.BooleanField(default=False)
+    max_applications = models.IntegerField(default=1)
 
     objects = UserManager()
 

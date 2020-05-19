@@ -21,10 +21,11 @@ from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter, VolunteerListTable, \
-    MentorListTable, MentorFilter, SponsorListTable, SponsorFilter
+    MentorListTable, MentorFilter, SponsorListTable, SponsorFilter, SponsorUserListTable, SponsorUserFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin, HaveDubiousPermissionMixin, HaveVolunteerPermissionMixin, \
     HaveSponsorPermissionMixin, HaveMentorPermissionMixin
+from user.models import User, USR_SPONSOR
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -374,6 +375,7 @@ class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, F
     def get_context_data(self, **kwargs):
         context = super(_OtherApplicationsListView, self).get_context_data(**kwargs)
         context['otherApplication'] = True
+        context['emailCopy'] = True
         list_email = ""
         for u in self.object_list.values('user__email'):
             list_email += "%s, " % u['user__email']
@@ -395,6 +397,28 @@ class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplications
 
     def get_queryset(self):
         return models.SponsorApplication.objects.all()
+
+
+class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'applications_list.html'
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('detail', 'status')
+    export_name = 'applications'
+    table_class = SponsorUserListTable
+    filterset_class = SponsorUserFilter
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(SponsorUserListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        context['emailCopy'] = False
+        context['createUser'] = True
+        return context
+
+    def get_queryset(self):
+        return User.objects.filter(type=USR_SPONSOR)
 
 
 class MentorApplicationsListView(HaveMentorPermissionMixin, _OtherApplicationsListView):

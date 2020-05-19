@@ -60,6 +60,18 @@ class RegisterForm(LoginForm):
         return self.cleaned_data
 
 
+class RegisterSponsorForm(forms.Form):
+    name = forms.CharField(label='Company name', max_length=225)
+    email = forms.EmailField(label='Email', max_length=100, help_text='Can be an invented email')
+    n_max = forms.IntegerField(label='Number of applications max that can create this sponsor')
+
+    def clean_n_max(self):
+        n_max = self.cleaned_data['n_max']
+        if n_max < 1:
+            forms.ValidationError("Set a positive number, please")
+        return n_max
+
+
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label="Email", max_length=254)
 

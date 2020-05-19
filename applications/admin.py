@@ -65,6 +65,10 @@ class OtherApplicationAdmin(admin.ModelAdmin):
     status_last_updated.admin_order_field = 'status_update_date'
 
 
+class SponsorApplicationAdmin(OtherApplicationAdmin):
+    list_filter = ('status', 'diet')
+
+
 class DraftApplicationAdmin(admin.ModelAdmin):
     list_display = ('user', 'name')
     list_per_page = 200
@@ -78,7 +82,7 @@ class DraftApplicationAdmin(admin.ModelAdmin):
 admin.site.register(models.HackerApplication, admin_class=ApplicationAdmin)
 admin.site.register(models.VolunteerApplication, admin_class=OtherApplicationAdmin)
 admin.site.register(models.MentorApplication, admin_class=OtherApplicationAdmin)
-admin.site.register(models.SponsorApplication, admin_class=OtherApplicationAdmin)
+admin.site.register(models.SponsorApplication, admin_class=SponsorApplicationAdmin)
 admin.site.register(models.DraftApplication, admin_class=DraftApplicationAdmin)
 admin.site.site_header = '%s Admin' % settings.HACKATHON_NAME
 admin.site.site_title = '%s Admin' % settings.HACKATHON_NAME

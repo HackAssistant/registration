@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^sponsor/(?P<id>[\w-]+)$', views.ReviewSponsorApplicationView.as_view(), name="sponsor_detail"),
     url(r'^mentor/all/$', views.MentorApplicationsListView.as_view(), name="mentor_list"),
     url(r'^mentor/(?P<id>[\w-]+)$', views.ReviewMentorApplicationView.as_view(), name="mentor_detail"),
+    url(r'^user/sponsor/all/$', views.SponsorUserListView.as_view(), name="sponsor_user_list"),
 ]

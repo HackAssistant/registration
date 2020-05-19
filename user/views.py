@@ -1,3 +1,6 @@
+import random
+import string
+
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -6,11 +9,13 @@ from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views.generic import TemplateView
 
 from app.utils import reverse
 from applications import models as a_models
 from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
+from user.mixins import HaveSponsorPermissionMixin
 from user.models import User
 from user.tokens import account_activation_token, password_reset_token
 
@@ -241,3 +246,27 @@ def callback(request, provider=None):
         })
         draft.save()
     return HttpResponseRedirect(reverse('root'))
+
+
+class SponsorRegister(HaveSponsorPermissionMixin, TemplateView):
+    template_name = 'signup.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(SponsorRegister, self).get_context_data(**kwargs)
+        form = forms.RegisterSponsorForm()
+        context.update({'form': form})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = forms.RegisterSponsorForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            name = form.cleaned_data['name']
+            n_max = form.cleaned_data['n_max']
+            password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+
+            if models.User.objects.filter(email=email).first() is not None:
+                messages.error(request, 'An account with this email already exists')
+            else:
+                models.User.objects.create_sponsor(email=email, password=password, name=name, n_max=n_max)
+                return HttpResponseRedirect(reverse('sponsor_user_list'))

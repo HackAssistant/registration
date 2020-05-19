@@ -435,14 +435,39 @@ class VolunteerApplication(
 
 
 class SponsorApplication(
-    BaseApplication,
     _VolunteerMentorSponsorApplication,
 ):
+    name = models.CharField(
+        verbose_name='Full name',
+        max_length=255,
+    )
+    # When was the application submitted
+    submission_date = models.DateTimeField(default=timezone.now)
+
+    # When was the last status update
+    status_update_date = models.DateTimeField(blank=True, null=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
+    # Application status
+    status = models.CharField(choices=STATUS,
+                              default=APP_PENDING,
+                              max_length=2)
+    phone_number = models.CharField(blank=True, null=True, max_length=16,
+                                    validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
+                                                               message="Phone number must be entered in the format: \
+                                                                          '+#########'. Up to 15 digits allowed.")])
+
+    # Info for swag and food
+    diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
+    other_diet = models.CharField(max_length=600, blank=True, null=True)
+    tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
     position = models.CharField(max_length=50, null=False)
-    company = models.CharField(max_length=100, null=False)
 
     def confirm(self):
         self.status = APP_CONFIRMED
+
+    def can_be_edit(self):
+        return True
 
 
 class DraftApplication(models.Model):
