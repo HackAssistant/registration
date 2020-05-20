@@ -73,9 +73,13 @@
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
                 {% endif %}
-                {% if h_leave %}
+                {% if h_leave_hacker %}
                     <h3>When to leave</h3>
-                    <p>{{ h_leave }}</p>
+                    {% if application.user.is_hacker %}
+                        <p>{{ h_leave_hacker }}</p>
+                    {% else %}
+                        <p>{{ h_leave_other }}</p>
+                    {% endif %}
                 {% endif %}
                 {% include 'include/cancel.html' %}
             </div>
@@ -87,21 +91,31 @@
                     confirm
                     your attendance as soon as possible.
                 </div>
-
-                <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
-                    please let us know by clicking "Cancel". We want as many people as possible to experience the
-                    hackathon!
-                    <b>This invite expires in
-                        {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
-                </p>
-
+                {% if application.user.is_hacker %}
+                    <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
+                        please let us know by clicking "Cancel". We want as many people as possible to experience the
+                        hackathon!
+                        <b>This invite expires in
+                            {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
+                    </p>
+                {% else %}
+                    <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
+                        please let us know by clicking "Cancel". Thank you so much for helping {{ h_name }}!
+                     <b>This invite expires in
+                            {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
+                    </p>
+                {% endif %}
                 {% if h_arrive %}
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
                 {% endif %}
-                {% if h_leave %}
+                {% if h_leave_hacker %}
                     <h3>When to leave</h3>
-                    <p>{{ h_leave }}</p>
+                    {% if application.user.is_hacker %}
+                        <p>{{ h_leave_hacker }}</p>
+                    {% else %}
+                        <p>{{ h_leave_other }}</p>
+                    {% endif %}
                 {% endif %}
 
                 <div class="col-md-5  no-padding"><a href="{% url 'confirm_app' application.uuid_str %}"
@@ -122,6 +136,7 @@
         {% else %}
             <div class="col-md-12">
                 {% include 'include/status.html' %}
+                <p>Thank you so much for applying at {{ h_name }}!</p>
                 <p> When decisions are released, you'll be able to see your results on this page.</p>
                 <p>If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}</p>
                  <div class="col-md-5 no-padding">

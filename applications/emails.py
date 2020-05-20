@@ -31,6 +31,7 @@ def create_confirmation_email(application, request):
 def create_lastreminder_email(application):
     c = {
         'name': application.user.get_full_name,
+        'type': application.user.get_type_display(),
         # We need to make sure to redirect HTTP to HTTPS in production
         'confirm_url': 'http://%s%s' % (settings.HACKATHON_DOMAIN,
                                         reverse('confirm_app', kwargs={'id': application.uuid_str})),

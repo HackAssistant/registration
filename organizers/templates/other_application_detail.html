@@ -138,12 +138,13 @@
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.pk }}"/>
                 {% if app.is_pending %}
-                <button name="invite" class="btn btn-success btn-block" value="invite">Invite</button>
-                <button name="noinvite" class="btn btn-danger btn-block" value="noinvite">Reject</button>
+                    <button name="invite" class="btn btn-success btn-block" value="invite">Invite</button>
+                {% elif app.is_expired %}
+                    <button name="invite" class="btn btn-success btn-block" value="invite">Invite again</button>
                 {% elif app.is_invited %}
-                <button name="cancel_invite" class="btn btn-danger btn-block" value="cancel_invite">Cancel invitation</button>
+                    <button name="cancel_invite" class="btn btn-danger btn-block" value="cancel_invite">Cancel invitation</button>
                 {% elif app.is_rejected %}
-                <button name="cancel_invite" class="btn btn-danger btn-block" value="cancel_invite">Move back to review</button>
+                    <button name="cancel_invite" class="btn btn-danger btn-block" value="cancel_invite">Move back to review</button>
                 {% endif %}
             </form>
         </div>

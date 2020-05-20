@@ -312,6 +312,19 @@ class BaseApplication(models.Model):
         d.save()
         return super().delete(using, keep_parents)
 
+    def last_reminder(self):
+        if self.status != APP_INVITED:
+            raise ValidationError('Reminder can\'t be sent to non-pending '
+                                  'applications')
+        self.status_update_date = timezone.now()
+        self.status = APP_LAST_REMIDER
+        self.save()
+
+    def expire(self):
+        self.status_update_date = timezone.now()
+        self.status = APP_EXPIRED
+        self.save()
+
 
 class _HackerMentorVolunteerApplication(models.Model):
 
@@ -388,19 +401,6 @@ class HackerApplication(
     @classmethod
     def annotate_vote(cls, qs):
         return qs.annotate(vote_avg=Avg('vote__calculated_vote'))
-
-    def last_reminder(self):
-        if self.status != APP_INVITED:
-            raise ValidationError('Reminder can\'t be sent to non-pending '
-                                  'applications')
-        self.status_update_date = timezone.now()
-        self.status = APP_LAST_REMIDER
-        self.save()
-
-    def expire(self):
-        self.status_update_date = timezone.now()
-        self.status = APP_EXPIRED
-        self.save()
 
     def invalidate(self):
         if self.status != APP_DUBIOUS:
