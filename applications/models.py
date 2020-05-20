@@ -447,10 +447,10 @@ class SponsorApplication(
     # When was the last status update
     status_update_date = models.DateTimeField(blank=True, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
+    user = models.ForeignKey(User, related_name='%(class)s_application')
     # Application status
     status = models.CharField(choices=STATUS,
-                              default=APP_PENDING,
+                              default=APP_CONFIRMED,
                               max_length=2)
     phone_number = models.CharField(blank=True, null=True, max_length=16,
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
@@ -463,11 +463,15 @@ class SponsorApplication(
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
     position = models.CharField(max_length=50, null=False)
 
-    def confirm(self):
-        self.status = APP_CONFIRMED
+    def __str__(self):
+        return self.name + ' from ' + self.user.name
 
-    def can_be_edit(self):
-        return True
+    def save(self, **kwargs):
+        self.status_update_date = timezone.now()
+        super(SponsorApplication, self).save(**kwargs)
+
+    class META:
+        unique_together = [['name', 'user']]
 
 
 class DraftApplication(models.Model):

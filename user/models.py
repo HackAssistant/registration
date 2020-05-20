@@ -54,7 +54,8 @@ class UserManager(BaseUserManager):
             email=email,
             name=name,
             type=USR_SPONSOR,
-            max_applications=n_max
+            max_applications=n_max,
+            email_verified=True,
         )
 
         user.set_password(password)

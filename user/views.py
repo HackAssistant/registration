@@ -17,7 +17,6 @@ from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.mixins import HaveSponsorPermissionMixin
 from user.models import User
-from user.tokens import account_activation_token, password_reset_token
 
 
 def login(request):
@@ -102,7 +101,7 @@ def activate(request, uid, token):
         messages.warning(request, "This user no longer exists. Please sign up again!")
         return redirect('root')
 
-    if account_activation_token.check_token(user, token):
+    if tokens.account_activation_token.check_token(user, token):
         messages.success(request, "Email verified!")
 
         user.email_verified = True
@@ -144,7 +143,7 @@ def password_reset_confirm(request, uid, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         return TemplateResponse(request, 'password_reset_confirm.html', {'validlink': False})
 
-    if password_reset_token.check_token(user, token):
+    if tokens.password_reset_token.check_token(user, token):
         if request.method == 'POST':
             form = SetPasswordForm(request.POST)
             if form.is_valid():
@@ -264,9 +263,11 @@ class SponsorRegister(HaveSponsorPermissionMixin, TemplateView):
             name = form.cleaned_data['name']
             n_max = form.cleaned_data['n_max']
             password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-
             if models.User.objects.filter(email=email).first() is not None:
                 messages.error(request, 'An account with this email already exists')
             else:
-                models.User.objects.create_sponsor(email=email, password=password, name=name, n_max=n_max)
+                user = models.User.objects.create_sponsor(email=email, password=password, name=name, n_max=n_max)
+                msg = tokens.generate_sponsor_link_email(user, request)
+                msg.send()
+                messages.success(request, "Sponsor link email successfully sent")
                 return HttpResponseRedirect(reverse('sponsor_user_list'))

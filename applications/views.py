@@ -9,8 +9,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from django.views import View
 
 from app import slack
@@ -19,8 +21,7 @@ from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
 from user.mixins import IsHackerMixin, is_hacker
-from user import models as userModels
-
+from user import models as userModels, tokens
 
 VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
@@ -230,18 +231,39 @@ class SponsorApplicationView(IsHackerMixin, TabsView):
 
         return context
 
+    def get(self, request, *args, **kwargs):
+        try:
+            uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
+            user = userModels.User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
+            raise Http404('Invalid url')
+
+        token = self.kwargs.get('token', None)
+        if not tokens.password_reset_token.check_token(user, token) and user.is_sponsor():
+            raise Http404('Invalid url')
+        return super(SponsorApplicationView, self).get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         form = forms.SponsorForm(request.POST, request.FILES)
-        if form.is_valid():
-            application = form.save(commit=False)
-            application.user = request.user
-            application.save()
-            messages.success(request, 'We have now received your application. ')
-            return HttpResponseRedirect(reverse('root'))
-        else:
-            c = self.get_context_data()
-            c.update({'form': form})
-            return render(request, self.template_name, c)
+        try:
+            uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
+            user = userModels.User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
+            return Http404('How did you get here?')
+        if form.is_valid() and user.is_sponsor():
+            name = form.cleaned_data['name']
+            app = models.SponsorApplication.objects.filter(user=user, name=name).first()
+            if app:
+                form.add_error('name', 'This name is already taken. Have you applied?')
+            else:
+                application = form.save(commit=False)
+                application.user = user
+                application.save()
+                messages.success(request, 'We have now received your application. ')
+                return render(request, 'sponsor_submited.html')
+        c = self.get_context_data() 
+        c.update({'form': form})
+        return render(request, self.template_name, c)
 
 
 @is_hacker

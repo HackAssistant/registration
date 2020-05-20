@@ -473,12 +473,43 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         }
 
 
-class SponsorForm(_BaseApplicationForm):
+class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+    phone_number = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': '+#########'}))
+    code_conduct = forms.BooleanField(required=False,
+                                      label='I have read and accept the '
+                                            '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
+                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
+                                                settings.HACKATHON_NAME), )
+
+    def clean_code_conduct(self):
+        cc = self.cleaned_data.get('code_conduct', False)
+        # Check that if it's the first submission hackers checks code of conduct checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError(
+                "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
+        return cc
+
+    def clean_other_diet(self):
+        data = self.cleaned_data['other_diet']
+        diet = self.cleaned_data['diet']
+        if diet == 'Others' and not data:
+            raise forms.ValidationError("Please tell us your specific dietary requirements")
+        return data
+
+    def clean_other_gender(self):
+        data = self.cleaned_data['other_gender']
+        gender = self.cleaned_data['gender']
+        if gender == models.GENDER_OTHER and not data:
+            raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
+        return data
 
     def fieldsets(self):
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('phone_number', 'tshirt_size', 'diet', 'other_diet', 'position', 'attendance'),
+             {'fields': ('name', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'position', 'attendance'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
         ]
         # Fields that we only need the first time the hacker fills the application
@@ -487,14 +518,7 @@ class SponsorForm(_BaseApplicationForm):
             self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
         return super(SponsorForm, self).fieldsets
 
-    def save(self, commit=True):
-        application = super(SponsorForm, self).save(commit=False)
-        application.confirm()
-        if commit:
-            application.save()
-        return application
-
-    class Meta(_BaseApplicationForm.Meta):
+    class Meta:
         model = models.SponsorApplication
         help_texts = {
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
@@ -505,3 +529,4 @@ class SponsorForm(_BaseApplicationForm):
             'attendance': 'What availability will you have during the event?',
             'position': 'What is your job position?',
         }
+        exclude = ['user', 'uuid', 'submission_date', 'status_update_date', 'status', ]
