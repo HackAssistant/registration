@@ -56,7 +56,8 @@ def organizer_tabs(user):
     if user.has_mentor_access:
         t.append(('Mentors', reverse('mentor_list'), False))
     if user.has_sponsor_access:
-        t.append(('Sponsor', reverse('sponsor_list'), False))
+        t.append(('Sponsor App', reverse('sponsor_list'), False))
+        t.append(('Sponsor Users', reverse('sponsor_user_list'), False))
     t.append(('Ranking', reverse('ranking'), False))
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
@@ -397,6 +398,12 @@ class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplications
 
     def get_queryset(self):
         return models.SponsorApplication.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(SponsorApplicationsListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        context['emailCopy'] = False
+        return context
 
 
 class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin, SingleTableMixin, FilterView):

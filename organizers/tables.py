@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from applications.models import HackerApplication, STATUS, VolunteerApplication, MentorApplication, SponsorApplication
-from user.models import User
+from user.models import User, USR_SPONSOR
 
 
 class ApplicationFilter(django_filters.FilterSet):
@@ -163,13 +163,20 @@ class MentorListTable(tables.Table):
         order_by = '-submission_date'
 
 
-class SponsorFilter(ApplicationFilter):
+class SponsorFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='search_filter', label='Search')
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+                               Q(name__icontains=value))
+
     class Meta:
         model = SponsorApplication
-        fields = ['search', 'status']
+        fields = ['search']
 
 
 class SponsorListTable(tables.Table):
+    company = tables.Column(verbose_name='Company', accessor='user.name')
     detail = tables.TemplateColumn(
         "<a href='{% url 'sponsor_detail' record.uuid %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
@@ -178,7 +185,7 @@ class SponsorListTable(tables.Table):
         model = SponsorApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'user.email', 'status']
+        fields = ['name', 'user.email', 'status']
         empty_text = 'No Sponsor Application available'
         order_by = '-submission_date'
 
