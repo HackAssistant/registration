@@ -137,7 +137,9 @@ class HackerDashboard(IsHackerMixin, TabsView):
         ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
         try:
             draft = models.DraftApplication.objects.get(user=self.request.user)
-            form = ApplicationForm(instance=Application(**draft.get_dict()))
+            dict = draft.get_dict()
+            app = Application({'dict': dict})
+            form = ApplicationForm(instance=app)
         except:
             form = ApplicationForm()
         context.update({'form': form})
@@ -268,6 +270,24 @@ class SponsorApplicationView(TemplateView):
         c = self.get_context_data()
         c.update({'form': form})
         return render(request, self.template_name, c)
+
+
+class ConvertHackerToMentor(TemplateView):
+    template_name = 'convert_mentor.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.application.is_invalid():
+            return super(ConvertHackerToMentor, self).get(request, *args, **kwargs)
+        return Http404
+
+    def post(self, request, *args, **kwargs):
+        if request.user.application.is_invalid():
+            request.user.set_mentor()
+            request.user.save()
+            messages.success(request, 'Thanks for coming as mentor!')
+        else:
+            messages.error(request, 'You have no permissions to do this')
+        return HttpResponseRedirect(reverse('dashboard'))
 
 
 @is_hacker

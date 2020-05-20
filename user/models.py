@@ -182,6 +182,7 @@ class User(AbstractBaseUser):
 
     def is_organizer(self):
         return self.check_is_organizer
+
     is_organizer.boolean = True
 
     @property
@@ -195,10 +196,12 @@ class User(AbstractBaseUser):
 
     def is_volunteer_accepted(self):
         return self.check_is_volunteer_accepted
+
     is_volunteer_accepted.boolean = True
 
     def have_application(self):
         return self.application is not None
+
     have_application.boolean = True
 
     def is_volunteer(self):
@@ -224,3 +227,6 @@ class User(AbstractBaseUser):
                 return self.mentorapplication_application
         except:
             return None
+
+    def set_mentor(self):
+        self.type = USR_MENTOR

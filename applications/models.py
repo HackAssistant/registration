@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
+from django.forms import model_to_dict
 from django.utils import timezone
 from multiselectfield import MultiSelectField
 
@@ -158,6 +159,18 @@ class BaseApplication(models.Model):
     other_diet = models.CharField(max_length=600, blank=True, null=True)
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            dict = args[0]['dict']
+        except:
+            dict = None
+        if dict is not None:
+            for key in dict:
+                atr = getattr(self, key, 'NOT_EXIST')
+                if atr != 'NOT_EXIST':
+                    setattr(self, key, dict[key])
+
     def __str__(self):
         return self.user.email
 
@@ -173,6 +186,10 @@ class BaseApplication(models.Model):
 
     def save(self, **kwargs):
         self.status_update_date = timezone.now()
+        try:
+            self.user.draftapplication.delete()
+        except DraftApplication.DoesNotExist:
+            pass
         super(BaseApplication, self).save(**kwargs)
 
     def is_confirmed(self):
@@ -284,6 +301,16 @@ class BaseApplication(models.Model):
             reimb = getattr(self.user, 'reimbursement', None)
             if reimb:
                 reimb.delete()
+
+    def delete(self, using=None, keep_parents=False):
+        dict = model_to_dict(self)
+        for key in ['user', 'invited_by', 'submission_date', 'status_update_date', 'status', 'resume']:
+            dict.pop(key)
+        d = DraftApplication()
+        d.user = self.user
+        d.save_dict(dict)
+        d.save()
+        return super().delete(using, keep_parents)
 
 
 class _HackerMentorVolunteerApplication(models.Model):

@@ -114,7 +114,10 @@
              <div class="col-md-12">
                 {% include 'include/status.html' %}
                 <p>Application has been marked as invalid. Please reach out to us at {{ h_contact_email|urlize }}
-                    if you think this is a mistake</p>
+                    if you think this is a mistake.
+                  We are sorry your application, if you want you can apply at {{ h_name }} as mentor.
+                </p>
+               <a class="btn btn-info btn-block" href={% url 'change_to_mentor' %}>Convert to mentor</a>
             </div>
         {% else %}
             <div class="col-md-12">
