@@ -10,7 +10,8 @@ from app.utils import reverse
 from app.views import TabsView
 from applications import models
 from checkin.models import CheckIn
-from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
+from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable, \
+    SponsorApplicationsCheckInTable, SponsorApplicationCheckinFilter
 from user.mixins import IsVolunteerMixin, IsOrganizerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
     HaveSponsorPermissionMixin
 from user.models import User
@@ -71,7 +72,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
         type = kwargs['type']
-        type = models.userModels.USR_URL_TYPE[type]
+        type = models.userModels.USR_URL_TYPE_CHECKIN[type]
         app = get_application_by_type(type, appid)
         if not app:
             raise Http404
@@ -133,5 +134,8 @@ class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
 
 
 class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
+    table_class = SponsorApplicationsCheckInTable
+    filterset_class = SponsorApplicationCheckinFilter
+
     def get_queryset(self):
         return models.SponsorApplication.objects.filter(status=models.APP_CONFIRMED)

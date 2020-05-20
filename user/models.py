@@ -30,6 +30,9 @@ USR_URL_TYPE = {
     USR_MENTOR_NAME.lower(): USR_MENTOR
 }
 
+USR_URL_TYPE_CHECKIN = USR_URL_TYPE
+USR_URL_TYPE_CHECKIN[USR_SPONSOR_NAME.lower()] = USR_SPONSOR
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None, u_type=None):

@@ -470,6 +470,11 @@ class SponsorApplication(
         self.status_update_date = timezone.now()
         super(SponsorApplication, self).save(**kwargs)
 
+    def check_in(self):
+        self.status = APP_ATTENDED
+        self.status_update_date = timezone.now()
+        self.save()
+
     class META:
         unique_together = [['name', 'user']]
 

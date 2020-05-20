@@ -16,13 +16,17 @@
                 <h3>Personal</h3>
                 </dt>
                 <dd></dd>
-                {% include 'include/field.html' with desc='Name' value=app.user.name %}
+                {% if app.user.is_sponsor %}
+                  {% include 'include/field.html' with desc='Name' value=app.name %}
+                {% else %}
+                  {% include 'include/field.html' with desc='Name' value=app.user.name %}
+                  {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
+                {% endif %}
                 {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
                 {% include 'include/field.html' with desc='Phone' value=app.phone_number %}
                 {% include 'include/field.html' with desc='Origin' value=app.origin %}
                 {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                 {% include 'include/field.html' with desc='Email' value=app.user.email %}
-                {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                 {% if app.user.is_volunteer %}
                     <hr>
                     <dt>
@@ -62,8 +66,8 @@
                     <h3>Sponsor</h3>
                     </dt>
                     <dd></dd>
+                    {% include 'include/field.html' with desc='Company' value=app.user.name %}
                     {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
-                    {% include 'include/field.html' with desc='Company' value=app.company %}
                     {% include 'include/field.html' with desc='Position' value=app.position %}
                 {% endif %}
                 {% if app.user.is_mentor %}
