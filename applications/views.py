@@ -14,6 +14,7 @@ from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
+from django.views.generic import TemplateView
 
 from app import slack
 from app.slack import SlackInvitationException
@@ -218,16 +219,19 @@ class HackerApplication(IsHackerMixin, TabsView):
             return render(request, self.template_name, c)
 
 
-class SponsorApplicationView(IsHackerMixin, TabsView):
+class SponsorApplicationView(TemplateView):
     template_name = 'dashboard.html'
-
-    def get_current_tabs(self):
-        return None
 
     def get_context_data(self, **kwargs):
         context = super(SponsorApplicationView, self).get_context_data(**kwargs)
         form = forms.SponsorForm()
         context.update({'form': form})
+        try:
+            uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
+            user = userModels.User.objects.get(pk=uid)
+            context.update({'user': user})
+        except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
+            pass
 
         return context
 
@@ -261,7 +265,7 @@ class SponsorApplicationView(IsHackerMixin, TabsView):
                 application.save()
                 messages.success(request, 'We have now received your application. ')
                 return render(request, 'sponsor_submited.html')
-        c = self.get_context_data() 
+        c = self.get_context_data()
         c.update({'form': form})
         return render(request, self.template_name, c)
 
