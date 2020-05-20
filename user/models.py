@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 from django.utils import timezone
-from applications import models as applicationModels
 
 USR_ORGANIZER = 'O'
 USR_VOLUNTEER = 'V'
@@ -189,8 +188,8 @@ class User(AbstractBaseUser):
     def check_is_volunteer_accepted(self):
         if self.type == USR_VOLUNTEER:
             try:
-                return self.volunteerapplication_application.status == applicationModels.APP_ATTENDED
-            except applicationModels.VolunteerApplication.DoesNotExist:
+                return self.volunteerapplication_application.is_attended()
+            except:
                 pass
         return False
 
