@@ -61,3 +61,12 @@
         padding-right: 10px;
     }
 }
+
+.active_tab {
+    background-color: white;
+}
+
+.active_tab > a {
+    background: none !important;
+    box-shadow: none !important;
+}

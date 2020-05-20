@@ -1,0 +1,19 @@
+{% extends 'base_tabs.html' %}
+
+{% load bootstrap3 %}
+{% block head_title %}Application{% endblock %}
+
+{% block panel %}
+
+  <div>
+  <h1 style="text-align: center">Please read this!</h1>
+  <p style="text-align: center">You can apply to come at {{ h_name }} as mentor. Be aware that if you choose to be a mentor,
+                    your hacker application will be <b>removed</b>. This action can't be reverted</p>
+  <form enctype="multipart/form-data" method="post" action="">
+    {% csrf_token %}
+    <button class="btn btn-success btn-block">I want to become mentor</button>
+    <a class="btn btn-danger btn-block" href={% url 'dashboard' %}>Go back</a>
+  </form>
+  </div>
+
+{% endblock %}

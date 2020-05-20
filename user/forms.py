@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.password_validation import validate_password, password_validators_help_texts
-from django.conf import settings
 
 from user.models import User
 from user import models
@@ -60,19 +59,16 @@ class RegisterForm(LoginForm):
         return self.cleaned_data
 
 
-class RegisterSponsorForm(RegisterForm):
-    token = forms.CharField(label='Registration code', max_length=50)
-    field_order = ['name', 'email', 'password', 'password2', 'token']
+class RegisterSponsorForm(forms.Form):
+    name = forms.CharField(label='Company name', max_length=225)
+    email = forms.EmailField(label='Email', max_length=100, help_text='Can be an invented email')
+    n_max = forms.IntegerField(label='Number of applications max that can create this sponsor')
 
-    def clean_token(self):
-        token = self.cleaned_data.get("token")
-        sponsor_token = getattr(settings, 'SPONSOR_TOKEN', '')
-        if token != sponsor_token:
-            raise forms.ValidationError("Invalid registration code")
-        return token
-
-    def clean(self):
-        return self.cleaned_data
+    def clean_n_max(self):
+        n_max = self.cleaned_data['n_max']
+        if n_max < 1:
+            forms.ValidationError("Set a positive number, please")
+        return n_max
 
 
 class PasswordResetForm(forms.Form):

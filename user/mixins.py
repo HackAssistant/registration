@@ -41,7 +41,7 @@ class IsVolunteerMixin(UserPassesTestMixin):
             return False
         return \
             self.request.user.is_authenticated and \
-            (self.request.user.check_is_volunteer or self.request.user.check_is_organizer)
+            (self.request.user.check_is_volunteer_accepted or self.request.user.check_is_organizer)
 
 
 class IsDirectorMixin(UserPassesTestMixin):
@@ -69,6 +69,66 @@ class IsHardwareAdminMixin(UserPassesTestMixin):
         if not self.request.user.has_usable_password():
             return False
         return self.request.user.is_hardware_admin or self.request.user.check_is_organizer
+
+
+class HaveDubiousPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.check_is_organizer:
+            return False
+        return self.request.user.has_dubious_access
+
+
+class HaveVolunteerPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.check_is_organizer:
+            return False
+        return self.request.user.has_volunteer_access
+
+
+class HaveMentorPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.check_is_organizer:
+            return False
+        return self.request.user.has_mentor_access
+
+
+class HaveSponsorPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.check_is_organizer:
+            return False
+        return self.request.user.has_sponsor_access
 
 
 def is_organizer(f, raise_exception=True):

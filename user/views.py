@@ -1,3 +1,6 @@
+import random
+import string
+
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -6,13 +9,14 @@ from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views.generic import TemplateView
 
 from app.utils import reverse
 from applications import models as a_models
 from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
+from user.mixins import HaveSponsorPermissionMixin
 from user.models import User
-from user.tokens import account_activation_token, password_reset_token
 
 
 def login(request):
@@ -51,11 +55,8 @@ def signup(request, u_type):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
-    form_by_user = {
-        models.USR_URL_SPONSOR: forms.RegisterSponsorForm,
-    }
     if request.method == 'POST':
-        form = form_by_user.get(u_type, forms.RegisterForm)(request.POST, type=u_type)
+        form = forms.RegisterForm(request.POST, type=u_type)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
@@ -64,12 +65,12 @@ def signup(request, u_type):
             if models.User.objects.filter(email=email).first() is not None:
                 messages.error(request, 'An account with this email already exists')
             else:
-                user = models.User.objects.create_user(email=email, password=password, name=name, u_type=u_type)
+                models.User.objects.create_user(email=email, password=password, name=name, u_type=u_type)
                 user = auth.authenticate(email=email, password=password)
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('root'))
     else:
-        form = form_by_user.get(u_type, forms.RegisterForm)()
+        form = forms.RegisterForm()
 
     return render(request, 'signup.html', {'form': form})
 
@@ -100,7 +101,7 @@ def activate(request, uid, token):
         messages.warning(request, "This user no longer exists. Please sign up again!")
         return redirect('root')
 
-    if account_activation_token.check_token(user, token):
+    if tokens.account_activation_token.check_token(user, token):
         messages.success(request, "Email verified!")
 
         user.email_verified = True
@@ -142,7 +143,7 @@ def password_reset_confirm(request, uid, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         return TemplateResponse(request, 'password_reset_confirm.html', {'validlink': False})
 
-    if password_reset_token.check_token(user, token):
+    if tokens.password_reset_token.check_token(user, token):
         if request.method == 'POST':
             form = SetPasswordForm(request.POST)
             if form.is_valid():
@@ -244,3 +245,29 @@ def callback(request, provider=None):
         })
         draft.save()
     return HttpResponseRedirect(reverse('root'))
+
+
+class SponsorRegister(HaveSponsorPermissionMixin, TemplateView):
+    template_name = 'signup.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(SponsorRegister, self).get_context_data(**kwargs)
+        form = forms.RegisterSponsorForm()
+        context.update({'form': form})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = forms.RegisterSponsorForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            name = form.cleaned_data['name']
+            n_max = form.cleaned_data['n_max']
+            password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+            if models.User.objects.filter(email=email).first() is not None:
+                messages.error(request, 'An account with this email already exists')
+            else:
+                user = models.User.objects.create_sponsor(email=email, password=password, name=name, n_max=n_max)
+                msg = tokens.generate_sponsor_link_email(user, request)
+                msg.send()
+                messages.success(request, "Sponsor link email successfully sent")
+                return HttpResponseRedirect(reverse('sponsor_user_list'))

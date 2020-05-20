@@ -20,9 +20,13 @@ from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
+    VolunteerListTable, MentorListTable, MentorFilter, SponsorListTable, SponsorFilter, SponsorUserListTable,\
+    SponsorUserFilter
 from teams.models import Team
-from user.mixins import IsOrganizerMixin, IsDirectorMixin
+from user.mixins import IsOrganizerMixin, IsDirectorMixin, HaveDubiousPermissionMixin, HaveVolunteerPermissionMixin, \
+    HaveSponsorPermissionMixin, HaveMentorPermissionMixin
+from user.models import User, USR_SPONSOR
 
 
 def add_vote(application, user, tech_rat, pers_rat):
@@ -38,18 +42,24 @@ def add_vote(application, user, tech_rat, pers_rat):
 def add_comment(application, user, text):
     comment = models.ApplicationComment()
     comment.author = user
-    comment.application = application
+    comment.set_application(application)
     comment.text = text
     comment.save()
     return comment
 
 
 def organizer_tabs(user):
-    t = [('Applications', reverse('app_list'), False),
+    t = [('Hackers', reverse('app_list'), False),
          ('Review', reverse('review'),
-          'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else ''),
-         ('Ranking', reverse('ranking'), False),
-         ]
+          'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else '')]
+    if user.has_volunteer_access:
+        t.append(('Volunteers', reverse('volunteer_list'), False))
+    if user.has_mentor_access:
+        t.append(('Mentors', reverse('mentor_list'), False))
+    if user.has_sponsor_access:
+        t.append(('Sponsor App', reverse('sponsor_list'), False))
+        t.append(('Sponsor Users', reverse('sponsor_user_list'), False))
+    t.append(('Ranking', reverse('ranking'), False))
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
@@ -87,6 +97,11 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
 
     def get_queryset(self):
         return models.HackerApplication.annotate_vote(models.HackerApplication.objects.all())
+
+    def get_context_data(self, **kwargs):
+        context = super(ApplicationsListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = False
+        return context
 
 
 class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterView):
@@ -136,7 +151,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         application = self.get_application(kwargs)
         context['app'] = application
         context['vote'] = self.can_vote()
-        context['comments'] = models.ApplicationComment.objects.filter(application=application)
+        context['comments'] = models.ApplicationComment.objects.filter(hacker=application)
         if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
             context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \
                 .values('user__name', 'user__email', 'user')
@@ -335,7 +350,8 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return HttpResponseRedirect(reverse('invite_teams_list'))
 
 
-class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
+class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, ExportMixin, SingleTableMixin,
+                                  FilterView):
     template_name = 'dubious_list.html'
     table_class = DubiousListTable
     filterset_class = DubiousApplicationFilter
@@ -348,3 +364,195 @@ class DubiousApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, 
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
+
+
+class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'applications_list.html'
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('detail', 'status')
+    export_name = 'applications'
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(_OtherApplicationsListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        context['emailCopy'] = True
+        list_email = ""
+        for u in self.object_list.values('user__email'):
+            list_email += "%s, " % u['user__email']
+        context['emails'] = list_email
+        return context
+
+
+class VolunteerApplicationsListView(HaveVolunteerPermissionMixin, _OtherApplicationsListView):
+    table_class = VolunteerListTable
+    filterset_class = VolunteerFilter
+
+    def get_queryset(self):
+        return models.VolunteerApplication.objects.all()
+
+
+class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplicationsListView):
+    table_class = SponsorListTable
+    filterset_class = SponsorFilter
+
+    def get_queryset(self):
+        return models.SponsorApplication.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(SponsorApplicationsListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        context['emailCopy'] = False
+        return context
+
+
+class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin, SingleTableMixin, FilterView):
+    template_name = 'applications_list.html'
+    table_pagination = {'per_page': 100}
+    exclude_columns = ('detail', 'status')
+    export_name = 'applications'
+    table_class = SponsorUserListTable
+    filterset_class = SponsorUserFilter
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(SponsorUserListView, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        context['emailCopy'] = False
+        context['createUser'] = True
+        return context
+
+    def get_queryset(self):
+        return User.objects.filter(type=USR_SPONSOR)
+
+
+class MentorApplicationsListView(HaveMentorPermissionMixin, _OtherApplicationsListView):
+    table_class = MentorListTable
+    filterset_class = MentorFilter
+
+    def get_queryset(self):
+        return models.MentorApplication.objects.all()
+
+
+class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin, TemplateView):
+    template_name = 'other_application_detail.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.VolunteerApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
+        return application
+
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        comment_text = request.POST.get('comment_text', None)
+        application = models.VolunteerApplication.objects.get(pk=id_)
+        if request.POST.get('invite') and request.user.check_is_organizer:
+            application.invite(request.user)
+            application.save()
+            m = emails.create_invite_email(application, self.request)
+            m.send()
+            messages.success(request, 'Volunteer invited!')
+        elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
+            application.move_to_pending()
+            messages.success(request, 'Volunteer invite canceled')
+        elif request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+            messages.success(request, 'Comment added')
+
+        return HttpResponseRedirect(reverse('volunteer_detail', kwargs={'id': application.uuid_str}))
+
+    def get_back_url(self):
+        return reverse('volunteer_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewVolunteerApplicationView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(volunteer=application)
+        return context
+
+
+class ReviewSponsorApplicationView(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
+    template_name = 'other_application_detail.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.SponsorApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
+        return application
+
+    def get_back_url(self):
+        return reverse('sponsor_list')
+
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        comment_text = request.POST.get('comment_text', None)
+        application = models.SponsorApplication.objects.get(pk=id_)
+        if request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+            messages.success(request, 'Comment added')
+
+        return HttpResponseRedirect(reverse('sponsor_detail', kwargs={'id': application.uuid_str}))
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewSponsorApplicationView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(sponsor=application)
+        return context
+
+
+class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, TemplateView):
+    template_name = 'other_application_detail.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.MentorApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+
+        return application
+
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        application = models.MentorApplication.objects.get(pk=id_)
+        comment_text = request.POST.get('comment_text', None)
+        if request.POST.get('invite') and request.user.check_is_organizer:
+            application.invite(request.user)
+            application.save()
+            m = emails.create_invite_email(application, self.request)
+            m.send()
+            messages.success(request, 'sponsor invited!')
+        elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
+            application.move_to_pending()
+            messages.success(request, 'Sponsor invite canceled')
+        elif request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+            messages.success(request, 'comment added')
+
+        return HttpResponseRedirect(reverse('mentor_detail', kwargs={'id': application.uuid_str}))
+
+    def get_back_url(self):
+        return reverse('mentor_list')
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewMentorApplicationView, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(mentor=application)
+        return context

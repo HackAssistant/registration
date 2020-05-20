@@ -23,13 +23,14 @@ USR_TYPE = [
     (USR_ORGANIZER, USR_ORGANIZER_NAME),
 ]
 
-USR_URL_SPONSOR = USR_SPONSOR_NAME.lower()
 USR_URL_TYPE = {
     USR_HACKER_NAME.lower(): USR_HACKER,
     USR_VOLUNTEER_NAME.lower(): USR_VOLUNTEER,
-    USR_MENTOR_NAME.lower(): USR_MENTOR,
-    USR_URL_SPONSOR: USR_SPONSOR
+    USR_MENTOR_NAME.lower(): USR_MENTOR
 }
+
+USR_URL_TYPE_CHECKIN = USR_URL_TYPE
+USR_URL_TYPE_CHECKIN[USR_SPONSOR_NAME.lower()] = USR_SPONSOR
 
 
 class UserManager(BaseUserManager):
@@ -41,6 +42,22 @@ class UserManager(BaseUserManager):
             email=email,
             name=name,
             type=USR_URL_TYPE[u_type]
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_sponsor(self, email, name, password=None, n_max=1):
+        if not email:
+            raise ValueError('Users must have a email')
+
+        user = self.model(
+            email=email,
+            name=name,
+            type=USR_SPONSOR,
+            max_applications=n_max,
+            email_verified=True,
         )
 
         user.set_password(password)
@@ -101,6 +118,10 @@ class User(AbstractBaseUser):
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
+    can_review_volunteers = models.BooleanField(default=False)
+    can_review_mentors = models.BooleanField(default=False)
+    can_review_sponsors = models.BooleanField(default=False)
+    max_applications = models.IntegerField(default=1)
 
     objects = UserManager()
 
@@ -143,9 +164,68 @@ class User(AbstractBaseUser):
         return self.can_review_dubious or self.is_director
 
     @property
+    def has_volunteer_access(self):
+        return self.can_review_volunteers or self.is_director
+
+    @property
+    def has_mentor_access(self):
+        return self.can_review_mentors or self.is_director
+
+    @property
+    def has_sponsor_access(self):
+        return self.can_review_sponsors or self.is_director
+
+    @property
     def check_is_organizer(self):
         return self.type == USR_ORGANIZER
 
+    def is_organizer(self):
+        return self.check_is_organizer
+
+    is_organizer.boolean = True
+
     @property
-    def check_is_volunteer(self):
+    def check_is_volunteer_accepted(self):
+        if self.type == USR_VOLUNTEER:
+            try:
+                return self.volunteerapplication_application.is_attended()
+            except:
+                pass
+        return False
+
+    def is_volunteer_accepted(self):
+        return self.check_is_volunteer_accepted
+
+    is_volunteer_accepted.boolean = True
+
+    def have_application(self):
+        return self.application is not None
+
+    have_application.boolean = True
+
+    def is_volunteer(self):
         return self.type == USR_VOLUNTEER
+
+    def is_mentor(self):
+        return self.type == USR_MENTOR
+
+    def is_sponsor(self):
+        return self.type == USR_SPONSOR
+
+    def is_hacker(self):
+        return self.type == USR_HACKER
+
+    @property
+    def application(self):
+        try:
+            if self.type == USR_HACKER:
+                return self.hackerapplication_application
+            if self.type == USR_VOLUNTEER:
+                return self.volunteerapplication_application
+            if self.type == USR_MENTOR:
+                return self.mentorapplication_application
+        except:
+            return None
+
+    def set_mentor(self):
+        self.type = USR_MENTOR
