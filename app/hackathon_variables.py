@@ -88,6 +88,10 @@ HARDWARE_REQUEST_TIME = 15
 # HACKERS_CAN_REQUEST = False
 
 # Enable dubious separate pipeline (disabled by default)
-DUBIOUS_ENABLED = True
+DUBIOUS_ENABLED = False
+
+
+# Enable blacklist separate pipeline (disabled by default)
+BLACKLIST_ENABLED = False
 
 SUPPORTED_RESUME_EXTENSIONS = []

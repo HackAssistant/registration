@@ -115,6 +115,7 @@ class User(AbstractBaseUser):
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     can_review_dubious = models.BooleanField(default=False)
+    can_review_blacklist = models.BooleanField(default=False)
     is_hardware_admin = models.BooleanField(default=False)
     created_time = models.DateTimeField(default=timezone.now)
     mlh_id = models.IntegerField(blank=True, null=True, unique=True)
@@ -162,6 +163,10 @@ class User(AbstractBaseUser):
     @property
     def has_dubious_access(self):
         return self.can_review_dubious or self.is_director
+
+    @property
+    def has_blacklist_acces(self):
+        return self.can_review_blacklist or self.is_director
 
     @property
     def has_volunteer_access(self):
@@ -229,3 +234,32 @@ class User(AbstractBaseUser):
 
     def set_mentor(self):
         self.type = USR_MENTOR
+
+
+class BlacklistUserManager(models.Manager):
+    def create_blacklist_user(self, user, motive_of_ban):
+        blacklist_user = self.create(
+            email=user.email,
+            name=user.name,
+            motive_of_ban=motive_of_ban,
+            date_of_ban=timezone.now()
+        )
+        return blacklist_user
+
+
+class BlacklistUser(models.Model):
+    email = models.EmailField(
+        verbose_name='email',
+        max_length=255,
+        unique=True,
+    )
+    name = models.CharField(
+        verbose_name='Full name',
+        max_length=255,
+    )
+
+    motive_of_ban = models.CharField(blank=True, max_length=300, null=True)
+
+    date_of_ban = models.DateTimeField()
+
+    objects = BlacklistUserManager()

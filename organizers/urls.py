@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^mentor/all/$', views.MentorApplicationsListView.as_view(), name="mentor_list"),
     url(r'^mentor/(?P<id>[\w-]+)$', views.ReviewMentorApplicationView.as_view(), name="mentor_detail"),
     url(r'^user/sponsor/all/$', views.SponsorUserListView.as_view(), name="sponsor_user_list"),
+    url(r'^blacklist/$', views.BlacklistApplicationsListView.as_view(), name="blacklist"),
 ]

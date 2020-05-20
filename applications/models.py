@@ -13,7 +13,7 @@ from multiselectfield import MultiSelectField
 
 from app import utils, hackathon_variables
 from app.hackathon_variables import HACKATHON_NAME
-from user.models import User
+from user.models import User, BlacklistUser
 from user import models as userModels
 from applications.validators import validate_file_extension
 
@@ -27,9 +27,11 @@ APP_ATTENDED = 'A'
 APP_EXPIRED = 'E'
 APP_DUBIOUS = 'D'
 APP_INVALID = 'IV'
+APP_BLACKLISTED = 'BL'
 
 PENDING_TEXT = 'Under review'
 DUBIOUS_TEXT = 'Dubious'
+BLACKLIST_TEXT = 'Blacklisted'
 STATUS = [
     (APP_PENDING, PENDING_TEXT),
     (APP_REJECTED, 'Wait listed'),
@@ -40,7 +42,8 @@ STATUS = [
     (APP_ATTENDED, 'Attended'),
     (APP_EXPIRED, 'Expired'),
     (APP_DUBIOUS, DUBIOUS_TEXT),
-    (APP_INVALID, 'Invalid')
+    (APP_INVALID, 'Invalid'),
+    (APP_BLACKLISTED, BLACKLIST_TEXT)
 ]
 
 NO_ANSWER = 'NA'
@@ -129,6 +132,9 @@ class BaseApplication(models.Model):
     user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
     invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True)
 
+    reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
+    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
+
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
 
@@ -179,7 +185,7 @@ class BaseApplication(models.Model):
 
     def get_soft_status_display(self):
         text = self.get_status_display()
-        if DUBIOUS_TEXT in text:
+        if DUBIOUS_TEXT or BLACKLIST_TEXT in text:
             return PENDING_TEXT
         return text
 
@@ -423,6 +429,35 @@ class HackerApplication(
             self.contacted = True
             self.contacted_by = user
             self.save()
+
+    def confirm_blacklist(self, user, motive_of_ban):
+        if self.status != APP_BLACKLISTED:
+            raise ValidationError('Applications can only be confirmed as blacklisted if they are blacklisted first')
+        self.status = APP_INVALID
+        self.set_blacklisted_by(user)
+        blacklist_user = BlacklistUser.objects.filter(email=self.user.email).first()
+        if not blacklist_user:
+            blacklist_user = BlacklistUser.objects.create_blacklist_user(
+                self.user, motive_of_ban)
+        blacklist_user.save()
+        self.save()
+
+    def set_blacklist(self):
+        self.status = APP_BLACKLISTED
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def unset_blacklist(self):
+        self.status = APP_PENDING
+        self.status_update_date = timezone.now()
+        self.save()
+
+    def set_blacklisted_by(self, user):
+        if not self.blacklisted_by:
+            self.blacklisted_by = user
+
+    def is_blacklisted(self):
+        return self.status == APP_BLACKLISTED
 
     def can_be_edit(self):
         return self.status == APP_PENDING and not self.vote_set.exists() and not utils.is_app_closed()

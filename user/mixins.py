@@ -131,6 +131,19 @@ class HaveSponsorPermissionMixin(UserPassesTestMixin):
         return self.request.user.has_sponsor_access
 
 
+class IsBlacklistAdminMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        return self.request.user.has_blacklist_acces or self.request.user.is_director
+
+
 def is_organizer(f, raise_exception=True):
     """
     Decorator for views that checks whether a user is an organizer or not

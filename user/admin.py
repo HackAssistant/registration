@@ -52,5 +52,14 @@ class UserAdmin(admin.ModelAdmin):
         return super(UserAdmin, self).get_fieldsets(request, obj)
 
 
+class BlacklistUserAdmin(admin.ModelAdmin):
+    list_display = ('email', 'name', 'date_of_ban')
+    list_per_page = 20
+    list_filter = ('email', 'name')
+    search_fields = ('email', 'name')
+    actions = ['delete_selected', ]
+
+
 admin.site.register(models.User, admin_class=UserAdmin)
+admin.site.register(models.BlacklistUser, admin_class=BlacklistUserAdmin)
 admin.site.unregister(Group)

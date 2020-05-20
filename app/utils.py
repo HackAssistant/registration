@@ -90,6 +90,7 @@ def get_substitutions_templates():
             'h_oauth_providers': getattr(settings, 'OAUTH_PROVIDERS', {}),
             'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
             'h_dubious_enabled': getattr(settings, 'DUBIOUS_ENABLED', False),
+            'h_blacklist_enabled': getattr(settings, 'BLACKLIST_ENABLED', True)
             }
 
 
