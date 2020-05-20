@@ -127,6 +127,26 @@
             {% endif %}
 
         </div>
+      <div class="col-md-4 margin-left">
+            <h3>Comments</h3>
+            <hr>
+            {% for comment in comments %}
+                <h4>{{ comment.text }}</h4>
+
+                <p style="color:gray;">by <span title="{{ comment.author.get_full_name }}">{{ comment.author.email }}</span>
+                    <small class="pull-right">{{ comment.created_at|timesince }} ago</small>
+                </p>
+                <hr>
+            {% endfor %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
+                          rows="3" required maxlength="500"></textarea>
+                <button name="add_comment" class="btn btn-block btn-default" value="comment">Add comment
+                </button>
+            </form>
+        </div>
     {% endif %}
 {% endblock %}
 

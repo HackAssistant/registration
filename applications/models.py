@@ -490,6 +490,10 @@ class SponsorApplication(
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
     position = models.CharField(max_length=50, null=False)
 
+    @property
+    def uuid_str(self):
+        return str(self.uuid)
+
     def __str__(self):
         return self.name + ' from ' + self.user.name
 

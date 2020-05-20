@@ -41,7 +41,7 @@ def add_vote(application, user, tech_rat, pers_rat):
 def add_comment(application, user, text):
     comment = models.ApplicationComment()
     comment.author = user
-    comment.application = application
+    comment.set_application(application)
     comment.text = text
     comment.save()
     return comment
@@ -150,7 +150,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         application = self.get_application(kwargs)
         context['app'] = application
         context['vote'] = self.can_vote()
-        context['comments'] = models.ApplicationComment.objects.filter(application=application)
+        context['comments'] = models.ApplicationComment.objects.filter(hacker=application)
         if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
             context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \
                 .values('user__name', 'user__email', 'user')
@@ -451,13 +451,20 @@ class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin
 
     def post(self, request, *args, **kwargs):
         id_ = request.POST.get('app_id')
+        comment_text = request.POST.get('comment_text', None)
         application = models.VolunteerApplication.objects.get(pk=id_)
         if request.POST.get('invite') and request.user.check_is_organizer:
             application.invite(request.user)
             application.save()
-        elif request.POST.get('noinvite') and request.user.check_is_organizer:
-            application.reject(request)
-            application.save()
+            m = emails.create_invite_email(application, self.request)
+            m.send()
+            messages.success(request, 'Volunteer invited!')
+        elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
+            application.move_to_pending()
+            messages.success(request, 'Volunteer invite canceled')
+        elif request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+            messages.success(request, 'Comment added')
 
         return HttpResponseRedirect(reverse('volunteer_detail', kwargs={'id': application.uuid_str}))
 
@@ -468,6 +475,7 @@ class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin
         context = super(ReviewVolunteerApplicationView, self).get_context_data(**kwargs)
         application = self.get_application(kwargs)
         context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(volunteer=application)
         return context
 
 
@@ -487,10 +495,21 @@ class ReviewSponsorApplicationView(TabsViewMixin, HaveSponsorPermissionMixin, Te
     def get_back_url(self):
         return reverse('sponsor_list')
 
+    def post(self, request, *args, **kwargs):
+        id_ = request.POST.get('app_id')
+        comment_text = request.POST.get('comment_text', None)
+        application = models.SponsorApplication.objects.get(pk=id_)
+        if request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+            messages.success(request, 'Comment added')
+
+        return HttpResponseRedirect(reverse('sponsor_detail', kwargs={'id': application.uuid_str}))
+
     def get_context_data(self, **kwargs):
         context = super(ReviewSponsorApplicationView, self).get_context_data(**kwargs)
         application = self.get_application(kwargs)
         context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(sponsor=application)
         return context
 
 
@@ -510,14 +529,19 @@ class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, Temp
     def post(self, request, *args, **kwargs):
         id_ = request.POST.get('app_id')
         application = models.MentorApplication.objects.get(pk=id_)
+        comment_text = request.POST.get('comment_text', None)
         if request.POST.get('invite') and request.user.check_is_organizer:
             application.invite(request.user)
             application.save()
-        elif request.POST.get('noinvite') and request.user.check_is_organizer:
-            application.reject()
-            application.save()
+            m = emails.create_invite_email(application, self.request)
+            m.send()
+            messages.success(request, 'sponsor invited!')
         elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
             application.move_to_pending()
+            messages.success(request, 'Sponsor invite canceled')
+        elif request.POST.get('add_comment'):
+            add_comment(application, request.user, comment_text)
+            messages.success(request, 'comment added')
 
         return HttpResponseRedirect(reverse('mentor_detail', kwargs={'id': application.uuid_str}))
 
@@ -528,4 +552,5 @@ class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, Temp
         context = super(ReviewMentorApplicationView, self).get_context_data(**kwargs)
         application = self.get_application(kwargs)
         context['app'] = application
+        context['comments'] = models.ApplicationComment.objects.filter(mentor=application)
         return context
