@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from django.db import models
 # Create your models here.
 from django.utils import timezone
-from django.utils.datetime_safe import datetime
 
 from applications.models import APP_CONFIRMED, APP_ATTENDED
 from user.models import User

@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -40,8 +40,8 @@ VIEW_APPLICATION_FORM_TYPE = {
 def check_application_exists(user, uuid):
     try:
         application = VIEW_APPLICATION_TYPE.get(user.type, models.HackerApplication).objects.get(user=user)
-    except models.HackerApplication.DoesNotExist or models.VolunteerApplication.DoesNotExist or \
-           models.SponsorApplication.DoesNotExist or models.MentorApplication.DoesNotExist:
+    except (models.HackerApplication.DoesNotExist or models.VolunteerApplication.DoesNotExist or
+            models.SponsorApplication.DoesNotExist or models.MentorApplication.DoesNotExist):
         raise Http404
     if not application or uuid != application.uuid_str:
         raise Http404
@@ -154,13 +154,11 @@ class HackerDashboard(IsHackerMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
         ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
 
         new_application = True
         try:
-            form = ApplicationForm(request.POST, request.FILES,
-                                         instance=request.user.application)
+            form = ApplicationForm(request.POST, request.FILES, instance=request.user.application)
             new_application = False
         except:
             form = ApplicationForm(request.POST, request.FILES)
@@ -204,7 +202,7 @@ class HackerApplication(IsHackerMixin, TabsView):
         ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
         try:
             form = ApplicationForm(request.POST, request.FILES,
-                                         instance=request.user.application)
+                                   instance=request.user.application)
         except:
             form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():

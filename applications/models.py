@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import json
 import uuid as uuid
-from django.core import serializers
 
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator

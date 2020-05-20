@@ -20,8 +20,9 @@ from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID
 from organizers import models
 from organizers.models import Vote
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
-    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter, VolunteerListTable, \
-    MentorListTable, MentorFilter, SponsorListTable, SponsorFilter, SponsorUserListTable, SponsorUserFilter
+    AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
+    VolunteerListTable, MentorListTable, MentorFilter, SponsorListTable, SponsorFilter, SponsorUserListTable,\
+    SponsorUserFilter
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin, HaveDubiousPermissionMixin, HaveVolunteerPermissionMixin, \
     HaveSponsorPermissionMixin, HaveMentorPermissionMixin
@@ -349,7 +350,8 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return HttpResponseRedirect(reverse('invite_teams_list'))
 
 
-class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, ExportMixin, SingleTableMixin, FilterView):
+class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, ExportMixin, SingleTableMixin,
+                                  FilterView):
     template_name = 'dubious_list.html'
     table_class = DubiousListTable
     filterset_class = DubiousApplicationFilter

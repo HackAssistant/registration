@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.password_validation import validate_password, password_validators_help_texts
-from django.conf import settings
 
 from user.models import User
 from user import models

@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from applications.models import HackerApplication, STATUS, VolunteerApplication, MentorApplication, SponsorApplication
-from user.models import User, USR_SPONSOR
+from user.models import User
 
 
 class ApplicationFilter(django_filters.FilterSet):
