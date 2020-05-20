@@ -132,9 +132,6 @@ class BaseApplication(models.Model):
     user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
     invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True)
 
-    reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
-    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
-
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
 
@@ -395,6 +392,9 @@ class HackerApplication(
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
     contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
 
+    reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
+    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
+
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
 
@@ -507,7 +507,7 @@ class SponsorApplication(
 
     # When was the last status update
     status_update_date = models.DateTimeField(blank=True, null=True)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
     user = models.ForeignKey(User, related_name='%(class)s_application')
     # Application status
     status = models.CharField(choices=STATUS,

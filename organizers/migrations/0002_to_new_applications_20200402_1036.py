@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('organizers', '0001_initial'),
-        ('applications', '0021_new_applications_20200402_1036'),
+        ('applications', '0020_new_applications_20200402_1036'),
     ]
 
     operations = [

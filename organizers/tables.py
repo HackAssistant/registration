@@ -47,7 +47,7 @@ class BlacklistApplicationFilter(django_filters.FilterSet):
                                Q(university__icontains=value) | Q(origin__icontains=value))
 
     class Meta:
-        model = Application
+        model = HackerApplication
         fields = ['search']
 
 
@@ -101,7 +101,7 @@ class BlacklistListTable(tables.Table):
     origin = tables.Column(accessor='origin', verbose_name='Origin')
 
     class Meta:
-        model = Application
+        model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['user.name', 'user.email', 'university', 'origin']

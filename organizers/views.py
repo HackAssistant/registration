@@ -418,6 +418,9 @@ class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, F
         context['emails'] = list_email
         return context
 
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
 
 class VolunteerApplicationsListView(HaveVolunteerPermissionMixin, _OtherApplicationsListView):
     table_class = VolunteerListTable

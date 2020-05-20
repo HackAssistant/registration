@@ -19,8 +19,7 @@ GENDER_DICT = dict(GENDERS)
 
 
 def stats_tabs():
-    tabs = [('
-             s', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
+    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
             ('Check-in', reverse('checkin_stats'), False)]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
