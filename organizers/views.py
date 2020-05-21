@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count, Avg, F
+from django.db.models import Count, Avg, F, Q
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -283,7 +283,7 @@ class ReviewApplicationView(ApplicationDetailView):
         """
         max_votes_to_app = getattr(settings, 'MAX_VOTES_TO_APP', 50)
         return models.HackerApplication.objects \
-            .exclude(vote__user_id=self.request.user.id, user_id=self.request.user.id) \
+            .exclude(Q(vote__user_id=self.request.user.id) | Q(user_id=self.request.user.id)) \
             .filter(status=APP_PENDING) \
             .annotate(count=Count('vote__calculated_vote')) \
             .filter(count__lte=max_votes_to_app) \
