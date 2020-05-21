@@ -182,7 +182,7 @@ class BaseApplication(models.Model):
 
     def get_soft_status_display(self):
         text = self.get_status_display()
-        if DUBIOUS_TEXT or BLACKLIST_TEXT in text:
+        if DUBIOUS_TEXT == text or BLACKLIST_TEXT == text:
             return PENDING_TEXT
         return text
 
