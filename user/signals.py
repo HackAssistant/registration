@@ -47,5 +47,5 @@ def change_type(sender, instance, *args, **kwargs):
             instance.mentorapplication_application.delete()
         if old_user.is_hacker():
             instance.hackerapplication_application.delete()
-        if old_user.is_sponsor():
-            instance.sponsorapplication_application.delete()
+    elif old_user and old_user.is_sponsor() and old_user.sponsorapplication_application:
+        instance.sponsorapplication_application.all().delete()
