@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import uuid as uuid
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 from django.utils import timezone
@@ -237,8 +238,16 @@ class User(AbstractBaseUser):
 
     def has_applications_left(self):
         if self.is_sponsor() and self.sponsorapplication_application is not None:
-            return self.sponsorapplication_application.size() < self.max_applications
+            return len(self.sponsorapplication_application.all()) < self.max_applications
         return False
+
+
+class Token(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    user = models.OneToOneField(User, related_name='token', primary_key=True)
+
+    def uuid_str(self):
+        return str(self.uuid)
 
 
 class BlacklistUserManager(models.Manager):

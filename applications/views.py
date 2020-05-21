@@ -21,10 +21,10 @@ from app.slack import SlackInvitationException
 from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
-from organizers.tables import SponsorListTable, SponsorFilter
+from organizers.tables import SponsorFilter, SponsorListTableWithNoAction
 from organizers.views import _OtherApplicationsListView
 from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin
-from user import models as userModels, tokens
+from user import models as userModels
 
 VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
@@ -243,11 +243,11 @@ class SponsorApplicationView(TemplateView):
         try:
             uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
             user = userModels.User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
+            real_token = userModels.Token.objects.get(pk=user).uuid_str()
+            token = self.kwargs.get('token', None)
+        except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist, userModels.Token.DoesNotExist):
             raise Http404('Invalid url')
-
-        token = self.kwargs.get('token', None)
-        if not tokens.password_reset_token.check_token(user, token):
+        if token != real_token:
             raise Http404('Invalid url')
         if not user.has_applications_left():
             raise Http404('You have no applications left')
@@ -297,7 +297,7 @@ class ConvertHackerToMentor(TemplateView):
 
 
 class SponsorDashboard(IsSponsorMixin, _OtherApplicationsListView):
-    table_class = SponsorListTable
+    table_class = SponsorListTableWithNoAction
     filterset_class = SponsorFilter
 
     def get_current_tabs(self):

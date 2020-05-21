@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^application/$', views.HackerApplication.as_view(), name='application'),
     url(r'^application/change_to_mentor/$', views.ConvertHackerToMentor.as_view(), name='change_to_mentor'),
     url(r'^application/draft/$', views.save_draft, name='save_draft'),
-    url(r'^sponsor/(?P<uid>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    url(r'^sponsor/(?P<uid>[0-9A-Za-z_\-]+)/(?P<token>[\w-]+)/$',
         views.SponsorApplicationView.as_view(), name='sponsor_app'),
     url(r'^sponsor/dashboard/$', views.SponsorDashboard.as_view(), name='sponsor_dashboard'),
 ]

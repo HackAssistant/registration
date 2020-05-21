@@ -202,11 +202,8 @@ class SponsorFilter(django_filters.FilterSet):
         fields = ['search']
 
 
-class SponsorListTable(tables.Table):
+class SponsorListTableWithNoAction(tables.Table):
     company = tables.Column(verbose_name='Company', accessor='user.name')
-    detail = tables.TemplateColumn(
-        "<a href='{% url 'sponsor_detail' record.uuid %}'>Detail</a> ",
-        verbose_name='Actions', orderable=False)
 
     class Meta:
         model = SponsorApplication
@@ -215,6 +212,12 @@ class SponsorListTable(tables.Table):
         fields = ['name', 'user.email', 'status']
         empty_text = 'No Sponsor Application available'
         order_by = '-submission_date'
+
+
+class SponsorListTable(SponsorListTableWithNoAction):
+    detail = tables.TemplateColumn(
+        "<a href='{% url 'sponsor_detail' record.uuid %}'>Detail</a> ",
+        verbose_name='Actions', orderable=False)
 
 
 class SponsorUserFilter(django_filters.FilterSet):

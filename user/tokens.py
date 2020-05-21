@@ -7,6 +7,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from app.utils import reverse as r_reverse
 from user.emails import create_verify_email, create_password_reset_email, create_sponsor_link_email
+from user.models import Token
 
 
 class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
@@ -20,9 +21,6 @@ class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
 account_activation_token = AccountActivationTokenGenerator()
 
 password_reset_token = PasswordResetTokenGenerator()
-
-
-sponsor_token = PasswordResetTokenGenerator()
 
 
 def generate_verify_email(user):
@@ -41,10 +39,14 @@ def generate_pw_reset_email(user, request):
 
 
 def generate_sponsor_link_email(user, request):
-    token = sponsor_token.make_token(user)
+    token = password_reset_token.make_token(user)
+    t = Token()
+    t.user = user
+    app_token = t.uuid_str()
+    t.save()
     uuid = urlsafe_base64_encode(force_bytes(user.pk))
     user_sponsor_url = r_reverse('password_reset_confirm', kwargs={'uid': uuid, 'token': token}, request=request)
-    app_sponsor_url = r_reverse('sponsor_app', kwargs={'uid': uuid, 'token': token}, request=request)
+    app_sponsor_url = r_reverse('sponsor_app', kwargs={'uid': uuid, 'token': app_token}, request=request)
     print(user_sponsor_url)
     print(app_sponsor_url)
     return create_sponsor_link_email(request.user, user_sponsor_url, app_sponsor_url, user.name)
