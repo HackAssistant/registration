@@ -307,7 +307,7 @@ class BaseApplication(models.Model):
     def delete(self, using=None, keep_parents=False):
         dict = model_to_dict(self)
         for key in ['user', 'invited_by', 'submission_date', 'status_update_date', 'status', 'resume']:
-            dict.pop(key)
+            dict.pop(key, None)
         d = DraftApplication()
         d.user = self.user
         d.save_dict(dict)
@@ -491,8 +491,8 @@ class VolunteerApplication(
     first_time_volunteer = models.BooleanField(null=False)
     quality = models.CharField(max_length=150, null=False)
     weakness = models.CharField(max_length=150, null=False)
-    fav_movie = models.CharField(max_length=60, null=True)
-    friends = models.CharField(max_length=100, null=True)
+    fav_movie = models.CharField(max_length=60, null=True, blank=True)
+    friends = models.CharField(max_length=100, null=True, blank=True)
 
 
 class SponsorApplication(

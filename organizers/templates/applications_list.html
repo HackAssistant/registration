@@ -5,11 +5,9 @@
   <script>
     function copy_mails() {
       var copyText = document.getElementById('copy');
-      copyText.style.display = 'block';
       copyText.select();
       copyText.setSelectionRange(0, 99999); /*For mobile devices*/
       document.execCommand("copy");
-      copyText.style.display = 'none';
     }
   </script>
 {% endblock %}
@@ -23,8 +21,12 @@
         </div>
     {% elif otherApplication and emailCopy %}
       <div>
-        <input style="display: none" id='copy' type="text" value={{ emails }}/>
-        <a onclick="copy_mails()" class="btn-block btn btn-info">Copy mails</a>
+        <div class="col-md-8">
+          <input class="form-control" id='copy' type="text" value={{ emails }}/>
+        </div>
+        <div class="col-md-4">
+          <a onclick="copy_mails()" style="margin: 0px" class="btn-block btn btn-info">Copy mails</a>
+        </div>
       </div>
     {% elif createUser %}
       <div>

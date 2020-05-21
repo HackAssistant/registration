@@ -235,6 +235,11 @@ class User(AbstractBaseUser):
     def set_mentor(self):
         self.type = USR_MENTOR
 
+    def has_applications_left(self):
+        if self.is_sponsor() and self.sponsorapplication_application is not None:
+            return self.sponsorapplication_application.size() < self.max_applications
+        return False
+
 
 class BlacklistUserManager(models.Manager):
     def create_blacklist_user(self, user, motive_of_ban):

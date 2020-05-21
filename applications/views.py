@@ -245,8 +245,10 @@ class SponsorApplicationView(TemplateView):
             raise Http404('Invalid url')
 
         token = self.kwargs.get('token', None)
-        if not tokens.password_reset_token.check_token(user, token) and user.is_sponsor():
+        if not tokens.password_reset_token.check_token(user, token):
             raise Http404('Invalid url')
+        if not user.has_applications_left():
+            raise Http404('You have no applications left')
         return super(SponsorApplicationView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -256,7 +258,9 @@ class SponsorApplicationView(TemplateView):
             user = userModels.User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
             return Http404('How did you get here?')
-        if form.is_valid() and user.is_sponsor():
+        if not user.has_applications_left():
+            form.add_error(None, 'You have no applications left')
+        elif form.is_valid():
             name = form.cleaned_data['name']
             app = models.SponsorApplication.objects.filter(user=user, name=name).first()
             if app:
