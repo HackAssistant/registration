@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from app.views import TabsView
 from applications import models as a_models
-from applications.models import HackerApplication, STATUS, APP_CONFIRMED, GENDERS, APP_ATTENDED
+from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
 from checkin.models import CheckIn
