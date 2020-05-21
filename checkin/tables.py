@@ -35,7 +35,7 @@ class SponsorApplicationCheckinFilter(django_filters.FilterSet):
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
-                               Q(name_icontains=value))
+                               Q(name__icontains=value))
 
     class Meta:
         model = SponsorApplication

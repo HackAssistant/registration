@@ -113,7 +113,7 @@ class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Temp
             checkin_count=Count('checkin')).exclude(checkin_count=0)
 
 
-class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, TemplateView):
+class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
