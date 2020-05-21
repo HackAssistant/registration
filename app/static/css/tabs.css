@@ -8,7 +8,7 @@
     font-style: normal;
     line-height: normal;
     z-index: -1;
-    font-size: 17px;
+    font-size: 15px;
     color: black;
     border: 1px solid #838383;
     border-bottom: 0;
@@ -55,7 +55,7 @@
 
 @media (max-width: 768px) {
     .nav-tabs > li > a {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: normal;
         padding-left: 10px;
         padding-right: 10px;

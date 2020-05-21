@@ -66,7 +66,8 @@ def organizer_tabs(user):
                                                                    contacted=False).count() else ''))
     if user.has_blacklist_acces and getattr(settings, 'BLACKLIST_ENABLED', False):
         t.append(('Blacklist', reverse('blacklist'),
-                  'new' if models.Application.objects.filter(status=APP_BLACKLISTED, contacted=False).count() else ''))
+                  'new' if models.HackerApplication.objects.filter(status=APP_BLACKLISTED, contacted=False).count()
+                  else ''))
     return t
 
 

@@ -190,7 +190,7 @@ class BaseApplication(models.Model):
         self.status_update_date = timezone.now()
         try:
             self.user.draftapplication.delete()
-        except DraftApplication.DoesNotExist:
+        except:
             pass
         super(BaseApplication, self).save(**kwargs)
 
