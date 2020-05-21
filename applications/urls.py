@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^application/draft/$', views.save_draft, name='save_draft'),
     url(r'^sponsor/(?P<uid>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.SponsorApplicationView.as_view(), name='sponsor_app'),
+    url(r'^sponsor/dashboard/$', views.SponsorDashboard.as_view(), name='sponsor_dashboard'),
 ]

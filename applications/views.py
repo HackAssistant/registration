@@ -21,7 +21,9 @@ from app.slack import SlackInvitationException
 from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
-from user.mixins import IsHackerMixin, is_hacker
+from organizers.tables import SponsorListTable, SponsorFilter
+from organizers.views import _OtherApplicationsListView
+from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin
 from user import models as userModels, tokens
 
 VIEW_APPLICATION_TYPE = {
@@ -270,7 +272,7 @@ class SponsorApplicationView(TemplateView):
                 application.user = user
                 application.save()
                 messages.success(request, 'We have now received your application. ')
-                return render(request, 'sponsor_submited.html')
+                return render(request, 'sponsor_submitted.html')
         c = self.get_context_data()
         c.update({'form': form})
         return render(request, self.template_name, c)
@@ -292,6 +294,23 @@ class ConvertHackerToMentor(TemplateView):
         else:
             messages.error(request, 'You have no permissions to do this')
         return HttpResponseRedirect(reverse('dashboard'))
+
+
+class SponsorDashboard(IsSponsorMixin, _OtherApplicationsListView):
+    table_class = SponsorListTable
+    filterset_class = SponsorFilter
+
+    def get_current_tabs(self):
+        return None
+
+    def get_queryset(self):
+        return models.SponsorApplication.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(SponsorDashboard, self).get_context_data(**kwargs)
+        context['otherApplication'] = True
+        context['emailCopy'] = False
+        return context
 
 
 @is_hacker

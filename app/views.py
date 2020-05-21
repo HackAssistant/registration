@@ -16,9 +16,11 @@ def root_view(request):
         return HttpResponseRedirect(reverse('set_password'))
     if not request.user.email_verified:
         return HttpResponseRedirect(reverse('verify_email_required'))
+    if request.user.is_sponsor():
+        return HttpResponseRedirect(reverse('sponsor_dashboard'))
     if request.user.check_is_organizer:
         return HttpResponseRedirect(reverse('review'))
-    elif request.user.check_is_volunteer_accepted:
+    if request.user.check_is_volunteer_accepted:
         return HttpResponseRedirect(reverse('check_in_list'))
     return HttpResponseRedirect(reverse('dashboard'))
 

@@ -29,6 +29,19 @@ class IsOrganizerMixin(UserPassesTestMixin):
         return self.request.user.is_authenticated and self.request.user.check_is_organizer
 
 
+class IsSponsorMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        return self.request.user.is_authenticated and self.request.user.is_sponsor()
+
+
 class IsVolunteerMixin(UserPassesTestMixin):
     raise_exception = True
 
