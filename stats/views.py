@@ -14,9 +14,6 @@ from checkin.models import CheckIn
 
 from collections import defaultdict
 
-STATUS_DICT = dict(STATUS)
-GENDER_DICT = dict(GENDERS)
-
 
 def stats_tabs():
     tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
@@ -81,8 +78,8 @@ def app_stats_api(request):
     resume_count_confirmed = defaultdict(int)
     other_diet = []
     for a in applications:
-        status_count[STATUS_DICT[a.status]] += 1
-        gender_count[GENDER_DICT[a.gender]] += 1
+        status_count[a.get_status_display()] += 1
+        gender_count[a.get_gender_display()] += 1
         origin_count[a.origin] += 1
         university_count[a.university] += 1
         grad_year_count[a.graduation_year] += 1
@@ -172,10 +169,12 @@ def users_stats_api(request):
     users = list(User.objects.all())
     users_count = defaultdict(int)
     for u in users:
-        users_count["Volunteers"] += u.is_volunteer
+        users_count["Mentors"] += u.is_mentor()
+        users_count["Sponsors"] += u.is_sponsor()
+        users_count["Volunteers"] += u.is_volunteer()
         users_count["Directors"] += u.is_director
-        users_count["Organizers"] += u.is_organizer
-        users_count["Hackers"] += not (u.is_volunteer or u.is_director or u.is_organizer)
+        users_count["Organizers"] += (u.is_organizer() and not u.is_director)
+        users_count["Hackers"] += u.is_hacker()
 
     users_count = [{'user_type': x, 'Users': v} for (x, v) in users_count.items()]
 
