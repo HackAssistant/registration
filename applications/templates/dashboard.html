@@ -101,9 +101,11 @@
                 {% else %}
                     <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
                         please let us know by clicking "Cancel". Thank you so much for helping {{ h_name }}!
-                     <b>This invite expires in
-                            {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
-                    </p>
+                    {% if application.user.is_mentor and mentor_expires or application.user.is_volunteer and volunteer_expires %}
+                        <b>This invite expires in
+                                {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
+                        </p>
+                    {% endif %}
                 {% endif %}
                 {% if h_arrive %}
                     <h3>When to arrive</h3>
