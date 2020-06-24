@@ -112,7 +112,7 @@ def hackathon_vars_processor(request):
         'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None),
         'mentor_expires': settings.MENTOR_EXPIRES,
         'volunteer_expires': settings.VOLUNTEER_EXPIRES,
-        })
+    })
     return c
 
 
