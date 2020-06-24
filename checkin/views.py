@@ -19,7 +19,7 @@ from user.models import User
 
 def user_tabs(user):
     tab = [('Hackers', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False)]
-    if user.is_organizer():
+    if user.is_organizer:
         if user.has_volunteer_access:
             tab.append(('Volunteer', reverse('check_in_volunteer_list'), False))
         if user.has_mentor_access:

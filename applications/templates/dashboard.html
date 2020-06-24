@@ -73,10 +73,10 @@
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
                 {% endif %}
-                {% if h_leave_hacker %}
+                {% if h_leave_hacker_sponsor %}
                     <h3>When to leave</h3>
-                    {% if application.user.is_hacker %}
-                        <p>{{ h_leave_hacker }}</p>
+                    {% if application.user.is_hacker or application.user.is_sponsor %}
+                        <p>{{ h_leave_hacker_sponsor }}</p>
                     {% else %}
                         <p>{{ h_leave_other }}</p>
                     {% endif %}
@@ -109,10 +109,10 @@
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
                 {% endif %}
-                {% if h_leave_hacker %}
+                {% if h_leave_hacker_sponsor %}
                     <h3>When to leave</h3>
-                    {% if application.user.is_hacker %}
-                        <p>{{ h_leave_hacker }}</p>
+                    {% if application.user.is_hacker or application.user.is_sponsor %%}
+                        <p>{{ h_leave_hacker_sponsor }}</p>
                     {% else %}
                         <p>{{ h_leave_other }}</p>
                     {% endif %}

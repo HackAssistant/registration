@@ -200,9 +200,9 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             self.cancel_application(application)
         elif request.POST.get('waitlist') and request.user.is_director:
             self.waitlist_application(application)
-        elif request.POST.get('slack') and request.user.check_is_organizer:
+        elif request.POST.get('slack') and request.user.is_organizer:
             self.slack_invite(application)
-        elif request.POST.get('set_dubious') and request.user.check_is_organizer:
+        elif request.POST.get('set_dubious') and request.user.is_organizer:
             application.set_dubious()
         elif request.POST.get('contact_user') and request.user.has_dubious_access:
             application.set_contacted(request.user)
@@ -492,13 +492,13 @@ class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin
         id_ = request.POST.get('app_id')
         comment_text = request.POST.get('comment_text', None)
         application = models.VolunteerApplication.objects.get(pk=id_)
-        if request.POST.get('invite') and request.user.check_is_organizer:
+        if request.POST.get('invite') and request.user.is_organizer:
             application.invite(request.user)
             application.save()
             m = emails.create_invite_email(application, self.request)
             m.send()
             messages.success(request, 'Volunteer invited!')
-        elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
+        elif request.POST.get('cancel_invite') and request.user.is_organizer:
             application.move_to_pending()
             messages.success(request, 'Volunteer invite canceled')
         elif request.POST.get('add_comment'):
@@ -569,13 +569,13 @@ class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, Temp
         id_ = request.POST.get('app_id')
         application = models.MentorApplication.objects.get(pk=id_)
         comment_text = request.POST.get('comment_text', None)
-        if request.POST.get('invite') and request.user.check_is_organizer:
+        if request.POST.get('invite') and request.user.is_organizer:
             application.invite(request.user)
             application.save()
             m = emails.create_invite_email(application, self.request)
             m.send()
             messages.success(request, 'sponsor invited!')
-        elif request.POST.get('cancel_invite') and request.user.check_is_organizer:
+        elif request.POST.get('cancel_invite') and request.user.is_organizer:
             application.move_to_pending()
             messages.success(request, 'Sponsor invite canceled')
         elif request.POST.get('add_comment'):

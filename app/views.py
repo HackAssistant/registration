@@ -18,9 +18,9 @@ def root_view(request):
         return HttpResponseRedirect(reverse('verify_email_required'))
     if request.user.is_sponsor():
         return HttpResponseRedirect(reverse('sponsor_dashboard'))
-    if request.user.check_is_organizer:
+    if request.user.is_organizer:
         return HttpResponseRedirect(reverse('review'))
-    if request.user.check_is_volunteer_accepted:
+    if request.user.is_volunteer_accepted:
         return HttpResponseRedirect(reverse('check_in_list'))
     return HttpResponseRedirect(reverse('dashboard'))
 

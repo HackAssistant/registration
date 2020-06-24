@@ -173,7 +173,7 @@ def users_stats_api(request):
         users_count["Sponsors"] += u.is_sponsor()
         users_count["Volunteers"] += u.is_volunteer()
         users_count["Directors"] += u.is_director
-        users_count["Organizers"] += (u.is_organizer() and not u.is_director)
+        users_count["Organizers"] += (u.is_organizer and not u.is_director)
         users_count["Hackers"] += u.is_hacker()
 
     users_count = [{'user_type': x, 'Users': v} for (x, v) in users_count.items()]

@@ -75,7 +75,7 @@ def get_substitutions_templates():
             'h_app_closed': is_app_closed(),
             'h_app_timeleft': application_timeleft(),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
-            'h_leave_hacker': getattr(settings, 'HACKATHON_LEAVE_HACKER', None),
+            'h_leave_hacker_sponsor': getattr(settings, 'HACKATHON_LEAVE_HACKER_SPONSOR', None),
             'h_leave_other': getattr(settings, 'HACKATHON_LEAVE_OTHER', None),
             'h_logo': getattr(settings, 'HACKATHON_LOGO_URL', None),
             'h_fb': getattr(settings, 'HACKATHON_FACEBOOK_PAGE', None),
@@ -90,7 +90,7 @@ def get_substitutions_templates():
             'h_oauth_providers': getattr(settings, 'OAUTH_PROVIDERS', {}),
             'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
             'h_dubious_enabled': getattr(settings, 'DUBIOUS_ENABLED', False),
-            'h_blacklist_enabled': getattr(settings, 'BLACKLIST_ENABLED', True)
+            'h_blacklist_enabled': getattr(settings, 'BLACKLIST_ENABLED', True),
             }
 
 
@@ -108,7 +108,11 @@ def get_user_substitutions(request):
 def hackathon_vars_processor(request):
     c = get_substitutions_templates()
     c.update(get_user_substitutions(request))
-    c.update({'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None)})
+    c.update({
+        'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None),
+        'mentor_expires': settings.MENTOR_EXPIRES,
+        'volunteer_expires': settings.VOLUNTEER_EXPIRES,
+        })
     return c
 
 

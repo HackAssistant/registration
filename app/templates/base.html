@@ -95,7 +95,7 @@
                                     href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
                         {% if request.user.email_verified and request.user.has_usable_password %}
-                            {% if request.user.check_is_organizer %}
+                            {% if request.user.is_organizer %}
                                 <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
                                         href="{% url 'app_stats' %}">Stats</a></li>
                                 <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
@@ -109,7 +109,7 @@
                             {% if h_hw_enabled %}
                                 {% include 'include/hardware_tab.html' %}
                             {% endif %}
-                            {% if request.user.check_is_organizer or request.user.check_is_volunteer_accepted %}
+                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
                                 <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
                             {% endif %}

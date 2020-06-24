@@ -182,16 +182,16 @@ class User(AbstractBaseUser):
         return self.can_review_sponsors or self.is_director
 
     @property
-    def check_is_organizer(self):
+    def is_organizer(self):
         return self.type == USR_ORGANIZER
 
-    def is_organizer(self):
-        return self.check_is_organizer
+    def admin_is_organizer(self):
+        return self.is_organizer
 
-    is_organizer.boolean = True
+    admin_is_organizer.boolean = True
 
     @property
-    def check_is_volunteer_accepted(self):
+    def is_volunteer_accepted(self):
         if self.type == USR_VOLUNTEER:
             try:
                 return self.volunteerapplication_application.is_attended()
@@ -199,10 +199,10 @@ class User(AbstractBaseUser):
                 pass
         return False
 
-    def is_volunteer_accepted(self):
-        return self.check_is_volunteer_accepted
+    def admin_is_volunteer_accepted(self):
+        return self.is_volunteer_accepted
 
-    is_volunteer_accepted.boolean = True
+    admin_is_volunteer_accepted.boolean = True
 
     def have_application(self):
         return self.application is not None
