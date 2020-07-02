@@ -240,7 +240,7 @@ class User(AbstractBaseUser):
         if self.is_sponsor() and self.sponsorapplication_application is not None:
             return len(self.sponsorapplication_application.all()) < self.max_applications
         return False
-    
+
     @property
     def current_applications(self):
         if self.is_sponsor():

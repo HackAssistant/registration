@@ -6,9 +6,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from app.views import TabsView
-from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, DIETS, TSHIRT_SIZES, \
-                                D_OTHER, VolunteerApplication, MentorApplication, SponsorApplication, \
-                                ATTENDANCE
+from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, D_OTHER, \
+    VolunteerApplication, MentorApplication, SponsorApplication
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
 from checkin.models import CheckIn
@@ -17,9 +16,9 @@ from collections import defaultdict
 
 
 def stats_tabs():
-    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
-            ('Check-in', reverse('checkin_stats'), False), ('Volunteer', reverse('volunteer_stats'), False),
-            ('Mentor', reverse('mentor_stats'), False), ('Sponsor', reverse('sponsor_stats'), False)]
+    tabs = [('Hacker', reverse('app_stats'), False), ('Volunteer', reverse('volunteer_stats'), False),
+            ('Mentor', reverse('mentor_stats'), False), ('Sponsor', reverse('sponsor_stats'), False),
+            ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False), ]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
@@ -31,8 +30,6 @@ def get_stats(model):
     mentor = model == MentorApplication
     sponsor = model == SponsorApplication
     # Status analysis
-    tshirt_dict = dict(TSHIRT_SIZES)
-    diets_dict = dict(DIETS)
     applications = list(model.objects.all())
     status_count = defaultdict(int)
     gender_count = defaultdict(int)
@@ -61,8 +58,8 @@ def get_stats(model):
     other_diet = []
     for a in applications:
         status_count[a.get_status_display()] += 1
-        shirt_count[tshirt_dict[a.tshirt_size]] += 1
-        diet_count[diets_dict[a.diet]] += 1
+        shirt_count[a.get_tshirt_size_display()] += 1
+        diet_count[a.get_diet_display()] += 1
         if hacker or volunteer or mentor:
             origin_count[a.origin] += 1
             gender_count[a.get_gender_display()] += 1
@@ -82,11 +79,11 @@ def get_stats(model):
         if sponsor or volunteer or mentor:
                 for day in a.get_attendance_display().split(', '):
                     attendance_count[day] += 1
-            
+
         if not sponsor and a.status == APP_CONFIRMED:
-            shirt_count_confirmed[tshirt_dict[a.tshirt_size]] += 1
-            diet_count_confirmed[diets_dict[a.diet]] += 1
-            if hacker or  volunteer or mentor:
+            shirt_count_confirmed[a.get_tshirt_size_display()] += 1
+            diet_count_confirmed[a.get_diet_display()] += 1
+            if hacker or volunteer or mentor:
                 origin_count_confirmed[a.origin] += 1
             if hacker or volunteer:
                 university_count_confirmed[a.university] += 1
@@ -106,7 +103,7 @@ def get_stats(model):
             if volunteer or mentor:
                 for day in a.get_attendance_display().split(', '):
                     attendance_count_confirmed[day] += 1
-    
+
     shirt_count = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count.items()]
     shirt_count_confirmed = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count_confirmed.items()]
 
@@ -114,27 +111,28 @@ def get_stats(model):
     diet_count_confirmed = [{'diet': x, 'applications': v} for (x, v) in diet_count_confirmed.items()]
 
     origin_count = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count.items(),
-                                                                        key=lambda item: item[1])[-10:]]
+                                                                          key=lambda item: item[1])[-10:]]
     origin_count_confirmed = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count_confirmed.items(),
                                                                                     key=lambda item: item[1])[-10:]]
 
     university_count = [{'university': x, 'applications': v} for (x, v) in sorted(university_count.items(),
-                                                                                key=lambda item: item[1])[-10:]]
+                                                                                  key=lambda item: item[1])[-10:]]
     university_count_confirmed = [{'university': x, 'applications': v} for (x, v) in
-                                sorted(university_count_confirmed.items(), key=lambda item: item[1])[-10:]]
+                                  sorted(university_count_confirmed.items(), key=lambda item: item[1])[-10:]]
 
     degree_count = [{'degree': x, 'applications': v} for (x, v) in
                     sorted(degree_count.items(), key=lambda item: item[1])[-10:]]
     degree_count_confirmed = [{'degree': x, 'applications': v} for (x, v) in
-                            sorted(degree_count_confirmed.items(), key=lambda item: item[1])[-10:]]
+                              sorted(degree_count_confirmed.items(), key=lambda item: item[1])[-10:]]
 
     lennyface_count = [{'lennyface': x, 'applications': v} for (x, v) in
-                        sorted(lennyface_count.items(), key=lambda item: item[1])[-5:]]
+                       sorted(lennyface_count.items(), key=lambda item: item[1])[-5:]]
     lennyface_count_confirmed = [{'lennyface': x, 'applications': v} for (x, v) in
-                                sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
-    
+                                 sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
+
     attendance_count = [{'attendance': x, 'applications': v} for (x, v) in attendance_count.items()]
-    attendance_count_confirmed = [{'attendance': x, 'applications': v} for (x, v) in attendance_count_confirmed.items()]
+    attendance_count_confirmed = [{'attendance': x, 'applications': v} for (x, v) in
+                                  attendance_count_confirmed.items()]
 
     timeseries = model.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
@@ -171,7 +169,6 @@ def get_stats(model):
             'attendance_confirmed': attendance_count_confirmed,
         }
     )
-
 
 
 @is_organizer
@@ -263,6 +260,7 @@ def volunteer_stats_api(request):
 def mentor_stats_api(request):
     return get_stats(MentorApplication)
 
+
 @is_organizer
 def sponsor_stats_api(request):
     return get_stats(SponsorApplication)
@@ -308,6 +306,7 @@ class MentorStats(IsOrganizerMixin, TabsView):
 
     def get_current_tabs(self):
         return stats_tabs()
+
 
 class SponsorStats(IsOrganizerMixin, TabsView):
     template_name = 'sponsor_stats.html'
