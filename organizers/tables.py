@@ -237,5 +237,5 @@ class SponsorUserListTable(tables.Table):
         model = SponsorApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['name', 'email', 'max_applications']
+        fields = ['name', 'email', 'max_applications', 'current_applications']
         empty_text = 'No Sponsor available'

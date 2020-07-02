@@ -113,7 +113,7 @@
                 {% endif %}
                 {% if h_leave_hacker_sponsor %}
                     <h3>When to leave</h3>
-                    {% if application.user.is_hacker or application.user.is_sponsor %%}
+                    {% if application.user.is_hacker or application.user.is_sponsor %}
                         <p>{{ h_leave_hacker_sponsor }}</p>
                     {% else %}
                         <p>{{ h_leave_other }}</p>
