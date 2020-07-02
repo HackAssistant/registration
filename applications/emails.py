@@ -12,9 +12,9 @@ def create_invite_email(application, request):
         'confirm_url': str(reverse('confirm_app', request=request, kwargs={'id': application.uuid_str})),
         'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str})),
     }
-    if application.is_hacker():
+    if application.user.is_hacker():
         return emails.render_mail('mails/invitation_hacker', application.user.email, c)
-    if application.is_mentor():
+    if application.user.is_mentor():
         return emails.render_mail('mails/invitation_mentor', application.user.email, c)
     return emails.render_mail('mails/invitation_volunteer', application.user.email, c)
 
