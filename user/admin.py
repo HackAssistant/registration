@@ -29,7 +29,7 @@ class UserAdmin(admin.ModelAdmin):
     permission_fields = tuple(permission_fields)
 
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'password',)}),
         ('Personal info', {'fields': ('name',)}),
         ('Permissions', {'fields': permission_fields}),
         ('Important dates', {'fields': ('last_login',)}),

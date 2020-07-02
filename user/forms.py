@@ -14,16 +14,46 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField(label=("Password"),
                                          help_text=("Passwords are not stored in plaintext, so there is no way to see "
                                                     "this user's password"))
+    
+    password1 = forms.CharField(required=False, widget=forms.PasswordInput, label='Password', max_length=100)
+
+    password2 = forms.CharField(required=False, widget=forms.PasswordInput, label='Repeat password', max_length=100,
+                                help_text=' '.join(password_validators_help_texts()))
 
     class Meta:
         model = User
-        exclude = []
+        exclude = ['password1', 'password2']
+    
+    def __init__(self, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        if self.initial:
+            self.fields.pop('password1')
+            self.fields.pop('password2')
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
         # This is done here, rather than on the field, because the
         # field does not have access to the initial value
-        return self.initial["password"]
+        if self.initial:
+            return self.initial["password"]
+    
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1", None)
+        password2 = self.cleaned_data.get("password2", None)
+        if not self.initial and password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        validate_password(password1)
+        return password2
+    
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(UserChangeForm, self).save(commit=False)
+        if not self.initial:
+            user.set_password(self.cleaned_data["password2"])
+            if commit:
+                user.save()
+        return user
 
 
 class LoginForm(forms.Form):
