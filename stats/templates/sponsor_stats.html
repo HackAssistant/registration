@@ -1,8 +1,8 @@
 {% extends 'c3_base.html' %}
 
-{% block head_title %}Mentor stats{% endblock %}
+{% block head_title %}Sponsor stats{% endblock %}
 {% block panel %}
-    <h1>Mentor stats</h1>
+    <h1>Sponsor stats</h1>
     <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
     <div class="row">
         <div class="col-md-12">
@@ -17,84 +17,34 @@
             <p><b>Application count:</b> <span id="app_count"></span></p>
         </div>
         <div class="col-md-6">
-            <h3>Gender</h3>
-            <div id="gender_stats"></div>
-        </div>
-    </div>
-    <h2>Origin</h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h3>All</h3>
-            <div id="origin_stats"></div>
-        </div>
-        <div class="col-md-6">
-            <h3>Confirmed only</h3>
-            <div id="origin_confirmed_stats"></div>
-        </div>
-    </div>
-    <h2>Student or worker</h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h3>All</h3>
-            <div id="study_work_stats"></div>
-        </div>
-        <div class="col-md-6">
-            <h3>Confirmed only</h3>
-            <div id="study_work_confirmed_stats"></div>
-        </div>
-    </div>
-
-    <h2>Attendance</h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h3>All</h3>
+            <h3>Attendance</h3>
             <div id="attendance_stats"></div>
         </div>
-        <div class="col-md-6">
-            <h3>Confirmed only</h3>
-            <div id="attendance_confirmed_stats"></div>
-        </div>
     </div>
 
-    <h2>T-Shirts sizes</h2>
+    
 
     <div class="row">
         <div class="col-md-6">
-            <h3>All</h3>
-            <div id="tshirt_stats"></div>
-        </div>
-        <div class="col-md-6">
-            <h3>Confirmed only</h3>
-            <div id="tshirt_confirmed_stats"></div>
-        </div>
-    </div>
-    <h2>Dietary restrictions</h2>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h3>All</h3>
+            <h2>Dietary restrictions</h2>
             <div id="diet_stats"></div>
         </div>
         <div class="col-md-6">
-            <h3>Confirmed only</h3>
-            <div id="diet_confirmed_stats"></div>
+            <h2>T-Shirts sizes</h2>
+            <div id="tshirt_stats"></div>
         </div>
         <div class="col-md-12">
             <p><b>Confirmed extra diet requirements:</b><br> <span id="other_diet"></span></p>
         </div>
-
     </div>
 
 {% endblock %}
 {% block c3script %}
     <script>
-        $.getJSON('{% url 'api_mentor_stats' %}', function (data) {
-          var bar_stats = ['tshirt', 'tshirt_confirmed', 'diet', 'diet_confirmed', 'origin', 'origin_confirmed',
-            'attendance', 'attendance_confirmed'];
-          var donut_stats = ['status', 'gender', 'study_work', 'study_work_confirmed'];
+        
+        $.getJSON('{% url 'api_sponsor_stats' %}', function (data) {
+          var bar_stats = ['tshirt', 'tshirt_confirmed', 'diet', 'diet_confirmed', 'attendance'];
+          var donut_stats = ['status'];
           bar_stats.forEach(function (element) {
                   c3.generate({
                     bindto: '#'+element+'_stats',
