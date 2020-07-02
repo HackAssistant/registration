@@ -14,7 +14,7 @@ class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField(label=("Password"),
                                          help_text=("Passwords are not stored in plaintext, so there is no way to see "
                                                     "this user's password"))
-    
+
     password1 = forms.CharField(required=False, widget=forms.PasswordInput, label='Password', max_length=100)
 
     password2 = forms.CharField(required=False, widget=forms.PasswordInput, label='Repeat password', max_length=100,
@@ -23,7 +23,7 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         exclude = ['password1', 'password2']
-    
+
     def __init__(self, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
         if self.initial:
@@ -36,7 +36,7 @@ class UserChangeForm(forms.ModelForm):
         # field does not have access to the initial value
         if self.initial:
             return self.initial["password"]
-    
+
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1", None)
@@ -45,7 +45,7 @@ class UserChangeForm(forms.ModelForm):
             raise forms.ValidationError("Passwords don't match")
         validate_password(password1)
         return password2
-    
+
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super(UserChangeForm, self).save(commit=False)
