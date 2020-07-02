@@ -22,7 +22,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        exclude = ['password1', 'password2']
+        exclude = []
 
     def __init__(self, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
