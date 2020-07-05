@@ -245,10 +245,10 @@ class User(AbstractBaseUser):
         if self.application():
             return 1
         return 0
-    
+
     def set_mentor(self):
         self.type = USR_MENTOR
-    
+
     def set_volunteer(self):
         self.type = USR_VOLUNTEER
 
