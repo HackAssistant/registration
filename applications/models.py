@@ -185,6 +185,10 @@ class BaseApplication(models.Model):
             return PENDING_TEXT
         return text
 
+    def save(self, **kwargs):
+        self.status_update_date = timezone.now()
+        super(BaseApplication, self).save(**kwargs)
+
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
