@@ -23,7 +23,7 @@ from app.views import TabsView
 from applications import models, emails, forms
 from organizers.tables import SponsorFilter, SponsorListTableWithNoAction
 from organizers.views import _OtherApplicationsListView
-from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin
+from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin, DashboardMixin
 from user import models as userModels
 
 VIEW_APPLICATION_TYPE = {
@@ -127,7 +127,7 @@ def get_deadline(application):
     return deadline
 
 
-class HackerDashboard(IsHackerMixin, TabsView):
+class HackerDashboard(DashboardMixin, TabsView):
     template_name = 'dashboard.html'
 
     def get_current_tabs(self):

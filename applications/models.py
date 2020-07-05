@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
-from django.forms import model_to_dict
 from django.utils import timezone
 from multiselectfield import MultiSelectField
 
@@ -186,14 +185,6 @@ class BaseApplication(models.Model):
             return PENDING_TEXT
         return text
 
-    def save(self, **kwargs):
-        self.status_update_date = timezone.now()
-        try:
-            self.user.draftapplication.delete()
-        except:
-            pass
-        super(BaseApplication, self).save(**kwargs)
-
     def is_confirmed(self):
         return self.status == APP_CONFIRMED
 
@@ -303,16 +294,6 @@ class BaseApplication(models.Model):
             reimb = getattr(self.user, 'reimbursement', None)
             if reimb:
                 reimb.delete()
-
-    def delete(self, using=None, keep_parents=False):
-        dict = model_to_dict(self)
-        for key in ['user', 'invited_by', 'submission_date', 'status_update_date', 'status', 'resume']:
-            dict.pop(key, None)
-        d = DraftApplication()
-        d.user = self.user
-        d.save_dict(dict)
-        d.save()
-        return super().delete(using, keep_parents)
 
     def last_reminder(self):
         if self.status != APP_INVITED:

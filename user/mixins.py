@@ -157,6 +157,21 @@ class IsBlacklistAdminMixin(UserPassesTestMixin):
         return self.request.user.has_blacklist_acces or self.request.user.is_director
 
 
+class DashboardMixin(UserPassesTestMixin):
+    raise_exception = False
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.is_authenticated:
+            return False
+        return self.request.user.is_hacker() or self.request.user.is_volunteer() or self.request.user.is_mentor()
+
+
 def is_organizer(f, raise_exception=True):
     """
     Decorator for views that checks whether a user is an organizer or not
