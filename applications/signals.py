@@ -36,10 +36,6 @@ def create_draft_application(sender, instance, *args, **kwargs):
 @receiver(post_delete, sender=models.HackerApplication)
 @receiver(post_delete, sender=models.MentorApplication)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `MediaFile` object is deleted.
-    """
     if instance.resume:
         if os.path.isfile(instance.resume.path):
             os.remove(instance.resume.path)
@@ -49,11 +45,6 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
 @receiver(pre_save, sender=models.HackerApplication)
 @receiver(pre_save, sender=models.MentorApplication)
 def auto_delete_file_on_change(sender, instance, **kwargs):
-    """
-    Deletes old file from filesystem
-    when corresponding `MediaFile` object is updated
-    with new file.
-    """
     if not instance.pk:
         return False
 
