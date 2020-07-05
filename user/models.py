@@ -233,9 +233,6 @@ class User(AbstractBaseUser):
         except:
             return None
 
-    def set_mentor(self):
-        self.type = USR_MENTOR
-
     def has_applications_left(self):
         if self.is_sponsor() and self.sponsorapplication_application is not None:
             return len(self.sponsorapplication_application.all()) < self.max_applications
@@ -248,6 +245,12 @@ class User(AbstractBaseUser):
         if self.application():
             return 1
         return 0
+    
+    def set_mentor(self):
+        self.type = USR_MENTOR
+    
+    def set_volunteer(self):
+        self.type = USR_VOLUNTEER
 
 
 class Token(models.Model):
