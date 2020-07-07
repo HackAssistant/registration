@@ -60,7 +60,6 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
 - **DROPBOX_OAUTH2_TOKEN**(optional): Enables Dropbox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
 - **MLH_CLIENT_SECRET**(optional): Enables MyMLH as a sign up option. Format is `client_id@client_secret` (See "Set up MyMLH" below)
-- **SPONSOR_TOKEN**: Registration code needed to sign up as sponsor. If this token is None, nobody can signup as sponsor.
 
 
 
@@ -227,11 +226,12 @@ server {
 
 ### User roles
 
-- **is_volunteer**: Allows user to check-in hackers with QR and list view
+- **is_volunteer_accepted**: Allows user to check-in hackers with QR and list view
 - **is_organizer**: Allows user to vote, see voting ranking and check-in hackers.
 - **is_director**: Allows user to send invites to hackers as well as send reimbursement. Also can review dubious applications.
 - **is_admin**: Allows user to enter Django Admin interface
 - **can_review_dubious**: User can review and mark as safe applications that seem weird.
+- **can_review_blacklist**: User can review and mark as blacklist applications that their user seem to be in the blacklist.
 
 ### Important SQL queries
 
