@@ -1,10 +1,18 @@
+import os
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
+
 from django.conf import settings
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponseNotFound, StreamingHttpResponse, HttpResponse
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
 
 from app import utils, mixins
+from applications.models import HackerApplication, MentorApplication
+from reimbursement.models import Reimbursement
 
 
 def root_view(request):
@@ -30,6 +38,39 @@ def code_conduct(request):
     if code_link:
         return HttpResponseRedirect(code_link)
     return render(request, 'code_conduct.html')
+
+
+def protectedMedia(request, file_):
+    path, file_name = os.path.split(file_)
+    downloadable_path = None
+    if path == "resumes":
+        app = get_object_or_404(HackerApplication, resume=file_)
+        if request.user.is_authenticated() and (request.user.is_organizer or
+                                                (app and (app.user_id == request.user.id))):
+            downloadable_path = app.resume.path
+    elif path == "receipt":
+        app = get_object_or_404(Reimbursement, receipt=file_)
+        if request.user.is_authenticated() and (request.user.is_organizer or
+                                                (app and (app.hacker_id == request.user.id))):
+            downloadable_path = app.receipt.path
+    if downloadable_path:
+        (_, doc_extension) = file_name.rsplit('.', 1)
+        if doc_extension == 'pdf':
+            with open(downloadable_path, 'rb') as doc:
+                response = HttpResponse(doc.read(), content_type='application/pdf')
+                response['Content-Disposition'] = 'inline;filename=%s' % quote(file_name)
+                return response
+            doc.closed
+        else:
+            response = StreamingHttpResponse(open(downloadable_path, 'rb'))
+            response['Content-Type'] = ''
+            response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'%s' % quote(file_name)
+            response['Content-Transfer-Encoding'] = 'binary'
+            response['Expires'] = '0'
+            response['Cache-Control'] = 'must-revalidate'
+            response['Pragma'] = 'public'
+            return response
+    return HttpResponseRedirect(reverse('account_login'))
 
 
 class TabsView(mixins.TabsViewMixin, TemplateView):

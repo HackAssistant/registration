@@ -18,6 +18,7 @@
     -moz-transition: all .1s linear;
     -o-transition: all .1s linear;
     transition: all .1s linear;
+    padding-bottom: 9px;
 }
 
 .nav-tabs > li > a:hover {
@@ -34,10 +35,12 @@
     margin: 0;
 }
 
-.nav-tabs > li.active > a {
+.nav-tabs > li.active_tab > a {
     box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
     color: black;
-
+    border-left: none !important;
+    border-right: none !important;
+    padding-bottom: 10px;
 }
 
 .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:active, .nav-tabs > li.active > a:focus {

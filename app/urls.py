@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^teams/', include('teams.urls')),
     url(r'^stats/', include('stats.urls')),
     url(r'code_conduct/$', views.code_conduct, name='code_conduct'),
+    url(r'^files/(?P<file_>.*)$', views.protectedMedia, name="protect_media"),
 
 ]
 
