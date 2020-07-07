@@ -5,7 +5,7 @@ except ImportError:
     from urllib.parse import quote
 
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponseNotFound, StreamingHttpResponse, HttpResponse
+from django.http import HttpResponseRedirect, StreamingHttpResponse, HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
@@ -44,7 +44,13 @@ def protectedMedia(request, file_):
     path, file_name = os.path.split(file_)
     downloadable_path = None
     if path == "resumes":
-        app = get_object_or_404(HackerApplication, resume=file_)
+        try:
+            app = HackerApplication.objects.get(resume=file_)
+        except HackerApplication.DoesNotExist:
+            try:
+                app = MentorApplication.objects.get(resume=file_)
+            except MentorApplication.DoesNotExist:
+                raise Http404
         if request.user.is_authenticated() and (request.user.is_organizer or
                                                 (app and (app.user_id == request.user.id))):
             downloadable_path = app.resume.path
