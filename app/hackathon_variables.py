@@ -42,7 +42,8 @@ HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Frida
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_LEAVE_HACKER_SPONSOR = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
                          'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
-HACKATHON_LEAVE_OTHER = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. '
+HACKATHON_LEAVE_OTHER = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
+    'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
 
 # (OPTIONAL) Hackathon live page
 # HACKATHON_LIVE_PAGE = 'https://gerard.space/live'
