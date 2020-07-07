@@ -226,12 +226,8 @@ def users_stats_api(request):
     )
 
 
-@is_organizer
-def checkin_stats_api(request):
-    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
-        .values('hour').annotate(checkins=Count('hour'))
-    checkin_count = len(CheckIn.objects.all())
-    applications = list(HackerApplication.objects.all())
+def attrition_rate(application_type):
+    applications = list(application_type.objects.all())
     attended = 0
     confirmed = 0
     for a in applications:
@@ -239,14 +235,30 @@ def checkin_stats_api(request):
             confirmed += 1
         if a.status == APP_ATTENDED:
             attended += 1
-    attrition_rate = {'Attrition rate': attended * 100 / (confirmed + attended)}
+    result = 0
+    if confirmed or attended:
+        result = attended * 100 / (confirmed + attended)
+    return result
 
+
+@is_organizer
+def checkin_stats_api(request):
+    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
+        .values('hour').annotate(checkins=Count('hour'))
+    checkin_count = len(CheckIn.objects.all())
+    hacker_attrition_rate = {'Attrition rate': attrition_rate(HackerApplication)}
+    volunteer_attrition_rate = {'Attrition rate': attrition_rate(VolunteerApplication)}
+    mentor_attrition_rate = {'Attrition rate': attrition_rate(MentorApplication)}
+    sponsor_attrition_rate = {'Attrition rate': attrition_rate(SponsorApplication)}
     return JsonResponse(
         {
             'update_time': timezone.now(),
             'timeseries': list(timeseries),
             'checkin_count': checkin_count,
-            'attrition_rate': attrition_rate
+            'hacker_attrition_rate': hacker_attrition_rate,
+            'volunteer_attrition_rate': volunteer_attrition_rate,
+            'mentor_attrition_rate': mentor_attrition_rate,
+            'sponsor_attrition_rate': sponsor_attrition_rate,
         }
     )
 
