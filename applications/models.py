@@ -379,7 +379,7 @@ class HackerApplication(
 
     # Info for hardware
     hardware = models.CharField(max_length=300, null=True, blank=True)
-           
+
     cvs_edition = models.BooleanField(default=False)
 
     @classmethod

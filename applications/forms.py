@@ -185,18 +185,18 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         initial=False,
         widget=forms.RadioSelect
     )
-    
+
     resume = forms.FileField(required=True)
-    
+
     cvs_edition = forms.BooleanField(
         required=False,
         label='I authorize "Hackers at UPC" to share my CV with HackUPC 2019 Sponsors.'
     )
-    
+
     def clean_cvs_edition(self):
         cc = self.cleaned_data.get('cvs_edition', False)
         return cc
-    
+
     def clean_resume(self):
         resume = self.cleaned_data['resume']
         size = getattr(resume, '_size', 0)
@@ -380,7 +380,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                                              'english_level', 'quality', 'weakness', 'cool_skill', 'fav_movie',
                                              'friends')}),
         ]
-         # Fields that we only need the first time the hacker fills the application
+        # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
@@ -641,7 +641,7 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
              {'fields': ('name', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'position', 'attendance'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
         ]
-         # Fields that we only need the first time the hacker fills the application
+        # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {

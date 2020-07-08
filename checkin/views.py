@@ -25,8 +25,6 @@ from app.slack import send_slack_message
 from multiprocessing import Pool
 
 
-
-
 def get_application_by_type(type, uuid):
     if type == models.userModels.USR_HACKER:
         return models.HackerApplication.objects.filter(uuid=uuid).first()
@@ -53,10 +51,9 @@ def checking_in_hacker(request, web, appid, qrcode, type):
     ci.set_application(app)
     ci.qr_identifier = qrcode
     ci.save()
-    app.check_in()
     try:
         pool = Pool(processes=1)
-        pool.apply_async(send_slack_message, [user.email, 'Hello ' + user.name + ' :wave::skin-tone-3:'
+        pool.apply_async(send_slack_message, [app.user.email, 'Hello ' + app.user.name + ' :wave::skin-tone-3:'
                                               'and welcome to *HackUPC 2019* :bee:!\n    - Opening ceremony '
                                               ':fast_forward: will be at 19h :clock6: on the Vèrtex building, more '
                                               'information on how to get there :world_map: at maps.hackupc.com. '
@@ -150,7 +147,6 @@ class CheckInSponsorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, Filt
         return models.User.objects.filter(is_sponsor=True).exclude(id__in=checkins)
 
 
-
 class CheckInVolunteerList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
@@ -179,18 +175,13 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         app = get_application_by_type(type, appid)
         if not app:
             raise Http404
-        context.update({
-            "user": user,
-            'checkedin': CheckIn.objects.filter(application_user=user).exists()
-        })
-        app = appmodels.Application.objects.filter(user=user).first()
         if app:
             context.update({
                 'app': app,
                 'checkedin': app.status == appmodels.APP_ATTENDED
             })
         try:
-            context.update({'checkin': CheckIn.objects.filter(user=user).first()})
+            context.update({'checkin': CheckIn.objects.filter(application=app).first()})
         except:
             pass
         return context

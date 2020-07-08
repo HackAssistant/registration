@@ -92,7 +92,7 @@ class RegisterForm(LoginForm):
             raise forms.ValidationError("Unexpected type. Are you trying to hack us?")
         return self.cleaned_data
 
-     def clean_terms_and_conditions(self):
+    def clean_terms_and_conditions(self):
         cc = self.cleaned_data.get('terms_and_conditions', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
         # self.instance.pk is None if there's no Application existing before

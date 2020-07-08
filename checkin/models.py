@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 
-from applications.models import APP_CONFIRMED, Application
+from applications.models import APP_CONFIRMED, APP_ATTENDED
 from offer.models import Code
 from user.models import User
 
@@ -57,7 +57,7 @@ class CheckIn(models.Model):
             if not self.application_user.is_sponsor and not self.application_user.is_mentor and not \
                self.application_user.is_judge and not self.application_user.is_volunteer:
                 codes = {c["offer"]: c["id"] for c in
-                        Code.objects.filter(user__isnull=True).order_by("-id").values("id", "offer")}
+                         Code.objects.filter(user__isnull=True).order_by("-id").values("id", "offer")}
                 Code.objects.filter(id__in=list(codes.values())).update(user_id=self.application_user.id)
         else:
             raise ValueError

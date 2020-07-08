@@ -9,21 +9,12 @@ from django.http import HttpResponseRedirect, StreamingHttpResponse, HttpRespons
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
-from applications.models import Application
-from offer.models import Offer
-from reimbursement.models import Reimbursement
-from baggage.models import Bag
-from django.shortcuts import get_object_or_404
-from django.http import StreamingHttpResponse
-try:
-    from urllib import quote
-except ImportError:
-    from urllib.parse import quote
-import os
 
 from app import utils, mixins
 from applications.models import HackerApplication, MentorApplication
 from reimbursement.models import Reimbursement
+from baggage.models import Bag
+from offer.models import Offer
 
 
 def root_view(request):
