@@ -54,7 +54,7 @@
                 {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects|safe|urlize %}
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                 {% include 'include/field.html' with desc='Excited about' value=app.excited %}
-                {% if request.user.has_dubious_acces  and app.is_dubious %}
+                {% if request.user.has_dubious_access  and app.is_dubious %}
                     <hr>
                     <dt>
                     <h3>Dubious info</h3>
@@ -149,18 +149,20 @@
 
 {% block out_panel %}
     {% if vote and app %}
-        <div class="panel-footer">
+        <div class="panel-body" style="padding: 0px">
 
             <form action="" method="post">
                 {% csrf_token %}
-                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                <h4 class="text-center">Score</h4>
-                <dl class="dl-horizontal">
-                    <dt>Technical Skills</dt>
-                    <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
-                    <dt>Personal Skills</dt>
-                    <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
-                </dl>
+                <div class="col-md-8">
+                    <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                    <h4 class="text-center">Score</h4>
+                    <dl class="dl-horizontal">
+                        <dt>Technical Skills</dt>
+                        <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                        <dt>Personal Skills</dt>
+                        <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+                    </dl>
+                </div>
                 <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
                 <button name="skip" class="btn btn-default btn-block" value="skip">Skip
                     application
@@ -175,6 +177,7 @@
                         Blacklist Application
                     </button>
                 {% endif %}
+
             </form>
         </div>
     {% elif app and user.is_director %}
@@ -233,7 +236,7 @@
                         <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
                         </button>
                     {% endif %}
-                    
+
                     {% if app.is_dubious and app.contacted and app.contacted_by == request.user %}
                         <button name="unset_dubious" class="btn btn-success btn-block" value="unset_dubious">Mark as not
                             dubious

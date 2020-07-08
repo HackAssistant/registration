@@ -6,59 +6,31 @@ from django.urls import reverse
 from django.utils import timezone
 
 from app.views import TabsView
-from applications import models as a_models
-from applications.models import Application, STATUS, APP_ATTENDED, APP_CONFIRMED, GENDERS
+from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, D_OTHER, \
+    VolunteerApplication, MentorApplication, SponsorApplication
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
 from checkin.models import CheckIn
 
 from collections import defaultdict
 
-STATUS_DICT = dict(STATUS)
-GENDER_DICT = dict(GENDERS)
-
 
 def stats_tabs():
-    tabs = [('Applications', reverse('app_stats'), False), ('Users', reverse('users_stats'), False),
-            ('Check-in', reverse('checkin_stats'), False)]
+    tabs = [('Hacker', reverse('app_stats'), False), ('Volunteer', reverse('volunteer_stats'), False),
+            ('Mentor', reverse('mentor_stats'), False), ('Sponsor', reverse('sponsor_stats'), False),
+            ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False), ]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
 
 
-@is_organizer
-def reimb_stats_api(request):
-    from reimbursement.models import Reimbursement, RE_STATUS, RE_DRAFT
-    RE_STATUS_DICT = dict(RE_STATUS)
+def get_stats(model):
+    hacker = model == HackerApplication
+    volunteer = model == VolunteerApplication
+    mentor = model == MentorApplication
+    sponsor = model == SponsorApplication
     # Status analysis
-    status_count = Reimbursement.objects.all().values('status') \
-        .annotate(reimbursements=Count('status'))
-    status_count = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), status_count)
-
-    total_apps = Application.objects.count()
-    reimb_count = Reimbursement.objects.count()
-
-    amounts = Reimbursement.objects.all().exclude(status=RE_DRAFT).values('status') \
-        .annotate(final_amount=Sum('reimbursement_money'), max_amount=Sum('assigned_money'))
-    amounts = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), amounts)
-
-    return JsonResponse(
-        {
-            'update_time': timezone.now(),
-            'reimb_count': reimb_count,
-            'reimb_apps': {'Reimbursement needed': reimb_count, 'No reimbursement': total_apps - reimb_count},
-            'status': list(status_count),
-            'amounts': list(amounts),
-        }
-    )
-
-
-@is_organizer
-def app_stats_api(request):
-    # Status analysis
-    tshirt_dict = dict(a_models.TSHIRT_SIZES)
-    diets_dict = dict(a_models.DIETS)
-    applications = list(Application.objects.all())
+    applications = list(model.objects.all())
     status_count = defaultdict(int)
     gender_count = defaultdict(int)
     origin_count = defaultdict(int)
@@ -79,34 +51,64 @@ def app_stats_api(request):
     lennyface_count_confirmed = defaultdict(int)
     resume_count = defaultdict(int)
     resume_count_confirmed = defaultdict(int)
+    study_work_count = defaultdict(int)
+    study_work_count_confirmed = defaultdict(int)
+    attendance_count = defaultdict(int)
+    attendance_count_confirmed = defaultdict(int)
     other_diet = []
     for a in applications:
-        status_count[STATUS_DICT[a.status]] += 1
-        gender_count[GENDER_DICT[a.gender]] += 1
-        origin_count[a.origin] += 1
-        university_count[a.university] += 1
-        grad_year_count[a.graduation_year] += 1
-        degree_count[a.degree] += 1
-        first_timer_count[a.first_timer] += 1
-        shirt_count[tshirt_dict[a.tshirt_size]] += 1
-        diet_count[diets_dict[a.diet]] += 1
-        lennyface_count[a.lennyface] += 1
-        resume_count['Resume'] += a.resume != ""
-        resume_count['No resume'] += a.resume == ""
+        status_count[a.get_status_display()] += 1
+        shirt_count[a.get_tshirt_size_display()] += 1
+        diet_count[a.get_diet_display()] += 1
+        if hacker or volunteer or mentor:
+            origin_count[a.origin] += 1
+            gender_count[a.get_gender_display()] += 1
+        if hacker or volunteer:
+            university_count[a.university] += 1
+            grad_year_count[a.graduation_year] += 1
+            degree_count[a.degree] += 1
+            first_timer_count[a.first_timer] += 1
+        if hacker:
+            lennyface_count[a.lennyface] += 1
+            resume_count['Resume'] += a.resume != ""
+            resume_count['No resume'] += a.resume == ""
+        if mentor and a.study_work:
+            study_work_count['Student'] += 1
+        elif mentor:
+            study_work_count['Worker'] += 1
+        if sponsor or volunteer or mentor:
+                for day in a.get_attendance_display().split(', '):
+                    attendance_count[day] += 1
 
-        if a.status == APP_CONFIRMED:
-            origin_count_confirmed[a.origin] += 1
-            university_count_confirmed[a.university] += 1
-            grad_year_count_confirmed[a.graduation_year] += 1
-            degree_count_confirmed[a.degree] += 1
-            first_timer_count_confirmed[a.first_timer] += 1
-            shirt_count_confirmed[tshirt_dict[a.tshirt_size]] += 1
-            diet_count_confirmed[diets_dict[a.diet]] += 1
-            lennyface_count_confirmed[a.lennyface] += 1
-            resume_count_confirmed['Resume'] += a.resume != ""
-            resume_count_confirmed['No resume'] += a.resume == ""
-            if a.diet == a_models.D_OTHER and a.other_diet:
+        if not sponsor and a.status == APP_CONFIRMED:
+            shirt_count_confirmed[a.get_tshirt_size_display()] += 1
+            diet_count_confirmed[a.get_diet_display()] += 1
+            if hacker or volunteer or mentor:
+                origin_count_confirmed[a.origin] += 1
+            if hacker or volunteer:
+                university_count_confirmed[a.university] += 1
+                grad_year_count_confirmed[a.graduation_year] += 1
+                degree_count_confirmed[a.degree] += 1
+                first_timer_count_confirmed[a.first_timer] += 1
+            if hacker:
+                lennyface_count_confirmed[a.lennyface] += 1
+                resume_count_confirmed['Resume'] += a.resume != ""
+                resume_count_confirmed['No resume'] += a.resume == ""
+            if mentor and a.study_work:
+                study_work_count_confirmed['Student'] += 1
+            elif mentor:
+                study_work_count_confirmed['Worker'] += 1
+            if a.diet == D_OTHER and a.other_diet:
                 other_diet.append(a.other_diet)
+            if volunteer or mentor:
+                for day in a.get_attendance_display().split(', '):
+                    attendance_count_confirmed[day] += 1
+
+    shirt_count = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count.items()]
+    shirt_count_confirmed = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count_confirmed.items()]
+
+    diet_count = [{'diet': x, 'applications': v} for (x, v) in diet_count.items()]
+    diet_count_confirmed = [{'diet': x, 'applications': v} for (x, v) in diet_count_confirmed.items()]
 
     origin_count = [{'origin': x, 'applications': v} for (x, v) in sorted(origin_count.items(),
                                                                           key=lambda item: item[1])[-10:]]
@@ -123,18 +125,16 @@ def app_stats_api(request):
     degree_count_confirmed = [{'degree': x, 'applications': v} for (x, v) in
                               sorted(degree_count_confirmed.items(), key=lambda item: item[1])[-10:]]
 
-    shirt_count = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count.items()]
-    shirt_count_confirmed = [{'tshirt': x, 'applications': v} for (x, v) in shirt_count_confirmed.items()]
-
-    diet_count = [{'diet': x, 'applications': v} for (x, v) in diet_count.items()]
-    diet_count_confirmed = [{'diet': x, 'applications': v} for (x, v) in diet_count_confirmed.items()]
-
     lennyface_count = [{'lennyface': x, 'applications': v} for (x, v) in
                        sorted(lennyface_count.items(), key=lambda item: item[1])[-5:]]
     lennyface_count_confirmed = [{'lennyface': x, 'applications': v} for (x, v) in
                                  sorted(lennyface_count_confirmed.items(), key=lambda item: item[1])[-5:]]
 
-    timeseries = Application.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
+    attendance_count = [{'attendance': x, 'applications': v} for (x, v) in attendance_count.items()]
+    attendance_count_confirmed = [{'attendance': x, 'applications': v} for (x, v) in
+                                  attendance_count_confirmed.items()]
+
+    timeseries = model.objects.all().annotate(date=TruncDate('submission_date')).values('date').annotate(
         applications=Count('date'))
 
     return JsonResponse(
@@ -162,9 +162,45 @@ def app_stats_api(request):
             'lennyface_confirmed': lennyface_count_confirmed,
             'resume': resume_count,
             'resume_confirmed': resume_count_confirmed,
-            'other_diet': '<br>'.join([el for el in other_diet])
+            'other_diet': '<br>'.join([el for el in other_diet]),
+            'study_work': study_work_count,
+            'study_work_confirmed': study_work_count_confirmed,
+            'attendance': attendance_count,
+            'attendance_confirmed': attendance_count_confirmed,
         }
     )
+
+
+@is_organizer
+def reimb_stats_api(request):
+    from reimbursement.models import Reimbursement, RE_STATUS, RE_DRAFT
+    RE_STATUS_DICT = dict(RE_STATUS)
+    # Status analysis
+    status_count = Reimbursement.objects.all().values('status') \
+        .annotate(reimbursements=Count('status'))
+    status_count = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), status_count)
+
+    total_apps = HackerApplication.objects.count()
+    reimb_count = Reimbursement.objects.count()
+
+    amounts = Reimbursement.objects.all().exclude(status=RE_DRAFT).values('status') \
+        .annotate(final_amount=Sum('reimbursement_money'), max_amount=Sum('assigned_money'))
+    amounts = map(lambda x: dict(status_name=RE_STATUS_DICT[x['status']], **x), amounts)
+
+    return JsonResponse(
+        {
+            'update_time': timezone.now(),
+            'reimb_count': reimb_count,
+            'reimb_apps': {'Reimbursement needed': reimb_count, 'No reimbursement': total_apps - reimb_count},
+            'status': list(status_count),
+            'amounts': list(amounts),
+        }
+    )
+
+
+@is_organizer
+def app_stats_api(request):
+    return get_stats(HackerApplication)
 
 
 @is_organizer
@@ -172,10 +208,12 @@ def users_stats_api(request):
     users = list(User.objects.all())
     users_count = defaultdict(int)
     for u in users:
-        users_count["Volunteers"] += u.is_volunteer
+        users_count["Mentors"] += u.is_mentor()
+        users_count["Sponsors"] += u.is_sponsor()
+        users_count["Volunteers"] += u.is_volunteer()
         users_count["Directors"] += u.is_director
-        users_count["Organizers"] += u.is_organizer
-        users_count["Hackers"] += not (u.is_volunteer or u.is_director or u.is_organizer)
+        users_count["Organizers"] += (u.is_organizer and not u.is_director)
+        users_count["Hackers"] += u.is_hacker()
 
     users_count = [{'user_type': x, 'Users': v} for (x, v) in users_count.items()]
 
@@ -188,12 +226,8 @@ def users_stats_api(request):
     )
 
 
-@is_organizer
-def checkin_stats_api(request):
-    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
-        .values('hour').annotate(checkins=Count('hour'))
-    checkin_count = len(CheckIn.objects.all())
-    applications = list(Application.objects.all())
+def attrition_rate(application_type):
+    applications = list(application_type.objects.all())
     attended = 0
     confirmed = 0
     for a in applications:
@@ -201,16 +235,47 @@ def checkin_stats_api(request):
             confirmed += 1
         if a.status == APP_ATTENDED:
             attended += 1
-    attrition_rate = {'Attrition rate': attended * 100 / (confirmed + attended)}
+    result = 0
+    if confirmed or attended:
+        result = attended * 100 / (confirmed + attended)
+    return result
 
+
+@is_organizer
+def checkin_stats_api(request):
+    timeseries = CheckIn.objects.all().annotate(hour=TruncHour('update_time')) \
+        .values('hour').annotate(checkins=Count('hour'))
+    checkin_count = len(CheckIn.objects.all())
+    hacker_attrition_rate = {'Attrition rate': attrition_rate(HackerApplication)}
+    volunteer_attrition_rate = {'Attrition rate': attrition_rate(VolunteerApplication)}
+    mentor_attrition_rate = {'Attrition rate': attrition_rate(MentorApplication)}
+    sponsor_attrition_rate = {'Attrition rate': attrition_rate(SponsorApplication)}
     return JsonResponse(
         {
             'update_time': timezone.now(),
             'timeseries': list(timeseries),
             'checkin_count': checkin_count,
-            'attrition_rate': attrition_rate
+            'hacker_attrition_rate': hacker_attrition_rate,
+            'volunteer_attrition_rate': volunteer_attrition_rate,
+            'mentor_attrition_rate': mentor_attrition_rate,
+            'sponsor_attrition_rate': sponsor_attrition_rate,
         }
     )
+
+
+@is_organizer
+def volunteer_stats_api(request):
+    return get_stats(VolunteerApplication)
+
+
+@is_organizer
+def mentor_stats_api(request):
+    return get_stats(MentorApplication)
+
+
+@is_organizer
+def sponsor_stats_api(request):
+    return get_stats(SponsorApplication)
 
 
 class AppStats(IsOrganizerMixin, TabsView):
@@ -236,6 +301,27 @@ class UsersStats(IsOrganizerMixin, TabsView):
 
 class CheckinStats(IsOrganizerMixin, TabsView):
     template_name = 'checkin_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class VolunteerStats(IsOrganizerMixin, TabsView):
+    template_name = 'volunteer_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class MentorStats(IsOrganizerMixin, TabsView):
+    template_name = 'mentor_stats.html'
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+
+class SponsorStats(IsOrganizerMixin, TabsView):
+    template_name = 'sponsor_stats.html'
 
     def get_current_tabs(self):
         return stats_tabs()

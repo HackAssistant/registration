@@ -1,0 +1,27 @@
+{% extends 'base_email.html' %}
+{% block preheader %}New Sponsor: {{ sponsor_name }}{% endblock %}
+{% block content %}
+    <p>
+        Hi {{ user.name }},
+        thanks for creating a new Sponsor User! Here you have a few useful links:
+        Password reset generator link for {{ sponsor_name }}:
+    </p>
+    {% include 'mails/include/email_button.html' with url=user_sponsor_url text='Reset password' %}
+    <p>
+        If clicking the link above doesn't work, please copy and paste the URL in a new browser
+        window instead.
+    </p>
+    <p style="text-align: center;">{{ user_sponsor_url|urlize }}</p>
+    <p>
+        Application link for {{ sponsor_name }}:
+    </p>
+    {% include 'mails/include/email_button.html' with url=app_sponsor_url text='Application' %}
+    <p>
+        If clicking the link above doesn't work, please copy and paste the URL in a new browser
+        window instead.
+    </p>
+    <p style="text-align: center;">{{ app_sponsor_url|urlize }}</p>
+
+    {% include 'mails/include/closing.html' %}
+
+{% endblock %}

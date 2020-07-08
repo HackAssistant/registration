@@ -4,6 +4,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.password_validation import validate_password, password_validators_help_texts
 
 from user.models import User
+from user import models
 
 
 class UserChangeForm(forms.ModelForm):
@@ -68,6 +69,10 @@ class RegisterForm(LoginForm):
 
     field_order = ['name', 'email', 'password', 'password2']
 
+    def __init__(self, *args, **kwargs):
+        self._type = kwargs.pop('type', None)
+        super().__init__(*args, **kwargs)
+
     def clean_password2(self):
         # Check that the two password entries match
         password = self.cleaned_data.get("password")
@@ -76,6 +81,24 @@ class RegisterForm(LoginForm):
             raise forms.ValidationError("Passwords don't match")
         validate_password(password)
         return password2
+
+    def clean(self):
+        # Check if the parameter of the url is one of our user types
+        if self._type not in models.USR_URL_TYPE:
+            raise forms.ValidationError("Unexpected type. Are you trying to hack us?")
+        return self.cleaned_data
+
+
+class RegisterSponsorForm(forms.Form):
+    name = forms.CharField(label='Company name', max_length=225)
+    email = forms.EmailField(label='Email', max_length=100, help_text='Can be an invented email')
+    n_max = forms.IntegerField(label='Number of applications max that can create this sponsor')
+
+    def clean_n_max(self):
+        n_max = self.cleaned_data['n_max']
+        if n_max < 1:
+            forms.ValidationError("Set a positive number, please")
+        return n_max
 
 
 class PasswordResetForm(forms.Form):

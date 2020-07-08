@@ -29,6 +29,19 @@ class IsOrganizerMixin(UserPassesTestMixin):
         return self.request.user.is_authenticated and self.request.user.is_organizer
 
 
+class IsSponsorMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        return self.request.user.is_authenticated and self.request.user.is_sponsor()
+
+
 class IsVolunteerMixin(UserPassesTestMixin):
     raise_exception = True
 
@@ -40,7 +53,8 @@ class IsVolunteerMixin(UserPassesTestMixin):
         if not self.request.user.has_usable_password():
             return False
         return \
-            self.request.user.is_authenticated and (self.request.user.is_volunteer or self.request.user.is_organizer)
+            self.request.user.is_authenticated and \
+            (self.request.user.is_volunteer_accepted or self.request.user.is_organizer)
 
 
 class IsDirectorMixin(UserPassesTestMixin):
@@ -70,6 +84,66 @@ class IsHardwareAdminMixin(UserPassesTestMixin):
         return self.request.user.is_hardware_admin or self.request.user.is_organizer
 
 
+class HaveDubiousPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.is_organizer:
+            return False
+        return self.request.user.has_dubious_access
+
+
+class HaveVolunteerPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.is_organizer:
+            return False
+        return self.request.user.has_volunteer_access
+
+
+class HaveMentorPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.is_organizer:
+            return False
+        return self.request.user.has_mentor_access
+
+
+class HaveSponsorPermissionMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.is_organizer:
+            return False
+        return self.request.user.has_sponsor_access
+
+
 class IsBlacklistAdminMixin(UserPassesTestMixin):
     raise_exception = True
 
@@ -81,6 +155,21 @@ class IsBlacklistAdminMixin(UserPassesTestMixin):
         if not self.request.user.has_usable_password():
             return False
         return self.request.user.has_blacklist_acces or self.request.user.is_director
+
+
+class DashboardMixin(UserPassesTestMixin):
+    raise_exception = False
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        if not self.request.user.email_verified:
+            return False
+        if not self.request.user.has_usable_password():
+            return False
+        if not self.request.user.is_authenticated:
+            return False
+        return self.request.user.is_hacker() or self.request.user.is_volunteer() or self.request.user.is_mentor()
 
 
 def is_organizer(f, raise_exception=True):

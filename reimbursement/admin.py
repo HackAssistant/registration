@@ -13,7 +13,7 @@ class ReimbursementAdmin(admin.ModelAdmin):
     list_display = ('hacker', 'money', 'origin', 'status',
                     'timeleft_expiration', 'application_status',)
     list_filter = ('status', 'origin',
-                   'reimbursed_by', 'hacker__application__status')
+                   'reimbursed_by')
 
     search_fields = ['hacker__name', 'hacker__email',
                      'origin']
@@ -36,7 +36,7 @@ class ReimbursementAdmin(admin.ModelAdmin):
     def application_status(self, obj):
         return obj.hacker.application.get_status_display()
 
-    application_status.admin_order_field = 'hacker__application__status'  # Allows column order sorting
+    # application_status.admin_order_field = 'hacker__application__status'  # Allows column order sorting
 
     def status_last_updated(self, app):
         if not app.status_update_date:

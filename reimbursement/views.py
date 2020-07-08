@@ -165,7 +165,7 @@ class SendReimbursementListView(IsDirectorMixin, TabsViewMixin, SingleTableMixin
     def get_queryset(self):
         status = [app_mod.APP_INVITED, app_mod.APP_LAST_REMIDER, app_mod.APP_CONFIRMED, app_mod.APP_ATTENDED]
         return models.Reimbursement.objects.filter(status=models.RE_DRAFT) \
-            .filter(hacker__application__status__in=status).all()
+            .filter(hacker__hackerapplication_application__status__in=status).all()
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')

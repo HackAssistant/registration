@@ -42,6 +42,7 @@ HACKATHON_ARRIVE = 'Registration opens at 3:00 PM and closes at 6:00 PM on Frida
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
                   'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
+
 # (OPTIONAL) Hackathon live page
 # HACKATHON_LIVE_PAGE = 'https://gerard.space/live'
 
@@ -93,3 +94,7 @@ DUBIOUS_ENABLED = False
 BLACKLIST_ENABLED = False
 
 SUPPORTED_RESUME_EXTENSIONS = []
+
+# Mentor/Volunteer applications can expire if they are invited, set to False to not
+MENTOR_EXPIRES = False
+VOLUNTEER_EXPIRES = False
