@@ -73,13 +73,9 @@
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
                 {% endif %}
-                {% if h_leave_hacker_sponsor %}
+                {% if h_leave %}
                     <h3>When to leave</h3>
-                    {% if application.user.is_hacker or application.user.is_sponsor %}
-                        <p>{{ h_leave_hacker_sponsor }}</p>
-                    {% else %}
-                        <p>{{ h_leave_other }}</p>
-                    {% endif %}
+                    <p>{{ h_leave }}</p>
                 {% endif %}
                 {% include 'include/cancel.html' %}
             </div>
@@ -111,13 +107,9 @@
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
                 {% endif %}
-                {% if h_leave_hacker_sponsor %}
+                {% if h_leave %}
                     <h3>When to leave</h3>
-                    {% if application.user.is_hacker or application.user.is_sponsor %}
-                        <p>{{ h_leave_hacker_sponsor }}</p>
-                    {% else %}
-                        <p>{{ h_leave_other }}</p>
-                    {% endif %}
+                    <p>{{ h_leave }}</p>
                 {% endif %}
 
                 <div class="col-md-5  no-padding"><a href="{% url 'confirm_app' application.uuid_str %}"

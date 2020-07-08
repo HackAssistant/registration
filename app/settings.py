@@ -270,10 +270,6 @@ MAX_VOTES = 10
 # Max number of votes that can have one application
 MAX_VOTES_TO_APP = 50
 
-# Mentor/Volunteer applications can expire if they are invited, set to False to not
-MENTOR_EXPIRES = False
-VOLUNTEER_EXPIRES = False
-
 APPLICATION_EXPIRATION_TYPES = {
     'H': True,                  # Hacker allways expire, do not change this
     'M': MENTOR_EXPIRES,        # Mentor can expire

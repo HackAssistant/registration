@@ -1,6 +1,2 @@
 {% if h_arrive %}<p><b>When to arrive</b> {{ h_arrive }}</p>{% endif %}
-{% if is_hacker or is_sponsor %}
-    {% if h_leave_hacker_sponsor %}<p><b>When to leave</b> {{ h_leave_hacker_sponsor }}</p>{% endif %}
-{% else %}
-    {% if h_leave_other %}<p><b>When to leave</b> {{ h_leave_other }}</p>{% endif %}
-{% endif %}
+    {% if h_leave %}<p><b>When to leave</b> {{ h_leave }}</p>{% endif %}
