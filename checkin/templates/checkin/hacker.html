@@ -1,7 +1,15 @@
 {% extends "base_tabs.html" %}
-{% block head_title %}Check In {{ app.user.name }}{% endblock %}
-{% block panel %}
 
+{% load static %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/checkin.css' %}">
+{% endblock %}
+
+{% block head_title %}Check-in {{ app.user.name }}{% endblock %}
+
+{% block panel %}
     <dl class="dl-horizontal">
         {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
         {% include 'include/field.html' with desc='Type' value=app.user.get_type_display %}
@@ -18,33 +26,38 @@
         {% include 'include/field.html' with desc='Other' value=app.other_diet %}
         {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
     </dl>
-
 {% endblock %}
+
 {% block cols-panel %}col-md-6 col-md-offset-3{% endblock %}
+
 {% block out_panel %}
     <div class="panel-footer">
         {% if checkedin %}
-            <h4>Let's keep this up!</h4>
-            {% if app.user.is_hacker %}
-            <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
-                manually...</a>
-            {% elif app.user.is_volunteer %}
-            <a class="btn btn-default btn-block" href="{% url 'check_in_volunteer_list' %}">Check in more volunteers
-                manually...</a>
-            {% elif app.user.is_mentor %}
-            <a class="btn btn-default btn-block" href="{% url 'check_in_mentor_list' %}">Check in more mentors
-                manually...</a>
-            {% elif app.user.is_sponsor %}
-            <a class="btn btn-default btn-block" href="{% url 'check_in_sponsor_list' %}">Check in more sponsors
-                manually...</a>
-            {% endif %}
-            <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">... or try the QR
-                better?</a>
+            <div style="padding: 1em 1.5em 1.5em 1.5em;">
+                <h4 style="margin-bottom: 15px;">Let's keep this up!</h4>
+                {% if app.user.is_hacker %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
+                    manually...</a>
+                {% elif app.user.is_volunteer %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_volunteer_list' %}">Check in more volunteers
+                    manually...</a>
+                {% elif app.user.is_mentor %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_mentor_list' %}">Check in more mentors
+                    manually...</a>
+                {% elif app.user.is_sponsor %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_sponsor_list' %}">Check in more sponsors
+                    manually...</a>
+                {% endif %}
+            </div>
         {% else %}
-            <form action="" method="post">
+            <form action="" method="post" style="padding-top: 1.5em;">
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
                 <input type="hidden" name="type" value="{{ app.user.type }}"/>
+                <div class="form-group">
+                    {% include 'include/input.html' with type='qr' desc='QR code' name='qr_code' id='qr_code' %}
+                </div>
+                <input type="hidden" name="user_id" value="{{ user.id }}"/>
                 <button class="btn btn-success btn-block" name="checkin">Check In</button>
             </form>
         {% endif %}

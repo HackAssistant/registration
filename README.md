@@ -1,14 +1,13 @@
-<br>
 <p align="center">
-  <img alt="HackAssistant" src="https://avatars2.githubusercontent.com/u/33712329?s=200&v=4" width="200"/>
+  <img alt="HackUPC Fall 2016" src="app/static/img/hackupc-ogimage@2x.png" width="100%"/>
 </p>
-<br>
-
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![CircleCI](https://circleci.com/gh/HackAssistant/registration/tree/master.svg?style=svg)](https://circleci.com/gh/HackAssistant/registration/tree/master)
 
-📝 Hackathon registration server. Originally [HackUPC/backend](https://github.com/hackupc). With collaboration from [HackCU](https://github.com/hackcu). [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199). [User Guide](USER_GUIDE.md)
+
+📝 Registration for hackathons. Forked from [HackAssistant/registration](https://github.com/HackAssistant/registration). Previously known as hackupc/backend. [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199). [User Guide](USER_GUIDE.md)
+
 
 ## Features
 
@@ -28,13 +27,13 @@
 - (Optional) Automated slack invites on confirm #️⃣
 - (Optional) MyMLH sign up 📥
 
-**Demo**: http://registration.gerard.space (updated from master automatically. Running on Heroku free dyno)
+
 
 ## Setup
 
 Needs: Python 3.X, virtualenv
 
-- `git clone https://github.com/hackassistant/registration && cd registration`
+- `git clone https://github.com/hackupc/registration && cd registration`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
@@ -58,7 +57,12 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **DOMAIN**(optional): Domain where app will be running. Default: localhost:8000
 - **SL_TOKEN**(optional): Slack token to invite hackers automatically on confirmation. You can obtain it [here](https://api.slack.com/custom-integrations/legacy-tokens)
 - **SL_TEAM**(optional): Slack team name (xxx on xxx.slack.com)
-- **DROPBOX_OAUTH2_TOKEN**(optional): Enables Dropbox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
+- **DROPBOX_OAUTH2_TOKEN**(optional): Enables DropBox as file upload server instead of local computer. (See "Set up Dropbox storage for uploaded files" below)
+- **SL_BOT_ID**(optional): Slack bot ID to send messages from.
+- **SL_BOT_TOKEN**(optional): Slack bot token to send messages.
+- **SL_BOT_CHANNEL**(optional): General channel to refer from the bot messages.
+- **SL_BOT_DIRECTOR1**(optional): User ID of one of the directors.
+- **SL_BOT_DIRECTOR2**(optional): User ID of the other director.
 - **MLH_CLIENT_SECRET**(optional): Enables MyMLH as a sign up option. Format is `client_id@client_secret` (See "Set up MyMLH" below)
 
 
@@ -198,6 +202,7 @@ server {
     location / {
         include proxy_params;
         proxy_pass http://unix:/home/user/project_folder/backend.sock;
+        client_max_body_size 5MB;
     }
 
 
@@ -270,6 +275,8 @@ You can use this for your own hackathon. How?
 - Colors and presentation: [app/static/css/main.css](app/static/css/main.css).
 - Navbar & content/disposition: [app/templates/base.html](app/templates/base.html)
 - Email base template: [app/templates/base_email.html](app/templates/base_email.html)
+- Update favicon [app/static/](app/static/)
+
 
 ### Content
 
@@ -278,7 +285,7 @@ You can use this for your own hackathon. How?
 You can update emails related to 
 - Applications (application invite, event ticket, last reminder) at [applications/templates/mails/](applications/templates/mails/)
 - Reimbursements (reimbursement email, reject receipt) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
-- User registration (email verification, password reset) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
+- User registration (email verification, password reset) at [user/templates/mails/](user/templates/mails/)
 
 #### Update hackathon variables
 Check all available variables at [app/hackathon_variables.py.template](app/hackathon_variables.py.template). 
@@ -297,7 +304,7 @@ If you need extra labels for your hackathon, you can change the model and add yo
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
 
-By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to report@gerard.space and appropriate action will be taken against the offender after investigation.
+By making a contribution, in any form (including, but not limited to, Issues and Pull Requests), you agree to abide by the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report any incidents to devs@hackupc.com and appropriate action will be taken against the offender after investigation.
 
 # License
 

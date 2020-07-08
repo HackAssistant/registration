@@ -13,8 +13,8 @@ class UserAdmin(admin.ModelAdmin):
     change_password_form = AdminPasswordChangeForm
 
     display_fields = ['email', 'name', 'type', 'admin_is_organizer', 'admin_is_volunteer_accepted',
-                      'is_director', 'have_application']
-    filter_fields = ['is_director', 'is_admin', 'email_verified', 'type']
+                      'is_director', 'have_application', 'is_judge']
+    filter_fields = ['is_director', 'is_admin', 'email_verified', 'type', 'is_judge']
     permission_fields = ['is_director', 'is_admin', 'email_verified', 'can_review_dubious', 'can_review_blacklist',
                          'can_review_volunteers', 'can_review_mentors', 'can_review_sponsors']
 

@@ -9,6 +9,17 @@ from django.http import HttpResponseRedirect, StreamingHttpResponse, HttpRespons
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView
+from applications.models import Application
+from offer.models import Offer
+from reimbursement.models import Reimbursement
+from baggage.models import Bag
+from django.shortcuts import get_object_or_404
+from django.http import StreamingHttpResponse
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
+import os
 
 from app import utils, mixins
 from applications.models import HackerApplication, MentorApplication
@@ -40,6 +51,18 @@ def code_conduct(request):
     return render(request, 'code_conduct.html')
 
 
+def legal_notice(request):
+    return render(request, 'legal_notice.html')
+
+
+def privacy_and_cookies(request):
+    return render(request, 'privacy_and_cookies.html')
+
+
+def terms_and_conditions(request):
+    return render(request, 'terms_and_conditions.html')
+
+
 def protectedMedia(request, file_):
     path, file_name = os.path.split(file_)
     downloadable_path = None
@@ -59,6 +82,13 @@ def protectedMedia(request, file_):
         if request.user.is_authenticated() and (request.user.is_organizer or
                                                 (app and (app.hacker_id == request.user.id))):
             downloadable_path = app.receipt.path
+    elif path == "baggage":
+        bag = get_object_or_404(Bag, image=file_)
+        if request.user.is_authenticated() and (request.user.is_organizer or request.user.is_volunteer):
+            downloadable_path = bag.image.path
+    elif path == "offer/logo":
+        offer = get_object_or_404(Offer, logo=file_)
+        downloadable_path = offer.logo.path
     if downloadable_path:
         (_, doc_extension) = file_name.rsplit('.', 1)
         if doc_extension == 'pdf':

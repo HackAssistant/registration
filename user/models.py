@@ -94,6 +94,7 @@ class UserManager(BaseUserManager):
         user.email_verified = True
         user.is_volunteer = True
         user.is_hardware_admin = True
+        user.is_hx = True
         user.save(using=self._db)
         return user
 
@@ -113,6 +114,7 @@ class User(AbstractBaseUser):
 
     email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_judge = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     can_review_dubious = models.BooleanField(default=False)
@@ -138,6 +140,11 @@ class User(AbstractBaseUser):
     def get_short_name(self):
         # The user is identified by their email address
         return self.email
+
+    @property
+    def is_participant(self):
+        return not self.is_sponsor and not self.is_mentor and not self.is_judge and not self.is_volunteer and not \
+            self.is_organizer
 
     def __str__(self):
         return self.email

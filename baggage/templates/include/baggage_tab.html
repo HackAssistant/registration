@@ -1,0 +1,5 @@
+{% if request.user.is_volunteer or request.user.is_organizer %}
+    <li class="{% if 'baggage' in request.build_absolute_uri %}active{% endif %}"><a href="{% url 'baggage_search' %}">Baggage</a></li>
+{% elif request.user.email_verified %}
+    <li class="{% if 'baggage' in request.build_absolute_uri %}active{% endif %}"><a href="{% url 'baggage_currenthacker' %}">Baggage</a></li>
+{% endif %}

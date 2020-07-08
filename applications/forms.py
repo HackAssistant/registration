@@ -32,24 +32,49 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         label='How old are you?',
         initial=False,
         coerce=lambda x: x == 'True',
-        choices=((False, '18 or over'), (True, 'Under 18')),
+        choices=((False, '18 or over'), (True, 'Between 14 (included) and 18')),
         widget=forms.RadioSelect
     )
-    code_conduct = forms.BooleanField(required=False,
-                                      label='I have read and accept the '
-                                            '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
-                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
-                                                settings.HACKATHON_NAME), )
 
-    def clean_code_conduct(self):
-        cc = self.cleaned_data.get('code_conduct', False)
-        # Check that if it's the first submission hackers checks code of conduct checkbox
+    terms_and_conditions = forms.BooleanField(
+        required=False,
+        label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
+              'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
+              'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
+                  settings.HACKATHON_NAME, settings.HACKATHON_NAME
+              )
+    )
+
+    diet_notice = forms.BooleanField(
+        required=False,
+        label='I authorize "Hackers at UPC" to use my food allergies and intolerances information to '
+              'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
+    )
+
+    def clean_terms_and_conditions(self):
+        cc = self.cleaned_data.get('terms_and_conditions', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
             raise forms.ValidationError(
-                "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
+                "In order to apply and attend you have to accept our Terms & Conditions and"
+                " our Privacy and Cookies Policy."
+            )
         return cc
+
+    def clean_diet_notice(self):
+        diet = self.cleaned_data['diet']
+        diet_notice = self.cleaned_data.get('diet_notice', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if diet != 'None' and not diet_notice and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept us to use your personal data related to your food "
+                "allergies and intolerances only in order to manage the catering service."
+            )
+        return diet_notice
 
     def clean_other_diet(self):
         data = self.cleaned_data['other_diet']
@@ -147,7 +172,7 @@ class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm)
         data = self.cleaned_data['projects']
         first_timer = self.cleaned_data['first_timer']
         if not first_timer and not data:
-            raise forms.ValidationError("Please fill this in order for us to know you a bit better")
+            raise forms.ValidationError("Please fill this in order for us to know you a bit better.")
         return data
 
 
@@ -160,12 +185,35 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         initial=False,
         widget=forms.RadioSelect
     )
+    
+    resume = forms.FileField(required=True)
+    
+    cvs_edition = forms.BooleanField(
+        required=False,
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2019 Sponsors.'
+    )
+    
+    def clean_cvs_edition(self):
+        cc = self.cleaned_data.get('cvs_edition', False)
+        return cc
+    
+    def clean_resume(self):
+        resume = self.cleaned_data['resume']
+        size = getattr(resume, '_size', 0)
+        if size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError("Please keep resume size under %s. Current filesize %s!" % (
+                filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size)))
+        if not resume and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to provide a resume."
+            )
+        return resume
 
     def clean_reimb_amount(self):
         data = self.cleaned_data['reimb_amount']
         reimb = self.cleaned_data.get('reimb', False)
         if reimb and not data:
-            raise forms.ValidationError("To apply for reimbursement please set a valid amount")
+            raise forms.ValidationError("To apply for reimbursement please set a valid amount.")
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         if data and deadline and deadline <= timezone.now():
             raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
@@ -184,7 +232,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             ('Personal Info',
              {'fields': ('university', 'degree', 'graduation_year', 'gender', 'other_gender',
                          'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
+                         'under_age', 'lennyface', 'hardware'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -217,7 +265,20 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(('HackUPC Policies', {
+                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
+                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                               'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
+                               'process your information to organize an awesome hackaton. It '
+                               'will also include images and videos of yourself during the event. '
+                               'Your data will be used for admissions mainly. We may also reach '
+                               'out to you (sending you an e-mail) about other events that we are '
+                               'organizing and that are of a similar nature to those previously '
+                               'requested by you. For more information on the processing of your '
+                               'personal data and on how to exercise your rights of access, '
+                               'rectification, suppression, limitation, portability and opposition '
+                               'please visit our Privacy and Cookies Policy.</p>'
+            }))
         return super(HackerApplicationForm, self).fieldsets
 
     class Meta(_BaseApplicationForm.Meta):
@@ -225,13 +286,14 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         extensions = getattr(settings, 'SUPPORTED_RESUME_EXTENSIONS', None)
 
         help_texts = {
-            'gender': 'This is for demographic purposes.',
-            'graduation_year': 'What year have you graduated on or when will '
-                               'you graduate',
+            'gender': 'This is for demographic purposes. You can skip this question if you want.',
+            'graduation_year': 'What year have you graduated on or when will you graduate',
             'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
+            'hardware': 'Any hardware that you would like us to have. We can\'t promise anything, '
+                        'but at least we\'ll try!',
             'projects': 'You can talk about about past hackathons, personal projects, awards etc. '
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
@@ -253,6 +315,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
+            'hardware': 'Hardware you would like us to have',
             'origin': 'Where are you joining us from?',
             'description': 'Why are you excited about %s?' % settings.HACKATHON_NAME,
             'projects': 'What projects have you worked on?',
@@ -317,10 +380,23 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                                              'english_level', 'quality', 'weakness', 'cool_skill', 'fav_movie',
                                              'friends')}),
         ]
-        # Fields that we only need the first time the hacker fills the application
+         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(('HackUPC Policies', {
+                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
+                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                               'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
+                               'process your information to organize an awesome hackaton. It '
+                               'will also include images and videos of yourself during the event. '
+                               'Your data will be used for admissions mainly. We may also reach '
+                               'out to you (sending you an e-mail) about other events that we are '
+                               'organizing and that are of a similar nature to those previously '
+                               'requested by you. For more information on the processing of your '
+                               'personal data and on how to exercise your rights of access, '
+                               'rectification, suppression, limitation, portability and opposition '
+                               'please visit our Privacy and Cookies Policy.</p>'
+            }))
         return super(VolunteerApplicationForm, self).fieldsets
 
     class Meta(_BaseApplicationForm.Meta):
@@ -421,7 +497,20 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(('HackUPC Policies', {
+                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
+                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                               'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
+                               'process your information to organize an awesome hackaton. It '
+                               'will also include images and videos of yourself during the event. '
+                               'Your data will be used for admissions mainly. We may also reach '
+                               'out to you (sending you an e-mail) about other events that we are '
+                               'organizing and that are of a similar nature to those previously '
+                               'requested by you. For more information on the processing of your '
+                               'personal data and on how to exercise your rights of access, '
+                               'rectification, suppression, limitation, portability and opposition '
+                               'please visit our Privacy and Cookies Policy.</p>'
+            }))
         return super(MentorApplicationForm, self).fieldsets
 
     def clean(self):
@@ -492,21 +581,45 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
-    code_conduct = forms.BooleanField(required=False,
-                                      label='I have read and accept the '
-                                            '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
-                                                getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
-                                                settings.HACKATHON_NAME), )
+    terms_and_conditions = forms.BooleanField(
+        required=False,
+        label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
+              'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
+              'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
+                  settings.HACKATHON_NAME, settings.HACKATHON_NAME
+              )
+    )
 
-    def clean_code_conduct(self):
-        cc = self.cleaned_data.get('code_conduct', False)
-        # Check that if it's the first submission hackers checks code of conduct checkbox
+    diet_notice = forms.BooleanField(
+        required=False,
+        label='I authorize "Hackers at UPC" to use my food allergies and intolerances information to '
+              'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
+    )
+
+    def clean_terms_and_conditions(self):
+        cc = self.cleaned_data.get('terms_and_conditions', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
         # self.instance.pk is None if there's no Application existing before
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not cc and not self.instance.pk:
             raise forms.ValidationError(
-                "To attend %s you must abide by our code of conduct" % settings.HACKATHON_NAME)
+                "In order to apply and attend you have to accept our Terms & Conditions and"
+                " our Privacy and Cookies Policy."
+            )
         return cc
+
+    def clean_diet_notice(self):
+        diet = self.cleaned_data['diet']
+        diet_notice = self.cleaned_data.get('diet_notice', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if diet != 'None' and not diet_notice and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept us to use your personal data related to your food "
+                "allergies and intolerances only in order to manage the catering service."
+            )
+        return diet_notice
 
     def clean_other_diet(self):
         data = self.cleaned_data['other_diet']
@@ -528,10 +641,23 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
              {'fields': ('name', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'position', 'attendance'),
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
         ]
-        # Fields that we only need the first time the hacker fills the application
+         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            self._fieldsets.append(('HackUPC Policies', {
+                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
+                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                               'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
+                               'process your information to organize an awesome hackaton. It '
+                               'will also include images and videos of yourself during the event. '
+                               'Your data will be used for admissions mainly. We may also reach '
+                               'out to you (sending you an e-mail) about other events that we are '
+                               'organizing and that are of a similar nature to those previously '
+                               'requested by you. For more information on the processing of your '
+                               'personal data and on how to exercise your rights of access, '
+                               'rectification, suppression, limitation, portability and opposition '
+                               'please visit our Privacy and Cookies Policy.</p>'
+            }))
         return super(SponsorForm, self).fieldsets
 
     class Meta:

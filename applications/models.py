@@ -75,13 +75,6 @@ DIETS = [
     (D_OTHER, 'Others')
 ]
 
-W_XXS = 'W-XSS'
-W_XS = 'W-XS'
-W_S = 'W-S'
-W_M = 'W-M'
-W_L = 'W-L'
-W_XL = 'W-XL'
-W_XXL = 'W-XXL'
 T_XXS = 'XXS'
 T_XS = 'XS'
 T_S = 'S'
@@ -89,22 +82,18 @@ T_M = 'M'
 T_L = 'L'
 T_XL = 'XL'
 T_XXL = 'XXL'
+T_XXXL = 'XXXL'
+
 TSHIRT_SIZES = [
-    (W_XXS, "Women's - XXS"),
-    (W_XS, "Women's - XS"),
-    (W_S, "Women's - S"),
-    (W_M, "Women's - M"),
-    (W_L, "Women's - L"),
-    (W_XL, "Women's - XL"),
-    (W_XXL, "Women's - XXL"),
-    (T_XXS, "Unisex - XXS"),
     (T_XS, "Unisex - XS"),
     (T_S, "Unisex - S"),
     (T_M, "Unisex - M"),
     (T_L, "Unisex - L"),
     (T_XL, "Unisex - XL"),
     (T_XXL, "Unisex - XXL"),
+    (T_XXXL, "Unisex - XXXL"),
 ]
+
 DEFAULT_TSHIRT_SIZE = T_M
 
 ATTENDANCE = [
@@ -153,7 +142,7 @@ class BaseApplication(models.Model):
     phone_number = models.CharField(blank=True, null=True, max_length=16,
                                     validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                                                message="Phone number must be entered in the format: \
-                                                                      '+#########'. Up to 15 digits allowed.")])
+                                                                  '+#########'. Up to 15 digits allowed.")])
 
     # Info for swag and food
     diet = models.CharField(max_length=300, choices=DIETS, default=D_NONE)
@@ -387,6 +376,11 @@ class HackerApplication(
     reimb = models.BooleanField(default=False)
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value")])
+
+    # Info for hardware
+    hardware = models.CharField(max_length=300, null=True, blank=True)
+           
+    cvs_edition = models.BooleanField(default=False)
 
     @classmethod
     def annotate_vote(cls, qs):

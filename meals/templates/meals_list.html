@@ -1,0 +1,13 @@
+{% extends "base_table.html" %}
+
+
+{% block head_title %}Meals list{% endblock %}
+
+
+{% block table_footer %}
+    {%  if user.is_organizer %}
+    <div class="panel-footer">
+	    <a href="{% url 'meal_add' %}" class="btn btn-success btn-block">Add new meal</a>
+    </div>
+    {% endif %}
+{% endblock %}

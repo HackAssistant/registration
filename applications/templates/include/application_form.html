@@ -30,7 +30,10 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
-    <small><span style="color: red">*</span>Indicates required field</small>
+
+    <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
+    <small><span style="color: red">*</span>Indicates required field.</small>
+
     {% if not application or application.can_be_edit %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
             Submit application{% endif %}</button>
@@ -73,27 +76,31 @@
             var diet = $('#id_diet');
             conditional_field(other_diet, diet, function () {
                 return diet.val() === 'Others';
-            });
+            }, 1);
+            var diet_notice = $('#id_diet_notice');
+            conditional_field(diet_notice, diet, function () {
+                return diet.val() !== 'None';
+            }, 2);
 
             var has_team = $('input[name="team"][value="True"]');
             var no_team = $('input[name="team"][value="False"]');
             var teammates = $('#id_teammates');
             conditional_field(teammates, has_team, function () {
                 return has_team.prop("checked");
-            });
+            }, 1);
             conditional_field(teammates, no_team, function () {
                 return has_team.prop("checked");
-            });
+            }, 1);
 
             var needs_reimb = $('input[name="reimb"][value="True"]');
             var no_reimb = $('input[name="reimb"][value="False"]');
             var reimb_amout = $('#id_reimb_amount');
             conditional_field(reimb_amout, needs_reimb, function () {
                 return needs_reimb.prop("checked");
-            });
+            }, 1);
             conditional_field(reimb_amout, no_reimb, function () {
                 return needs_reimb.prop("checked");
-            });
+            }, 1);
             $('#id_reimb').parent().addClass('required');
             reimb_amout.parent().addClass('required');
 
@@ -102,10 +109,10 @@
             var projects = $('#id_projects');
             conditional_field(projects, is_firsttime, function () {
                 return experienced.prop("checked");
-            });
+            }, 1);
             conditional_field(projects, experienced, function () {
                 return experienced.prop("checked");
-            });
+            }, 1);
             // Making projects look like required
             projects.parent().addClass('required');
 

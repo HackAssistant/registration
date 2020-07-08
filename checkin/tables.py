@@ -10,7 +10,8 @@ class ApplicationCheckinFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value))
+        return queryset.filter(Q(email__icontains=value) | Q(name__icontains=value) |
+                               Q(id__icontains=value.replace('-', '')))
 
     class Meta:
         model = BaseApplication

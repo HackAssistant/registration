@@ -50,7 +50,13 @@ INSTALLED_APPS = [
     'stats',
     'storages',
     'multiselectfield',
+    'meals',
+    'judging',
+    'offer',
 ]
+
+if BAGGAGE_ENABLED:
+    INSTALLED_APPS.append('baggage')
 
 if REIMBURSEMENT_ENABLED:
     INSTALLED_APPS.append('reimbursement')
@@ -275,3 +281,5 @@ APPLICATION_EXPIRATION_TYPES = {
     'M': MENTOR_EXPIRES,        # Mentor can expire
     'V': VOLUNTEER_EXPIRES,     # Volunteer can expire
 }
+
+MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)
