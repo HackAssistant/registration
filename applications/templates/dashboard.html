@@ -87,14 +87,22 @@
                     confirm
                     your attendance as soon as possible.
                 </div>
-
-                <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
-                    please let us know by clicking "Cancel". We want as many people as possible to experience the
-                    hackathon!
-                    <b>This invite expires in
-                        {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
-                </p>
-
+                {% if application.user.is_hacker %}
+                    <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
+                        please let us know by clicking "Cancel". We want as many people as possible to experience the
+                        hackathon!
+                        <b>This invite expires in
+                            {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
+                    </p>
+                {% else %}
+                    <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
+                        please let us know by clicking "Cancel". Thank you so much for helping {{ h_name }}!
+                    {% if application.user.is_mentor and mentor_expires or application.user.is_volunteer and volunteer_expires %}
+                        <b>This invite expires in
+                                {% include 'include/deadline_countdown.html' with timeleft=invite_timeleft %}</b>
+                        </p>
+                    {% endif %}
+                {% endif %}
                 {% if h_arrive %}
                     <h3>When to arrive</h3>
                     <p>{{ h_arrive }}</p>
@@ -114,11 +122,15 @@
              <div class="col-md-12">
                 {% include 'include/status.html' %}
                 <p>Application has been marked as invalid. Please reach out to us at {{ h_contact_email|urlize }}
-                    if you think this is a mistake</p>
+                    if you think this is a mistake.
+                  We are sorry your application, if you want you can apply at {{ h_name }} as mentor.
+                </p>
+               <a class="btn btn-info btn-block" href={% url 'change_to_mentor' %}>Convert to mentor</a>
             </div>
         {% else %}
             <div class="col-md-12">
                 {% include 'include/status.html' %}
+                <p>Thank you so much for applying at {{ h_name }}!</p>
                 <p> When decisions are released, you'll be able to see your results on this page.</p>
                 <p>If you have any questions or concerns, you can still reach us at {{ h_contact_email|urlize }}</p>
                  <div class="col-md-5 no-padding">
@@ -126,7 +138,7 @@
                         View{% if application.can_be_edit %}/Edit{% endif %} application
                     </a>
                 </div>
-            {%  if h_team_enabled %}
+            {%  if h_team_enabled and application.can_join_team %}
                 <div class="col-md-offset-2 col-md-5 no-padding">
                     <a href="{% url 'teams' %}" class="btn  btn-info btn-block">
                         {% if user.team %}

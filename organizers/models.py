@@ -6,7 +6,7 @@ from django.db.models import Avg, F
 from django.utils import timezone
 
 from django.conf import settings
-from applications.models import Application
+from applications.models import HackerApplication, VolunteerApplication, SponsorApplication, MentorApplication
 from user.models import User
 
 MAX_VOTES = getattr(settings, 'MAX_VOTES', 10)
@@ -17,7 +17,7 @@ VOTES = [(i, str(i)) for i in range(1, MAX_VOTES + 1)]
 
 
 class Vote(models.Model):
-    application = models.ForeignKey(Application)
+    application = models.ForeignKey(HackerApplication)
     user = models.ForeignKey(User)
     tech = models.IntegerField(choices=VOTES, null=True)
     personal = models.IntegerField(choices=VOTES, null=True)
@@ -80,7 +80,37 @@ class Vote(models.Model):
 
 
 class ApplicationComment(models.Model):
-    application = models.ForeignKey(Application, null=False)
+    hacker = models.ForeignKey(HackerApplication, null=True)
+    volunteer = models.ForeignKey(VolunteerApplication, null=True)
+    mentor = models.ForeignKey(MentorApplication, null=True)
+    sponsor = models.ForeignKey(SponsorApplication, null=True)
     author = models.ForeignKey(User)
     text = models.CharField(max_length=500)
     created_at = models.DateTimeField(default=timezone.now)
+
+    @property
+    def application(self):
+        if self.hacker_id:
+            return self.hacker
+        if self.mentor_id:
+            return self.mentor
+        if self.volunteer_id:
+            return self.volunteer
+        if self.sponsor_id:
+            return self.sponsor
+        return None
+
+    def set_application(self, app):
+        if app.user.is_hacker():
+            self.hacker = app
+        elif app.user.is_volunteer():
+            self.volunteer = app
+        elif app.user.is_mentor():
+            self.mentor = app
+        elif app.user.is_sponsor():
+            self.sponsor = app
+        else:
+            raise ValueError
+
+    def type(self):
+        return self.application.user.get_type_display()

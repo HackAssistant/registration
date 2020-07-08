@@ -4,7 +4,14 @@
 
     <dl class="dl-horizontal">
         {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
-        {% include 'include/field.html' with desc='Name' value=app.user.name %}
+        {% include 'include/field.html' with desc='Type' value=app.user.get_type_display %}
+        {% if app.user.is_sponsor %}
+            {% include 'include/field.html' with desc='Name' value=app.name %}
+            {% include 'include/field.html' with desc='Company' value=app.user.name %}
+        {% else %}
+            {% include 'include/field.html' with desc='Name' value=app.user.name %}
+        {% endif %}
+
         {% include 'include/field.html' with desc='Email' value=app.user.email %}
         {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
         {% include 'include/field.html' with desc='Diet' value=app.diet %}
@@ -18,14 +25,26 @@
     <div class="panel-footer">
         {% if checkedin %}
             <h4>Let's keep this up!</h4>
+            {% if app.user.is_hacker %}
             <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
                 manually...</a>
+            {% elif app.user.is_volunteer %}
+            <a class="btn btn-default btn-block" href="{% url 'check_in_volunteer_list' %}">Check in more volunteers
+                manually...</a>
+            {% elif app.user.is_mentor %}
+            <a class="btn btn-default btn-block" href="{% url 'check_in_mentor_list' %}">Check in more mentors
+                manually...</a>
+            {% elif app.user.is_sponsor %}
+            <a class="btn btn-default btn-block" href="{% url 'check_in_sponsor_list' %}">Check in more sponsors
+                manually...</a>
+            {% endif %}
             <a class="btn btn-info btn-block" href="{% url 'check_in_qr' %}">... or try the QR
                 better?</a>
         {% else %}
             <form action="" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
+                <input type="hidden" name="type" value="{{ app.user.type }}"/>
                 <button class="btn btn-success btn-block" name="checkin">Check In</button>
             </form>
         {% endif %}

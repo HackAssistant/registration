@@ -2,11 +2,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from applications.models import Application
+from applications.models import HackerApplication
 from reimbursement.models import Reimbursement, RE_EXPIRED, RE_PEND_TICKET
 
 
-@receiver(post_save, sender=Application)
+@receiver(post_save, sender=HackerApplication)
 def reimbursement_create(sender, instance, created, *args, **kwargs):
     exists = Reimbursement.objects.filter(hacker=instance.user).exists()
     if not instance.reimb and exists:

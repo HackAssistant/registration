@@ -1,11 +1,16 @@
 from django.conf.urls import url
+from django.urls import reverse_lazy
+from django.views.generic.base import RedirectView
 
 from user import views
 
 urlpatterns = [
     url(r'^login/$', views.login, name='account_login'),
     url(r'^callback/(?P<provider>[0-9A-Za-z_\-]+)/$', views.callback, name='callback'),
-    url(r'^signup/$', views.signup, name='account_signup'),
+    url(r'^signup/$', RedirectView.as_view(url=reverse_lazy('account_signup_typed', kwargs={'u_type': 'hacker'})),
+        name='account_signup'),
+    url(r'^register/sponsor/$', views.SponsorRegister.as_view(), name='sponsor_signup'),
+    url(r'^signup/(?P<u_type>[a-z_\-]{1,10})/$', views.signup, name='account_signup_typed'),
     url(r'^logout/$', views.logout, name='account_logout'),
     url(r'^activate/(?P<uid>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),

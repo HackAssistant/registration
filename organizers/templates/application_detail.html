@@ -54,7 +54,7 @@
                 {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects|safe|urlize %}
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                 {% include 'include/field.html' with desc='Excited about' value=app.excited %}
-                {% if request.user.has_dubious_acces  and app.is_dubious %}
+                {% if request.user.has_dubious_access  and app.is_dubious %}
                     <hr>
                     <dt>
                     <h3>Dubious info</h3>
@@ -149,18 +149,20 @@
 
 {% block out_panel %}
     {% if vote and app %}
-        <div class="panel-footer">
+        <div class="panel-body" style="padding: 0px">
 
             <form action="" method="post">
                 {% csrf_token %}
-                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                <h4 class="text-center">Score</h4>
-                <dl class="dl-horizontal">
-                    <dt>Technical Skills</dt>
-                    <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
-                    <dt>Personal Skills</dt>
-                    <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
-                </dl>
+                <div class="col-md-8">
+                    <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                    <h4 class="text-center">Score</h4>
+                    <dl class="dl-horizontal">
+                        <dt>Technical Skills</dt>
+                        <dd>{% include 'include/number10.html' with name='tech_rat' %}</dd>
+                        <dt>Personal Skills</dt>
+                        <dd>{% include 'include/number10.html' with name='pers_rat' %}</dd>
+                    </dl>
+                </div>
                 <button name="send" class="btn btn-success btn-block" value="send">Send vote</button>
                 <button name="skip" class="btn btn-default btn-block" value="skip">Skip
                     application
@@ -170,56 +172,87 @@
                         Dubious Application
                     </button>
                 {% endif %}
+                {% if h_blacklist_enabled %}
+                    <button name="set_blacklist" class="btn btn-warning btn-block" value="set_blacklist">
+                        Blacklist Application
+                    </button>
+                {% endif %}
+
             </form>
         </div>
     {% elif app and user.is_director %}
         <div class="panel-footer">
 
-            <form action="" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                {% if  app.is_pending %}
-                    <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">Wait list
+            {% if app.is_blacklisted %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                    <textarea name="motive_of_ban" class="form-control" placeholder="Write the motive of ban..."
+                                rows="3"
+                                required></textarea>
+                    <button name="confirm_blacklist" class="btn btn-danger btn-block" value="confirm_blacklist">
+                        Confirm the application as blacklisted
                     </button>
-                    {% if h_dubious_enabled %}
-                        <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious">
-                            Dubious Application
+                </form>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                    <button name="unset_blacklist" class="btn btn-success btn-block" value="unset_blacklist">Mark as not
+                        blacklisted
+                    </button>
+                </form>
+            {% else %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                    {% if  app.is_pending %}
+                        <button name="waitlist" class="btn btn-danger btn-block" value="waitlist">
+                            Wait list
+                        </button>
+                        {% if h_dubious_enabled %}
+                            <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious">
+                                Dubious Application
+                            </button>
+                        {% endif %}
+                        {% if h_blacklist_enabled %}
+                            <button name="set_blacklist" class="btn btn-warning btn-block" value="set_blacklist">
+                                Blacklist Application
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% if app.can_be_invited %}
+                        <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
                         </button>
                     {% endif %}
-                {% endif %}
-                {% if app.can_be_invited %}
-                    <button name="invite" class="btn btn-success btn-block" value="invite">Send invite
-                    </button>
-                {% endif %}
-                {% if app.can_be_cancelled %}
-                    <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
-                        ticket
-                    </button>
-                    {% if slack_enabled %}
-                        <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
-                            invite
+                    {% if app.can_be_cancelled %}
+                        <button name="confirm" class="btn btn-info btn-block" value="confirm">Confirm & send
+                            ticket
+                        </button>
+                        {% if slack_enabled %}
+                            <button name="slack" class="btn btn-default btn-block" value="slack">Send slack
+                                invite
+                            </button>
+                        {% endif %}
+                        <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
                         </button>
                     {% endif %}
-                    <button name="cancel" class="btn btn-danger btn-block" value="cancel">Cancel
-                    </button>
-                {% endif %}
-                {% if app.is_dubious and app.contacted and app.contacted_by == request.user %}
-                    <button name="unset_dubious" class="btn btn-success btn-block" value="unset_dubious">Mark as not
-                        dubious
-                    </button>
-                    <button name="invalidate" class="btn btn-danger btn-block" value="invalidate">Mark as invalid
-                    </button>
-                {% elif app.is_dubious and app.contacted %}
-                    <button name="invalidate" class="btn btn-default btn-block" disabled value="invalidate">Application
-                        under review by {{ app.contacted_by }}
-                    </button>
-                {% elif not app.contacted and app.is_dubious %}
-                    <button name="contact_user" class="btn btn-success btn-block" value="contact_user">Mark as contacted
-                    </button>
-                {% endif %}
 
-
-            </form>
+                    {% if app.is_dubious and app.contacted and app.contacted_by == request.user %}
+                        <button name="unset_dubious" class="btn btn-success btn-block" value="unset_dubious">Mark as not
+                            dubious
+                        </button>
+                        <button name="invalidate" class="btn btn-danger btn-block" value="invalidate">Mark as invalid
+                        </button>
+                    {% elif app.is_dubious and app.contacted %}
+                        <button name="invalidate" class="btn btn-default btn-block" disabled value="invalidate">Application
+                            under review by {{ app.contacted_by }}
+                        </button>
+                    {% elif not app.contacted and app.is_dubious %}
+                        <button name="contact_user" class="btn btn-success btn-block" value="contact_user">Mark as contacted
+                        </button>
+                    {% endif %}
+                </form>
+            {% endif %}
         </div>
     {% elif app and app.is_dubious and user.can_review_dubious and not user.is_director and h_dubious_enabled %}
         <div class="panel-footer">
@@ -243,10 +276,28 @@
                     </button>
                 {% endif %}
 
-
-
             </form>
         </div>
+    {% elif app and app.is_blacklisted and user.can_review_blacklist and not user.is_director and h_blacklist_enabled %}
+        <div class="panel-footer">
 
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                <textarea name="motive_of_ban" class="form-control" placeholder="Write the motive of ban..."
+                            rows="3"
+                            required></textarea>
+                <button name="confirm_blacklist" class="btn btn-danger btn-block" value="confirm_blacklist">
+                    Confirm the application as blacklisted
+                </button>
+            </form>
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.pk }}"/>
+                <button name="unset_blacklist" class="btn btn-success btn-block" value="unset_blacklist">Mark as not
+                    blacklisted
+                </button>
+            </form>
+        </div>
     {% endif %}
 {% endblock %}

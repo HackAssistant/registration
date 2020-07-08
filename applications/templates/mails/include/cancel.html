@@ -1,6 +1,7 @@
-<p>
-    If you cannot make it, please let us know by clicking "Cancel". We want as many people as possible to experience the
-    hackathon!</p>
+<p>If you cannot make it, please let us know by clicking "Cancel".</p>
+{% if is_hacker %}
+    <p>We want as many people as possible to experience the hackathon!</p>
+{% endif %}
 <p style="text-align: center">
     <a href="{{ cancel_url }}">Cancel</a>
 </p>

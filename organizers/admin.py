@@ -15,7 +15,7 @@ class VoteAdmin(admin.ModelAdmin):
     list_display = ('application', 'user', 'tech', 'personal', 'calculated_vote')
     list_per_page = 200
     list_filter = ('user', 'application')
-    search_fields = ('user', 'application')
+    search_fields = ('application__user__name', 'application__user__email', 'user__name', 'user__email')
     actions = ['delete_selected', ]
 
 

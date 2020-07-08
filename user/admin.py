@@ -12,9 +12,11 @@ class UserAdmin(admin.ModelAdmin):
     form = UserChangeForm
     change_password_form = AdminPasswordChangeForm
 
-    display_fields = ['email', 'name', 'is_organizer', 'is_volunteer', 'is_director']
-    filter_fields = ['is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified']
-    permission_fields = ['is_volunteer', 'is_director', 'is_organizer', 'is_admin', 'email_verified']
+    display_fields = ['email', 'name', 'type', 'admin_is_organizer', 'admin_is_volunteer_accepted',
+                      'is_director', 'have_application']
+    filter_fields = ['is_director', 'is_admin', 'email_verified', 'type']
+    permission_fields = ['is_director', 'is_admin', 'email_verified', 'can_review_dubious', 'can_review_blacklist',
+                         'can_review_volunteers', 'can_review_mentors', 'can_review_sponsors']
 
     if settings.HARDWARE_ENABLED:
         display_fields.append('is_hardware_admin')
@@ -29,7 +31,7 @@ class UserAdmin(admin.ModelAdmin):
     permission_fields = tuple(permission_fields)
 
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('email', 'type', 'password')}),
         ('Personal info', {'fields': ('name',)}),
         ('Permissions', {'fields': permission_fields}),
         ('Important dates', {'fields': ('last_login',)}),
@@ -51,5 +53,14 @@ class UserAdmin(admin.ModelAdmin):
         return super(UserAdmin, self).get_fieldsets(request, obj)
 
 
+class BlacklistUserAdmin(admin.ModelAdmin):
+    list_display = ('email', 'name', 'date_of_ban')
+    list_per_page = 20
+    list_filter = ('email', 'name')
+    search_fields = ('email', 'name')
+    actions = ['delete_selected', ]
+
+
 admin.site.register(models.User, admin_class=UserAdmin)
+admin.site.register(models.BlacklistUser, admin_class=BlacklistUserAdmin)
 admin.site.unregister(Group)

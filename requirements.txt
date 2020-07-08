@@ -4,11 +4,12 @@ certifi==2019.9.11
 chardet==3.0.4
 defusedxml==0.6.0
 dj-database-url==0.5.0
-Django==1.11.28
+Django==1.11.29
 django-bootstrap3==8.2.3
 django-filter==1.0.2
 django-form-utils==1.0.3
 django-jet==1.0.8
+django-multiselectfield==0.1.12
 django-storages==1.7.2
 django-tables2==1.14.2
 dropbox==8.7.1
@@ -18,7 +19,7 @@ google-api-python-client==1.7.9
 google-auth==1.6.3
 google-auth-httplib2==0.0.3
 gunicorn==19.6.0
-httplib2==0.9.2
+httplib2==0.18.0
 idna==2.7
 jdcal==1.4.1
 Markdown==2.6.7
