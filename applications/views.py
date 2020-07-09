@@ -144,7 +144,7 @@ class HackerDashboard(DashboardMixin, TabsView):
             form = ApplicationForm(instance=app)
         except:
             form = ApplicationForm()
-        context.update({'form': form})
+        context.update({'form': form, 'is_hacker': self.request.user.is_hacker()})
         try:
             application = Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
@@ -199,7 +199,8 @@ class HackerApplication(IsHackerMixin, TabsView):
         application = get_object_or_404(Application, user=self.request.user)
         deadline = get_deadline(application)
         context.update(
-            {'invite_timeleft': deadline - timezone.now(), 'form': ApplicationForm(instance=application)})
+            {'invite_timeleft': deadline - timezone.now(), 'form': ApplicationForm(instance=application),
+             'is_hacker': self.request.user.is_hacker()})
         return context
 
     def post(self, request, *args, **kwargs):
