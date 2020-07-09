@@ -12,6 +12,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='application',
+            name='cvs_edition',
+            field=models.BooleanField(default=False),
+        ),
         migrations.AlterField(
             model_name='application',
             name='tshirt_size',
