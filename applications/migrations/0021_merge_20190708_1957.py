@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('applications', '0020_auto_20190708_1203'),
-        ('applications', '0013_application_cvs_edition'),
     ]
 
     operations = [

@@ -8,7 +8,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('applications', '0011_application_cvs_edition'),
         ('applications', '0017_application_contacted_by'),
     ]
 

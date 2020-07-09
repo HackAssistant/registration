@@ -15,6 +15,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='application',
+            name='hardware',
+            field=models.CharField(blank=True, max_length=300, null=True),
+        ),
         migrations.CreateModel(
             name='DraftApplication',
             fields=[
