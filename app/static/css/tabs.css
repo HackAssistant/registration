@@ -3,21 +3,20 @@
     -moz-border-radius: 0;
     border-radius: 0;
     background: #C2BEBE;
-    box-shadow: inset 0 -5px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.1);
     margin: 0;
     font-style: normal;
     line-height: normal;
     z-index: -1;
-    font-size: 17px;
+    font-size: 15px;
     color: black;
     border: 1px solid #838383;
     border-bottom: 0;
-    padding-left: 30px;
-    padding-right: 30px;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
     -o-transition: all .1s linear;
     transition: all .1s linear;
+    padding: 9px 30px;
 }
 
 .nav-tabs > li > a:hover {
@@ -34,13 +33,17 @@
     margin: 0;
 }
 
-.nav-tabs > li.active > a {
-    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1);
+.nav-tabs > li.active_tab > a {
+    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
     color: black;
-
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
-.nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:active, .nav-tabs > li.active > a:focus {
+.nav-tabs > li.active_tab > a:hover, .nav-tabs > li.active > a:active, .nav-tabs > li.active > a:focus {
     box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1);
     color: black;
 
@@ -55,9 +58,28 @@
 
 @media (max-width: 768px) {
     .nav-tabs > li > a {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: normal;
         padding-left: 10px;
         padding-right: 10px;
     }
+
+    .nav-tabs > li.active_tab > a {
+    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.25);
+    color: black;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    padding-bottom: 9px;
+    padding-top: 9px;
+}
+}
+
+.active_tab {
+    background-color: white;
+}
+
+.active_tab > a {
+    background: none !important;
+    box-shadow: none !important;
 }

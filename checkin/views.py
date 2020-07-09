@@ -16,30 +16,43 @@ from app.views import TabsView
 from applications import models as appmodels
 from user import models
 from checkin.models import CheckIn
-from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable
-from user.mixins import IsVolunteerMixin, IsOrganizerMixin
-from user.models import User
+from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable, \
+    SponsorApplicationsCheckInTable, SponsorApplicationCheckinFilter
+from user.mixins import IsVolunteerMixin, IsOrganizerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
+    HaveSponsorPermissionMixin
 from app.slack import send_slack_message
 from multiprocessing import Pool
 
 
-def checking_in_hacker(request, web, userid, qrcode):
+def get_application_by_type(type, uuid):
+    if type == models.USR_HACKER:
+        return appmodels.HackerApplication.objects.filter(uuid=uuid).first()
+    elif type == models.USR_VOLUNTEER:
+        return appmodels.VolunteerApplication.objects.filter(uuid=uuid).first()
+    elif type == models.USR_SPONSOR:
+        return appmodels.SponsorApplication.objects.filter(uuid=uuid).first()
+    elif type == models.USR_MENTOR:
+        return appmodels.MentorApplication.objects.filter(uuid=uuid).first()
+    return None
+
+
+def checking_in_hacker(request, web, appid, qrcode, type):
     if qrcode is None or qrcode == '':
         return False
-    user = models.User.objects.filter(id=userid).first()
-    if not user:
+    app = get_application_by_type(type, appid)
+    if not app:
         return False
     ci = CheckIn()
     if web:
         ci.user = request.user
     else:
-        ci.user = appmodels.Application.objects.filter(user=1).first().user
-    ci.application_user = user
+        ci.user = appmodels.HackerApplication.objects.filter(user=1).first().user
+    ci.set_application(app)
     ci.qr_identifier = qrcode
     ci.save()
     try:
         pool = Pool(processes=1)
-        pool.apply_async(send_slack_message, [user.email, 'Hello ' + user.name + ' :wave::skin-tone-3:'
+        pool.apply_async(send_slack_message, [app.user.email, 'Hello ' + app.user.name + ' :wave::skin-tone-3:'
                                               'and welcome to *HackUPC 2019* :bee:!\n    - Opening ceremony '
                                               ':fast_forward: will be at 19h :clock6: on the Vèrtex building, more '
                                               'information on how to get there :world_map: at maps.hackupc.com. '
@@ -66,8 +79,16 @@ def checking_in_hacker(request, web, userid, qrcode):
 
 
 def user_tabs(user):
-    return [('List', reverse('check_in_list'), False),
-            ('Ranking', reverse('check_in_ranking'), False)]
+    tab = [('Hackers', reverse('check_in_list'), False)]
+    if user.is_organizer:
+        if user.has_volunteer_access:
+            tab.append(('Volunteer', reverse('check_in_volunteer_list'), False))
+        if user.has_mentor_access:
+            tab.append(('Mentor', reverse('check_in_mentor_list'), False))
+        if user.has_sponsor_access:
+            tab.append(('Sponsor', reverse('check_in_sponsor_list'), False))
+        tab.append(('Ranking', reverse('check_in_ranking'), False))
+    return tab
 
 
 class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -80,23 +101,7 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
-        ids = [u.id for u in models.User.objects.exclude(id__in=checkins) if u.is_participant]
-        return models.User.objects.filter(id__in=ids)
-
-
-class CheckInMentorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'checkin/list.html'
-    table_class = ApplicationsCheckInTable
-    filterset_class = ApplicationCheckinFilter
-    table_pagination = {'per_page': 50}
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
-
-    def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
-        return models.User.objects.filter(is_mentor=True).exclude(id__in=checkins)
+        return appmodels.HackerApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
 
 class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -109,22 +114,8 @@ class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, Filter
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         return models.User.objects.filter(is_judge=True).exclude(id__in=checkins)
-
-
-class CheckInSponsorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'checkin/list.html'
-    table_class = ApplicationsCheckInTable
-    filterset_class = ApplicationCheckinFilter
-    table_pagination = {'per_page': 50}
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
-
-    def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
-        return models.User.objects.filter(is_sponsor=True).exclude(id__in=checkins)
 
 
 class CheckInVolunteerList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -137,7 +128,7 @@ class CheckInVolunteerList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, Fi
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         return models.User.objects.filter(is_volunteer=True).exclude(id__in=checkins)
 
 
@@ -149,30 +140,28 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
 
     def get_context_data(self, **kwargs):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
-        id = kwargs['id']
-        user = models.User.objects.filter(id=id).first()
-        if not user:
+        appid = kwargs['id']
+        type = kwargs['type']
+        type = models.USR_URL_TYPE_CHECKIN[type]
+        app = get_application_by_type(type, appid)
+        if not app:
             raise Http404
-        context.update({
-            "user": user,
-            'checkedin': CheckIn.objects.filter(application_user=user).exists()
-        })
-        app = appmodels.Application.objects.filter(user=user).first()
         if app:
             context.update({
                 'app': app,
                 'checkedin': app.status == appmodels.APP_ATTENDED
             })
         try:
-            context.update({'checkin': CheckIn.objects.filter(user=user).first()})
+            context.update({'checkin': CheckIn.objects.filter(application=app).first()})
         except:
             pass
         return context
 
     def post(self, request, *args, **kwargs):
-        userid = request.POST.get('user_id')
+        appid = request.POST.get('app_id')
+        type = request.POST.get('type')
         qrcode = request.POST.get('qr_code')
-        if checking_in_hacker(request, True, userid, qrcode):
+        if checking_in_hacker(request, True, appid, qrcode, type):
             messages.success(self.request, 'Hacker checked-in! Good job! '
                                            'Nothing else to see here, '
                                            'you can move on :D')
@@ -189,8 +178,36 @@ class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Temp
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        return User.objects.annotate(
-            checkin_count=Count('checkin__application')).exclude(checkin_count=0)
+        return models.User.objects.annotate(
+            checkin_count=Count('checkin')).exclude(checkin_count=0)
+
+
+class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'checkin/list.html'
+    table_class = ApplicationsCheckInTable
+    filterset_class = ApplicationCheckinFilter
+    table_pagination = {'per_page': 50}
+
+    def get_current_tabs(self):
+        return user_tabs(self.request.user)
+
+
+class CheckinVolunteerList(HaveVolunteerPermissionMixin, CheckinOtherUserList):
+    def get_queryset(self):
+        return appmodels.VolunteerApplication.objects.filter(status=appmodels.APP_CONFIRMED)
+
+
+class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
+    def get_queryset(self):
+        return appmodels.MentorApplication.objects.filter(status=appmodels.APP_CONFIRMED)
+
+
+class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
+    table_class = SponsorApplicationsCheckInTable
+    filterset_class = SponsorApplicationCheckinFilter
+
+    def get_queryset(self):
+        return appmodels.SponsorApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
 
 class CheckInAPI(APIView):
@@ -199,12 +216,12 @@ class CheckInAPI(APIView):
         var_token = request.GET.get('token')
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=403)
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         ids = [u.id for u in models.User.objects.exclude(id__in=checkins) if not u.is_participant]
         checkInData = models.User.objects.filter(id__in=ids)
         checkInDataList = []
         for e in checkInData:
-            app = appmodels.Application.objects.filter(user__id=e.id).first()
+            app = appmodels.HackerApplication.objects.filter(user__id=e.id).first()
             if app:
                 checkInDataList.append({'uuid': str(e.id), 'id': e.id, 'name': e.name, 'email': e.email,
                                         "tSize": app.tshirt_size, "diet": app.diet})

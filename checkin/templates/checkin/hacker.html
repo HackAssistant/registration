@@ -11,21 +11,20 @@
 
 {% block panel %}
     <dl class="dl-horizontal">
-      {% if app %}
-          {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
-          {% include 'include/field.html' with desc='Name' value=app.user.name %}
-          {% include 'include/field.html' with desc='Email' value=app.user.email %}
-          {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
-          {% include 'include/field.html' with desc='Diet' value=app.diet %}
-          {% include 'include/field.html' with desc='Other' value=app.other_diet %}
-          {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
-      {% else %}
-          {% include 'include/field.html' with desc='Name' value=user.name %}
-          {% include 'include/field.html' with desc='Email' value=user.email %}
-          {% if user.diet %}
-            {% include 'include/field.html' with desc='Diet' value=user.diet %}
-          {% endif %}
-      {% endif %}
+        {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
+        {% include 'include/field.html' with desc='Type' value=app.user.get_type_display %}
+        {% if app.user.is_sponsor %}
+            {% include 'include/field.html' with desc='Name' value=app.name %}
+            {% include 'include/field.html' with desc='Company' value=app.user.name %}
+        {% else %}
+            {% include 'include/field.html' with desc='Name' value=app.user.name %}
+        {% endif %}
+
+        {% include 'include/field.html' with desc='Email' value=app.user.email %}
+        {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
+        {% include 'include/field.html' with desc='Diet' value=app.diet %}
+        {% include 'include/field.html' with desc='Other' value=app.other_diet %}
+        {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
     </dl>
 {% endblock %}
 
@@ -36,11 +35,25 @@
         {% if checkedin %}
             <div style="padding: 1em 1.5em 1.5em 1.5em;">
                 <h4 style="margin-bottom: 15px;">Let's keep this up!</h4>
-                <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check-in more hackers!</a>
+                {% if app.user.is_hacker %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_list' %}">Check in more hackers
+                    manually...</a>
+                {% elif app.user.is_volunteer %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_volunteer_list' %}">Check in more volunteers
+                    manually...</a>
+                {% elif app.user.is_mentor %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_mentor_list' %}">Check in more mentors
+                    manually...</a>
+                {% elif app.user.is_sponsor %}
+                <a class="btn btn-default btn-block" href="{% url 'check_in_sponsor_list' %}">Check in more sponsors
+                    manually...</a>
+                {% endif %}
             </div>
         {% else %}
             <form action="" method="post" style="padding-top: 1.5em;">
                 {% csrf_token %}
+                <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
+                <input type="hidden" name="type" value="{{ app.user.type }}"/>
                 <div class="form-group">
                     {% include 'include/input.html' with type='qr' desc='QR code' name='qr_code' id='qr_code' %}
                 </div>

@@ -17,3 +17,14 @@ def create_password_reset_email(user, reset_url):
     }
     return emails.render_mail('mails/password_reset',
                               user.email, c)
+
+
+def create_sponsor_link_email(user, user_sponsor_url, app_sponsor_url, sponsor_name):
+    c = {
+        'user': user,
+        'user_sponsor_url': user_sponsor_url,
+        'app_sponsor_url': app_sponsor_url,
+        'sponsor_name': sponsor_name,
+    }
+    return emails.render_mail('mails/sponsor_link',
+                              user.email, c)

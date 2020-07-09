@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'teams',
     'stats',
     'storages',
+    'multiselectfield',
     'meals',
     'judging',
     'offer',
@@ -269,8 +270,16 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Maximum file upload size for forms
 MAX_UPLOAD_SIZE = 5242880
 
-MAX_VOTES = 10
+# Max number of votation application from 1 to MAX_VOTES
+MAX_VOTES = 5
 
+# Max number of votes that can have one application
 MAX_VOTES_TO_APP = 50
+
+APPLICATION_EXPIRATION_TYPES = {
+    'H': True,                  # Hacker allways expire, do not change this
+    'M': MENTOR_EXPIRES,        # Mentor can expire
+    'V': VOLUNTEER_EXPIRES,     # Volunteer can expire
+}
 
 MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)

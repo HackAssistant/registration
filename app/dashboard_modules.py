@@ -2,7 +2,7 @@ from django import forms
 from django.db.models import Count
 from jet.dashboard.modules import DashboardModule
 
-from applications.models import Application, STATUS
+from applications.models import HackerApplication, STATUS
 from user.models import User
 
 
@@ -49,7 +49,7 @@ class AppsStats(DashboardModule):
         self.status = settings.get('status', self.status)
 
     def init_with_context(self, context):
-        qs = Application.objects.all()
+        qs = HackerApplication.objects.all()
 
         if self.status != '__all__':
             qs = qs.filter(status=self.status)

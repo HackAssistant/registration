@@ -96,6 +96,7 @@ def get_substitutions_templates():
             'h_judging': getattr(settings, 'JUDGING_ENABLED', {}),
             'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
             'h_dubious_enabled': getattr(settings, 'DUBIOUS_ENABLED', False),
+            'h_blacklist_enabled': getattr(settings, 'BLACKLIST_ENABLED', True),
             }
 
 
@@ -113,7 +114,11 @@ def get_user_substitutions(request):
 def hackathon_vars_processor(request):
     c = get_substitutions_templates()
     c.update(get_user_substitutions(request))
-    c.update({'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None)})
+    c.update({
+        'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None),
+        'mentor_expires': settings.MENTOR_EXPIRES,
+        'volunteer_expires': settings.VOLUNTEER_EXPIRES,
+    })
     return c
 
 

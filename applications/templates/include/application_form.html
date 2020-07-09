@@ -3,7 +3,8 @@
 {% load form_utils %}
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
-    #id_scholarship > div, #id_reimb > div {
+    #id_scholarship > div, #id_reimb > div, #id_first_time_volunteer > div, #id_which_hack > div, #id_attendance > div,
+    #id_english_level > div, #id_first_time_mentor > div , #id_study_work > div {
         display: inline-block;
         padding-right: 20px;
         margin-bottom: 0;
@@ -29,8 +30,9 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
-
+    {% if is_hacker %}
     <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
+    {% endif %}
     <small><span style="color: red">*</span>Indicates required field.</small>
 
     {% if not application or application.can_be_edit %}
@@ -57,6 +59,9 @@
                         var cities = jQuery.map(data._embedded["city:search-results"], function (c) {
                             return c.matching_full_name;
                         });
+                        if ("others".includes(query.toLowerCase())){
+                          cities.push("Others");
+                        }
                         return process(cities);
                     });
                 }
@@ -112,6 +117,63 @@
             // Making projects look like required
             projects.parent().addClass('required');
 
+            var is_firsttime_volunteer = $('input[name="first_time_volunteer"][value="True"]');
+            var experienced_volunteer = $('input[name="first_time_volunteer"][value="False"]');
+            var is_firsttime_mentor = $('input[name="first_time_mentor"][value="True"]');
+            var experienced_mentor = $('input[name="first_time_mentor"][value="False"]')
+            var which_hack = $('#id_which_hack');
+            {% if form.volunteer %}
+              conditional_field(which_hack, is_firsttime_volunteer, function () {
+                  return is_firsttime_volunteer.prop("checked");
+              });
+              conditional_field(which_hack, experienced_volunteer, function () {
+                  return is_firsttime_volunteer.prop("checked");
+              });
+            {% endif %}
+            // Making projects look like required
+            which_hack.parent().addClass('required');
+            {% if form.mentor %}
+                conditional_field(which_hack, is_firsttime_mentor, function () {
+                    return is_firsttime_mentor.prop("checked");
+                });
+                conditional_field(which_hack, experienced_mentor, function () {
+                    return is_firsttime_mentor.prop("checked");
+                });
+                var company_mentor = $('#id_company');
+                var university_mentor = $('#id_university');
+                var degree_mentor = $('#id_degree');
+                var graduation_year = $('#id_graduation_year');
+                var worker = $('input[name="study_work"][value="True"]');
+                var student = $('input[name="study_work"][value="False"]');
+                conditional_field(degree_mentor, worker, function () {
+                    return worker.prop("checked");
+                });
+                conditional_field(degree_mentor, student, function () {
+                    return worker.prop("checked");
+                });
+                conditional_field(university_mentor, worker, function () {
+                    return worker.prop("checked");
+                });
+                conditional_field(university_mentor, student, function () {
+                    return worker.prop("checked");
+                });
+                conditional_field(company_mentor, worker, function () {
+                    return student.prop("checked");
+                });
+                conditional_field(company_mentor, student, function () {
+                    return student.prop("checked");
+                });
+                conditional_field(graduation_year, worker, function () {
+                    return worker.prop("checked");
+                });
+                conditional_field(graduation_year, student, function () {
+                    return worker.prop("checked");
+                });
+                company_mentor.parent().addClass('required');
+                university_mentor.parent().addClass('required');
+                degree_mentor.parent().addClass('required');
+                graduation_year.parent().addClass('required');
+            {% endif %}
             {% if not application %}
                 var timer;
                 var clear_timer;

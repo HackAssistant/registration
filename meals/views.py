@@ -19,7 +19,6 @@ from rest_framework.views import APIView
 from app.mixins import TabsViewMixin
 from app.views import TabsView
 from applications import models as models_app
-from applications.models import Application
 from checkin.models import CheckIn
 from meals.models import Meal, Eaten, MEAL_TYPE
 from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
@@ -191,7 +190,7 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         if not hacker_checkin:
             return JsonResponse({'error': 'Invalid QR code!'})
 
-        hacker_application = getattr(hacker_checkin, 'application', None)
+        hacker_application = hacker_checkin.application()
         if not hacker_application:
             return JsonResponse({'error': 'No application found for current code'})
 
@@ -263,11 +262,9 @@ class MealsApi(APIView):
             obj_checkin = CheckIn.objects.filter(qr_identifier=var_user).first()
             if obj_checkin is None:
                 return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
-            obj_user = obj_checkin.application_user
-            obj_application = Application.objects.filter(user=obj_user).first()
-            if obj_user.diet:
-                var_diet = obj_user.diet
-            elif obj_application:
+            obj_application = obj_checkin.application()
+            obj_user = obj_application.user
+            if obj_application:
                 var_diet = obj_application.diet
             else:
                 var_diet = "UNKNOWN"

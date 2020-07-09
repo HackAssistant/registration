@@ -46,8 +46,9 @@ HACKATHON_ARRIVE = 'Registration opens at 4:00PM and closes at 6:45PM on Friday 
                    'the opening ceremony will be at 7:00PM.'
 
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 13th from 3:00PM to 5:00PM. ' \
-                  'However judging will be happenning in the morning from 10:30AM to 1:00PM.'
+HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
+                  'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
+
 # (OPTIONAL) Hackathon live page
 HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
 
@@ -112,4 +113,12 @@ JUDGING_ENABLED = True
 # Enable dubious separate pipeline (disabled by default)
 DUBIOUS_ENABLED = True
 
-SUPPORTED_RESUME_EXTENSIONS = []
+
+# Enable blacklist separate pipeline (disabled by default)
+BLACKLIST_ENABLED = True
+
+SUPPORTED_RESUME_EXTENSIONS = ['.pdf']
+
+# Mentor/Volunteer applications can expire if they are invited, set to False to not
+MENTOR_EXPIRES = False
+VOLUNTEER_EXPIRES = False
