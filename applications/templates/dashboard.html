@@ -118,7 +118,7 @@
                 <div class="col-md-offset-2 col-md-5 no-padding"><a href="{% url 'cancel_app' application.uuid_str %}"
                                                     class="btn  btn-danger btn-block">Cancel</a></div>
             </div>
-        {% elif application.is_invalid %}
+        {% elif application.is_invalid and not application.user.is_blacklisted %}
              <div class="col-md-12">
                 {% include 'include/status.html' %}
                 <p>Application has been marked as invalid. Please reach out to us at {{ h_contact_email|urlize }}
