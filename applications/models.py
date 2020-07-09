@@ -11,7 +11,6 @@ from django.utils import timezone
 from multiselectfield import MultiSelectField
 
 from app import utils, hackathon_variables
-from app.hackathon_variables import HACKATHON_NAME
 from user.models import User, BlacklistUser
 from user import models as userModels
 from applications.validators import validate_file_extension
