@@ -111,11 +111,11 @@ JUDGING_ENABLED = True
 # HACKERS_CAN_REQUEST = False
 
 # Enable dubious separate pipeline (disabled by default)
-DUBIOUS_ENABLED = False
+DUBIOUS_ENABLED = True
 
 
 # Enable blacklist separate pipeline (disabled by default)
-BLACKLIST_ENABLED = False
+BLACKLIST_ENABLED = True
 
 SUPPORTED_RESUME_EXTENSIONS = ['.pdf']
 

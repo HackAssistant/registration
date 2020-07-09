@@ -12,13 +12,11 @@
     color: black;
     border: 1px solid #838383;
     border-bottom: 0;
-    padding-left: 30px;
-    padding-right: 30px;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
     -o-transition: all .1s linear;
     transition: all .1s linear;
-    padding-bottom: 9px;
+    padding: 9px 30px;
 }
 
 .nav-tabs > li > a:hover {
@@ -42,6 +40,7 @@
     border-right: none !important;
     border-top: none !important;
     padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .nav-tabs > li.active_tab > a:hover, .nav-tabs > li.active > a:active, .nav-tabs > li.active > a:focus {
