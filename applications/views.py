@@ -229,7 +229,7 @@ class SponsorApplicationView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(SponsorApplicationView, self).get_context_data(**kwargs)
         form = forms.SponsorForm()
-        context.update({'form': form})
+        context.update({'form': form, 'is_sponsor': True})
         try:
             uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
             user = userModels.User.objects.get(pk=uid)

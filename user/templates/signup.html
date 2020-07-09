@@ -13,14 +13,16 @@
            href="{% url 'account_login' %}">{% trans "Log in " %}</a>
     {% else %}
         <h1>Sign up</h1>
-        {% if h_app_timeleft %}
+        {% if h_app_timeleft and not is_sposnor_form %}
             <p class="lead">Application deadline:{% include 'include/deadline_countdown.html' %}</p>
         {% endif %}
 
         <form action="" method="post" class="form">
             {% csrf_token %}
             {% bootstrap_form form  %}
-	    <p class="team-info team-info-margin"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to register separately.</p>
+            {% if not is_sposnor_form %}
+	              <p class="team-info team-info-margin"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to register separately.</p>
+            {% endif %}
             <button class="btn btn-primary btn-block" type="submit">{% trans "Sign Up" %}</button>
             {%  if h_oauth_providers.mlh and h_oauth_providers.mlh.id and h_oauth_providers.mlh.auth_url %}
 
@@ -29,8 +31,10 @@
                 </a>
             {% endif %}
         </form>
+        {% if not is_sposnor_form %}
             <a class="btn btn-block"
                href="{% url 'account_login' %}">{% trans "...or log in if you already have an account " %}</a>
+        {% endif %}
 
     {% endif %}
 

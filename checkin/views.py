@@ -20,20 +20,19 @@ from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, R
     SponsorApplicationsCheckInTable, SponsorApplicationCheckinFilter
 from user.mixins import IsVolunteerMixin, IsOrganizerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
     HaveSponsorPermissionMixin
-from user.models import User
 from app.slack import send_slack_message
 from multiprocessing import Pool
 
 
 def get_application_by_type(type, uuid):
-    if type == models.userModels.USR_HACKER:
-        return models.HackerApplication.objects.filter(uuid=uuid).first()
-    elif type == models.userModels.USR_VOLUNTEER:
-        return models.VolunteerApplication.objects.filter(uuid=uuid).first()
-    elif type == models.userModels.USR_SPONSOR:
-        return models.SponsorApplication.objects.filter(uuid=uuid).first()
-    elif type == models.userModels.USR_MENTOR:
-        return models.MentorApplication.objects.filter(uuid=uuid).first()
+    if type == models.USR_HACKER:
+        return appmodels.HackerApplication.objects.filter(uuid=uuid).first()
+    elif type == models.USR_VOLUNTEER:
+        return appmodels.VolunteerApplication.objects.filter(uuid=uuid).first()
+    elif type == models.USR_SPONSOR:
+        return appmodels.SponsorApplication.objects.filter(uuid=uuid).first()
+    elif type == models.USR_MENTOR:
+        return appmodels.MentorApplication.objects.filter(uuid=uuid).first()
     return None
 
 
@@ -80,7 +79,7 @@ def checking_in_hacker(request, web, appid, qrcode, type):
 
 
 def user_tabs(user):
-    tab = [('Hackers', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False)]
+    tab = [('Hackers', reverse('check_in_list'), False)]
     if user.is_organizer:
         if user.has_volunteer_access:
             tab.append(('Volunteer', reverse('check_in_volunteer_list'), False))
@@ -102,21 +101,7 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.objects.filter(status=models.APP_CONFIRMED)
-
-
-class CheckInMentorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'checkin/list.html'
-    table_class = ApplicationsCheckInTable
-    filterset_class = ApplicationCheckinFilter
-    table_pagination = {'per_page': 50}
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
-
-    def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
-        return models.User.objects.filter(is_mentor=True).exclude(id__in=checkins)
+        return appmodels.HackerApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
 
 class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -129,22 +114,8 @@ class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, Filter
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         return models.User.objects.filter(is_judge=True).exclude(id__in=checkins)
-
-
-class CheckInSponsorList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'checkin/list.html'
-    table_class = ApplicationsCheckInTable
-    filterset_class = ApplicationCheckinFilter
-    table_pagination = {'per_page': 50}
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
-
-    def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
-        return models.User.objects.filter(is_sponsor=True).exclude(id__in=checkins)
 
 
 class CheckInVolunteerList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -157,7 +128,7 @@ class CheckInVolunteerList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, Fi
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         return models.User.objects.filter(is_volunteer=True).exclude(id__in=checkins)
 
 
@@ -171,7 +142,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         context = super(CheckInHackerView, self).get_context_data(**kwargs)
         appid = kwargs['id']
         type = kwargs['type']
-        type = models.userModels.USR_URL_TYPE_CHECKIN[type]
+        type = models.USR_URL_TYPE_CHECKIN[type]
         app = get_application_by_type(type, appid)
         if not app:
             raise Http404
@@ -207,7 +178,7 @@ class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, Temp
         return user_tabs(self.request.user)
 
     def get_queryset(self):
-        return User.objects.annotate(
+        return models.User.objects.annotate(
             checkin_count=Count('checkin')).exclude(checkin_count=0)
 
 
@@ -223,12 +194,12 @@ class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):
 
 class CheckinVolunteerList(HaveVolunteerPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
-        return models.VolunteerApplication.objects.filter(status=models.APP_CONFIRMED)
+        return appmodels.VolunteerApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
 
 class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
-        return models.MentorApplication.objects.filter(status=models.APP_CONFIRMED)
+        return appmodels.MentorApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
 
 class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
@@ -236,7 +207,7 @@ class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
     filterset_class = SponsorApplicationCheckinFilter
 
     def get_queryset(self):
-        return models.SponsorApplication.objects.filter(status=models.APP_CONFIRMED)
+        return appmodels.SponsorApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
 
 class CheckInAPI(APIView):
@@ -245,12 +216,12 @@ class CheckInAPI(APIView):
         var_token = request.GET.get('token')
         if var_token != settings.MEALS_TOKEN:
             return HttpResponse(status=403)
-        checkins = CheckIn.objects.values_list("application_user__id", flat=True)
+        checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         ids = [u.id for u in models.User.objects.exclude(id__in=checkins) if not u.is_participant]
         checkInData = models.User.objects.filter(id__in=ids)
         checkInDataList = []
         for e in checkInData:
-            app = appmodels.Application.objects.filter(user__id=e.id).first()
+            app = appmodels.HackerApplication.objects.filter(user__id=e.id).first()
             if app:
                 checkInDataList.append({'uuid': str(e.id), 'id': e.id, 'name': e.name, 'email': e.email,
                                         "tSize": app.tshirt_size, "diet": app.diet})

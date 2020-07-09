@@ -30,8 +30,9 @@
             {% endfor %}
         </fieldset>
     {% endfor %}
-
+    {% if not is_sponsor %}
     <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
+    {% endif %}
     <small><span style="color: red">*</span>Indicates required field.</small>
 
     {% if not application or application.can_be_edit %}

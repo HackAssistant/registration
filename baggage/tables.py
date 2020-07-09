@@ -22,7 +22,7 @@ class BaggageListFilter(django_filters.FilterSet):
     def search_filter(self, queryset, name, value):
         queryfilter = queryset.annotate(fullpos=Concat('room', 'row', 'col', output_field=CharField()))
         return queryfilter.filter((Q(owner__email__icontains=value) | Q(owner__name__icontains=value) |
-                                   Q(status__icontains=value) | Q(type__icontains=value) | Q(color__icontains=value) |
+                                   Q(status__icontains=value) | Q(btype__icontains=value) | Q(color__icontains=value) |
                                    Q(description__icontains=value) | Q(fullpos__icontains=value)))
 
     def search_time(self, queryset, name, value):
@@ -39,8 +39,14 @@ class BaggageUsersFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(Q(application_user__email__icontains=value) |
-                               Q(application_user__name__icontains=value) |
+        return queryset.filter(Q(hacker__user__email__icontains=value) |
+                               Q(hacker__user__name__icontains=value) |
+                               Q(volunteer__user__email__icontains=value) |
+                               Q(volunteer__user__name__icontains=value) |
+                               Q(mentor__user__email__icontains=value) |
+                               Q(mentor__user__name__icontains=value) |
+                               Q(sponsor__user__email__icontains=value) |
+                               Q(sponsor__user__name__icontains=value) |
                                Q(qr_identifier__icontains=value))
 
     class Meta:
@@ -68,13 +74,13 @@ class BaggageListTable(tables.Table):
 
 class BaggageUsersTable(tables.Table):
     checkin = tables.TemplateColumn(
-        "<a href='{% url 'baggage_new' record.application_user.id %}'>Baggage check-in</a> ",
+        "<a href='{% url 'baggage_new' record.application.user.id %}'>Baggage check-in</a> ",
         verbose_name='Check-in', orderable=False)
     checkout = tables.TemplateColumn(
-        "<a href='{% url 'baggage_hacker' record.application_user.id %}'>Baggage check-out</a> ",
+        "<a href='{% url 'baggage_hacker' record.application.user.id %}'>Baggage check-out</a> ",
         verbose_name='Check-out', orderable=False)
-    name = tables.Column(accessor='application_user.name', verbose_name='Name')
-    email = tables.Column(accessor='application_user.email', verbose_name='Email')
+    name = tables.Column(accessor='application.user.name', verbose_name='Name')
+    email = tables.Column(accessor='application.user.email', verbose_name='Email')
 
     class Meta:
         model = CheckIn

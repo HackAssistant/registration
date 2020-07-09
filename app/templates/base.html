@@ -118,7 +118,7 @@
                                 {% endif %}
                             {% endif %}
                             {% include 'include/baggage_tab.html' %}
-                            {% if h_hw_enabled %}
+                            {% if h_hw_enabled and not request.user.is_sponsor %}
                                 {% include 'include/hardware_tab.html' %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}

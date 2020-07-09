@@ -53,12 +53,13 @@ class CheckIn(models.Model):
             super(CheckIn, self).save(force_insert, force_update, using,
                                       update_fields)
             self.application.status = APP_ATTENDED
+            self.application.save()
             # Assign one code per available offer to the user
-            if not self.application_user.is_sponsor and not self.application_user.is_mentor and not \
-               self.application_user.is_judge and not self.application_user.is_volunteer:
+            if not self.application.user.is_sponsor and not self.application.user.is_mentor and not \
+               self.application.user.is_judge and not self.application.user.is_volunteer:
                 codes = {c["offer"]: c["id"] for c in
                          Code.objects.filter(user__isnull=True).order_by("-id").values("id", "offer")}
-                Code.objects.filter(id__in=list(codes.values())).update(user_id=self.application_user.id)
+                Code.objects.filter(id__in=list(codes.values())).update(user_id=self.application.user.id)
         else:
             raise ValueError
 

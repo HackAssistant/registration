@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.forms.utils import ErrorList
 from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
 from form_utils.forms import BetterModelForm
@@ -186,12 +187,16 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         widget=forms.RadioSelect
     )
 
-    resume = forms.FileField(required=True)
-
     cvs_edition = forms.BooleanField(
         required=False,
         label='I authorize "Hackers at UPC" to share my CV with HackUPC 2019 Sponsors.'
     )
+
+    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
+                 label_suffix=None, empty_permitted=False, instance=None, use_required_attribute=None):
+        super().__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance,
+                         use_required_attribute)
+        self.fields['resume'].required = True
 
     def clean_cvs_edition(self):
         cc = self.cleaned_data.get('cvs_edition', False)

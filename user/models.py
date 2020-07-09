@@ -60,7 +60,6 @@ class UserManager(BaseUserManager):
             max_applications=n_max,
             email_verified=True,
         )
-
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -89,10 +88,8 @@ class UserManager(BaseUserManager):
         )
         user.type = USR_ORGANIZER
         user.is_director = True
-        user.is_organizer = True
         user.is_admin = True
         user.email_verified = True
-        user.is_volunteer = True
         user.is_hardware_admin = True
         user.is_hx = True
         user.save(using=self._db)

@@ -253,7 +253,7 @@ class SponsorRegister(HaveSponsorPermissionMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(SponsorRegister, self).get_context_data(**kwargs)
         form = forms.RegisterSponsorForm()
-        context.update({'form': form})
+        context.update({'form': form, 'is_sposnor_form': True})
         return context
 
     def post(self, request, *args, **kwargs):

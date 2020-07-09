@@ -40,7 +40,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2019, 11, 6, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2021, 11, 6, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = 'Registration opens at 4:00PM and closes at 6:45PM on Friday October 11th, ' \
                    'the opening ceremony will be at 7:00PM.'
@@ -117,7 +117,7 @@ DUBIOUS_ENABLED = False
 # Enable blacklist separate pipeline (disabled by default)
 BLACKLIST_ENABLED = False
 
-SUPPORTED_RESUME_EXTENSIONS = []
+SUPPORTED_RESUME_EXTENSIONS = ['.pdf']
 
 # Mentor/Volunteer applications can expire if they are invited, set to False to not
 MENTOR_EXPIRES = False
