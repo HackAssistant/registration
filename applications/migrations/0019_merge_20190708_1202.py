@@ -9,8 +9,21 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('applications', '0018_merge_20190707_2102'),
-        ('applications', '0018_merge_20190705_1210'),
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='application',
+            name='resume',
+            field=models.FileField(blank=True, null=True, upload_to='resumes',
+                                   validators=[applications.validators.validate_file_extension]),
+        ),
+        migrations.AlterField(
+            model_name='application',
+            name='status',
+            field=models.CharField(
+                choices=[('P', 'Under review'), ('R', 'Wait listed'), ('I', 'Invited'), ('LR', 'Last reminder'),
+                         ('C', 'Confirmed'), ('X', 'Cancelled'), ('A', 'Attended'), ('E', 'Expired'), ('D', 'Dubious'),
+                         ('IV', 'Invalid')], default='P', max_length=2),
+        ),
     ]
