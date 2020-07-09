@@ -107,6 +107,15 @@ nav.navbar {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.navbar-header > a > img {
+    height: 20px;
+    object-fit: contain;
+}
+
+.navbar-nav > li.active > a {
+    border-bottom: 1px solid #838383
+}
+
 .table {
     margin-bottom: 0;
 }
