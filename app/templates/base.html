@@ -101,7 +101,7 @@
                         {% if request.user.is_admin %}
                             <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
                                     href="{% url 'admin:index' %}">Admin</a></li>
-                        {% elif request.user.email_verified and not request.user.is_organizer and not request.user.is_volunteer %}
+                        {% elif request.user.email_verified and not request.user.is_organizer %}
                             <li class="{% if 'dashboard' in request.build_absolute_uri %}active{% endif %}">
                                 <a href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
@@ -117,15 +117,18 @@
                                         <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
                                 {% endif %}
                             {% endif %}
-                            {% include 'include/baggage_tab.html' %}
-                            {% if h_hw_enabled and not request.user.is_sponsor %}
+                            {% if request.user.is_organizer or request.user.has_checked_in %}
+                                {% include 'include/baggage_tab.html' %}
+                            {% endif %}
+                            {% if h_hw_enabled and request.user.is_hacker or h_hw_enabled and request.user.is_organizer %}
                                 {% include 'include/hardware_tab.html' %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
                                 <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
                                     <a href="{% url 'check_in_list' %}">Check-in</a></li>
+                              {% include 'include/meals_tab.html' %}
                             {% endif %}
-                            {% include 'include/meals_tab.html' %}
+
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
                     {% else %}

@@ -246,7 +246,7 @@ class User(AbstractBaseUser):
     def current_applications(self):
         if self.is_sponsor():
             return len(self.sponsorapplication_application.all())
-        if self.application():
+        if self.application:
             return 1
         return 0
 
@@ -255,6 +255,12 @@ class User(AbstractBaseUser):
 
     def set_volunteer(self):
         self.type = USR_VOLUNTEER
+
+    @property
+    def has_checked_in(self):
+        if self.application:
+            return self.application.is_attended()
+        return False
 
 
 class Token(models.Model):
