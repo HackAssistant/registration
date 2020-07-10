@@ -18,7 +18,7 @@ from user.models import User
 
 
 def user_tabs(user):
-    tab = [('Hackers', reverse('check_in_list'), False), ('QR', reverse('check_in_qr'), False)]
+    tab = [('Hackers', reverse('check_in_list'), False)]
     if user.is_organizer:
         if user.has_volunteer_access:
             tab.append(('Volunteer', reverse('check_in_volunteer_list'), False))
@@ -53,13 +53,6 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=models.APP_CONFIRMED)
-
-
-class QRView(IsVolunteerMixin, TabsView):
-    template_name = 'checkin/qr.html'
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
 
 
 class CheckInHackerView(IsVolunteerMixin, TabsView):
