@@ -252,6 +252,15 @@ class User(AbstractBaseUser):
     def set_volunteer(self):
         self.type = USR_VOLUNTEER
 
+    @property
+    def is_blacklisted(self):
+        try:
+            user = BlacklistUser.objects.get(email=self.email)
+            if user:
+                return True
+        except BlacklistUser.DoesNotExist:
+            return False
+
 
 class Token(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

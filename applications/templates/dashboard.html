@@ -118,12 +118,12 @@
                 <div class="col-md-offset-2 col-md-5 no-padding"><a href="{% url 'cancel_app' application.uuid_str %}"
                                                     class="btn  btn-danger btn-block">Cancel</a></div>
             </div>
-        {% elif application.is_invalid %}
+        {% elif application.is_invalid and not application.user.is_blacklisted %}
              <div class="col-md-12">
                 {% include 'include/status.html' %}
                 <p>Application has been marked as invalid. Please reach out to us at {{ h_contact_email|urlize }}
                     if you think this is a mistake.
-                  We are sorry your application, if you want you can apply at {{ h_name }} as mentor.
+                  We are sorry for your application, if you want you can apply at {{ h_name }} as mentor.
                 </p>
                <a class="btn btn-info btn-block" href={% url 'change_to_mentor' %}>Convert to mentor</a>
             </div>
