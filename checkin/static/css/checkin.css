@@ -1,0 +1,20 @@
+.button-qr {
+    vertical-align: middle;
+    padding: 5px 7px 3px;
+    border: thin solid #ddd;
+    cursor: pointer;
+    float: left;
+    font-size: 24px;
+    border-radius: 4px;
+}
+
+.button-qr-success {
+    color: #3c763d;
+    border-color: #3c763d;
+}
+
+.input-qr {
+    display: block;
+    overflow: hidden;
+    padding-left: 10px;
+}
