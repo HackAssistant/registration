@@ -155,6 +155,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         application = self.get_application(kwargs)
         context['app'] = application
         context['vote'] = self.can_vote()
+        context['max_vote'] = dict(models.VOTES)
         context['comments'] = models.ApplicationComment.objects.filter(hacker=application)
         if application and getattr(application.user, 'team', False) and settings.TEAMS_ENABLED:
             context['teammates'] = Team.objects.filter(team_code=application.user.team.team_code) \

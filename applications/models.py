@@ -11,7 +11,6 @@ from django.utils import timezone
 from multiselectfield import MultiSelectField
 
 from app import utils, hackathon_variables
-from app.hackathon_variables import HACKATHON_NAME
 from user.models import User, BlacklistUser
 from user import models as userModels
 from applications.validators import validate_file_extension
@@ -112,7 +111,7 @@ ATTENDANCE = [
     (1, "Saturday"),
     (2, "Sunday")
 ]
-HACK_NAME = getattr(hackathon_variables, HACKATHON_NAME, "HackAssistant")
+HACK_NAME = getattr(hackathon_variables, 'HACKATHON_NAME', "HackAssistant")
 EXTRA_NAME = [' 2016', ' 2017', ' 2018', ' 2019']
 PREVIOUS_HACKS = [(i, HACK_NAME + EXTRA_NAME[i]) for i in range(0, len(EXTRA_NAME))]
 
