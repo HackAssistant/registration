@@ -11,7 +11,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0010_blacklist_and_user_type_permisions_20200520_1452'),
+        ('user', '0010_user_types'),
     ]
 
     operations = [

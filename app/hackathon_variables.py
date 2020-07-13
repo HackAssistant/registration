@@ -91,7 +91,7 @@ DUBIOUS_ENABLED = False
 
 
 # Enable blacklist separate pipeline (disabled by default)
-BLACKLIST_ENABLED = False
+BLACKLIST_ENABLED = True
 
 SUPPORTED_RESUME_EXTENSIONS = []
 

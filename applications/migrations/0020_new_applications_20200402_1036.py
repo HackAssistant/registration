@@ -59,7 +59,7 @@ def convert(apps, schema_editor, reverse):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0009_user_types_20200321_0441'),
+        ('user', '0010_user_types'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('applications', '0019_auto_20200321_1814'),
     ]

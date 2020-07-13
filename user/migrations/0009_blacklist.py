@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0009_user_types_20200321_0441'),
+        ('user', '0008_user_can_review_dubious'),
     ]
 
     operations = [
@@ -27,24 +27,5 @@ class Migration(migrations.Migration):
             name='can_review_blacklist',
             field=models.BooleanField(default=False),
         ),
-        migrations.AddField(
-            model_name='user',
-            name='can_review_mentors',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name='user',
-            name='can_review_sponsors',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name='user',
-            name='can_review_volunteers',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name='user',
-            name='max_applications',
-            field=models.IntegerField(default=1),
-        ),
+
     ]
