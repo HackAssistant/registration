@@ -164,7 +164,7 @@ class User(AbstractBaseUser):
         return self.can_review_dubious or self.is_director
 
     @property
-    def has_blacklist_acces(self):
+    def has_blacklist_access(self):
         return self.can_review_blacklist or self.is_director
 
     @property

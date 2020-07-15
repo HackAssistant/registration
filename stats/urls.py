@@ -13,9 +13,9 @@ urlpatterns = [
     url(r'^api/users/$', cache_page(5 * 60)(views.users_stats_api), name='api_users_stats'),
     url(r'^api/checkin/$', cache_page(5 * 60)(views.checkin_stats_api), name='api_checkin_stats'),
     url(r'^apps/$', views.AppStats.as_view(), name='app_stats'),
-    url(r'^volunteer/$', views.VolunteerStats.as_view(), name='volunteer_stats'),
-    url(r'^mentor/$', views.MentorStats.as_view(), name='mentor_stats'),
-    url(r'^sponsor/$', views.SponsorStats.as_view(), name='sponsor_stats'),
+    url(r'^volunt_apps/$', views.VolunteerStats.as_view(), name='volunteer_stats'),
+    url(r'^ment_apps/$', views.MentorStats.as_view(), name='mentor_stats'),
+    url(r'^spon_apps/$', views.SponsorStats.as_view(), name='sponsor_stats'),
     url(r'^users/$', views.UsersStats.as_view(), name='users_stats'),
     url(r'^check_in/$', views.CheckinStats.as_view(), name='checkin_stats'),
 

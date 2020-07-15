@@ -1,33 +1,17 @@
 from django.contrib import messages
-from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
-from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from app.mixins import TabsViewMixin
-from app.utils import reverse
 from app.views import TabsView
 from applications import models
 from checkin.models import CheckIn
-from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, RankingListTable, \
+from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, \
     SponsorApplicationsCheckInTable, SponsorApplicationCheckinFilter
-from user.mixins import IsVolunteerMixin, IsOrganizerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
+from user.mixins import IsVolunteerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
     HaveSponsorPermissionMixin
-from user.models import User
-
-
-def user_tabs(user):
-    tab = [('Hackers', reverse('check_in_list'), False)]
-    if user.is_organizer:
-        if user.has_volunteer_access:
-            tab.append(('Volunteer', reverse('check_in_volunteer_list'), False))
-        if user.has_mentor_access:
-            tab.append(('Mentor', reverse('check_in_mentor_list'), False))
-        if user.has_sponsor_access:
-            tab.append(('Sponsor', reverse('check_in_sponsor_list'), False))
-        tab.append(('Ranking', reverse('check_in_ranking'), False))
-    return tab
+from organizers.views import volunteer_tabs, mentor_tabs, hacker_tabs, sponsor_tabs
 
 
 def get_application_by_type(type, uuid):
@@ -49,7 +33,7 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
     table_pagination = {'per_page': 50}
 
     def get_current_tabs(self):
-        return user_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=models.APP_CONFIRMED)
@@ -94,36 +78,27 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-class CheckinRankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
-    template_name = 'checkin/ranking.html'
-    table_class = RankingListTable
-
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
-
-    def get_queryset(self):
-        return User.objects.annotate(
-            checkin_count=Count('checkin')).exclude(checkin_count=0)
-
-
 class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):
     template_name = 'checkin/list.html'
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
     table_pagination = {'per_page': 50}
 
-    def get_current_tabs(self):
-        return user_tabs(self.request.user)
-
 
 class CheckinVolunteerList(HaveVolunteerPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
         return models.VolunteerApplication.objects.filter(status=models.APP_CONFIRMED)
 
+    def get_current_tabs(self):
+        return volunteer_tabs(self.request.user)
+
 
 class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
     def get_queryset(self):
         return models.MentorApplication.objects.filter(status=models.APP_CONFIRMED)
+
+    def get_current_tabs(self):
+        return mentor_tabs(self.request.user)
 
 
 class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
@@ -132,3 +107,6 @@ class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
 
     def get_queryset(self):
         return models.SponsorApplication.objects.filter(status=models.APP_CONFIRMED)
+
+    def get_current_tabs(self):
+        return sponsor_tabs(self.request.user)

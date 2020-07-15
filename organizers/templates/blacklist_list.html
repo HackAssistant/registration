@@ -3,7 +3,7 @@
 {% block head_title %}All application{% endblock %}
 
 {% block table_footer %}
-    {% if user.has_blacklist_acces %}
+    {% if user.has_blacklist_access %}
         <div class="panel-footer">
             <a href="{% querystring '_export'='csv' %}" class="btn-block btn btn-info">Export
                 CSV</a>
