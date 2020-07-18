@@ -4,10 +4,12 @@ from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.urls import reverse
 from django.utils import timezone
+from django_tables2 import SingleTableMixin
 
 from app.views import TabsView
 from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, D_OTHER, \
     VolunteerApplication, MentorApplication, SponsorApplication
+from stats.tables import CheckinRankingListTable
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
 from checkin.models import CheckIn
@@ -299,11 +301,16 @@ class UsersStats(IsOrganizerMixin, TabsView):
         return stats_tabs()
 
 
-class CheckinStats(IsOrganizerMixin, TabsView):
+class CheckinStats(IsOrganizerMixin, SingleTableMixin, TabsView):
     template_name = 'checkin_stats.html'
+    table_class = CheckinRankingListTable
 
     def get_current_tabs(self):
         return stats_tabs()
+
+    def get_queryset(self):
+        return User.objects.annotate(
+            checkin_count=Count('checkin')).exclude(checkin_count=0)
 
 
 class VolunteerStats(IsOrganizerMixin, TabsView):

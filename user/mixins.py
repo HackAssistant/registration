@@ -154,7 +154,7 @@ class IsBlacklistAdminMixin(UserPassesTestMixin):
             return False
         if not self.request.user.has_usable_password():
             return False
-        return self.request.user.has_blacklist_acces or self.request.user.is_director
+        return self.request.user.has_blacklist_access or self.request.user.is_director
 
 
 class DashboardMixin(UserPassesTestMixin):

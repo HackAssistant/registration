@@ -1,0 +1,13 @@
+{% extends 'base_table.html' %}
+{% load static %}
+
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'lib/c3.min.css' %}">
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="{% static 'lib/c3.min.js' %}" charset="utf-8"></script>
+    {% block c3script %}{% endblock %}
+{% endblock %}
