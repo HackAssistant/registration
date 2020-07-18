@@ -106,15 +106,31 @@
                                 <a href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
                         {% if request.user.email_verified and request.user.has_usable_password %}
-                            {% if request.user.is_organizer %}
-                                <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'app_stats' %}">Stats</a></li>
-                                <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'app_list' %}">Applications</a></li>
-
-                                {% if h_r_enabled %}
-                                    <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
-                                        <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
+                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
+                                <li class="{% if 'hacker' in request.build_absolute_uri %}active{% endif %}">
+                                    {% if request.user.is_organizer %}
+                                        <a href="{% url 'app_list' %}">Hacker</a>
+                                    {% else %}
+                                        <a href="{% url 'check_in_list' %}">Check-in</a>
+                                    {% endif %}
+                                </li>
+                                {% if request.user.is_organizer %}
+                                    {% if request.user.has_volunteer_access %}
+                                        <li class="{% if 'volunteer' in request.build_absolute_uri %}active{% endif %}"><a
+                                                href="{% url 'volunteer_list' %}">Volunteer</a></li>
+                                    {% endif %}
+                                    {% if request.user.has_mentor_access %}
+                                        <li class="{% if 'mentor' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'mentor_list' %}">Mentor</a></li>
+                                    {% endif %}
+                                    {% if request.user.has_sponsor_access %}
+                                        <li class="{% if 'sponsor' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'sponsor_user_list' %}">Sponsor</a></li>
+                                    {% endif %}
+                                    {% if h_r_enabled %}
+                                        <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
+                                            <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.has_checked_in %}
@@ -124,9 +140,11 @@
                                 {% include 'include/hardware_tab.html' %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
-                                <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
-                                    <a href="{% url 'check_in_list' %}">Check-in</a></li>
                               {% include 'include/meals_tab.html' %}
+                            {% endif %}
+                            {% if request.user.is_organizer %}
+                                <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
+                                        href="{% url 'app_stats' %}">Stats</a></li>
                             {% endif %}
 
                         {% endif %}
