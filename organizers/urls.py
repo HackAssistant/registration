@@ -3,7 +3,7 @@ from django.conf.urls import url
 from organizers import views
 
 urlpatterns = [
-    url(r'^hacker/eview/$', views.ReviewApplicationView.as_view(), name='review'),
+    url(r'^hacker/review/$', views.ReviewApplicationView.as_view(), name='review'),
     url(r'^hacker/ranking/$', views.RankingView.as_view(), name='ranking'),
     url(r'^hacker/(?P<id>[\w-]+)$', views.ApplicationDetailView.as_view(), name="app_detail"),
     url(r'^hacker/all/$', views.ApplicationsListView.as_view(), name="app_list"),
