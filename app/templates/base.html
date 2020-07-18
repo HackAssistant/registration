@@ -125,8 +125,10 @@
                             {% if h_hw_enabled %}
                                 {% include 'include/hardware_tab.html' %}
                             {% endif %}
-                            <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'app_stats' %}">Stats</a></li>
+                            {% if request.user.is_organizer %}
+                                <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'app_stats' %}">Stats</a></li>
+                            {% endif %}
                         {% endif %}
                         <li><a href="{% url 'account_logout' %}">Logout</a></li>
 
