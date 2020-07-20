@@ -65,8 +65,6 @@ def hacker_tabs(user):
         t.extend([('Reimbursements', reverse('reimbursement_list'), False),
                   ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
                       status=RE_PEND_APPROVAL).count() else False), ])
-        if user.is_director:
-            t.append(('Send Reimb', reverse('send_reimbursement'), False))
     return t
 
 

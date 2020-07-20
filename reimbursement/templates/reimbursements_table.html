@@ -2,4 +2,11 @@
 {% block head_title %}All Reimbursements{% endblock %}
 
 {% block table_title %}All Reimbursements{% endblock %}
+{% block table_footer %}
+    {% if user.is_director %}
+        <div>
+            <a href="{% url 'send_reimbursement' %}" class="btn-block btn btn-default">Send Reimbursements</a>
+        </div>
+    {% endif %}
+{% endblock %}
 
