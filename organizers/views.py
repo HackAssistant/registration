@@ -61,6 +61,7 @@ def hacker_tabs(user):
         t.append(('Blacklist', reverse('blacklist'),
                   'new' if models.HackerApplication.objects.filter(status=APP_BLACKLISTED, contacted=False).count()
                   else ''))
+    t.append(('Check-in', reverse('check_in_list'), False))
     return t
 
 
