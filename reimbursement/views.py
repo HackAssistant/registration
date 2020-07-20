@@ -14,15 +14,7 @@ from reimbursement import forms, models, emails
 from reimbursement.tables import ReimbursementTable, ReimbursementFilter, SendReimbursementTable, \
     SendReimbursementFilter
 from user.mixins import IsOrganizerMixin, IsDirectorMixin, IsHackerMixin
-
-
-def organizer_tabs(user):
-    t = [('Reimbursements', reverse('reimbursement_list'), False),
-         ('Receipts', reverse('receipt_review'), 'new' if models.Reimbursement.objects.filter(
-             status=models.RE_PEND_APPROVAL).count() else False), ]
-    if user.is_director:
-        t.append(('Send', reverse('send_reimbursement'), False))
-    return t
+from organizers.views import hacker_tabs
 
 
 class ReimbursementHacker(IsHackerMixin, TabsView):
@@ -93,7 +85,7 @@ class ReimbursementDetail(IsOrganizerMixin, TabsView):
 
 class ReceiptReview(ReimbursementDetail):
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_back_url(self):
         return None
@@ -147,7 +139,7 @@ class ReimbursementListView(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, F
     table_pagination = {'per_page': 100}
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.Reimbursement.objects.all()
@@ -160,7 +152,7 @@ class SendReimbursementListView(IsDirectorMixin, TabsViewMixin, SingleTableMixin
     table_pagination = {'per_page': 100}
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         status = [app_mod.APP_INVITED, app_mod.APP_LAST_REMIDER, app_mod.APP_CONFIRMED, app_mod.APP_ATTENDED]

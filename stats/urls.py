@@ -18,7 +18,7 @@ urlpatterns = [
     url(r'^spon_apps/$', views.SponsorStats.as_view(), name='sponsor_stats'),
     url(r'^users/$', views.UsersStats.as_view(), name='users_stats'),
     url(r'^check_in/$', views.CheckinStats.as_view(), name='checkin_stats'),
-
+    url(r'^organizers/$', views.OrganizerStats.as_view(), name='organizer_stats'),
 ]
 
 
