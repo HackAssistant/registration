@@ -57,7 +57,7 @@ class CheckIn(models.Model):
         app = self.application
         app.status = APP_CONFIRMED
         app.save()
-        return super().delete(using, keep_parents)
+        return super(CheckIn, self).delete(using, keep_parents)
 
     def type(self):
         return self.application.user.get_type_display()
