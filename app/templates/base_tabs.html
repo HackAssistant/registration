@@ -9,10 +9,11 @@
     <div class="row margin-top">
         <div class="{% block cols-panel %}col-md-12{% endblock %}">
             <div>
-                <ul class="nav nav-tabs">
+                <ul class="nav nav-tabs" id="tabs">
+                    <li role="presentation" id="0" style="display: none" onclick="left()"><a><=</a></li>
                     {% for title,url,needs_action in tabs %}
 
-                        <li role="presentation" {% if url in request.get_full_path %}class="active_tab action"{% endif %}>
+                        <li role="presentation" {% if url in request.get_full_path %}class="active_tab action"{% endif %} id="{{ forloop.counter }}">
 
                             <a {% if url not in request.get_full_path %}href="{{ url }}"{% endif %}>
                                 {{ title }}
@@ -25,6 +26,7 @@
                         </li>
 
                     {% endfor %}
+                    <li role="presentation" id="-1" style="display: none" onclick="right()"><a>=></a></li>
                 </ul>
                 <div class="panel panel-default">
 
@@ -45,4 +47,83 @@
             </div>
         </div>
     </div>
+  <script>
+  var ul;
+  var list_li;
+  var active = 0;
+  var selected = 0;
+  var widths = [];
+  function right() {
+    selected++;
+    reset();
+  }
+  function left() {
+    selected--;
+    reset();
+  }
+  function resize_tabs() {
+    var total_size = ul.getBoundingClientRect().width;
+    var actual_size = 0;
+    var n_visible = 0;
+    for (let i = 0; i<list_li.length; i++) {
+      if (list_li[i].style.display !== 'none') {
+        actual_size += list_li[i].getBoundingClientRect().width;
+        if (i !== 0 && i !== list_li.length-1) n_visible++;
+      }
+    }
+    var add_size = (total_size - actual_size)/((n_visible));
+    for (let i = 0; i<list_li.length; i++) {
+      if (i !== 0 && i !== list_li.length-1 && list_li[i].style.display !== 'none') {
+        list_li[i].style.width = (list_li[i].getBoundingClientRect().width + add_size) + 'px';
+      }
+    }
+  }
+  function tabs() {
+    if (ul.getBoundingClientRect().height > 40) {
+      for (let i = 0; i<list_li.length; i++) {
+        if (i<selected) {
+          list_li[i].style.display = 'none';
+        }
+      }
+      if (selected != 1) {
+        list_li[0].style.display = 'block';
+      }
+      list_li[list_li.length-1].style.display = 'block';
+      var deleted = false;
+      for (let i = list_li.length-2; i>=0; i--) {
+        if (ul.getBoundingClientRect().height > 40) {
+          list_li[i].style.display = 'none';
+          deleted = true;
+        }
+      }
+      if (!deleted) list_li[list_li.length-1].style.display = 'none';
+      resize_tabs();
+    }
+  }
+  function reset() {
+    for (let i = 0; i < list_li.length; i++) {
+      if (i === 0 || i === list_li.length-1) {
+        list_li[i].style.display = 'none';
+      } else {
+        list_li[i].style.display = 'block';
+        list_li[i].style.width = null;
+      }
+    }
+    tabs()
+  }
+  function init() {
+    ul = document.getElementById('tabs');
+    list_li = ul.getElementsByTagName('li');
+    for (let i = 0; i<list_li.length; i++) {
+      if (list_li[i].className) {
+        active = list_li[i].id;
+      }
+      widths.push(list_li[i].getBoundingClientRect().width);
+    }
+    selected = active;
+    tabs();
+    window.addEventListener('resize', reset);
+  }
+  init();
+  </script>
 {% endblock %}
