@@ -16,13 +16,13 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED
+from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED
 from organizers import models
-from organizers.models import Vote
-from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
+from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
     VolunteerListTable, MentorListTable, MentorFilter, SponsorListTable, SponsorFilter, SponsorUserListTable,\
     SponsorUserFilter, BlacklistListTable, BlacklistApplicationFilter
+from reimbursement.models import Reimbursement, RE_PEND_APPROVAL
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin, HaveDubiousPermissionMixin, HaveVolunteerPermissionMixin, \
     HaveSponsorPermissionMixin, HaveMentorPermissionMixin, IsBlacklistAdminMixin
@@ -51,8 +51,7 @@ def add_comment(application, user, text):
 def hacker_tabs(user):
     t = [('Application', reverse('app_list'), False), ('Review', reverse('review'),
                                                        'new' if models.HackerApplication.objects.exclude(
-                                                           vote__user_id=user.id).filter(status=APP_PENDING) else ''),
-         ('Ranking', reverse('ranking'), False)]
+                                                           vote__user_id=user.id).filter(status=APP_PENDING) else '')]
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
@@ -62,6 +61,10 @@ def hacker_tabs(user):
                   'new' if models.HackerApplication.objects.filter(status=APP_BLACKLISTED, contacted=False).count()
                   else ''))
     t.append(('Check-in', reverse('check_in_list'), False))
+    if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
+        t.extend([('Reimbursements', reverse('reimbursement_list'), False),
+                  ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
+                      status=RE_PEND_APPROVAL).count() else False), ])
     return t
 
 
@@ -76,23 +79,6 @@ def volunteer_tabs(user):
 
 def mentor_tabs(user):
     return [('Application', reverse('mentor_list'), False), ('Check-in', reverse('check_in_mentor_list'), False)]
-
-
-class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
-    template_name = 'ranking.html'
-    table_class = RankingListTable
-    table_pagination = False
-
-    def get_current_tabs(self):
-        return hacker_tabs(self.request.user)
-
-    def get_queryset(self):
-        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED]) \
-            .annotate(email=F('user__email')) \
-            .values('email').annotate(total_count=Count('application'),
-                                      skip_count=Count('application') - Count('calculated_vote'),
-                                      vote_count=Count('calculated_vote')) \
-            .exclude(vote_count=0)
 
 
 class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):

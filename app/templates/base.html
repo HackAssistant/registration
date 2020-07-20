@@ -124,10 +124,6 @@
                                         <li class="{% if 'sponsor' in request.build_absolute_uri %}active{% endif %}"><a
                                             href="{% url 'sponsor_user_list' %}">Sponsor</a></li>
                                     {% endif %}
-                                    {% if h_r_enabled %}
-                                        <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
-                                            <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
-                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.has_checked_in %}

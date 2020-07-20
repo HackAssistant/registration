@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, F
 from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.urls import reverse
@@ -8,8 +8,9 @@ from django_tables2 import SingleTableMixin
 
 from app.views import TabsView
 from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, D_OTHER, \
-    VolunteerApplication, MentorApplication, SponsorApplication
-from stats.tables import CheckinRankingListTable
+    VolunteerApplication, MentorApplication, SponsorApplication, APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED
+from organizers.models import Vote
+from stats.tables import CheckinRankingListTable, OrganizerRankingListTable
 from user.mixins import is_organizer, IsOrganizerMixin
 from user.models import User
 from checkin.models import CheckIn
@@ -20,7 +21,8 @@ from collections import defaultdict
 def stats_tabs():
     tabs = [('Hacker', reverse('app_stats'), False), ('Volunteer', reverse('volunteer_stats'), False),
             ('Mentor', reverse('mentor_stats'), False), ('Sponsor', reverse('sponsor_stats'), False),
-            ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False), ]
+            ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False),
+            ('Organizers', reverse('organizer_stats'), False), ]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs
@@ -332,3 +334,20 @@ class SponsorStats(IsOrganizerMixin, TabsView):
 
     def get_current_tabs(self):
         return stats_tabs()
+
+
+class OrganizerStats(IsOrganizerMixin, SingleTableMixin, TabsView):
+    template_name = 'ranking.html'
+    table_class = OrganizerRankingListTable
+    table_pagination = False
+
+    def get_current_tabs(self):
+        return stats_tabs()
+
+    def get_queryset(self):
+        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED]) \
+            .annotate(email=F('user__email')) \
+            .values('email').annotate(total_count=Count('application'),
+                                      skip_count=Count('application') - Count('calculated_vote'),
+                                      vote_count=Count('calculated_vote')) \
+            .exclude(vote_count=0)
