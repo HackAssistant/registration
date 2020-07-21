@@ -14,15 +14,7 @@ from reimbursement import forms, models, emails
 from reimbursement.tables import ReimbursementTable, ReimbursementFilter, SendReimbursementTable, \
     SendReimbursementFilter
 from user.mixins import IsOrganizerMixin, IsDirectorMixin, IsHackerMixin
-
-
-def organizer_tabs(user):
-    t = [('Reimbursements', reverse('reimbursement_list'), False),
-         ('Receipts', reverse('receipt_review'), 'new' if models.Reimbursement.objects.filter(
-             status=models.RE_PEND_APPROVAL).count() else False), ]
-    if user.is_director:
-        t.append(('Send', reverse('send_reimbursement'), False))
-    return t
+from organizers.views import hacker_tabs as organizer_tabs
 
 
 class ReimbursementHacker(IsHackerMixin, TabsView):

@@ -160,7 +160,7 @@ class BaseApplication(models.Model):
     tshirt_size = models.CharField(max_length=5, default=DEFAULT_TSHIRT_SIZE, choices=TSHIRT_SIZES)
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(BaseApplication, self).__init__(*args, **kwargs)
         try:
             dict = args[0]['dict']
         except:
