@@ -18,13 +18,14 @@ class HackerTeam(IsHackerMixin, TabsView):
     def get_context_data(self, **kwargs):
         c = super(HackerTeam, self).get_context_data(**kwargs)
         team = getattr(self.request.user, 'team', None)
-        app = getattr(self.request.user, 'application', None)
+        app = getattr(self.request.user, 'hackerapplication_application', None)
         teammates = []
         if team:
             teammates = models.Team.objects.filter(team_code=team.team_code) \
-                .values('user__name', 'user__email', 'user__application')
+                .values('user__name', 'user__email', 'user__hackerapplication_application')
             teammates = list(map(lambda x:
-                                 {'name': x['user__name'], 'email': x['user__email'], 'app': x['user__application']},
+                                 {'name': x['user__name'], 'email': x['user__email'],
+                                  'app': x['user__hackerapplication_application']},
                                  teammates))
         instance = models.Team()
         instance.team_code = ''
