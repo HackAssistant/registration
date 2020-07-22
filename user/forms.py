@@ -6,6 +6,12 @@ from django.contrib.auth.password_validation import validate_password, password_
 from user.models import User
 from user import models
 
+USR_CHOICES_CHANGE = {
+    ('H', 'Hacker'),
+    ('M', 'Mentor'),
+    ('V', 'Volunteer')
+}
+
 
 class UserChangeForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
@@ -145,3 +151,36 @@ class SetPasswordForm(forms.Form):
         password = self.cleaned_data["new_password1"]
         user.set_password(password)
         user.save()
+
+
+class ProfileForm(forms.Form):
+    name = forms.CharField()
+    type = forms.ChoiceField(choices=USR_CHOICES_CHANGE)
+    non_change_type = forms.CharField(disabled=True, required=False, label='Type')
+    email = forms.CharField(disabled=True, required=False)
+
+    def __init__(self, *args, **kwargs):
+        type_active = kwargs.get('type_active', None)
+        if type_active is None:
+            type_active = False
+        else:
+            kwargs.pop('type_active')
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        if not type_active:
+            self.fields['type'].widget.attrs['disabled'] = True
+            self.fields['type'].required = False
+            self.fields['type'].widget = forms.HiddenInput()
+        else:
+            self.fields['non_change_type'].widget = forms.HiddenInput()
+
+
+class _UserPutsPassword(forms.Form):
+    actual_password = forms.CharField(
+        label="Actual password",
+        strip=False,
+        widget=forms.PasswordInput,
+    )
+
+
+class UserResetPasswordForm(SetPasswordForm, _UserPutsPassword):
+    pass

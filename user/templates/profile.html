@@ -1,0 +1,38 @@
+{% extends "base_tabs.html" %}
+{% load humanize %}
+{% load bootstrap3 %}
+{% load static %}
+{% block head_title %}Profile{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'lib/bars-square.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vote.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+{% block panel %}
+  <h2 style="text-align: center">Profile</h2>
+  <div>
+    <h3>Personal data</h3>
+    <hr>
+    <p>If you haven't applied yet you can change your user and apply as hacker, mentor or volunteer</p>
+    <form enctype="multipart/form-data" id="profile_change" method="post" action="">
+        {% csrf_token %}
+        {% bootstrap_form_errors form %}
+        {% for field in form %}
+            {% bootstrap_field field %}
+        {% endfor %}
+        <button class="btn-block btn btn-success">Update Profile</button>
+    </form>
+    <h2>Password</h2>
+    <hr>
+    <p>You can change your current password here.</p>
+    <a class="btn-block btn btn-default" href="{% url 'user_profile_password_reset' %}">Change Password</a>
+    <h2>Delete account</h2>
+    <hr>
+    <p>You can delete your account with all the personal data from your user and applications. <strong>This action cannot be reverted.</strong></p>
+    <a href="{% url 'user_profile_delete' %}" class="btn btn-block btn-danger">Delete account</a>
+  </div>
+{% endblock %}
+
+{% block out_panel %}
+
+{% endblock %}

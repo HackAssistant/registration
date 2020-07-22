@@ -1,0 +1,20 @@
+{% extends 'base_tabs.html' %}
+
+{% load bootstrap3 %}
+{% block head_title %}Application{% endblock %}
+
+{% block panel %}
+  <a class="btn btn-default" href={% url 'user_profile' %}>< back</a>
+  <div>
+  <h1 style="text-align: center">Please read this!</h1>
+  <p style="text-align: center">Your hole account is going to be deleted. That means all your progress will be lost and you will be
+    cancelling your attendance at {{ h_name }}. <strong>This action can't be reverted.</strong> Click below in order to
+    delete your account.</p>
+  <form enctype="multipart/form-data" method="post" action="">
+    {% csrf_token %}
+    <button class="btn btn-danger btn-block">Delete my account</button>
+
+  </form>
+  </div>
+
+{% endblock %}

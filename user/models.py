@@ -259,6 +259,11 @@ class User(AbstractBaseUser):
         except BlacklistUser.DoesNotExist:
             return False
 
+    def can_change_type(self):
+        if self.have_application():
+            return False
+        return self.is_hacker() or self.is_mentor() or self.is_volunteer()
+
 
 class Token(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
