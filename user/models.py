@@ -264,6 +264,10 @@ class User(AbstractBaseUser):
             return False
         return self.is_hacker() or self.is_mentor() or self.is_volunteer()
 
+    @property
+    def get_first_name(self):
+        return self.name.split(' ', 1)[0]
+
 
 class Token(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
