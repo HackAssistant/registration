@@ -23,6 +23,5 @@ urlpatterns = [
     url(r'^verify/$', views.verify_email_required, name='verify_email_required'),
     url(r'^verify/send$', views.send_email_verification, name='send_email_verification'),
     url(r'^profile/$', views.UserProfile.as_view(), name='user_profile'),
-    url(r'^profile/password_reset/$', views.ResetPassword.as_view(), name='user_profile_password_reset'),
     url(r'^profile/delete/$', views.DeleteAccount.as_view(), name='user_profile_delete'),
 ]

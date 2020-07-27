@@ -281,7 +281,7 @@ class UserProfile(IsHackerMixin, TemplateView):
         form = forms.ProfileForm(initial={
             'name': self.request.user.name,
             'email': self.request.user.email,
-            'type': self.request.user.type,
+            'type': self.request.user.type if self.request.user.can_change_type() else 'H',
             'non_change_type': self.request.user.get_type_display(),
         }, type_active=self.request.user.can_change_type())
         context.update({'form': form})
@@ -304,38 +304,10 @@ class UserProfile(IsHackerMixin, TemplateView):
         return render(request, self.template_name, c)
 
 
-class ResetPassword(IsHackerMixin, TemplateView):
-    template_name = 'password_reset_confirm.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(ResetPassword, self).get_context_data(**kwargs)
-        form = forms.UserResetPasswordForm()
-        context.update({'form': form, 'validlink': True, 'back': True})
-        return context
-
-    def post(self, request, *args, **kwargs):
-        form = forms.UserResetPasswordForm(request.POST)
-        if form.is_valid():
-            actual_password = form.cleaned_data['actual_password']
-            if not request.user.check_password(actual_password):
-                form.add_error('actual_password', 'Incorrect password')
-            else:
-                new_password = form.cleaned_data['new_password1']
-                email = request.user.email
-                form.save(request.user)
-                user = auth.authenticate(email=email, password=new_password)
-                if user and user.is_active:
-                    auth.login(request, user)
-                messages.success(request, "Password saved successfully")
-                return HttpResponseRedirect(reverse('user_profile'))
-        c = self.get_context_data()
-        c.update({'form': form, 'validlink': True, 'back': True})
-        return render(request, self.template_name, c)
-
-
 class DeleteAccount(IsHackerMixin, TemplateView):
     template_name = 'confirm_delete.html'
 
-    def post(self):
-        self.request.user.delete()
+    def post(self, request, *args, **kwargs):
+        request.user.delete()
+        messages.success(request, "User deleted successfully")
         return HttpResponseRedirect(reverse('root'))

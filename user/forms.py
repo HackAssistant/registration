@@ -172,15 +172,3 @@ class ProfileForm(forms.Form):
             self.fields['type'].widget = forms.HiddenInput()
         else:
             self.fields['non_change_type'].widget = forms.HiddenInput()
-
-
-class _UserPutsPassword(forms.Form):
-    actual_password = forms.CharField(
-        label="Actual password",
-        strip=False,
-        widget=forms.PasswordInput,
-    )
-
-
-class UserResetPasswordForm(SetPasswordForm, _UserPutsPassword):
-    pass
