@@ -1,7 +1,7 @@
-{% extends 'c3_base.html' %}
+{% extends 'c3_table_base.html' %}
 
 {% block head_title %}Check-in stats{% endblock %}
-{% block panel %}
+{% block extra_panel %}
     <h1>Check-in stats</h1>
     <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
     <div class="row">
@@ -31,6 +31,7 @@
             <div id="sponsor_attrition_rate"></div>
         </div>
     </div>
+  <h2>Ranking</h2>
 {% endblock %}
 {% block c3script %}
     <script>

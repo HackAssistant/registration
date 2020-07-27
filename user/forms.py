@@ -77,7 +77,7 @@ class RegisterForm(LoginForm):
 
     def __init__(self, *args, **kwargs):
         self._type = kwargs.pop('type', None)
-        super().__init__(*args, **kwargs)
+        super(LoginForm, self).__init__(*args, **kwargs)
 
     def clean_password2(self):
         # Check that the two password entries match
