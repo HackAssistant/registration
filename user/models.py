@@ -240,9 +240,7 @@ class User(AbstractBaseUser):
     def current_applications(self):
         if self.is_sponsor():
             return len(self.sponsorapplication_application.all())
-        if self.application():
-            return 1
-        return 0
+        return self.application is not None
 
     def set_mentor(self):
         self.type = USR_MENTOR
@@ -263,10 +261,6 @@ class User(AbstractBaseUser):
         if self.have_application():
             return False
         return self.is_hacker() or self.is_mentor() or self.is_volunteer()
-
-    @property
-    def get_first_name(self):
-        return self.name.split(' ', 1)[0]
 
 
 class Token(models.Model):
