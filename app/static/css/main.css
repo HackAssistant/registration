@@ -276,6 +276,10 @@ img {
     cursor: pointer;
 }
 
+hr {
+    margin-top: 0px;
+}
+
 @media (max-width: 1000px) {
     .navbar-header {
         float: none;
