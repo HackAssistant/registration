@@ -2,16 +2,13 @@ import json
 
 from django.conf import settings
 from django.contrib import messages
-from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
-from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 
 from app.mixins import TabsViewMixin
-from app.utils import reverse
 from app.views import TabsView
 from applications import models as appmodels
 from user import models
