@@ -246,9 +246,7 @@ class User(AbstractBaseUser):
     def current_applications(self):
         if self.is_sponsor():
             return len(self.sponsorapplication_application.all())
-        if self.application:
-            return 1
-        return 0
+        return self.application is not None
 
     def set_mentor(self):
         self.type = USR_MENTOR
@@ -270,6 +268,11 @@ class User(AbstractBaseUser):
                 return True
         except BlacklistUser.DoesNotExist:
             return False
+
+    def can_change_type(self):
+        if self.have_application():
+            return False
+        return self.is_hacker() or self.is_mentor() or self.is_volunteer()
 
 
 class Token(models.Model):
