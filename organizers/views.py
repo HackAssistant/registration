@@ -16,13 +16,13 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING, APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED
+from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED
 from organizers import models
-from organizers.models import Vote
-from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, RankingListTable, \
+from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
     VolunteerListTable, MentorListTable, MentorFilter, SponsorListTable, SponsorFilter, SponsorUserListTable,\
     SponsorUserFilter, BlacklistListTable, BlacklistApplicationFilter
+from reimbursement.models import Reimbursement, RE_PEND_APPROVAL
 from teams.models import Team
 from user.mixins import IsOrganizerMixin, IsDirectorMixin, HaveDubiousPermissionMixin, HaveVolunteerPermissionMixin, \
     HaveSponsorPermissionMixin, HaveMentorPermissionMixin, IsBlacklistAdminMixin
@@ -48,44 +48,37 @@ def add_comment(application, user, text):
     return comment
 
 
-def organizer_tabs(user):
-    t = [('Hackers', reverse('app_list'), False),
-         ('Review', reverse('review'),
-          'new' if models.HackerApplication.objects.exclude(vote__user_id=user.id).filter(status=APP_PENDING) else '')]
-    if user.has_volunteer_access:
-        t.append(('Volunteers', reverse('volunteer_list'), False))
-    if user.has_mentor_access:
-        t.append(('Mentors', reverse('mentor_list'), False))
-    if user.has_sponsor_access:
-        t.append(('Sponsor App', reverse('sponsor_list'), False))
-        t.append(('Sponsor Users', reverse('sponsor_user_list'), False))
-    t.append(('Ranking', reverse('ranking'), False))
+def hacker_tabs(user):
+    t = [('Application', reverse('app_list'), False), ('Review', reverse('review'),
+                                                       'new' if models.HackerApplication.objects.exclude(
+                                                           vote__user_id=user.id).filter(status=APP_PENDING) else '')]
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
                                                                    contacted=False).count() else ''))
-    if user.has_blacklist_acces and getattr(settings, 'BLACKLIST_ENABLED', False):
+    if user.has_blacklist_access and getattr(settings, 'BLACKLIST_ENABLED', False):
         t.append(('Blacklist', reverse('blacklist'),
                   'new' if models.HackerApplication.objects.filter(status=APP_BLACKLISTED, contacted=False).count()
                   else ''))
+    t.append(('Check-in', reverse('check_in_list'), False))
+    if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
+        t.extend([('Reimbursements', reverse('reimbursement_list'), False),
+                  ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
+                      status=RE_PEND_APPROVAL).count() else False), ])
     return t
 
 
-class RankingView(TabsViewMixin, IsOrganizerMixin, SingleTableMixin, TemplateView):
-    template_name = 'ranking.html'
-    table_class = RankingListTable
-    table_pagination = False
+def sponsor_tabs(user):
+    return [('Users', reverse('sponsor_user_list'), False), ('Application', reverse('sponsor_list'), False),
+            ('Check-in', reverse('check_in_sponsor_list'), False)]
 
-    def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
 
-    def get_queryset(self):
-        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED]) \
-            .annotate(email=F('user__email')) \
-            .values('email').annotate(total_count=Count('application'),
-                                      skip_count=Count('application') - Count('calculated_vote'),
-                                      vote_count=Count('calculated_vote')) \
-            .exclude(vote_count=0)
+def volunteer_tabs(user):
+    return [('Application', reverse('volunteer_list'), False), ('Check-in', reverse('check_in_volunteer_list'), False)]
+
+
+def mentor_tabs(user):
+    return [('Application', reverse('mentor_list'), False), ('Check-in', reverse('check_in_mentor_list'), False)]
 
 
 class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleTableMixin, FilterView):
@@ -97,7 +90,7 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
     export_name = 'applications'
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.HackerApplication.annotate_vote(models.HackerApplication.objects.all())
@@ -115,7 +108,7 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
     table_pagination = {'per_page': 100}
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))
@@ -217,11 +210,11 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             application.invalidate()
         elif request.POST.get('set_blacklist') and request.user.is_organizer:
             application.set_blacklist()
-        elif request.POST.get('unset_blacklist') and request.user.has_blacklist_acces:
+        elif request.POST.get('unset_blacklist') and request.user.has_blacklist_access:
             add_comment(application, request.user,
                         "Blacklist review result: No problems, hacker allowed to participate in hackathon!")
             application.unset_blacklist()
-        elif request.POST.get('confirm_blacklist') and request.user.has_blacklist_acces:
+        elif request.POST.get('confirm_blacklist') and request.user.has_blacklist_access:
             add_comment(application, request.user,
                         "Blacklist review result: Hacker is not allowed to participate in hackathon. " +
                         "Motive of ban: " + motive_of_ban)
@@ -271,7 +264,7 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
 
 class ReviewApplicationView(ApplicationDetailView):
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_back_url(self):
         return None
@@ -313,7 +306,7 @@ class ReviewApplicationView(ApplicationDetailView):
                 application.unset_dubious()
             elif request.POST.get('set_blacklist') and request.user.is_organizer:
                 application.set_blacklist()
-            elif request.POST.get('unset_blacklist') and request.user.has_blacklist_acces:
+            elif request.POST.get('unset_blacklist') and request.user.has_blacklist_access:
                 add_comment(application, request.user,
                             "Blacklist review result: No problems, hacker allowed to participate in hackathon!")
                 application.unset_blacklist()
@@ -335,7 +328,7 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
     table_pagination = {'per_page': 100}
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=APP_PENDING) \
@@ -383,7 +376,7 @@ class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, Exp
     export_name = 'dubious_applications'
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
@@ -398,7 +391,7 @@ class BlacklistApplicationsListView(TabsViewMixin, IsBlacklistAdminMixin, Export
     export_name = 'blacklist_applications'
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return hacker_tabs(self.request.user)
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status=APP_BLACKLISTED)
@@ -420,9 +413,6 @@ class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, F
         context['emails'] = list_email
         return context
 
-    def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
-
 
 class VolunteerApplicationsListView(HaveVolunteerPermissionMixin, _OtherApplicationsListView):
     table_class = VolunteerListTable
@@ -430,6 +420,9 @@ class VolunteerApplicationsListView(HaveVolunteerPermissionMixin, _OtherApplicat
 
     def get_queryset(self):
         return models.VolunteerApplication.objects.all()
+
+    def get_current_tabs(self):
+        return volunteer_tabs(self.request.user)
 
 
 class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplicationsListView):
@@ -445,6 +438,9 @@ class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplications
         context['emailCopy'] = False
         return context
 
+    def get_current_tabs(self):
+        return sponsor_tabs(self.request.user)
+
 
 class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin, SingleTableMixin, FilterView):
     template_name = 'applications_list.html'
@@ -455,7 +451,7 @@ class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin
     filterset_class = SponsorUserFilter
 
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return sponsor_tabs(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(SponsorUserListView, self).get_context_data(**kwargs)
@@ -474,6 +470,9 @@ class MentorApplicationsListView(HaveMentorPermissionMixin, _OtherApplicationsLi
 
     def get_queryset(self):
         return models.MentorApplication.objects.all()
+
+    def get_current_tabs(self):
+        return mentor_tabs(self.request.user)
 
 
 class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin, TemplateView):

@@ -47,16 +47,14 @@
 
     <link rel="stylesheet" href="{% static 'css/reset.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'lib/snackbar.min.css' %}">
     <link rel="stylesheet" href="{% static 'lib/material.css' %}">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="{% static 'lib/snackbar.min.js' %}"></script>
 
     {% block head %}
@@ -82,11 +80,10 @@
     </script>
 {% endif %}
 {% block navbar %}
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top navbar-expand-xl">
+        <div class="container container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -95,7 +92,7 @@
                 <a class="navbar-brand white-text" href="/"><img src="{% static 'img/logo.png' %}" /></a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right ">
+                <ul class="nav navbar-nav">
                     {% include 'include/judging_tab.html' %}
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_admin %}
@@ -106,15 +103,27 @@
                                 <a href="{% url 'dashboard' %}">Dashboard</a></li>
                         {% endif %}
                         {% if request.user.email_verified and request.user.has_usable_password %}
-                            {% if request.user.is_organizer %}
-                                <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'app_stats' %}">Stats</a></li>
-                                <li class="{% if 'applications' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'app_list' %}">Applications</a></li>
-
-                                {% if h_r_enabled %}
-                                    <li class="{% if 'reimbursement' in request.build_absolute_uri %}active{% endif %}">
-                                        <a href="{% url 'reimbursement_list' %}">Reimbursements</a></li>
+                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
+                                <li class="{% if 'hacker' in request.build_absolute_uri %}active{% endif %}">
+                                    {% if request.user.is_organizer %}
+                                        <a href="{% url 'app_list' %}">Hacker</a>
+                                    {% else %}
+                                        <a href="{% url 'check_in_list' %}">Check-in</a>
+                                    {% endif %}
+                                </li>
+                                {% if request.user.is_organizer %}
+                                    {% if request.user.has_volunteer_access %}
+                                        <li class="{% if 'volunteer' in request.build_absolute_uri %}active{% endif %}"><a
+                                                href="{% url 'volunteer_list' %}">Volunteer</a></li>
+                                    {% endif %}
+                                    {% if request.user.has_mentor_access %}
+                                        <li class="{% if 'mentor' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'mentor_list' %}">Mentor</a></li>
+                                    {% endif %}
+                                    {% if request.user.has_sponsor_access %}
+                                        <li class="{% if 'sponsor' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'sponsor_user_list' %}">Sponsor</a></li>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.has_checked_in %}
@@ -124,16 +133,21 @@
                                 {% include 'include/hardware_tab.html' %}
                             {% endif %}
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
-                                <li class="{% if 'checkin' in request.build_absolute_uri %}active{% endif %}">
-                                    <a href="{% url 'check_in_list' %}">Check-in</a></li>
                               {% include 'include/meals_tab.html' %}
                             {% endif %}
-
+                            {% if request.user.is_organizer %}
+                                <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
+                                        href="{% url 'app_stats' %}">Stats</a></li>
+                            {% endif %}
                         {% endif %}
-                        <li><a href="{% url 'account_logout' %}">Logout</a></li>
+                    {% endif %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'account_logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                     {% else %}
-                        <li><a href="{% url 'account_login' %}">Sign In</a></li>
-                        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+                        <li><a href="{% url 'account_login' %}"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+                        <li><a href="{% url 'account_signup' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
                     {% endif %}
                 </ul>
             </div>
