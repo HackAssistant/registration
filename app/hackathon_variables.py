@@ -45,7 +45,7 @@ HACKATHON_APP_DEADLINE = timezone.datetime(2019, 11, 6, 23, 59, tzinfo=timezone.
 HACKATHON_ARRIVE = 'Registration opens at 4:00PM and closes at 6:45PM on Friday October 11th, ' \
                    'the opening ceremony will be at 7:00PM.'
 
-# (OPTIONAL) When to arrive at the hackathon
+# (OPTIONAL) When to leave at the hackathon
 HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
                   'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
 
