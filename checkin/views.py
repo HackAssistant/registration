@@ -83,6 +83,8 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
     table_pagination = {'per_page': 50}
 
     def get_current_tabs(self):
+        if self.request.user.is_volunteer_accepted:
+            return None
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
