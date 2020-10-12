@@ -1,0 +1,4 @@
+{% if request.user.is_admin %}
+    <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
+            href="{% url 'admin:index' %}">Admin</a></li>
+{% endif %}
