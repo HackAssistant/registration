@@ -140,6 +140,10 @@ div.panel-body form {
     margin-bottom: 0;
 }
 
+.margin-bottom {
+    margin-bottom: 10px;
+}
+
 .margin-top-adjusted {
     margin-top: 0;
     margin-bottom: 0;

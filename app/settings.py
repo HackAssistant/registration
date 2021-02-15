@@ -64,6 +64,9 @@ if REIMBURSEMENT_ENABLED:
 if HARDWARE_ENABLED:
     INSTALLED_APPS.append('hardware')
 
+if DISCORD_HACKATHON:
+    INSTALLED_APPS.append('discord')
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -283,3 +286,6 @@ APPLICATION_EXPIRATION_TYPES = {
 }
 
 MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)
+
+DISCORD_CLIENT_ID = os.environ.get('DISCORD_CLIENT_ID', None)
+DISCORD_SECRET_ID = os.environ.get('DISCORD_SECRET_ID', None)
