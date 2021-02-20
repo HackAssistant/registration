@@ -2,7 +2,8 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.db import IntegrityError
-from django.shortcuts import redirect
+from django.http import Http404
+from django.shortcuts import redirect, render
 from django.views.generic.base import View
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
@@ -27,14 +28,13 @@ class ConnectDiscord(IsHackerMixin, View):
     def get(self, request, *args, **kwargs):
         try:
             DiscordUser.objects.get(user=request.user)
-            #TODO pag exception
-            pass
+            return redirect(reverse('alreadyConnected'))
         except DiscordUser.DoesNotExist:
             url = request.build_absolute_uri(reverse('discord_redirect'))
             redirect_uri = quote(url, safe='')
             client_id = getattr(settings, 'DISCORD_CLIENT_ID', '')
             return redirect('%s/oauth2/authorize?client_id=%s&redirect_uri=%s&response_type=code&scope=identify' %
-                            (DISCORD_URL, client_id, redirect_uri))
+           (DISCORD_URL, client_id, redirect_uri))
 
 
 class RedirectDiscord(IsHackerMixin, View):
@@ -49,8 +49,7 @@ class RedirectDiscord(IsHackerMixin, View):
         try:
             DiscordUser(user=request.user, discord_id=discord_id, discord_username=discord_username).save()
         except IntegrityError:
-            #TODO pag exception
-            pass
+            return redirect(reverse('alreadyConnected'))
         return redirect(reverse('dashboard'))
 
 
@@ -76,3 +75,8 @@ class DiscordTableView(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, Filter
 
     def get_queryset(self):
         return DiscordUser.objects.select_related('user')
+
+      
+class RedirectError(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'discord_connect_error.html' )
