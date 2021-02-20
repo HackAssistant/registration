@@ -29,4 +29,4 @@ def get_user_id(token):
     }
     r = requests.get('%s/users/@me' % DISCORD_URL, headers=headers)
     r.raise_for_status()
-    return r.json().get('id')
+    return r.json()

@@ -119,11 +119,10 @@ def hackathon_vars_processor(request):
         'mentor_expires': settings.MENTOR_EXPIRES,
         'volunteer_expires': settings.VOLUNTEER_EXPIRES,
     })
-    discord = getattr(settings, 'DISCORD_HACKATHON', None)
-    if discord is not None:
-        c.update({
-            'h_discord': discord
-        })
+    discord = getattr(settings, 'DISCORD_HACKATHON', False)
+    c.update({
+        'h_discord': discord
+    })
     return c
 
 

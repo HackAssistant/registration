@@ -1,0 +1,3 @@
+{% if request.user.is_organizer and h_discord %}
+  <li class="{% if 'discord' in request.build_absolute_uri %}active{% endif %}"><a href="{% url 'discord_list' %}">Discord</a></li>
+{% endif %}
