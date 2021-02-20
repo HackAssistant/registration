@@ -3,6 +3,7 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import RedirectView
+from rest_framework.authtoken.views import obtain_auth_token
 
 from app import views
 

@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'meals',
     'judging',
     'offer',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 if BAGGAGE_ENABLED:
@@ -260,6 +262,15 @@ OAUTH_PROVIDERS = {
         'user_url': 'https://my.mlh.io/api/v2/user.json'
 
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
 }
 
 # Add domain to allowed hosts

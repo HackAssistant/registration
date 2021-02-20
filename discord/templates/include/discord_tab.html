@@ -1,0 +1,3 @@
+{% if request.user.is_organizer and h_discord %}
+<li><a href="{% url 'discord_list' %}">Discord</a></li>
+{% endif %}

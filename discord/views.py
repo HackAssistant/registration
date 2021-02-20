@@ -2,14 +2,24 @@ from urllib.parse import quote
 
 from django.conf import settings
 from django.db import IntegrityError
-from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic.base import View
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
+from rest_framework import viewsets, permissions
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 
+from app.mixins import TabsViewMixin
 from app.utils import reverse
 from discord.discord_api import get_token, get_user_id, DISCORD_URL
 from discord.models import DiscordUser
-from user.mixins import IsHackerMixin
+from discord.serializers import DiscordSerializer
+from discord.tables import DiscordTable, DiscordFilter
+from user.mixins import IsHackerMixin, IsOrganizerMixin
+
+
+def organizer_tabs(user):
+    return [('Discord list', reverse('discord_list'), False), ]
 
 
 class ConnectDiscord(IsHackerMixin, View):
@@ -40,3 +50,27 @@ class RedirectDiscord(IsHackerMixin, View):
             #TODO pag exception
             pass
         return redirect(reverse('dashboard'))
+
+
+class UserViewSet(RetrieveModelMixin, UpdateModelMixin, viewsets.GenericViewSet):
+    queryset = DiscordUser.objects.all()
+    serializer_class = DiscordSerializer
+    permission_classes = (permissions.IsAdminUser,)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = self.get_serializer().add_related_fields(queryset)
+        return queryset
+
+
+class DiscordTableView(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'discord_list.html'
+    table_class = DiscordTable
+    filterset_class = DiscordFilter
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return DiscordUser.objects.select_related('user')
