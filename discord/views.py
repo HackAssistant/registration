@@ -43,9 +43,11 @@ class RedirectDiscord(IsHackerMixin, View):
         code = request.GET.get('code')
         url = request.build_absolute_uri(reverse('discord_redirect'))
         token = get_token(code, url)
-        discord_id = get_user_id(token)
+        discord_json = get_user_id(token)
+        discord_id = discord_json.get('id')
+        discord_username = discord_json.get('username')
         try:
-            DiscordUser(user=request.user, discord_id=discord_id).save()
+            DiscordUser(user=request.user, discord_id=discord_id, discord_username=discord_username).save()
         except IntegrityError:
             #TODO pag exception
             pass

@@ -135,6 +135,9 @@
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
                               {% include 'include/meals_tab.html' %}
                             {% endif %}
+                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
+                              {% include 'include/discord_tab.html' %}
+                            {% endif %}
                             {% if request.user.is_organizer %}
                                 <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
                                         href="{% url 'app_stats' %}">Stats</a></li>
