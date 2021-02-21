@@ -93,7 +93,9 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    {% include 'include/judging_tab.html' %}
+                    {% if not h_discord %}
+                      {% include 'include/judging_tab.html' %}
+                    {% endif %}
                     {% if request.user.is_authenticated %}
                         {% if request.user.is_admin %}
                             <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
@@ -126,18 +128,7 @@
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
-                            {% if request.user.is_organizer or request.user.has_checked_in %}
-                                {% include 'include/baggage_tab.html' %}
-                            {% endif %}
-                            {% if h_hw_enabled and request.user.is_hacker or h_hw_enabled and request.user.is_organizer %}
-                                {% include 'include/hardware_tab.html' %}
-                            {% endif %}
-                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
-                              {% include 'include/meals_tab.html' %}
-                            {% endif %}
-                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
-                              {% include 'include/discord_tab.html' %}
-                            {% endif %}
+                            {% include 'include/activities_tab.html' %}
                             {% if request.user.is_organizer %}
                                 <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
                                         href="{% url 'app_stats' %}">Stats</a></li>
