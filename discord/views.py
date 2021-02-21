@@ -7,7 +7,7 @@ from django.views.generic.base import View
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from rest_framework import viewsets, permissions
-from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin, ListModelMixin
 
 from app.mixins import TabsViewMixin
 from app.utils import reverse
@@ -52,7 +52,7 @@ class RedirectDiscord(IsHackerMixin, View):
         return redirect(reverse('dashboard'))
 
 
-class UserViewSet(RetrieveModelMixin, UpdateModelMixin, viewsets.GenericViewSet):
+class UserViewSet(RetrieveModelMixin, UpdateModelMixin, ListModelMixin, viewsets.GenericViewSet):
     queryset = DiscordUser.objects.all()
     serializer_class = DiscordSerializer
     permission_classes = (permissions.IsAdminUser,)
