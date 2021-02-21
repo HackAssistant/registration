@@ -12,6 +12,6 @@ urlpatterns = [
     url(r'^connect/$', views.ConnectDiscord.as_view(), name='discord_login'),
     url(r'^oauth2/$', views.RedirectDiscord.as_view(), name='discord_redirect'),
     url(r'^api/', include(router.urls)),
-    url(r'^list/$', views.DiscordTableView.as_view(), name='discord_list')
+    url(r'^list/$', views.DiscordTableView.as_view(), name='discord_list'),
     url(r'^error/$', views.RedirectError.as_view(), name='alreadyConnected'),
 ]
