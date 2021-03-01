@@ -19,10 +19,16 @@ class DiscordSerializer(serializers.ModelSerializer):
         team_changed = validated_data.get('team_changed', False)
         team_created = validated_data.get('team_created', False)
         if team_changed and team_name is not None and instance.team_name != team_name:
+            if team_name == "":
+                raise serializers.ValidationError("Team name blank")
+            if instance.team_name == "":
+                raise serializers.ValidationError("Please join a Team first")
             if DiscordUser.objects.filter(team_name=team_name).count() > 0:
                 raise serializers.ValidationError("Team name already taken")
             DiscordUser.objects.filter(team_name=instance.team_name).update(team_name=team_name)
         if team_created and team_name is not None and instance.team_name != team_name:
+            if team_name == "":
+                raise serializers.ValidationError("Team name blank")
             if DiscordUser.objects.filter(team_name=team_name).count() > 0:
                 raise serializers.ValidationError("Team name already taken")
         return super().update(instance, validated_data)
