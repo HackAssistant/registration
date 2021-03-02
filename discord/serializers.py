@@ -8,6 +8,7 @@ class DiscordSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='user.name', read_only=True)
     team_changed = serializers.BooleanField(write_only=True, required=False)
     team_created = serializers.BooleanField(write_only=True, required=False)
+    checked_in = serializers.BooleanField(required=False)
 
     @staticmethod
     def add_related_fields(queryset):
