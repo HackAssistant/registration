@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^list/$', views.DiscordTableView.as_view(), name='discord_list'),
     url(r'^error/$', views.RedirectError.as_view(), name='alreadyConnected'),
+    url(r'^swag/$', views.SwagView.as_view(), name='swag_form'),
 ]

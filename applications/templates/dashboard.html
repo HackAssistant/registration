@@ -91,8 +91,8 @@
                     {% if not user.discorduser %}
                       {% include 'include/discord_button.html' %}
                     {% else %}
-                      <p>Discord Connected!</p>
-                      {% endif %}
+                      {% include 'include/swag_button.html' %}
+                    {% endif %}
                   </div>
                 {% endif %}
                 {% include 'include/cancel.html' %}

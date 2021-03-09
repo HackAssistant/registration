@@ -9,6 +9,8 @@ class DiscordUser(models.Model):
     discord_username = models.CharField(max_length=100, null=True)
     checked_in = models.BooleanField(default=False)
     team_name = models.CharField(max_length=100, blank=True)
+    swag = models.BooleanField(default=False)
+    address = models.CharField(max_length=1000, blank=True, default='')
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.team_name is None and hasattr(self.user, 'team'):

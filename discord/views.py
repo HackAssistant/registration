@@ -1,9 +1,11 @@
 from urllib.parse import quote
 
 from django.conf import settings
+from django.contrib import messages
 from django.db import IntegrityError
-from django.shortcuts import redirect, render
-from django.views.generic.base import View
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render, get_object_or_404
+from django.views.generic.base import View, TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from rest_framework import viewsets, permissions
@@ -12,6 +14,7 @@ from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin, ListMode
 from app.mixins import TabsViewMixin
 from app.utils import reverse
 from discord.discord_api import get_token, get_user_id, DISCORD_URL
+from discord.form import SwagForm
 from discord.models import DiscordUser
 from discord.serializers import DiscordSerializer
 from discord.tables import DiscordTable, DiscordFilter
@@ -76,6 +79,34 @@ class DiscordTableView(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, Filter
         return DiscordUser.objects.select_related('user')
 
 
-class RedirectError(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'discord_connect_error.html')
+class RedirectError(TemplateView):
+    template_name = 'discord_connect_error.html'
+
+
+class SwagView(TemplateView):
+    template_name = 'swag_address_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        discord = get_object_or_404(DiscordUser, user=self.request.user)
+        form = SwagForm(instance=discord)
+        context.update({
+            'form': form,
+        })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        discord = get_object_or_404(DiscordUser, user=request.user)
+        form = SwagForm(request.POST, instance=discord)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Swag info saved!')
+            return HttpResponseRedirect(reverse('dashboard'))
+        context = self.get_context_data()
+        context.update({
+            'form': form,
+        })
+        return render(request, self.template_name, context)
+
+
+
