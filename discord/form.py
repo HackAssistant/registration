@@ -1,12 +1,11 @@
 from django import forms
-from django.core.exceptions import ValidationError
 
 from discord.models import DiscordUser
 
 SWAG_BOOLEAN = (
-        ('Yes', True),
-        ('No', False)
-    )
+    ('Yes', True),
+    ('No', False)
+)
 
 
 class SwagForm(forms.ModelForm):
