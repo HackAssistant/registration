@@ -18,12 +18,12 @@ class SwagForm(forms.ModelForm):
         widget=forms.RadioSelect
     )
 
-    def clean_address(self):
-        address = self.cleaned_data.get('address', '')
-        swag = self.cleaned_data.get('swag', False)
-        if swag and not address:
-            raise ValidationError("If you want swag, please fill your address!")
-        return address
+    def clean(self):
+        cleaned_data = super().clean()
+        address = cleaned_data.get('address', '')
+        swag = cleaned_data.get('swag', 'False')
+        if swag == 'True' and address == '':
+            self.add_error('address', "If you want swag, please fill your address!")
 
     class Meta:
         model = DiscordUser

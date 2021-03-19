@@ -42,16 +42,18 @@ class ConnectDiscord(IsHackerMixin, View):
 class RedirectDiscord(IsHackerMixin, View):
 
     def get(self, request, *args, **kwargs):
-        code = request.GET.get('code')
-        url = request.build_absolute_uri(reverse('discord_redirect'))
-        token = get_token(code, url)
-        discord_json = get_user_id(token)
-        discord_id = discord_json.get('id')
-        discord_username = discord_json.get('username')
-        try:
-            DiscordUser(user=request.user, discord_id=discord_id, discord_username=discord_username).save()
-        except IntegrityError:
-            return redirect(reverse('alreadyConnected'))
+        error = request.GET.get('error', None)
+        if not error:
+            code = request.GET.get('code', None)
+            url = request.build_absolute_uri(reverse('discord_redirect'))
+            token = get_token(code, url)
+            discord_json = get_user_id(token)
+            discord_id = discord_json.get('id')
+            discord_username = discord_json.get('username')
+            try:
+                DiscordUser(user=request.user, discord_id=discord_id, discord_username=discord_username).save()
+            except IntegrityError:
+                return redirect(reverse('alreadyConnected'))
         return redirect(reverse('dashboard'))
 
 
