@@ -165,9 +165,13 @@ class HackerDashboard(DashboardMixin, TabsView):
         except:
             form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
+            email_subscribe = form.cleaned_data.get('email_subscribe', False)
             application = form.save(commit=False)
             application.user = request.user
             application.save()
+            if email_subscribe:
+                application.user.email_subscribed = email_subscribe
+                application.user.save()
             if new_application:
                 messages.success(request,
                                  'We have now received your application. '

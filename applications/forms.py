@@ -60,6 +60,9 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
               'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
     )
 
+    email_subscribe = forms.BooleanField(required=False, label='Subscribe to our Marketing list in order to inform '
+                                                               'you about our next events.')
+
     def clean_terms_and_conditions(self):
         cc = self.cleaned_data.get('terms_and_conditions', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
@@ -245,7 +248,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         hardware = getattr(settings, 'HARDWARE_ENABLED', False)
         personal_info_fields = ['university', 'degree', 'graduation_year', 'gender', 'other_gender',
                                 'phone_number', 'under_age', 'lennyface']
-        polices_fields = ['terms_and_conditions', 'cvs_edition']
+        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
         if not discord:
             personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
             polices_fields.append('diet_notice')
@@ -394,7 +397,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
         personal_info_fields = ['origin', 'university', 'degree', 'graduation_year', 'gender', 'other_gender',
                                 'phone_number', 'under_age', 'lennyface']
-        polices_fields = ['terms_and_conditions', 'cvs_edition']
+        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
         if not discord:
             personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
             polices_fields.append('diet_notice')
@@ -511,7 +514,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
         personal_info_fields = ['origin', 'study_work', 'company', 'university', 'degree', 'graduation_year', 'gender',
                                 'other_gender', 'phone_number', 'under_age', 'lennyface']
-        polices_fields = ['terms_and_conditions', 'cvs_edition']
+        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
         if not discord:
             personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
             polices_fields.append('diet_notice')
