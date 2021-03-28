@@ -10,7 +10,7 @@ HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 700 hackers. 36h. October 11th-13th.'
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 36h. May 14th-16th.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', None)
 HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME', None)
@@ -40,14 +40,12 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2029, 11, 6, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2021, 5, 10, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_ARRIVE = 'Registration opens at 4:00PM and closes at 6:45PM on Friday October 11th, ' \
-                   'the opening ceremony will be at 7:00PM.'
+HACKATHON_ARRIVE = 'Registration is at Friday on Discord'
 
-# (OPTIONAL) When to leave at the hackathon
-HACKATHON_LEAVE = 'Closing ceremony will be held on Sunday October 15th from 3:00 PM to 5:00 PM. ' \
-                  'However the projects demo fair will be held in the morning from 10:30 AM to 1 PM.'
+# (OPTIONAL) When to arrive at the hackathon
+HACKATHON_LEAVE = ''
 
 # (OPTIONAL) Hackathon live page
 HACKATHON_LIVE_PAGE = 'https://hackupc.com/live'
@@ -59,11 +57,11 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
 # Baggage configuration
-BAGGAGE_ENABLED = True
-BAGGAGE_PICTURE = True
+BAGGAGE_ENABLED = False
+BAGGAGE_PICTURE = False
 
 # Reimbursement configuration
-REIMBURSEMENT_ENABLED = True
+REIMBURSEMENT_ENABLED = False
 DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRY_DAYS = 5
@@ -92,20 +90,20 @@ SLACK = {
 
 # Hardware configuration
 # Hardware request time length (in minutes)
-HARDWARE_ENABLED = True
+HARDWARE_ENABLED = False
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
 
 SLACK_BOT = {
-    'id' : os.environ.get('SL_BOT_ID', None),
-    'token' : os.environ.get('SL_BOT_TOKEN', None),
-    'channel' : os.environ.get('SL_BOT_CHANNEL', None),
-    'director1' : os.environ.get('SL_BOT_DIRECTOR1', None),
-    'director2' : os.environ.get('SL_BOT_DIRECTOR2', None)
+    'id': os.environ.get('SL_BOT_ID', None),
+    'token': os.environ.get('SL_BOT_TOKEN', None),
+    'channel': os.environ.get('SL_BOT_CHANNEL', None),
+    'director1': os.environ.get('SL_BOT_DIRECTOR1', None),
+    'director2': os.environ.get('SL_BOT_DIRECTOR2', None)
 }
 # Enable judging tab
-JUDGING_ENABLED = True
+JUDGING_ENABLED = False
 
 # Can Hackers start a request on the hardware lab?
 # HACKERS_CAN_REQUEST = False
@@ -122,3 +120,5 @@ SUPPORTED_RESUME_EXTENSIONS = ['.pdf']
 # Mentor/Volunteer applications can expire if they are invited, set to False to not
 MENTOR_EXPIRES = False
 VOLUNTEER_EXPIRES = False
+
+DISCORD_HACKATHON = True

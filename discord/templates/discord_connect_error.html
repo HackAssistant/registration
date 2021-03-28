@@ -1,0 +1,14 @@
+{% extends 'base_tabs.html' %}
+{% block panel %}
+  <div>
+     <div style="float: left;"><img src="https://thumbs.dreamstime.com/b/page-not-found-error-robot-fix-repair-fatal-broke-crash-hand-drawn-sketch-vector-line-contour-page-not-found-error-robot-fix-168267135.jpg" alt="Robot not working" width="300" height="250" >
+     </div>
+    <div style="overflow:hidden;">
+    <p style="font-size: 40px; font-weight: bold;"> Oops!!</p><p style="font-size: 30px; align-content: center; color: #9cb156;"> It seems like you are already connected to Discord. </p>
+    </div>
+    <div style=" margin: 60px">
+    <a style="color: black" href="{% url 'dashboard' %}"> Go back to dashboard</a>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,30 @@
+
+{% if request.user.is_organizer %}
+  {% if h_discord %}
+    {% include 'include/discord_tab.html' %}
+  {% else %}
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Activities <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+          {% include 'include/baggage_tab.html' %}
+          <li role="separator" class="divider"></li>
+          {% if h_hw_enabled %}
+              {% include 'include/hardware_tab.html' %}
+              <li role="separator" class="divider"></li>
+          {% endif %}
+          {% include 'include/meals_tab.html' %}
+      </ul>
+    </li>
+  {% endif %}
+{% endif %}
+{% if not h_discord %}
+  {% if request.user.has_checked_in %}
+      {% include 'include/baggage_tab.html' %}
+  {% endif %}
+  {% if h_hw_enabled and request.user.is_hacker %}
+      {% include 'include/hardware_tab.html' %}
+  {% endif %}
+  {% if request.user.is_volunteer_accepted %}
+    {% include 'include/meals_tab.html' %}
+  {% endif %}
+{% endif %}

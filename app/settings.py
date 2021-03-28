@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'meals',
     'judging',
     'offer',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 if BAGGAGE_ENABLED:
@@ -63,6 +65,9 @@ if REIMBURSEMENT_ENABLED:
 
 if HARDWARE_ENABLED:
     INSTALLED_APPS.append('hardware')
+
+if DISCORD_HACKATHON:
+    INSTALLED_APPS.append('discord')
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -259,6 +264,15 @@ OAUTH_PROVIDERS = {
     }
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
 # Add domain to allowed hosts
 ALLOWED_HOSTS.append(HACKATHON_DOMAIN)
 
@@ -283,3 +297,10 @@ APPLICATION_EXPIRATION_TYPES = {
 }
 
 MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)
+
+DISCORD_CLIENT_ID = os.environ.get('DISCORD_CLIENT_ID', None)
+DISCORD_SECRET_ID = os.environ.get('DISCORD_SECRET_ID', None)
+
+IP_SERVER = os.environ.get('IP_SERVER', '')
+if IP_SERVER:
+    ALLOWED_HOSTS.append(IP_SERVER)

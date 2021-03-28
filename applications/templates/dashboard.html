@@ -58,24 +58,42 @@
                 {% endif %}
             </div>
         {% elif application.answered_invite %}
-
-            <div class="col-md-4">
-                <img class="img-responsive "
-                     src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chld=L|0&chl={{ application.uuid_str }}"/>
-            </div>
+            {% if not h_discord %}
+              <div class="col-md-4">
+                  <img class="img-responsive "
+                       src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chld=L|0&chl={{ application.uuid_str }}"/>
+              </div>
+            {% else %}
+              <div class="col-md-4">
+                  <img class="img-responsive "
+                       src="https://discord.com/assets/f8389ca1a741a115313bede9ac02e2c0.svg"/>
+              </div>
+            {% endif %}
             <div class="col-md-8">
-                <p>Thank you {{ user.get_full_name }} for confirming your attendance
-                    to {{ h_name }}! In order to make registration go smoother, please show us this QR code during the
-                    process so we can
-                    easily find
-                    you.</p>
-                {% if h_arrive %}
-                    <h3>When to arrive</h3>
-                    <p>{{ h_arrive }}</p>
-                {% endif %}
-                {% if h_leave %}
-                    <h3>When to leave</h3>
-                    <p>{{ h_leave }}</p>
+                {% if not h_discord %}
+                  <p>Thank you {{ user.get_full_name }} for confirming your attendance
+                      to {{ h_name }}! In order to make registration go smoother, please show us this QR code during the
+                      process so we can
+                      easily find
+                      you.</p>
+                  {% if h_arrive %}
+                      <h3>When to arrive</h3>
+                      <p>{{ h_arrive }}</p>
+                  {% endif %}
+                  {% if h_leave %}
+                      <h3>When to leave</h3>
+                      <p>{{ h_leave }}</p>
+                  {% endif %}
+                {% else %}
+                  <div class="margin-bottom">
+                    <p>Thank you {{ user.get_full_name }} for confirming your attendance
+                        to {{ h_name }}!</p>
+                    {% if not user.discorduser %}
+                      {% include 'include/discord_button.html' %}
+                    {% else %}
+                      {% include 'include/swag_button.html' %}
+                    {% endif %}
+                  </div>
                 {% endif %}
                 {% include 'include/cancel.html' %}
             </div>

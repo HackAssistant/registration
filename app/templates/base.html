@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/custom-bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'lib/snackbar.min.css' %}">
     <link rel="stylesheet" href="{% static 'lib/material.css' %}">
@@ -93,12 +94,37 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
+                    {% if not h_discord %}
+                      {% include 'include/judging_tab.html' %}
+                    {% endif %}
                     {% if request.user.is_authenticated %}
                         {% include 'include/admin_tab.html' %}
                         {% include 'include/application_tab.html' %}
                         {% if request.user.email_verified and request.user.has_usable_password %}
-                            {% include 'include/organizer_tab.html' %}
-                            {% include 'include/event_tab.html' %}
+                            {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
+                                <li class="{% if 'hacker' in request.build_absolute_uri %}active{% endif %}">
+                                    {% if request.user.is_organizer %}
+                                        <a href="{% url 'app_list' %}">Hacker</a>
+                                    {% else %}
+                                        <a href="{% url 'check_in_list' %}">Check-in</a>
+                                    {% endif %}
+                                </li>
+                                {% if request.user.is_organizer %}
+                                    {% if request.user.has_volunteer_access %}
+                                        <li class="{% if 'volunteer' in request.build_absolute_uri %}active{% endif %}"><a
+                                                href="{% url 'volunteer_list' %}">Volunteer</a></li>
+                                    {% endif %}
+                                    {% if request.user.has_mentor_access %}
+                                        <li class="{% if 'mentor' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'mentor_list' %}">Mentor</a></li>
+                                    {% endif %}
+                                    {% if request.user.has_sponsor_access %}
+                                        <li class="{% if 'sponsor' in request.build_absolute_uri %}active{% endif %}"><a
+                                            href="{% url 'sponsor_user_list' %}">Sponsor</a></li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            {% include 'include/activities_tab.html' %}
                             {% if request.user.is_organizer %}
                                 <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
                                         href="{% url 'app_stats' %}">Stats</a></li>

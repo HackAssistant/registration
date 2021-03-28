@@ -13,6 +13,13 @@ USR_CHOICES_CHANGE = {
 }
 
 
+USR_CHOICES_CHANGE = {
+    ('H', 'Hacker'),
+    ('M', 'Mentor'),
+    ('V', 'Volunteer')
+}
+
+
 class UserChangeForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's

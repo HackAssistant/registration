@@ -4,14 +4,13 @@
 }
 
 body {
-    background-image: url("../img/background.png");
+    background-image: url("../img/background.svg");
     background-position: center center;
     background-attachment: fixed;
     /*background: linear-gradient(#26ADB5 0%, #1DA3AD 33%, #1597A3 67%, #0E8C99 100%) no-repeat center center fixed;*/
     background-repeat: repeat repeat;
     font-family: ProximaNovaRegular, 'Roboto', sans-serif;
     font-size: 15px;
-    color: #202326;
 }
 
 html {
@@ -26,15 +25,12 @@ body {
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   margin-top: 0;
-  color: black;
 }
 
 p, .p {
-    color: black;
 }
 
 a {
-    color: #B4C959;
     text-decoration: none;
     -webkit-transition: all .1s linear;
     -moz-transition: all .1s linear;
@@ -43,7 +39,6 @@ a {
 }
 
 a:hover, a:active, a:focus {
-    color: #B4C959;
     text-decoration: none;
 }
 
@@ -60,8 +55,8 @@ a:hover, a:active, a:focus {
 
     width: 100%;
     /* Set the fixed height of the footer here */
-    background-color: #f8f8f8;
-    border-color: #e7e7e7;
+    background-color: #333333;
+    border-color: #555555;
 
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
@@ -69,17 +64,15 @@ a:hover, a:active, a:focus {
 }
 
 .btn-primary {
-    background: #B4C959;
-    border-color: #B4C959;
+
 }
 
 .btn-primary:hover, .btn-primary:active, .btn-primary:focus {
-    background: #a3b857 !important;
-    border-color: #9cb156;
+
 }
 
 footer p, footer small {
-    color: #777;
+
 }
 
 footer .row {
@@ -112,9 +105,7 @@ nav.navbar {
 }
 
 div.panel {
-    -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
@@ -140,6 +131,10 @@ div.panel-body form {
     margin-bottom: 0;
 }
 
+.margin-bottom {
+    margin-bottom: 10px;
+}
+
 .margin-top-adjusted {
     margin-top: 0;
     margin-bottom: 0;
@@ -148,7 +143,6 @@ div.panel-body form {
 a.icon {
     text-decoration: none;
     position: relative;
-    color: black;
     font-size: 70px;
     margin-left: 5px;
     margin-right: 5px;
@@ -177,7 +171,7 @@ img.icon {
 }
 
 .orderable > a {
-    color: #333;
+    /*color: #333;*/
     text-decoration: none;
 
 }
@@ -201,7 +195,6 @@ img.icon {
 }
 
 .alert {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     -moz-border-radius: 0;
     border-radius: 0;
     border: 0;
@@ -211,18 +204,15 @@ img.icon {
 }
 
 .alert-danger {
-    background: #B4C959;
-    color: #FBFBFB;
+
 }
 
 .alert-success {
-    background: #11AFC9;
-    color: #FBFBFB;
+
 }
 
 .alert-warning {
-    background: #B4C959;
-    color: #FBFBFB;
+
 }
 
 img {
@@ -258,7 +248,7 @@ img {
     padding: 0.5em 1em;
     text-align: center;
     transition: bottom 1s;
-    background-color:#B4C959;
+    background-color:#3f5182;
     z-index:1031; /*footer was set to 1030*/
     box-shadow: 0px 15px 15px 15px black;
     color:white;
@@ -274,13 +264,12 @@ img {
 }
 
 #cookies-a {
-    color: #FFF;
+    /*color: #FFF;*/
     text-decoration: underline !important;
 }
 
 .team-info {
-    color: #B4C959;
-    font-size: 18px;
+
 }
 
 .team-info-margin {
@@ -297,7 +286,7 @@ img {
     padding: 15px;
     text-align: center;
     z-index: 1500;
-    background-color: white;
+    background-color: #777777;
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -320,7 +309,7 @@ img {
     width: 100%;
     height: 100%;
     z-index: 1250;
-    background-color: rgba(30,30,30,0.9);
+
     cursor: pointer;
 }
 
@@ -364,4 +353,21 @@ hr {
     .collapse.in{
         display:block !important;
     }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active
+{
+ -webkit-box-shadow: 0 0 0 30px #222222 inset !important;
+}
+
+input:-webkit-autofill
+{
+ -webkit-text-fill-color: #eeeeee !important;
+ caret-color: #eeeeee !important;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    border: 1px solid #555555;
 }

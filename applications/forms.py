@@ -25,6 +25,14 @@ def set_field_html_name(cls, new_name):
     cls.widget.render = _widget_render_wrapper
 
 
+def get_exclude_fields():
+    discord = getattr(settings, 'DISCORD_HACKATHON', False)
+    exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status']
+    if discord:
+        exclude.extend(['diet', 'other_diet', 'tshirt_size', 'diet_notice'])
+    return exclude
+
+
 class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
@@ -52,6 +60,9 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
               'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
     )
 
+    email_subscribe = forms.BooleanField(required=False, label='Subscribe to our Marketing list in order to inform '
+                                                               'you about our next events.')
+
     def clean_terms_and_conditions(self):
         cc = self.cleaned_data.get('terms_and_conditions', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
@@ -65,7 +76,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return cc
 
     def clean_diet_notice(self):
-        diet = self.cleaned_data['diet']
+        diet = self.cleaned_data.get('diet', 'None')
         diet_notice = self.cleaned_data.get('diet_notice', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
         # self.instance.pk is None if there's no Application existing before
@@ -78,8 +89,8 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return diet_notice
 
     def clean_other_diet(self):
-        data = self.cleaned_data['other_diet']
-        diet = self.cleaned_data['diet']
+        data = self.cleaned_data.get('other_diet', '')
+        diet = self.cleaned_data.get('diet', 'None')
         if diet == 'Others' and not data:
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
@@ -110,7 +121,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return item
 
     class Meta:
-        exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', ]
+        exclude = get_exclude_fields()
 
 
 class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
@@ -233,11 +244,19 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
     def fieldsets(self):
         # Fieldsets ordered and with description
+        discord = getattr(settings, 'DISCORD_HACKATHON', False)
+        hardware = getattr(settings, 'HARDWARE_ENABLED', False)
+        personal_info_fields = ['university', 'degree', 'graduation_year', 'gender', 'other_gender',
+                                'phone_number', 'under_age', 'lennyface']
+        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        if not discord:
+            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
+            polices_fields.append('diet_notice')
+        if hardware:
+            personal_info_fields.append('hardware')
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('university', 'degree', 'graduation_year', 'gender', 'other_gender',
-                         'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface', 'hardware'),
+             {'fields': personal_info_fields,
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
             ('Show us what you\'ve built',
@@ -271,8 +290,8 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
-                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'fields': polices_fields,
+                'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -375,11 +394,16 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
 
     def fieldsets(self):
         # Fieldsets ordered and with description
+        discord = getattr(settings, 'DISCORD_HACKATHON', False)
+        personal_info_fields = ['origin', 'university', 'degree', 'graduation_year', 'gender', 'other_gender',
+                                'phone_number', 'under_age', 'lennyface']
+        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        if not discord:
+            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
+            polices_fields.append('diet_notice')
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('origin', 'university', 'degree', 'graduation_year', 'gender', 'other_gender',
-                         'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
+             {'fields': personal_info_fields,
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Volunteer Skills', {'fields': ('first_timer', 'first_time_volunteer', 'which_hack', 'attendance',
                                              'english_level', 'quality', 'weakness', 'cool_skill', 'fav_movie',
@@ -389,8 +413,8 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
-                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'fields': polices_fields,
+                'description': '<p style="margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -453,7 +477,6 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
 
 
 class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
-
     first_time_mentor = forms.TypedChoiceField(
         required=True,
         label='Have you mentored at %s before?' % settings.HACKATHON_NAME,
@@ -488,11 +511,16 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
     def fieldsets(self):
         # Fieldsets ordered and with description
+        discord = getattr(settings, 'DISCORD_HACKATHON', False)
+        personal_info_fields = ['origin', 'study_work', 'company', 'university', 'degree', 'graduation_year', 'gender',
+                                'other_gender', 'phone_number', 'under_age', 'lennyface']
+        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        if not discord:
+            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
+            polices_fields.append('diet_notice')
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('origin', 'study_work', 'company', 'university', 'degree', 'graduation_year', 'gender',
-                         'other_gender', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'under_age',
-                         'lennyface'),
+             {'fields': personal_info_fields,
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
             ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'which_hack',
                                           'participated', 'attendance', 'english_level', 'fluent', 'experience')}),
@@ -503,8 +531,8 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
-                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'fields': polices_fields,
+                'description': '<p style="margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -641,17 +669,23 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return data
 
     def fieldsets(self):
+        discord = getattr(settings, 'DISCORD_HACKATHON', False)
+        personal_info_fields = ['name', 'phone_number', 'position', 'attendance']
+        polices_fields = ['terms_and_conditions', 'cvs_edition']
+        if not discord:
+            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
+            polices_fields.append('diet_notice')
         self._fieldsets = [
             ('Personal Info',
-             {'fields': ('name', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'position', 'attendance'),
+             {'fields': personal_info_fields,
               'description': 'Hey there, before we begin we would like to know a little more about you.', }),
         ]
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
-                'fields': ('terms_and_conditions', 'diet_notice', 'cvs_edition'),
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'fields': polices_fields,
+                'description': '<p style="margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '

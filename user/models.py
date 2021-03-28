@@ -123,6 +123,7 @@ class User(AbstractBaseUser):
     can_review_mentors = models.BooleanField(default=False)
     can_review_sponsors = models.BooleanField(default=False)
     max_applications = models.IntegerField(default=1)
+    email_subscribed = models.BooleanField(default=False)
 
     objects = UserManager()
 

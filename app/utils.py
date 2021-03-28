@@ -97,6 +97,7 @@ def get_substitutions_templates():
             'h_hw_hacker_request': getattr(settings, 'HACKERS_CAN_REQUEST', True),
             'h_dubious_enabled': getattr(settings, 'DUBIOUS_ENABLED', False),
             'h_blacklist_enabled': getattr(settings, 'BLACKLIST_ENABLED', True),
+            'h_discord': getattr(settings, 'DISCORD_HACKATHON', False),
             }
 
 
@@ -118,6 +119,10 @@ def hackathon_vars_processor(request):
         'slack_enabled': settings.SLACK.get('token', None) and settings.SLACK.get('team', None),
         'mentor_expires': settings.MENTOR_EXPIRES,
         'volunteer_expires': settings.VOLUNTEER_EXPIRES,
+    })
+    discord = getattr(settings, 'DISCORD_HACKATHON', False)
+    c.update({
+        'h_discord': discord
     })
     return c
 

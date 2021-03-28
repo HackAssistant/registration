@@ -1,0 +1,11 @@
+{% extends "base_table.html" %}
+
+{% load static %}
+{% load bootstrap3 %}
+
+{% block extra_head %}
+    <script src="{% static 'lib/typeahead.min.js' %}"></script>
+    <script src="{% static 'js/form_modifiers.js' %}"></script>
+{% endblock %}
+
+{% block head_title %}Discord list{% endblock %}

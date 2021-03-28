@@ -16,7 +16,7 @@ class UserAdmin(admin.ModelAdmin):
                       'is_director', 'have_application', 'is_judge']
     filter_fields = ['is_director', 'is_admin', 'email_verified', 'type', 'is_judge']
     permission_fields = ['is_director', 'is_admin', 'email_verified', 'can_review_dubious', 'can_review_blacklist',
-                         'can_review_volunteers', 'can_review_mentors', 'can_review_sponsors']
+                         'can_review_volunteers', 'can_review_mentors', 'can_review_sponsors', 'email_subscribed']
 
     if settings.HARDWARE_ENABLED:
         display_fields.append('is_hardware_admin')
