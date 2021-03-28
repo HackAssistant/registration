@@ -48,14 +48,23 @@ def code_conduct(request):
 
 
 def legal_notice(request):
+    legal_link = getattr(settings, 'LEGAL_LINK', None)
+    if legal_link:
+        return HttpResponseRedirect(legal_link)
     return render(request, 'legal_notice.html')
 
 
 def privacy_and_cookies(request):
+    privacy_link = getattr(settings, 'PRIVACY_LINK', None)
+    if privacy_link:
+        return HttpResponseRedirect(privacy_link)
     return render(request, 'privacy_and_cookies.html')
 
 
 def terms_and_conditions(request):
+    terms_link = getattr(settings, 'TERMS_LINK', None)
+    if terms_link:
+        return HttpResponseRedirect(terms_link)
     return render(request, 'terms_and_conditions.html')
 
 
