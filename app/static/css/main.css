@@ -368,3 +368,6 @@ input:-webkit-autofill
  -webkit-text-fill-color: #eeeeee !important;
  caret-color: #eeeeee !important;
 }
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    border: 1px solid #555555;
+}

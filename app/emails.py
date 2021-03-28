@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from app import utils
 
 FROM_EMAIL = settings.HACKATHON_NAME + ' Team <' + settings.HACKATHON_CONTACT_EMAIL + '>'
+FROM_EMAIL = None
 
 
 def render_mail(template_prefix, recipient_email, substitutions,
