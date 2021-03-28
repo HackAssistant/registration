@@ -300,3 +300,7 @@ MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)
 
 DISCORD_CLIENT_ID = os.environ.get('DISCORD_CLIENT_ID', None)
 DISCORD_SECRET_ID = os.environ.get('DISCORD_SECRET_ID', None)
+
+IP_SERVER = os.environ.get('IP_SERVER', '')
+if IP_SERVER:
+    ALLOWED_HOSTS.append(IP_SERVER)
