@@ -10,7 +10,7 @@ HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 350 hackers. 36h. May 14th-16th.'
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 36h. May 14th-16th.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', None)
 HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME', None)

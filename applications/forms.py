@@ -288,7 +288,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
                 'fields': polices_fields,
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -411,7 +411,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
                 'fields': polices_fields,
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'description': '<p style="margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -529,7 +529,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
                 'fields': polices_fields,
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'description': '<p style="margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -682,7 +682,7 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         if not self.instance.pk:
             self._fieldsets.append(('HackUPC Policies', {
                 'fields': polices_fields,
-                'description': '<p style="color: #202326cc;margin-top: 1em;display: block;'
+                'description': '<p style="margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '

@@ -13,7 +13,7 @@
                     <li role="presentation" id="0" style="display: none" onclick="left()"><a><=</a></li>
                     {% for title,url,needs_action in tabs %}
 
-                        <li role="presentation" {% if url in request.get_full_path %}class="active_tab action"{% endif %} id="{{ forloop.counter }}">
+                        <li role="presentation" {% if url in request.get_full_path %}class="active action"{% endif %} id="{{ forloop.counter }}">
 
                             <a {% if url not in request.get_full_path %}href="{{ url }}"{% endif %}>
                                 {{ title }}
