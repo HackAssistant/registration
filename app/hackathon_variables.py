@@ -124,3 +124,8 @@ VOLUNTEER_EXPIRES = False
 DISCORD_HACKATHON = True
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
+
+CODE_CONDUCT_LINK = 'https://legal.hackersatupc.org/hackupc/code_of_conduct'
+LEGAL_LINK = 'https://legal.hackersatupc.org/hackupc/legal_notice'
+PRIVACY_LINK = 'https://legal.hackersatupc.org/hackupc/privacy_and_cookies'
+TERMS_LINK = 'https://legal.hackersatupc.org/hackupc/terms_and_conditions'
