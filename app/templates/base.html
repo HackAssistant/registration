@@ -98,13 +98,8 @@
                       {% include 'include/judging_tab.html' %}
                     {% endif %}
                     {% if request.user.is_authenticated %}
-                        {% if request.user.is_admin %}
-                            <li class="{% if request.resolver_match.url_name == "admin:index" %}active{% endif %}"><a
-                                    href="{% url 'admin:index' %}">Admin</a></li>
-                        {% elif request.user.email_verified and not request.user.is_organizer %}
-                            <li class="{% if 'dashboard' in request.build_absolute_uri %}active{% endif %}">
-                                <a href="{% url 'dashboard' %}">Dashboard</a></li>
-                        {% endif %}
+                        {% include 'include/admin_tab.html' %}
+                        {% include 'include/application_tab.html' %}
                         {% if request.user.email_verified and request.user.has_usable_password %}
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
                                 <li class="{% if 'hacker' in request.build_absolute_uri %}active{% endif %}">
@@ -135,21 +130,15 @@
                                         href="{% url 'app_stats' %}">Stats</a></li>
                             {% endif %}
                         {% endif %}
+                    {% else %}
+                      {% include 'include/judging_tab.html' %}
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if request.user.is_authenticated %}
-                        <li class="dropdown">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ request.user.email }} <span class="caret"></span></a>
-                          <ul class="dropdown-menu">
-                            <li><a href="{% url 'user_profile' %}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{% url 'account_logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-                          </ul>
-                        </li>
+                        {% include 'include/user_tab.html' %}
                     {% else %}
-                        <li><a href="{% url 'account_login' %}"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
-                        <li><a href="{% url 'account_signup' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                        {% include 'include/sign_in_up_tab.html' %}
                     {% endif %}
                 </ul>
             </div>

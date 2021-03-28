@@ -1,0 +1,4 @@
+{% if request.user.email_verified and not request.user.is_organizer %}
+    <li class="{% if 'dashboard' in request.build_absolute_uri %}active{% endif %}">
+        <a href="{% url 'dashboard' %}">Dashboard</a></li>
+{% endif %}

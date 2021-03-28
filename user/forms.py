@@ -6,6 +6,12 @@ from django.contrib.auth.password_validation import validate_password, password_
 from user.models import User
 from user import models
 
+USR_CHOICES_CHANGE = {
+    ('H', 'Hacker'),
+    ('M', 'Mentor'),
+    ('V', 'Volunteer')
+}
+
 
 USR_CHOICES_CHANGE = {
     ('H', 'Hacker'),
