@@ -271,6 +271,9 @@ class SponsorRegister(HaveSponsorPermissionMixin, TemplateView):
                 msg.send()
                 messages.success(request, "Sponsor link email successfully sent")
                 return HttpResponseRedirect(reverse('sponsor_user_list'))
+        context = self.get_context_data()
+        context.update({'form': form})
+        return TemplateResponse(request, self.template_name, context)
 
 
 class UserProfile(IsHackerMixin, TemplateView):

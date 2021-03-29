@@ -642,7 +642,7 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return cc
 
     def clean_diet_notice(self):
-        diet = self.cleaned_data['diet']
+        diet = self.cleaned_data.get('diet', 'None')
         diet_notice = self.cleaned_data.get('diet_notice', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
         # self.instance.pk is None if there's no Application existing before
@@ -655,8 +655,8 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return diet_notice
 
     def clean_other_diet(self):
-        data = self.cleaned_data['other_diet']
-        diet = self.cleaned_data['diet']
+        data = self.cleaned_data.get('other_diet', '')
+        diet = self.cleaned_data.get('diet', 'None')
         if diet == 'Others' and not data:
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data

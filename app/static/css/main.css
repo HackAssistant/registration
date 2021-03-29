@@ -4,7 +4,7 @@
 }
 
 body {
-    background-image: url("../img/background.svg");
+    background-image: url("../img/background.png");
     background-position: center center;
     background-attachment: fixed;
     /*background: linear-gradient(#26ADB5 0%, #1DA3AD 33%, #1597A3 67%, #0E8C99 100%) no-repeat center center fixed;*/
@@ -55,8 +55,8 @@ a:hover, a:active, a:focus {
 
     width: 100%;
     /* Set the fixed height of the footer here */
-    background-color: #333333;
-    border-color: #555555;
+    background-color: #222222;
+    border-color: #333333;
 
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
@@ -360,7 +360,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active
 {
- -webkit-box-shadow: 0 0 0 30px #222222 inset !important;
+ -webkit-box-shadow: 0 0 0 30px #333333 inset !important;
 }
 
 input:-webkit-autofill
@@ -368,6 +368,23 @@ input:-webkit-autofill
  -webkit-text-fill-color: #eeeeee !important;
  caret-color: #eeeeee !important;
 }
-.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-    border: 1px solid #555555;
+
+.br-theme-bars-square .br-widget a {
+    background-color: transparent !important;
+}
+
+.c3-axis-y text {
+   fill: #eeeeee;
+}
+.c3-axis-x text {
+    fill: #eeeeee;
+}
+.c3-legend-item {
+    fill: #eeeeee;
+}
+.c3 .c3-axis line, .c3 .c3-axis path {
+    stroke: #EEEEEE;
+}
+.c3-tooltip tr {
+    color: #222222;
 }
