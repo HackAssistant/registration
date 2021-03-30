@@ -280,7 +280,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                                                     settings.HACKATHON_CONTACT_EMAIL,
                                      }))
         elif not r_enabled:
-            self._fieldsets.append(('Traveling',
+            self._fieldsets.append(('Location',
                                     {'fields': ('origin',)}), )
         else:
             self._fieldsets.append(('Traveling',
