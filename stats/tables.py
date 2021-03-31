@@ -14,7 +14,7 @@ class CheckinRankingListTable(tables.Table):
 
 
 class OrganizerRankingListTable(tables.Table):
-    counter = tables.TemplateColumn('{{ row_counter|add:1 }}', verbose_name='Position')
+    counter = tables.TemplateColumn('{{ row_counter|add:1 }}', verbose_name='Position', orderable=False)
 
     class Meta:
         model = User
