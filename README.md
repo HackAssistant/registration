@@ -1,13 +1,9 @@
-<p align="center">
-  <img alt="HackUPC Fall 2016" src="app/static/img/hackupc-ogimage@2x.png" width="100%"/>
-</p>
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/dcf8e46541dbab5eb64f/maintainability)](https://codeclimate.com/github/HackAssistant/registration/maintainability)
 [![CircleCI](https://circleci.com/gh/HackAssistant/registration/tree/master.svg?style=svg)](https://circleci.com/gh/HackAssistant/registration/tree/master)
 
+![](https://hackupc.com/ogimage.png)
 
 📝 Registration for hackathons. Forked from [HackAssistant/registration](https://github.com/HackAssistant/registration). Previously known as hackupc/backend. [Medium article](https://medium.com/hackcu/hackassistant-95d0f15c9199). [User Guide](USER_GUIDE.md)
-
 
 ## Features
 
