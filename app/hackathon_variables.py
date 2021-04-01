@@ -23,7 +23,7 @@ HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
 # Hackathon logo url, will be used on all emails
 HACKATHON_LOGO_URL = 'https://my.hackupc.com/static/logo.png'
 
-HACKATHON_OG_IMAGE = 'https://hackupc.com/assets/img/hackupc-ogimage@2x.png?v=2018'
+HACKATHON_OG_IMAGE = 'https://hackupc.com/ogimage.png?v=2021'
 # (OPTIONAL) Track visits on your website
 HACKATHON_GOOGLE_ANALYTICS = 'UA-69542332-2'
 # (OPTIONAL) Hackathon Twitter user
