@@ -69,7 +69,7 @@ class ApplicationsListTable(tables.Table):
         "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
     origin = tables.Column(accessor='origin', verbose_name='Origin')
-    votes = tables.Column(accessor='vote.count', verbose_name='Votes', orderable=False)
+    votes = tables.Column(accessor='vote_set.count', verbose_name='Votes', orderable=False)
 
     class Meta:
         model = HackerApplication

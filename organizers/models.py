@@ -17,7 +17,7 @@ VOTES = [(i, str(i)) for i in range(1, MAX_VOTES + 1)]
 
 
 class Vote(models.Model):
-    application = models.ForeignKey(HackerApplication, related_name='vote')
+    application = models.ForeignKey(HackerApplication)
     user = models.ForeignKey(User)
     tech = models.IntegerField(choices=VOTES, null=True)
     personal = models.IntegerField(choices=VOTES, null=True)

@@ -22,7 +22,7 @@
                 <h3>Personal</h3>
                 </dt>
                 <dd></dd>
-                {% include 'include/field.html' with desc='Votes' value=app.vote.all|length %}
+                {% include 'include/field.html' with desc='Votes' value=app.vote_set.count %}
                 {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
                 {% include 'include/field.html' with desc='Name' value=app.user.name %}
                 {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}
