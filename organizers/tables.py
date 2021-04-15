@@ -69,12 +69,13 @@ class ApplicationsListTable(tables.Table):
         "<a href='{% url 'app_detail' record.uuid %}'>Detail</a> ",
         verbose_name='Actions', orderable=False)
     origin = tables.Column(accessor='origin', verbose_name='Origin')
+    votes = tables.Column(accessor='vote_set.count', verbose_name='Votes', orderable=False)
 
     class Meta:
         model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin']
+        fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin', 'votes', 'detail']
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
