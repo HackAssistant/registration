@@ -8,6 +8,9 @@ from applications import models
 
 
 # Delete DraftApplication when application submitted
+from user.models import User
+
+
 @receiver(post_save, sender=models.HackerApplication)
 @receiver(post_save, sender=models.MentorApplication)
 @receiver(post_save, sender=models.VolunteerApplication)
@@ -27,9 +30,13 @@ def create_draft_application(sender, instance, *args, **kwargs):
     for key in ['user', 'invited_by', 'submission_date', 'status_update_date', 'status', 'resume']:
         dict.pop(key, None)
     d = models.DraftApplication()
-    d.user = instance.user
-    d.save_dict(dict)
-    d.save()
+    try:
+        User.objects.get(id=instance.user_id)
+        d.user = instance.user
+        d.save_dict(dict)
+        d.save()
+    except User.DoesNotExist:
+        pass
 
 
 # Delete resume file when application deleted

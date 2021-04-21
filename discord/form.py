@@ -11,7 +11,7 @@ SWAG_BOOLEAN = (
 class SwagForm(forms.ModelForm):
     swag = forms.TypedChoiceField(
         required=True,
-        label='This edition we can send swag to your house. Would you want it?',
+        label='If this edition we can send you swag to your house, would you want it?',
         coerce=lambda x: x,
         choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect

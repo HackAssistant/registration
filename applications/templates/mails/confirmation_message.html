@@ -5,9 +5,11 @@
     <p>Thank you {{ name }} for confirming your attendance to {{ h_name }}!</p>
     <p>We are really excited to host this event and have you with us.</p>
 
-    <p>In order to make registration go smoother, please show us this QR code during the process so we can easily find
-        you:</p>
-    {% include 'mails/include/email_image.html' with url=qr_url %}
+    {% if not h_discord %}
+      <p>In order to make registration go smoother, please show us this QR code during the process so we can easily find
+          you:</p>
+      {% include 'mails/include/email_image.html' with url=qr_url %}
+    {% endif %}
     {% include 'mails/include/cancel.html' %}
     {% include 'mails/include/arrival_departure_info.html' %}
     {% include 'mails/include/closing.html' %}

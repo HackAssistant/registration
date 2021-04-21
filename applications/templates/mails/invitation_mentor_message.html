@@ -7,10 +7,12 @@
         First of all, thanks for applying to our mentorship program. We are glad to inform you that you have been chosen
         to be a mentor during this new {{ h_name }} edition!
       </p>
-      <p>
-        When the event is closer, we'll contact you again and we'll invite you to our Slack group, used for organizing
-        and hackers communication
-      </p>
+      {% if not h_discord %}
+        <p>
+          When the event is closer, we'll contact you again and we'll invite you to our Slack group, used for organizing
+          and hackers communication
+        </p>
+      {% endif %}
     <p>
         Respond to this invitation by clicking on the "Confirm" link below.
     </p>
