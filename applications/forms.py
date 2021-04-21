@@ -506,6 +506,11 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
+    graduation_year = forms.ChoiceField(required=False, choices=models.YEARS,
+                                        help_text='What year have you graduated on or when will you graduate',
+                                        label='What year will you graduate?',
+                                        widget=forms.RadioSelect())
+
     def mentor(self):
         return True
 
@@ -560,6 +565,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             if not self.cleaned_data['graduation_year']:
                 self.add_error('graduation_year', 'Choose your graduation year, please')
         else:
+            self.cleaned_data['graduation_year'] = models.DEFAULT_YEAR
             if not self.cleaned_data['company']:
                 self.add_error('company', 'Type your company, please')
 
