@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect, HttpResponse, FileResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic.base import View, TemplateView
 from django_filters.views import FilterView
