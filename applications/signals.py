@@ -2,13 +2,8 @@ import os
 
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
-from django.forms import model_to_dict
 
 from applications import models
-
-
-# Delete DraftApplication when application submitted
-from user.models import User
 
 
 @receiver(post_save, sender=models.HackerApplication)
