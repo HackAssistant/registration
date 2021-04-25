@@ -4,13 +4,13 @@ workflows:
   test:
     jobs:
     - build-3.7
-    - build-3.6
-    - build-2.7
+    - build-3.7
+    - build-3.8
 
 jobs:
   build-3.7: &test-template
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7.10
     steps:
       - checkout
       - restore_cache:
@@ -45,12 +45,8 @@ jobs:
   build-3.6:
     <<: *test-template
     docker:
-      - image: circleci/python:3.6-jessie
-  build-3.5:
+      - image: cimg/python:3.6.9
+  build-3.8:
     <<: *test-template
     docker:
-      - image: circleci/python:3.5-jessie
-  build-2.7:
-    <<: *test-template
-    docker:
-      - image: circleci/python:2.7-jessie
+      - image: circleci/python:3.8.9
