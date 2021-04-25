@@ -200,7 +200,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
     cvs_edition = forms.BooleanField(
         required=False,
-        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2019 Sponsors.'
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2021 Sponsors.'
     )
 
     def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
@@ -618,6 +618,8 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
 
 class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+    diet = forms.ChoiceField(required=False, choices=models.DIETS)
+    tshirt_size = forms.ChoiceField(required=False, choices=models.TSHIRT_SIZES)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     terms_and_conditions = forms.BooleanField(
@@ -665,13 +667,6 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         diet = self.cleaned_data.get('diet', 'None')
         if diet == 'Others' and not data:
             raise forms.ValidationError("Please tell us your specific dietary requirements")
-        return data
-
-    def clean_other_gender(self):
-        data = self.cleaned_data['other_gender']
-        gender = self.cleaned_data['gender']
-        if gender == models.GENDER_OTHER and not data:
-            raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
         return data
 
     def fieldsets(self):
