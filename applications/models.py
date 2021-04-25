@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
+from django.forms import model_to_dict
 from django.utils import timezone
 from multiselectfield import MultiSelectField
 
@@ -533,3 +534,13 @@ class DraftApplication(models.Model):
 
     def get_dict(self):
         return json.loads(self.content)
+
+    @staticmethod
+    def create_draft_application(instance):
+        dict = model_to_dict(instance)
+        for key in ['user', 'invited_by', 'submission_date', 'status_update_date', 'status', 'resume']:
+            dict.pop(key, None)
+        d = DraftApplication()
+        d.user_id = instance.user_id
+        d.save_dict(dict)
+        d.save()

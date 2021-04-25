@@ -18,6 +18,7 @@ from discord.form import SwagForm
 from discord.models import DiscordUser
 from discord.serializers import DiscordSerializer
 from discord.tables import DiscordTable, DiscordFilter
+from teams.models import Team
 from user.mixins import IsHackerMixin, IsOrganizerMixin
 
 
@@ -50,8 +51,14 @@ class RedirectDiscord(IsHackerMixin, View):
             discord_json = get_user_id(token)
             discord_id = discord_json.get('id')
             discord_username = discord_json.get('username')
+            discord = DiscordUser(user=request.user, discord_id=discord_id, discord_username=discord_username)
             try:
-                DiscordUser(user=request.user, discord_id=discord_id, discord_username=discord_username).save()
+                team = Team.objects.get(user=request.user)
+                discord.team_name = team.team_code
+            except Team.DoesNotExist:
+                pass
+            try:
+                discord.save()
             except IntegrityError:
                 return redirect(reverse('alreadyConnected'))
         return redirect(reverse('dashboard'))

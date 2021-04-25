@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from applications.models import DraftApplication
 from user import tokens, models
 from user.models import User
 
@@ -42,10 +43,13 @@ def change_type(sender, instance, *args, **kwargs):
         old_user = None
     if old_user and old_user.application and old_user.type != instance.type:
         if old_user.is_volunteer():
+            DraftApplication.create_draft_application(instance.volunteerapplication_application)
             instance.volunteerapplication_application.delete()
         if old_user.is_mentor():
+            DraftApplication.create_draft_application(instance.mentorapplication_application)
             instance.mentorapplication_application.delete()
         if old_user.is_hacker():
+            DraftApplication.create_draft_application(instance.hackerapplication_application)
             instance.hackerapplication_application.delete()
     elif old_user and old_user.is_sponsor() and old_user.sponsorapplication_application:
         instance.sponsorapplication_application.all().delete()
