@@ -15,4 +15,6 @@ urlpatterns = [
     url(r'^list/$', views.DiscordTableView.as_view(), name='discord_list'),
     url(r'^error/$', views.RedirectError.as_view(), name='alreadyConnected'),
     url(r'^swag/$', views.SwagView.as_view(), name='swag_form'),
+    url(r'^sticker/$', views.DiscordStickerList.as_view(), name='sticker_list'),
+    url(r'^list/csv/$', views.get_csv_address, name='csv_address'),
 ]
