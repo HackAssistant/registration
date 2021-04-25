@@ -34,3 +34,6 @@ class SwagForm(forms.ModelForm):
         widgets = {
             'address': forms.Textarea(attrs={'rows': 5}),
         }
+        help_texts = {
+            'address': 'Please follow this format: Street Address, Postal Code City, Country.'
+        }
