@@ -10,7 +10,7 @@ workflows:
 jobs:
   build-3.7: &test-template
     docker:
-      - image: cimg/python:3.7.10
+      - image: circleci/python:3.7
     steps:
       - checkout
       - restore_cache:
@@ -18,11 +18,7 @@ jobs:
       - run:
           name: Create virtualenv
           command: |
-            if [ "${CIRCLE_JOB}" == "build-2.7" ]; then
-                virtualenv env
-            else
-                python3 -m venv env
-            fi
+            virtualenv env --python=python3
             . env/bin/activate
             pip install -r requirements.txt
       - save_cache:
@@ -45,8 +41,8 @@ jobs:
   build-3.6:
     <<: *test-template
     docker:
-      - image: cimg/python:3.6.9
+      - image: circleci/python:3.6
   build-3.8:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8.9
+      - image: circleci/python:3.8
