@@ -8,4 +8,26 @@
     <script src="{% static 'js/form_modifiers.js' %}"></script>
 {% endblock %}
 
+{% block extra_panel %}
+  {% if sticker_list %}
+    <form method="get" class="form text-left filter">
+        <div class="form-group">
+          <label for="sel1">Select sticker:</label>
+          <select class="form-control" id="sel1" name="sticker">
+            <option value="">All</option>
+            {% for sticker in sticker_list %}
+              <option {% if sticker == sticker_selected %}selected{% endif %} value="{{ sticker }}">{{ sticker }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-info">Filter</button>
+    </form>
+  {% endif %}
+{% endblock %}
+{% block table_footer %}
+  {% if director_button %}
+    <a class="btn btn-block btn-primary" target="_blank" href="{% url 'csv_address' %}">Export csv</a>
+  {% endif %}
+{% endblock %}
+
 {% block head_title %}Discord list{% endblock %}

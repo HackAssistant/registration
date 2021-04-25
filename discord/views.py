@@ -1,9 +1,11 @@
 from urllib.parse import quote
 
+import csv
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, FileResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic.base import View, TemplateView
 from django_filters.views import FilterView
@@ -22,8 +24,9 @@ from teams.models import Team
 from user.mixins import IsHackerMixin, IsOrganizerMixin
 
 
-def organizer_tabs(user):
-    return [('Discord list', reverse('discord_list'), False), ]
+def discord_tabs(user):
+    return [('Discord list', reverse('discord_list'), False),
+            ('Sticker list', reverse('sticker_list'), False), ]
 
 
 class ConnectDiscord(IsHackerMixin, View):
@@ -81,8 +84,15 @@ class DiscordTableView(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, Filter
     filterset_class = DiscordFilter
     table_pagination = {'per_page': 100}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'director_button': self.request.user.is_director,
+        })
+        return context
+
     def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
+        return discord_tabs(self.request.user)
 
     def get_queryset(self):
         return DiscordUser.objects.select_related('user')
@@ -92,7 +102,7 @@ class RedirectError(TemplateView):
     template_name = 'discord_connect_error.html'
 
 
-class SwagView(TemplateView):
+class SwagView(IsHackerMixin, TemplateView):
     template_name = 'swag_address_form.html'
 
     def get_context_data(self, **kwargs):
@@ -116,3 +126,50 @@ class SwagView(TemplateView):
             'form': form,
         })
         return render(request, self.template_name, context)
+
+
+class DiscordStickerList(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, TemplateView):
+    template_name = 'discord_list.html'
+    table_class = DiscordTable
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return discord_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sticker = self.request.GET.get('sticker', '')
+        discords = DiscordUser.objects.select_related('user').exclude(stickers='')
+        stickers = set()
+        for discord in discords:
+            for stick in discord.stickers.split('-'):
+                stickers.add(stick)
+        context.update({
+            'sticker_selected': sticker,
+            'sticker_list': stickers,
+        })
+        return context
+
+    def get_queryset(self):
+        sticker = self.request.GET.get('sticker', '')
+        discords = DiscordUser.objects.select_related('user')
+        if sticker:
+            discords = discords.filter(stickers__contains=sticker)
+        else:
+            discords = discords.exclude(stickers='')
+        return discords
+
+
+def get_csv_address(request):
+    if not request.user.is_authenticated or not request.user.is_director:
+        raise PermissionDenied()
+    response = HttpResponse(
+        content_type='text/csv'
+    )
+
+    writer = csv.writer(response)
+    discord_users = DiscordUser.objects.filter(swag=True, checked_in=True)
+    for user in discord_users:
+        writer.writerow([user.user.email, user.user.name, user.user.get_type_display(), user.address, user.stickers,
+                         user.user.application.origin])
+    return response
