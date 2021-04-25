@@ -21,24 +21,6 @@ def clean_draft_application(sender, instance, created, *args, **kwargs):
     models.DraftApplication.objects.filter(user=instance.user).delete()
 
 
-# Create DraftApplication when application deleted
-@receiver(post_delete, sender=models.HackerApplication)
-@receiver(post_delete, sender=models.MentorApplication)
-@receiver(post_delete, sender=models.VolunteerApplication)
-def create_draft_application(sender, instance, *args, **kwargs):
-    dict = model_to_dict(instance)
-    for key in ['user', 'invited_by', 'submission_date', 'status_update_date', 'status', 'resume']:
-        dict.pop(key, None)
-    d = models.DraftApplication()
-    try:
-        User.objects.get(id=instance.user_id)
-        d.user = instance.user
-        d.save_dict(dict)
-        d.save()
-    except User.DoesNotExist:
-        pass
-
-
 # Delete resume file when application deleted
 @receiver(post_delete, sender=models.HackerApplication)
 @receiver(post_delete, sender=models.MentorApplication)
