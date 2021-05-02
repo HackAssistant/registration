@@ -17,6 +17,7 @@ from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.mixins import HaveSponsorPermissionMixin, IsHackerMixin
 from user.models import User
+from user.verification import check_recaptcha
 
 
 def login(request):
@@ -51,13 +52,14 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
+@check_recaptcha
 def signup(request, u_type):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST, type=u_type)
-        if form.is_valid():
+        if form.is_valid() and request.recaptcha_is_valid:
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             name = form.cleaned_data['name']
@@ -69,6 +71,8 @@ def signup(request, u_type):
                 user = auth.authenticate(email=email, password=password)
                 auth.login(request, user)
                 return HttpResponseRedirect(reverse('root'))
+        if not request.recaptcha_is_valid:
+            form.add_error(None, 'Invalid reCAPTCHA. Please try again.')
     else:
         form = forms.RegisterForm()
 
