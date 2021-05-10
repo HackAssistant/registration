@@ -410,8 +410,8 @@ class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, F
         context['otherApplication'] = True
         context['emailCopy'] = True
         list_email = ""
-        for u in self.object_list.values('user__email'):
-            list_email += "%s, " % u['user__email']
+        for u in context.get('object_list').values_list('user__email', flat=True):
+            list_email += "%s, " % u
         context['emails'] = list_email
         return context
 
