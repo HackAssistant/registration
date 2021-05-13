@@ -26,10 +26,11 @@ class SwagForm(forms.ModelForm):
 
     class Meta:
         model = DiscordUser
-        fields = ('swag', 'address')
+        fields = ('swag', 'address', 'pick_up')
         labels = {
             'address': 'Please specify all your address information so we will be able to send it to you '
-                       '(We won\'t send swag to some countries)'
+                       '(We won\'t send swag to some countries)',
+            'pick_up': 'I could go pick up swag on UPC campus nord, Barcelona, Spain'
         }
         widgets = {
             'address': forms.Textarea(attrs={'rows': 5}),
