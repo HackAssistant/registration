@@ -10,6 +10,7 @@ django-filter==1.0.2
 django-form-utils==1.0.3
 django-ha-hardware @ git+https://github.com/hackupc/hardware.git@e5f68b0cff7001bf7354257667b1880a821b37fb
 django-jet==1.0.8
+django-multiselectfield==0.1.12
 django-storages @ git+https://github.com/jschneier/django-storages.git@b116e3a235323144cda6d3cc5a5cb27baf076ee2
 django-tables2==1.14.2
 djangorestframework==3.8.2
