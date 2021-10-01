@@ -65,7 +65,7 @@ def signup(request, u_type):
             name = form.cleaned_data['name']
 
             if models.User.objects.filter(email=email).first() is not None:
-                messages.error(request, 'An account with this email already exists')
+                form.add_error(None, 'An account with this email already exists')
             else:
                 models.User.objects.create_user(email=email, password=password, name=name, u_type=u_type)
                 user = auth.authenticate(email=email, password=password)
