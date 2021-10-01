@@ -126,7 +126,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
             })
         try:
             context.update({'checkin': CheckIn.objects.filter(application=app).first()})
-        except:
+        except Exception:
             pass
         return context
 

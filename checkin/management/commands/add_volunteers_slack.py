@@ -37,6 +37,6 @@ class Command(BaseCommand):
                     print('Inviting user {0}.'.format(email))
                     slack_invite(email)
 
-                except:
+                except Exception:
                     print('There was a problem inviting the user: {0}.  Error: {1}.'
                           .format(email, sys.exc_info()[1]))

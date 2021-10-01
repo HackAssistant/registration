@@ -162,7 +162,7 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
                 bagimageext = bagimageformat.split('/')[-1]
                 bag.image = ContentFile(base64.b64decode(bagimagefile),
                                         name=(str(time.time()).split('.')[0] + '-' + userid + '.' + bagimageext))
-            except:
+            except Exception:
                 print("Error: Couldn't retrieve the image and decode it.")
 
         posmanual = request.POST.get('pos_manual')
