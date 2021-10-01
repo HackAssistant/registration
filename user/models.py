@@ -200,7 +200,7 @@ class User(AbstractBaseUser):
         if self.type == USR_VOLUNTEER:
             try:
                 return self.volunteerapplication_application.is_attended()
-            except:
+            except Exception:
                 pass
         return False
 
@@ -235,7 +235,7 @@ class User(AbstractBaseUser):
                 return self.volunteerapplication_application
             if self.type == USR_MENTOR:
                 return self.mentorapplication_application
-        except:
+        except Exception:
             return None
 
     def has_applications_left(self):
