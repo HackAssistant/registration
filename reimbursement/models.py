@@ -39,7 +39,7 @@ def check_friend_emails(friend_emails, user_email):
     for email in emails:
         try:
             user = User.objects.get(email=email)
-        except:
+        except User.DoesNotExist:
             raise Exception('%s is not a registered hacker' % email)
 
         try:
