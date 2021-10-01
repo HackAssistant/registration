@@ -62,7 +62,7 @@ class ConfirmApplication(IsHackerMixin, UserPassesTestMixin, View):
             msg = emails.create_confirmation_email(application, self.request)
         try:
             application.confirm()
-        except:
+        except Exception:
             raise Http404
 
         if msg:
@@ -142,14 +142,14 @@ class HackerDashboard(DashboardMixin, TabsView):
             dict = draft.get_dict()
             app = Application({'dict': dict})
             form = ApplicationForm(instance=app)
-        except:
+        except Exception:
             form = ApplicationForm()
         context.update({'form': form})
         try:
             application = Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
             context.update({'invite_timeleft': deadline - timezone.now(), 'application': application})
-        except:
+        except Exception:
             # We ignore this as we are okay if the user has not created an application yet
             pass
 
@@ -162,7 +162,7 @@ class HackerDashboard(DashboardMixin, TabsView):
         try:
             form = ApplicationForm(request.POST, request.FILES, instance=request.user.application)
             new_application = False
-        except:
+        except Exception:
             form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
@@ -207,7 +207,7 @@ class HackerApplication(IsHackerMixin, TabsView):
         try:
             form = ApplicationForm(request.POST, request.FILES,
                                    instance=request.user.application)
-        except:
+        except Exception:
             form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)

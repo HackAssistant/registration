@@ -38,7 +38,7 @@ def login(request):
                 if c_domain and c_key:
                     try:
                         resp.set_cookie(c_key, 'biene', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
-                    except:
+                    except Exception:
                         # We don't care if this is not set, we are being cool here!
                         pass
                 return resp
@@ -84,7 +84,7 @@ def logout(request):
     if c_domain and c_key:
         try:
             resp.delete_cookie(c_key, domain=c_domain)
-        except:
+        except Exception:
             # We don't care if this is not deleted, we are being cool here!
             pass
     return resp
