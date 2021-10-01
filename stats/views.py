@@ -61,11 +61,12 @@ def get_stats(model):
     attendance_count_confirmed = defaultdict(int)
     other_diet = []
     for a in applications:
+        origin = a.origin.split(", ")[-1] if "," in a.origin else a.origin
         status_count[a.get_status_display()] += 1
         shirt_count[a.get_tshirt_size_display()] += 1
         diet_count[a.get_diet_display()] += 1
         if hacker or volunteer or mentor:
-            origin_count[a.origin] += 1
+            origin_count[origin] += 1
             gender_count[a.get_gender_display()] += 1
         if hacker or volunteer:
             university_count[a.university] += 1
@@ -88,7 +89,7 @@ def get_stats(model):
             shirt_count_confirmed[a.get_tshirt_size_display()] += 1
             diet_count_confirmed[a.get_diet_display()] += 1
             if hacker or volunteer or mentor:
-                origin_count_confirmed[a.origin] += 1
+                origin_count_confirmed[origin] += 1
             if hacker or volunteer:
                 university_count_confirmed[a.university] += 1
                 grad_year_count_confirmed[a.graduation_year] += 1
