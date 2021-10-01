@@ -398,6 +398,7 @@ class HackerApplication(
         self.status = APP_DUBIOUS
         self.contacted = False
         self.status_update_date = timezone.now()
+        self.vote_set.all().delete()
         self.save()
 
     def unset_dubious(self):
@@ -441,7 +442,8 @@ class HackerApplication(
         return self.status == APP_BLACKLISTED
 
     def can_be_edit(self):
-        return self.status == APP_PENDING and not self.vote_set.exists() and not utils.is_app_closed()
+        return (self.status == APP_PENDING or self.status == APP_DUBIOUS) and not self.vote_set.exists() \
+               and not utils.is_app_closed()
 
 
 class MentorApplication(
