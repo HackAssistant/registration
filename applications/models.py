@@ -114,7 +114,6 @@ ENGLISH_LEVEL = [(i, str(i)) for i in range(1, 5 + 1)]
 
 
 class BaseApplication(models.Model):
-
     class Meta:
         abstract = True
 
@@ -305,7 +304,6 @@ class BaseApplication(models.Model):
 
 
 class _HackerMentorVolunteerApplication(models.Model):
-
     class Meta:
         abstract = True
 
@@ -325,7 +323,6 @@ class _HackerMentorVolunteerApplication(models.Model):
 
 
 class _HackerMentorApplication(models.Model):
-
     class Meta:
         abstract = True
 
@@ -340,7 +337,6 @@ class _HackerMentorApplication(models.Model):
 
 
 class _VolunteerMentorApplication(models.Model):
-
     class Meta:
         abstract = True
 
@@ -349,7 +345,6 @@ class _VolunteerMentorApplication(models.Model):
 
 
 class _VolunteerMentorSponsorApplication(models.Model):
-
     class Meta:
         abstract = True
 
@@ -442,8 +437,7 @@ class HackerApplication(
         return self.status == APP_BLACKLISTED
 
     def can_be_edit(self):
-        return (self.status == APP_PENDING or self.status == APP_DUBIOUS) and not self.vote_set.exists() \
-               and not utils.is_app_closed()
+        return self.status in [APP_PENDING, APP_DUBIOUS] and not self.vote_set.exists() and not utils.is_app_closed()
 
 
 class MentorApplication(
