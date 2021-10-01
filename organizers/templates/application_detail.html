@@ -169,12 +169,14 @@
                     application
                 </button>
                 {% if h_dubious_enabled %}
-                    <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious">
+                    <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious"
+                            onclick="return confirm('Are you sure you want set this application as Dubious?')">
                         Dubious Application
                     </button>
                 {% endif %}
                 {% if h_blacklist_enabled %}
-                    <button name="set_blacklist" class="btn btn-danger btn-block" value="set_blacklist">
+                    <button name="set_blacklist" class="btn btn-danger btn-block" value="set_blacklist"
+                            onclick="return confirm('Are you sure you want set this application as Blacklist?')">
                         Blacklist Application
                     </button>
                 {% endif %}
@@ -211,12 +213,14 @@
                             Wait list
                         </button>
                         {% if h_dubious_enabled %}
-                            <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious">
+                            <button name="set_dubious" class="btn btn-warning btn-block" value="set_dubious"
+                                    onclick="return confirm('Are you sure you want set this application as Dubious?')">
                                 Dubious Application
                             </button>
                         {% endif %}
                         {% if h_blacklist_enabled %}
-                            <button name="set_blacklist" class="btn btn-warning btn-block" value="set_blacklist">
+                            <button name="set_blacklist" class="btn btn-warning btn-block" value="set_blacklist"
+                                    onclick="return confirm('Are you sure you want set this application as Blacklist?')">
                                 Blacklist Application
                             </button>
                         {% endif %}
