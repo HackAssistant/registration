@@ -39,7 +39,7 @@ def login(request):
                 if c_domain and c_key:
                     try:
                         resp.set_cookie(c_key, 'biene', domain=c_domain, max_age=settings.SESSION_COOKIE_AGE)
-                    except:
+                    except Exception:
                         # We don't care if this is not set, we are being cool here!
                         pass
                 return resp
@@ -65,7 +65,7 @@ def signup(request, u_type):
             name = form.cleaned_data['name']
 
             if models.User.objects.filter(email=email).first() is not None:
-                messages.error(request, 'An account with this email already exists')
+                form.add_error(None, 'An account with this email already exists')
             else:
                 models.User.objects.create_user(email=email, password=password, name=name, u_type=u_type)
                 user = auth.authenticate(email=email, password=password)
@@ -88,7 +88,7 @@ def logout(request):
     if c_domain and c_key:
         try:
             resp.delete_cookie(c_key, domain=c_domain)
-        except:
+        except Exception:
             # We don't care if this is not deleted, we are being cool here!
             pass
     return resp

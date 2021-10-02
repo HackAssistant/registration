@@ -154,7 +154,7 @@ class BaseApplication(models.Model):
         super().__init__(*args, **kwargs)
         try:
             dict = args[0]['dict']
-        except:
+        except Exception:
             dict = None
         if dict is not None:
             for key in dict:
