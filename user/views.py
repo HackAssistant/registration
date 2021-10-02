@@ -17,9 +17,10 @@ from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.mixins import HaveSponsorPermissionMixin, IsHackerMixin
 from user.models import User
-from user.verification import check_recaptcha
+from user.verification import check_recaptcha, check_client_ip
 
 
+@check_client_ip
 def login(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect(reverse('root'))
@@ -27,7 +28,7 @@ def login(request):
     if request.method == 'POST':
         form = forms.LoginForm(request.POST)
         next_ = request.GET.get('next', '/')
-        if form.is_valid():
+        if form.is_valid() and request.client_req_is_valid:
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = auth.authenticate(email=email, password=password)
@@ -46,6 +47,8 @@ def login(request):
             else:
                 form.add_error(None, 'Incorrect username or password. Please try again.')
 
+        if not request.client_req_is_valid:
+            form.add_error(None, 'Too many login attempts. Please try again in 5 minutes.')
     else:
         form = forms.LoginForm()
 
