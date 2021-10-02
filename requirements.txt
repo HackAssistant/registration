@@ -4,7 +4,7 @@ certifi==2019.9.11
 chardet==3.0.4
 defusedxml==0.6.0
 dj-database-url==0.5.0
-django>=2.2.24
+Django==3.2.7
 django-bootstrap3==15.0.0
 django-filter==2.4.0
 django-multiselectfield==0.1.12
