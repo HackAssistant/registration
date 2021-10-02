@@ -51,13 +51,13 @@ def protectedMedia(request, file_):
                 app = MentorApplication.objects.get(resume=file_)
             except MentorApplication.DoesNotExist:
                 raise Http404
-        if request.user.is_authenticated() and (request.user.is_organizer or
-                                                (app and (app.user_id == request.user.id))):
+        if request.user.is_authenticated and (request.user.is_organizer or
+                                              (app and (app.user_id == request.user.id))):
             downloadable_path = app.resume.path
     elif path == "receipt":
         app = get_object_or_404(Reimbursement, receipt=file_)
-        if request.user.is_authenticated() and (request.user.is_organizer or
-                                                (app and (app.hacker_id == request.user.id))):
+        if request.user.is_authenticated and (request.user.is_organizer or
+                                              (app and (app.hacker_id == request.user.id))):
             downloadable_path = app.receipt.path
     if downloadable_path:
         (_, doc_extension) = file_name.rsplit('.', 1)

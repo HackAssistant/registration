@@ -212,7 +212,7 @@ else:
 # Set up custom auth
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'account_login'
-PASSWORD_RESET_TIMEOUT_DAYS = 1
+PASSWORD_RESET_TIMEOUT = 86400  # 1 day
 
 BOOTSTRAP3 = {
     # Don't normally want placeholders.
