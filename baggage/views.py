@@ -1,5 +1,7 @@
 import json
-from django.core.urlresolvers import reverse
+
+from django.urls import reverse
+
 from app.mixins import TabsViewMixin
 from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable
 from baggage.tables import BaggageUsersFilter, BaggageCurrentHackerTable

@@ -15,7 +15,7 @@ def generate_team_id():
 
 class Team(models.Model):
     team_code = models.CharField(default=generate_team_id, max_length=TEAM_ID_LENGTH)
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (("team_code", "user"),)

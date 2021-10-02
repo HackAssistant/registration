@@ -2,12 +2,25 @@ from django import forms
 from django.conf import settings
 from django.forms import ModelForm
 from django.template.defaultfilters import filesizeformat
-from form_utils.forms import BetterModelForm
 
+from app.mixins import BootstrapFormMixin
 from reimbursement.models import Reimbursement, check_friend_emails
 
 
-class ReceiptSubmissionReceipt(BetterModelForm):
+class ReceiptSubmissionReceipt(BootstrapFormMixin, ModelForm):
+    bootstrap_field_info = {
+        'Upload your receipt': {
+            'fields': [{'name': 'receipt', 'space': 12}, {'name': 'multiple_hackers', 'space': 12},
+                       {'name': 'friend_emails', 'space': 12}, ],
+        },
+        'Where should we send you the monies?': {
+            'fields': [{'name': 'paypal_email', 'space': 12}, ],
+        },
+        'Where are you joining us from?': {
+            'fields': [{'name': 'origin', 'space': 12}, ],
+        }
+    }
+
     def __init__(self, *args, **kwargs):
         super(ReceiptSubmissionReceipt, self).__init__(*args, **kwargs)
         self.fields['receipt'].required = True
@@ -46,12 +59,6 @@ class ReceiptSubmissionReceipt(BetterModelForm):
         model = Reimbursement
         fields = (
             'paypal_email', 'receipt', 'multiple_hackers', 'friend_emails', 'origin',)
-        fieldsets = (
-            ('Upload your receipt',
-             {'fields': ('receipt', 'multiple_hackers', 'friend_emails'), }),
-            ('Where should we send you the monies?', {'fields': ('paypal_email',), }),
-            ('Where are you joining us from?', {'fields': ('origin',), }),
-        )
         widgets = {
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
         }

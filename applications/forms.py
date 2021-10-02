@@ -1,11 +1,11 @@
 from django import forms
 from django.conf import settings
+from django.forms import ModelForm
 from django.forms.utils import ErrorList
 from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
-from form_utils.forms import BetterModelForm
 
-from app.mixins import OverwriteOnlyModelFormMixin
+from app.mixins import OverwriteOnlyModelFormMixin, BootstrapFormMixin
 from app.utils import validate_url
 from applications import models
 
@@ -29,11 +29,11 @@ def get_exclude_fields():
     discord = getattr(settings, 'DISCORD_HACKATHON', False)
     exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status']
     if discord:
-        exclude.extend(['diet', 'other_diet', 'tshirt_size', 'diet_notice'])
+        exclude.extend(['diet', 'other_diet', 'diet_notice'])
     return exclude
 
 
-class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     under_age = forms.TypedChoiceField(
@@ -124,7 +124,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         exclude = get_exclude_fields()
 
 
-class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, ModelForm):
     first_timer = forms.TypedChoiceField(
         required=True,
         label='Will %s be your first hackathon?' % settings.HACKATHON_NAME,
@@ -144,7 +144,7 @@ class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, BetterM
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
 
-class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, ModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control',
                'placeholder': 'https://github.com/johnBiene'}))
@@ -189,6 +189,28 @@ class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm)
 
 
 class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'university', 'space': 12}, {'name': 'degree', 'space': 12},
+                       {'name': 'graduation_year', 'space': 12}, {'name': 'gender', 'space': 12},
+                       {'name': 'other_gender', 'space': 12}, {'name': 'phone_number', 'space': 12},
+                       {'name': 'tshirt_size', 'space': 12}, {'name': 'under_age', 'space': 12},
+                       {'name': 'lennyface', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+        'Hackathons?': {
+            'fields': [{'name': 'description', 'space': 12}, {'name': 'first_timer', 'space': 12},
+                       {'name': 'projects', 'space': 12}, ]
+        },
+        'Show us what you\'ve built': {
+            'fields': [{'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
+                       {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
+                       {'name': 'resume', 'space': 12}, ],
+            'description': 'Some of our sponsors may use this information for recruitment purposes,'
+                           'so please include as much as you can.'
+        }
+    }
+
     reimb = forms.TypedChoiceField(
         required=False,
         label='Do you need a travel reimbursement to attend?',
@@ -242,54 +264,42 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
         return reimb
 
-    def fieldsets(self):
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
         # Fieldsets ordered and with description
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
         hardware = getattr(settings, 'HARDWARE_ENABLED', False)
-        personal_info_fields = ['university', 'degree', 'graduation_year', 'gender', 'other_gender',
-                                'phone_number', 'under_age', 'lennyface']
-        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        personal_info_fields = fields['Personal Info']['fields']
+        polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'cvs_edition', 'space': 12},
+                          {'name': 'email_subscribe', 'space': 12}]
         if not discord:
-            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
-            polices_fields.append('diet_notice')
+            personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
+            polices_fields.append({'name': 'diet_notice', 'space': 12})
         if hardware:
-            personal_info_fields.append('hardware')
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': personal_info_fields,
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
-              'description': 'Some of our sponsors may use this information for recruitment purposes,'
-                             'so please include as much as you can.'}),
-        ]
+            personal_info_fields.append({'name': 'hardware', 'space': 12})
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
         if r_enabled and deadline and deadline <= timezone.now() and not self.instance.pk:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',),
-                                     'description': 'Reimbursement applications are now closed. '
-                                                    'Sorry for the inconvenience.',
-                                     }))
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, ],
+                                   'description': 'Reimbursement applications are now closed. '
+                                                  'Sorry for the inconvenience.',
+                                   }
         elif self.instance.pk and r_enabled:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',),
-                                     'description': 'If you applied for reimbursement, check out the Travel tab. '
-                                                    'Email us at %s for any change needed on reimbursements.' %
-                                                    settings.HACKATHON_CONTACT_EMAIL,
-                                     }))
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, ],
+                                   'description': 'If you applied for reimbursement, check out the Travel tab. '
+                                                  'Email us at %s for any change needed on reimbursements.' %
+                                                  settings.HACKATHON_CONTACT_EMAIL,
+                                   }
         elif not r_enabled:
-            self._fieldsets.append(('Location',
-                                    {'fields': ('origin',)}), )
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, ], }
         else:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, {'name': 'reimb', 'space': 12},
+                                              {'name': 'reimb_amount', 'space': 12}, ], }
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('HackUPC Policies', {
+            fields['HackUPC Polices'] = {
                 'fields': polices_fields,
                 'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
@@ -301,9 +311,8 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                                'requested by you. For more information on the processing of your '
                                'personal data and on how to exercise your rights of access, '
                                'rectification, suppression, limitation, portability and opposition '
-                               'please visit our Privacy and Cookies Policy.</p>'
-            }))
-        return super(HackerApplicationForm, self).fieldsets
+                               'please visit our Privacy and Cookies Policy.</p>'}
+        return fields
 
     class Meta(_BaseApplicationForm.Meta):
         model = models.HackerApplication
@@ -364,6 +373,25 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         choices=models.PREVIOUS_HACKS
     )
 
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'origin', 'space': 12}, {'name': 'university', 'space': 12},
+                       {'name': 'degree', 'space': 12}, {'name': 'graduation_year', 'space': 12},
+                       {'name': 'gender', 'space': 12}, {'name': 'other_gender', 'space': 12},
+                       {'name': 'phone_number', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
+                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+        'Volunteer Skills': {
+            'fields': [{'name': 'first_timer', 'space': 12}, {'name': 'first_time_volunteer', 'space': 12},
+                       {'name': 'which_hack', 'space': 12}, {'name': 'attendance', 'space': 12},
+                       {'name': 'english_level', 'space': 12}, {'name': 'quality', 'space': 12},
+                       {'name': 'weakness', 'space': 12}, {'name': 'cool_skill', 'space': 12},
+                       {'name': 'fav_movie', 'space': 12}, {'name': 'friends', 'space': 12},
+                       ],
+        }
+    }
+
     def clean(self):
         data = self.cleaned_data['which_hack']
         volunteer = self.cleaned_data['first_time_volunteer']
@@ -392,29 +420,21 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
         return reimb
 
-    def fieldsets(self):
-        # Fieldsets ordered and with description
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
-        personal_info_fields = ['origin', 'university', 'degree', 'graduation_year', 'gender', 'other_gender',
-                                'phone_number', 'under_age', 'lennyface']
-        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        personal_info_fields = fields['Personal Info']['fields']
+        polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'cvs_edition', 'space': 12},
+                          {'name': 'email_subscribe', 'space': 12}]
         if not discord:
-            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
-            polices_fields.append('diet_notice')
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': personal_info_fields,
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Volunteer Skills', {'fields': ('first_timer', 'first_time_volunteer', 'which_hack', 'attendance',
-                                             'english_level', 'quality', 'weakness', 'cool_skill', 'fav_movie',
-                                             'friends')}),
-        ]
+            personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
+            polices_fields.append({'name': 'diet_notice', 'space': 12})
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('HackUPC Policies', {
+            fields['HackUPC Polices'] = {
                 'fields': polices_fields,
-                'description': '<p style="margin-top: 1em;display: block;'
+                'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -424,9 +444,8 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                                'requested by you. For more information on the processing of your '
                                'personal data and on how to exercise your rights of access, '
                                'rectification, suppression, limitation, portability and opposition '
-                               'please visit our Privacy and Cookies Policy.</p>'
-            }))
-        return super(VolunteerApplicationForm, self).fieldsets
+                               'please visit our Privacy and Cookies Policy.</p>'}
+        return fields
 
     class Meta(_BaseApplicationForm.Meta):
         model = models.VolunteerApplication
@@ -511,33 +530,47 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                                         label='What year will you graduate?',
                                         widget=forms.RadioSelect())
 
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'origin', 'space': 12}, {'name': 'study_work', 'space': 12},
+                       {'name': 'company', 'space': 12}, {'name': 'university', 'space': 12},
+                       {'name': 'degree', 'space': 12}, {'name': 'graduation_year', 'space': 12},
+                       {'name': 'gender', 'space': 12}, {'name': 'other_gender', 'space': 12},
+                       {'name': 'phone_number', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
+                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+        'Mentor Skills': {
+            'fields': [{'name': 'why_mentor', 'space': 12}, {'name': 'first_timer', 'space': 12},
+                       {'name': 'first_time_mentor', 'space': 12}, {'name': 'which_hack', 'space': 12},
+                       {'name': 'participated', 'space': 12}, {'name': 'attendance', 'space': 12},
+                       {'name': 'english_level', 'space': 12}, {'name': 'fluent', 'space': 12},
+                       {'name': 'experience', 'space': 12}, ],
+        },
+        'Show us what you\'ve built': {
+            'fields': [{'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
+                       {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
+                       {'name': 'resume', 'space': 12}, ]
+        }
+    }
+
     def mentor(self):
         return True
 
-    def fieldsets(self):
-        # Fieldsets ordered and with description
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
-        personal_info_fields = ['origin', 'study_work', 'company', 'university', 'degree', 'graduation_year', 'gender',
-                                'other_gender', 'phone_number', 'under_age', 'lennyface']
-        polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        personal_info_fields = fields['Personal Info']['fields']
+        polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'email_subscribe', 'space': 12}]
         if not discord:
-            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
-            polices_fields.append('diet_notice')
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': personal_info_fields,
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'which_hack',
-                                          'participated', 'attendance', 'english_level', 'fluent', 'experience')}),
-            ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume',)}),
-        ]
+            personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
+            polices_fields.append({'name': 'diet_notice', 'space': 12})
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('HackUPC Policies', {
+            fields['HackUPC Polices'] = {
                 'fields': polices_fields,
-                'description': '<p style="margin-top: 1em;display: block;'
+                'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -547,9 +580,8 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                                'requested by you. For more information on the processing of your '
                                'personal data and on how to exercise your rights of access, '
                                'rectification, suppression, limitation, portability and opposition '
-                               'please visit our Privacy and Cookies Policy.</p>'
-            }))
-        return super(MentorApplicationForm, self).fieldsets
+                               'please visit our Privacy and Cookies Policy.</p>'}
+        return fields
 
     def clean(self):
         data = self.cleaned_data['which_hack']
@@ -617,7 +649,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         }
 
 
-class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
     diet = forms.ChoiceField(required=False, choices=models.DIETS)
     tshirt_size = forms.ChoiceField(required=False, choices=models.TSHIRT_SIZES)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
@@ -636,6 +668,16 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         label='I authorize "Hackers at UPC" to use my food allergies and intolerances information to '
               'manage the catering service only.<span style="color: red; font-weight: bold;"> *</span>'
     )
+
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'name', 'space': 12}, {'name': 'phone_number', 'space': 12},
+                       {'name': 'tshirt_size', 'space': 12}, {'name': 'diet', 'space': 12},
+                       {'name': 'other_diet', 'space': 12}, {'name': 'position', 'space': 12},
+                       {'name': 'attendance', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+    }
 
     def clean_terms_and_conditions(self):
         cc = self.cleaned_data.get('terms_and_conditions', False)
@@ -669,24 +711,20 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
             raise forms.ValidationError("Please tell us your specific dietary requirements")
         return data
 
-    def fieldsets(self):
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
-        personal_info_fields = ['name', 'phone_number', 'position', 'attendance']
-        polices_fields = ['terms_and_conditions', 'cvs_edition']
+        personal_info_fields = fields['Personal Info']['fields']
+        polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, ]
         if not discord:
-            personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
-            polices_fields.append('diet_notice')
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': personal_info_fields,
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-        ]
+            personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
+            polices_fields.append({'name': 'diet_notice', 'space': 12})
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('HackUPC Policies', {
+            fields['HackUPC Polices'] = {
                 'fields': polices_fields,
-                'description': '<p style="margin-top: 1em;display: block;'
+                'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
                                'process your information to organize an awesome hackaton. It '
                                'will also include images and videos of yourself during the event. '
@@ -696,9 +734,8 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                'requested by you. For more information on the processing of your '
                                'personal data and on how to exercise your rights of access, '
                                'rectification, suppression, limitation, portability and opposition '
-                               'please visit our Privacy and Cookies Policy.</p>'
-            }))
-        return super(SponsorForm, self).fieldsets
+                               'please visit our Privacy and Cookies Policy.</p>'}
+        return fields
 
     class Meta:
         model = models.SponsorApplication

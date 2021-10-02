@@ -119,8 +119,9 @@ class BaseApplication(models.Model):
         abstract = True
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
-    invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True)
+    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True, on_delete=models.CASCADE)
+    invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True,
+                                   on_delete=models.SET_NULL)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -366,10 +367,12 @@ class HackerApplication(
 
     # META
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
-    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
+    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True,
+                                     on_delete=models.SET_NULL)
 
     reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
-    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
+    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True,
+                                       on_delete=models.SET_NULL)
 
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
@@ -489,7 +492,7 @@ class SponsorApplication(
     # When was the last status update
     status_update_date = models.DateTimeField(blank=True, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    user = models.ForeignKey(User, related_name='%(class)s_application')
+    user = models.ForeignKey(User, related_name='%(class)s_application', null=True, on_delete=models.SET_NULL)
     # Application status
     status = models.CharField(choices=STATUS,
                               default=APP_CONFIRMED,
@@ -527,7 +530,7 @@ class SponsorApplication(
 
 class DraftApplication(models.Model):
     content = models.CharField(max_length=7000)
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
 
     def save_dict(self, d):
         self.content = json.dumps(d)

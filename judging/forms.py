@@ -1,11 +1,19 @@
 from django import forms
 from django.conf import settings
+from django.forms import Form
 from django.template.defaultfilters import filesizeformat
-from form_utils.forms import BetterForm
+
+from app.mixins import BootstrapFormMixin
 
 
-class ProjectImportForm(BetterForm):
+class ProjectImportForm(BootstrapFormMixin, Form):
     projects_file = forms.FileField(required=True)
+
+    bootstrap_field_info = {
+        'Upload the devpost CSV file with all the projects': {
+            'fields': [{'name': 'projects_file', 'space': 12}, ],
+        },
+    }
 
     def __init__(self, *args, **kwargs):
         super(ProjectImportForm, self).__init__(*args, **kwargs)
@@ -30,8 +38,6 @@ class ProjectImportForm(BetterForm):
 
     class Meta:
         fields = ('projects_file',)
-        fieldsets = (('Upload the devpost CSV file with all the projects',
-                      {'fields': ('projects_file',)}),)
         labels = {
             'projects_file': 'Devpost project collection (CSV)'
         }
