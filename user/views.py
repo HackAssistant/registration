@@ -48,7 +48,7 @@ def login(request):
                 form.add_error(None, 'Incorrect username or password. Please try again.')
 
         if not request.client_req_is_valid:
-            form.add_error(None, 'Too many login attempts. Please try again later.')
+            form.add_error(None, 'Too many login attempts. Please try again in 5 minutes.')
     else:
         form = forms.LoginForm()
 
