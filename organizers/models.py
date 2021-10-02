@@ -17,8 +17,8 @@ VOTES = [(i, str(i)) for i in range(1, MAX_VOTES + 1)]
 
 
 class Vote(models.Model):
-    application = models.ForeignKey(HackerApplication)
-    user = models.ForeignKey(User)
+    application = models.ForeignKey(HackerApplication, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     tech = models.IntegerField(choices=VOTES, null=True)
     personal = models.IntegerField(choices=VOTES, null=True)
     calculated_vote = models.FloatField(null=True)
@@ -80,11 +80,11 @@ class Vote(models.Model):
 
 
 class ApplicationComment(models.Model):
-    hacker = models.ForeignKey(HackerApplication, null=True)
-    volunteer = models.ForeignKey(VolunteerApplication, null=True)
-    mentor = models.ForeignKey(MentorApplication, null=True)
-    sponsor = models.ForeignKey(SponsorApplication, null=True)
-    author = models.ForeignKey(User)
+    hacker = models.ForeignKey(HackerApplication, null=True, on_delete=models.CASCADE)
+    volunteer = models.ForeignKey(VolunteerApplication, null=True, on_delete=models.CASCADE)
+    mentor = models.ForeignKey(MentorApplication, null=True, on_delete=models.CASCADE)
+    sponsor = models.ForeignKey(SponsorApplication, null=True, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.CharField(max_length=500)
     created_at = models.DateTimeField(default=timezone.now)
 

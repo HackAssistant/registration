@@ -1,4 +1,4 @@
 [flake8]
 exclude = build,.git,.tox,./django/utils/six.py,./django/conf/app_template/*,./tests/.env,./env,./app/settings.py,./*/migrations,./app/hackathon_variables.py,./venv
-ignore = W601,F403,W504
+ignore = W601,F403,W504,F405
 max-line-length = 120
