@@ -10,6 +10,8 @@ from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from django_tables2.export import ExportMixin
+from django.utils import timezone
+from datetime import timedelta
 
 from app import slack
 from app.mixins import TabsViewMixin
@@ -282,6 +284,7 @@ class ReviewApplicationView(ApplicationDetailView):
         return models.HackerApplication.objects \
             .exclude(Q(vote__user_id=self.request.user.id) | Q(user_id=self.request.user.id)) \
             .filter(status=APP_PENDING) \
+            .filter(submission_date__lte=timezone.now()-timedelta(hours=2)) \
             .annotate(count=Count('vote__calculated_vote')) \
             .filter(count__lte=max_votes_to_app) \
             .order_by('count', 'submission_date') \
