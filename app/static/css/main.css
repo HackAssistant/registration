@@ -388,3 +388,8 @@ input:-webkit-autofill
 .c3-tooltip tr {
     color: #222222;
 }
+
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
+}

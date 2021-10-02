@@ -82,8 +82,8 @@ def get_stats(model):
         elif mentor:
             study_work_count['Worker'] += 1
         if sponsor or volunteer or mentor:
-                for day in a.get_attendance_display().split(', '):
-                    attendance_count[day] += 1
+            for day in a.get_attendance_display().split(', '):
+                attendance_count[day] += 1
 
         if not sponsor and a.status == APP_CONFIRMED:
             shirt_count_confirmed[a.get_tshirt_size_display()] += 1

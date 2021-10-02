@@ -39,7 +39,7 @@ def check_friend_emails(friend_emails, user_email):
     for email in emails:
         try:
             user = User.objects.get(email=email)
-        except:
+        except Exception:
             raise Exception('%s is not a registered hacker' % email)
 
         try:
@@ -78,8 +78,9 @@ class Reimbursement(models.Model):
                                           null=True, blank=True)
 
     # Meta
-    hacker = models.OneToOneField('user.User', primary_key=True)
-    reimbursed_by = models.ForeignKey(User, null=True, blank=True, related_name='reimbursements_made')
+    hacker = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+    reimbursed_by = models.ForeignKey(User, null=True, blank=True, related_name='reimbursements_made',
+                                      on_delete=models.SET_NULL)
     expiration_time = models.DateTimeField(blank=True, null=True)
     update_time = models.DateTimeField(default=timezone.now)
     creation_time = models.DateTimeField(default=timezone.now)

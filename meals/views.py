@@ -4,11 +4,11 @@ from datetime import datetime
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse
 from django.core.serializers.python import Serializer
 from django.http import Http404
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 from django_filters.views import FilterView
