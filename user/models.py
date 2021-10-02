@@ -311,3 +311,21 @@ class BlacklistUser(models.Model):
     date_of_ban = models.DateTimeField()
 
     objects = BlacklistUserManager()
+
+
+class LoginRequest(models.Model):
+    ip = models.CharField(max_length=30)
+    latestRequest = models.DateTimeField()
+    login_tries = models.IntegerField(default=1)
+
+    def get_latest_request(self):
+        return self.latestRequest
+
+    def set_latest_request(self, latest_request):
+        self.latestRequest = latest_request
+
+    def reset_tries(self):
+        self.login_tries = 1
+
+    def increment_tries(self):
+        self.login_tries += 1
