@@ -284,7 +284,7 @@ class ReviewApplicationView(ApplicationDetailView):
         return models.HackerApplication.objects \
             .exclude(Q(vote__user_id=self.request.user.id) | Q(user_id=self.request.user.id)) \
             .filter(status=APP_PENDING) \
-            .filter(submission_date__lte=timezone.now()-timedelta(hours=2)) \
+            .filter(submission_date__lte=timezone.now() - timedelta(hours=2)) \
             .annotate(count=Count('vote__calculated_vote')) \
             .filter(count__lte=max_votes_to_app) \
             .order_by('count', 'submission_date') \
