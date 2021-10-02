@@ -265,7 +265,7 @@ class User(AbstractBaseUser):
 
 class Token(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    user = models.OneToOneField(User, related_name='token', primary_key=True)
+    user = models.OneToOneField(User, related_name='token', primary_key=True, on_delete=models.CASCADE)
 
     def uuid_str(self):
         return str(self.uuid)

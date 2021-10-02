@@ -1,10 +1,10 @@
 from django import forms
 from django.conf import settings
+from django.forms import ModelForm
 from django.template.defaultfilters import filesizeformat
 from django.utils import timezone
-from form_utils.forms import BetterModelForm
 
-from app.mixins import OverwriteOnlyModelFormMixin
+from app.mixins import OverwriteOnlyModelFormMixin, BootstrapFormMixin
 from app.utils import validate_url
 from applications import models
 
@@ -24,7 +24,7 @@ def set_field_html_name(cls, new_name):
     cls.widget.render = _widget_render_wrapper
 
 
-class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     under_age = forms.TypedChoiceField(
@@ -87,7 +87,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', ]
 
 
-class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, ModelForm):
     first_timer = forms.TypedChoiceField(
         required=True,
         label='Will %s be your first hackathon?' % settings.HACKATHON_NAME,
@@ -107,7 +107,7 @@ class _HackerMentorVolunteerApplicationForm(OverwriteOnlyModelFormMixin, BetterM
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
 
-class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, ModelForm):
     github = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control',
                'placeholder': 'https://github.com/johnBiene'}))
@@ -161,6 +161,29 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         widget=forms.RadioSelect
     )
 
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'university', 'space': 12}, {'name': 'degree', 'space': 12},
+                       {'name': 'graduation_year', 'space': 12}, {'name': 'gender', 'space': 12},
+                       {'name': 'other_gender', 'space': 12}, {'name': 'phone_number', 'space': 12},
+                       {'name': 'tshirt_size', 'space': 12}, {'name': 'diet', 'space': 12},
+                       {'name': 'other_diet', 'space': 12}, {'name': 'under_age', 'space': 12},
+                       {'name': 'lennyface', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+        'Hackathons?': {
+            'fields': [{'name': 'description', 'space': 12}, {'name': 'first_timer', 'space': 12},
+                       {'name': 'projects', 'space': 12}, ]
+        },
+        'Show us what you\'ve built': {
+            'fields': [{'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
+                       {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
+                       {'name': 'resume', 'space': 12}, {'name': 'description', 'space': 12}, ],
+            'description': 'Some of our sponsors may use this information for recruitment purposes,'
+                           'so please include as much as you can.'
+        }
+    }
+
     def clean_reimb_amount(self):
         data = self.cleaned_data['reimb_amount']
         reimb = self.cleaned_data.get('reimb', False)
@@ -178,47 +201,33 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
         return reimb
 
-    def fieldsets(self):
-        # Fieldsets ordered and with description
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': ('university', 'degree', 'graduation_year', 'gender', 'other_gender',
-                         'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Hackathons?', {'fields': ('description', 'first_timer', 'projects'), }),
-            ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume'),
-              'description': 'Some of our sponsors may use this information for recruitment purposes,'
-                             'so please include as much as you can.'}),
-        ]
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
+
         deadline = getattr(settings, 'REIMBURSEMENT_DEADLINE', False)
         r_enabled = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
         if r_enabled and deadline and deadline <= timezone.now() and not self.instance.pk:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',),
-                                     'description': 'Reimbursement applications are now closed. '
-                                                    'Sorry for the inconvenience.',
-                                     }))
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, ],
+                                   'description': 'Reimbursement applications are now closed. '
+                                                  'Sorry for the inconvenience.',
+                                   }
         elif self.instance.pk and r_enabled:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',),
-                                     'description': 'If you applied for reimbursement, check out the Travel tab. '
-                                                    'Email us at %s for any change needed on reimbursements.' %
-                                                    settings.HACKATHON_CONTACT_EMAIL,
-                                     }))
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, ],
+                                   'description': 'If you applied for reimbursement, check out the Travel tab. '
+                                                  'Email us at %s for any change needed on reimbursements.' %
+                                                  settings.HACKATHON_CONTACT_EMAIL,
+                                   }
         elif not r_enabled:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin',)}), )
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, ], }
         else:
-            self._fieldsets.append(('Traveling',
-                                    {'fields': ('origin', 'reimb', 'reimb_amount'), }), )
+            fields['Traveling'] = {'fields': [{'name': 'origin', 'space': 12}, {'name': 'reimb', 'space': 12},
+                                              {'name': 'reimb_amount', 'space': 12}, ], }
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
-        return super(HackerApplicationForm, self).fieldsets
+            fields['Code of Conduct'] = {'fields': [{'name': 'code_conduct', 'space': 12}, ], }
+        return fields
 
     class Meta(_BaseApplicationForm.Meta):
         model = models.HackerApplication
@@ -276,6 +285,25 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         widget=forms.CheckboxSelectMultiple,
         choices=models.PREVIOUS_HACKS
     )
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'origin', 'space': 12}, {'name': 'university', 'space': 12},
+                       {'name': 'degree', 'space': 12}, {'name': 'graduation_year', 'space': 12},
+                       {'name': 'gender', 'space': 12}, {'name': 'other_gender', 'space': 12},
+                       {'name': 'phone_number', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
+                       {'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12},
+                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+        'Volunteer Skills': {
+            'fields': [{'name': 'first_timer', 'space': 12}, {'name': 'first_time_volunteer', 'space': 12},
+                       {'name': 'which_hack', 'space': 12}, {'name': 'attendance', 'space': 12},
+                       {'name': 'english_level', 'space': 12}, {'name': 'quality', 'space': 12},
+                       {'name': 'weakness', 'space': 12}, {'name': 'cool_skill', 'space': 12},
+                       {'name': 'fav_movie', 'space': 12}, {'name': 'friends', 'space': 12},
+                       ],
+        }
+    }
 
     def clean(self):
         data = self.cleaned_data['which_hack']
@@ -305,23 +333,13 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             raise forms.ValidationError("Reimbursement applications are now closed. Trying to hack us?")
         return reimb
 
-    def fieldsets(self):
-        # Fieldsets ordered and with description
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': ('origin', 'university', 'degree', 'graduation_year', 'gender', 'other_gender',
-                         'phone_number', 'tshirt_size', 'diet', 'other_diet',
-                         'under_age', 'lennyface'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Volunteer Skills', {'fields': ('first_timer', 'first_time_volunteer', 'which_hack', 'attendance',
-                                             'english_level', 'quality', 'weakness', 'cool_skill', 'fav_movie',
-                                             'friends')}),
-        ]
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
-        return super(VolunteerApplicationForm, self).fieldsets
+            fields['Code of Conduct'] = {'fields': [{'name': 'code_conduct', 'space': 12}, ], }
+        return fields
 
     class Meta(_BaseApplicationForm.Meta):
         model = models.VolunteerApplication
@@ -402,26 +420,38 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
 
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'origin', 'space': 12}, {'name': 'study_work', 'space': 12},
+                       {'name': 'company', 'space': 12}, {'name': 'university', 'space': 12},
+                       {'name': 'degree', 'space': 12}, {'name': 'graduation_year', 'space': 12},
+                       {'name': 'gender', 'space': 12}, {'name': 'other_gender', 'space': 12},
+                       {'name': 'phone_number', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
+                       {'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12},
+                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+        'Mentor Skills': {
+            'fields': [{'name': 'why_mentor', 'space': 12}, {'name': 'first_timer', 'space': 12},
+                       {'name': 'first_time_mentor', 'space': 12}, {'name': 'which_hack', 'space': 12},
+                       {'name': 'participated', 'space': 12}, {'name': 'attendance', 'space': 12},
+                       {'name': 'english_level', 'space': 12}, {'name': 'fluent', 'space': 12},
+                       {'name': 'experience', 'space': 12}, ],
+        },
+        'Show us what you\'ve built': {
+            'fields': [{'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
+                       {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
+                       {'name': 'resume', 'space': 12}, ]
+        }
+    }
+
     def mentor(self):
         return True
 
-    def fieldsets(self):
-        # Fieldsets ordered and with description
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': ('origin', 'study_work', 'company', 'university', 'degree', 'graduation_year', 'gender',
-                         'other_gender', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'under_age',
-                         'lennyface'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-            ('Mentor Skills', {'fields': ('why_mentor', 'first_timer', 'first_time_mentor', 'which_hack',
-                                          'participated', 'attendance', 'english_level', 'fluent', 'experience')}),
-            ('Show us what you\'ve built',
-             {'fields': ('github', 'devpost', 'linkedin', 'site', 'resume',)}),
-        ]
-        # Fields that we only need the first time the hacker fills the application
-        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+    def get_bootstrap_field_info(self):
+        fields = super().get_bootstrap_field_info()
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            fields['Code of Conduct'] = {'fields': [{'name': 'code_conduct', 'space': 12}, ], }
         return super(MentorApplicationForm, self).fieldsets
 
     def clean(self):
@@ -489,7 +519,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         }
 
 
-class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
+class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     code_conduct = forms.BooleanField(required=False,
@@ -497,6 +527,16 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
                                             '<a href="%s" target="_blank">%s Code of Conduct</a>' % (
                                                 getattr(settings, 'CODE_CONDUCT_LINK', '/code_conduct'),
                                                 settings.HACKATHON_NAME), )
+
+    bootstrap_field_info = {
+        'Personal Info': {
+            'fields': [{'name': 'name', 'space': 12}, {'name': 'phone_number', 'space': 12},
+                       {'name': 'tshirt_size', 'space': 12}, {'name': 'diet', 'space': 12},
+                       {'name': 'other_diet', 'space': 12}, {'name': 'position', 'space': 12},
+                       {'name': 'attendance', 'space': 12}, ],
+            'description': 'Hey there, before we begin we would like to know a little more about you.'
+        },
+    }
 
     def clean_code_conduct(self):
         cc = self.cleaned_data.get('code_conduct', False)
@@ -523,15 +563,9 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         return data
 
     def fieldsets(self):
-        self._fieldsets = [
-            ('Personal Info',
-             {'fields': ('name', 'phone_number', 'tshirt_size', 'diet', 'other_diet', 'position', 'attendance'),
-              'description': 'Hey there, before we begin we would like to know a little more about you.', }),
-        ]
-        # Fields that we only need the first time the hacker fills the application
-        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        fields = super().get_bootstrap_field_info()
         if not self.instance.pk:
-            self._fieldsets.append(('Code of Conduct', {'fields': ('code_conduct',)}))
+            fields['Code of Conduct'] = {'fields': [{'name': 'code_conduct', 'space': 12}, ], }
         return super(SponsorForm, self).fieldsets
 
     class Meta:

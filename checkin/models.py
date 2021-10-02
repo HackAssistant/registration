@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 from django.db import models
-# Create your models here.
 from django.utils import timezone
 
 from applications.models import APP_CONFIRMED, APP_ATTENDED
@@ -9,11 +8,11 @@ from user.models import User
 
 
 class CheckIn(models.Model):
-    hacker = models.OneToOneField('applications.HackerApplication', null=True)
-    mentor = models.OneToOneField('applications.MentorApplication', null=True)
-    volunteer = models.OneToOneField('applications.VolunteerApplication', null=True)
-    sponsor = models.OneToOneField('applications.SponsorApplication', null=True)
-    user = models.ForeignKey(User)
+    hacker = models.OneToOneField('applications.HackerApplication', null=True, on_delete=models.CASCADE)
+    mentor = models.OneToOneField('applications.MentorApplication', null=True, on_delete=models.CASCADE)
+    volunteer = models.OneToOneField('applications.VolunteerApplication', null=True, on_delete=models.CASCADE)
+    sponsor = models.OneToOneField('applications.SponsorApplication', null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     update_time = models.DateTimeField()
 
     @property

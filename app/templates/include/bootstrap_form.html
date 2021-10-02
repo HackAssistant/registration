@@ -1,0 +1,32 @@
+{% load bootstrap3 %}
+{% if messages %}
+    <div>
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %} alert-dismissible show" role="alert">
+                {{ message|capfirst }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% for title, zone in form.get_fields.items %}
+    <fieldset>
+        <h3 class="heading-primary">{{ title }}</h3>
+        {% if zone.description %}
+            <p>{{ zone.description }}</p>
+        {% endif %}
+        <div class="row">
+        {% for field in zone.fields %}
+            {% if field.new_row %}
+        </div>
+        <div class="row">
+            {% endif %}
+                <div class="col-{{ field.space }}">
+                    {% bootstrap_field field.field %}
+                </div>
+        {% endfor %}
+        </div>
+    </fieldset>
+{% endfor %}
