@@ -30,8 +30,6 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
-    'jet',
-    'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'form_utils',
     'bootstrap3',
     'django_tables2',
     'organizers',
@@ -212,10 +209,6 @@ else:
     else:
         EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-# Jet configs
-JET_SIDE_MENU_COMPACT = True
-JET_INDEX_DASHBOARD = 'app.jet_dashboard.CustomIndexDashboard'
-
 # Set up custom auth
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'account_login'
@@ -275,3 +268,5 @@ APPLICATION_EXPIRATION_TYPES = {
     'M': MENTOR_EXPIRES,        # Mentor can expire
     'V': VOLUNTEER_EXPIRES,     # Volunteer can expire
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

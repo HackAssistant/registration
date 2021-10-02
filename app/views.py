@@ -16,9 +16,9 @@ from reimbursement.models import Reimbursement
 
 
 def root_view(request):
-    if not request.user.is_authenticated() and not utils.is_app_closed():
+    if not request.user.is_authenticated and not utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_signup'))
-    if not request.user.is_authenticated() and utils.is_app_closed():
+    if not request.user.is_authenticated and utils.is_app_closed():
         return HttpResponseRedirect(reverse('account_login'))
     if not request.user.has_usable_password():
         return HttpResponseRedirect(reverse('set_password'))

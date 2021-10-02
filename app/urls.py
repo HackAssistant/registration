@@ -9,8 +9,8 @@ from app import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/', include('user.urls')),
-    url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    # url(r'^jet/', include('jet.urls', 'jet')),  # Django JET URLS
+    # url(r'^jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     url(r'^applications/', include('organizers.urls')),
     url(r'^', include('applications.urls')),
     url(r'^$', views.root_view, name='root'),
