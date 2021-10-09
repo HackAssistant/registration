@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% block title %}Login | {% endblock %}
+{% block navbar %}
+  {% with cas='True' %}
+    {{ block.super }}
+  {% endwith %}
+{% endblock %}
+{% block content %}
+      <h1 style="text-align: center">Sign in</h1>
+      {% for message in messages %}
+          <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %} alert-dismissible show" role="alert">
+              {{ message|capfirst }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+      {% endfor %}
+      <form class="form-signin" method="post">
+          {% csrf_token %}
+          {% include "cas_server/bs3/form.html" %}
+          <button class="btn btn-primary btn-block btn-lg" type="submit">{% trans "Connect to the service" %}</button>
+      </form>
+{% endblock %}

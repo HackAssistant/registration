@@ -11,7 +11,7 @@ urlpatterns = [
         name='account_signup'),
     url(r'^register/sponsor/$', views.SponsorRegister.as_view(), name='sponsor_signup'),
     url(r'^signup/(?P<u_type>[a-z_\-]{1,10})/$', views.signup, name='account_signup_typed'),
-    url(r'^logout/$', views.logout, name='account_logout'),
+    url(r'^logout/$', views.Logout.as_view(), name='account_logout'),
     url(r'^activate/(?P<uid>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,40})/$',
         views.activate, name='activate'),
     url(r'^password/$', views.set_password, name='set_password'),

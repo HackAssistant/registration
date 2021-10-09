@@ -1,6 +1,7 @@
 import random
 import string
 
+from cas_server.views import LogoutMixin
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,9 @@ from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views import View
 from django.views.generic import TemplateView
+from cas_server.models import User as User_cas
 
 from app.utils import reverse
 from applications import models as a_models
@@ -34,6 +37,10 @@ def login(request):
             user = auth.authenticate(email=email, password=password)
             if user and user.is_active:
                 auth.login(request, user)
+                if settings.CAS_SERVER:
+                    request.session['authenticated'] = True
+                    request.session['username'] = email
+                    User_cas(username=email, session_key=request.session.session_key).save()
                 resp = HttpResponseRedirect(next_)
                 c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', getattr(settings, 'HACKATHON_DOMAIN', None))
                 c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
@@ -82,19 +89,22 @@ def signup(request, u_type):
     return render(request, 'signup.html', {'form': form})
 
 
-def logout(request):
-    auth.logout(request)
-    messages.success(request, 'Successfully logged out!')
-    resp = HttpResponseRedirect(reverse('account_login'))
-    c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
-    c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
-    if c_domain and c_key:
-        try:
-            resp.delete_cookie(c_key, domain=c_domain)
-        except Exception:
-            # We don't care if this is not deleted, we are being cool here!
-            pass
-    return resp
+class Logout(LogoutMixin, View):
+    def get(self, request):
+        auth.logout(request)
+        if settings.CAS_SERVER:
+            self.logout(all_session=True)
+        messages.success(request, 'Successfully logged out!')
+        resp = HttpResponseRedirect(reverse('account_login'))
+        c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
+        c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
+        if c_domain and c_key:
+            try:
+                resp.delete_cookie(c_key, domain=c_domain)
+            except Exception:
+                # We don't care if this is not deleted, we are being cool here!
+                pass
+        return resp
 
 
 def activate(request, uid, token):

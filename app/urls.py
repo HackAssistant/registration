@@ -40,3 +40,6 @@ if settings.DEBUG:
 
 if settings.DISCORD_HACKATHON:
     urlpatterns.append(url(r'^discord/', include('discord.urls')))
+
+if settings.CAS_SERVER:
+    url(r'^cas/', include('cas_server.urls', namespace="cas_server")),

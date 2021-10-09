@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'offer',
     'rest_framework',
     'rest_framework.authtoken',
+    'cas_server'
 ]
 
 if BAGGAGE_ENABLED:
@@ -302,3 +303,10 @@ GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY', '')
 GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+CAS_SERVER = os.environ.get('CAS_SERVER', False)
+CAS_LOGIN_TEMPLATE = 'login_cas.html'
+CAS_LOGGED_TEMPLATE = 'login_cas_done.html'
+CAS_WARN_TEMPLATE = 'login_cas_done.html'
+CAS_AUTH_CLASS = 'user.auth.MyHackUPCAuthUser'
+SESSION_COOKIE_AGE = 86400

@@ -97,7 +97,7 @@
                     {% if not h_discord %}
                       {% include 'include/judging_tab.html' %}
                     {% endif %}
-                    {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated and cas != 'True' %}
                         {% include 'include/admin_tab.html' %}
                         {% include 'include/application_tab.html' %}
                         {% if request.user.email_verified and request.user.has_usable_password %}
@@ -130,14 +130,14 @@
                                         href="{% url 'app_stats' %}">Stats</a></li>
                             {% endif %}
                         {% endif %}
-                    {% else %}
+                    {% elif cas != 'True' %}
                       {% include 'include/judging_tab.html' %}
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if request.user.is_authenticated %}
                         {% include 'include/user_tab.html' %}
-                    {% else %}
+                    {% elif cas != 'True' %}
                         {% include 'include/sign_in_up_tab.html' %}
                     {% endif %}
                 </ul>
