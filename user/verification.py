@@ -67,7 +67,7 @@ def check_client_ip(view_func):
             if login_request.login_tries < 4:
                 request.client_req_is_valid = True
             else:
-                request.client_req_is_valid = True
+                request.client_req_is_valid = False
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view
