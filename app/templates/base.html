@@ -137,7 +137,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% if request.user.is_authenticated %}
                         {% include 'include/user_tab.html' %}
-                    {% else %}
+                    {% elif cas != 'True' %}
                         {% include 'include/sign_in_up_tab.html' %}
                     {% endif %}
                 </ul>

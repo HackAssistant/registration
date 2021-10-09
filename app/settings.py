@@ -22,11 +22,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays&')
+SECRET_KEY = os.environ.get('SECRET', ')6+vf9(1tihg@u8!+(0abk+y*#$3r$(-d=g5qhm@1&lo4pays')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('PROD_MODE', "false").lower() == "false"
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['casassarnau', 'localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'offer',
     'rest_framework',
     'rest_framework.authtoken',
+    'cas_server'
 ]
 
 if BAGGAGE_ENABLED:
@@ -302,3 +303,9 @@ GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY', '')
 GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+CAS_LOGIN_TEMPLATE = 'login_cas.html'
+CAS_LOGGED_TEMPLATE = 'login_cas_done.html'
+CAS_WARN_TEMPLATE = 'login_cas_done.html'
+CAS_AUTH_CLASS = 'user.auth.MyHackUPCAuthUser'
+SESSION_COOKIE_AGE = 86400

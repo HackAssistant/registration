@@ -7,6 +7,7 @@ from django.views.generic import RedirectView
 from app import views
 
 urlpatterns = [
+    url(r'^cas/', include('cas_server.urls', namespace="cas_server")),
     url(r'^admin/', admin.site.urls),
     url(r'^user/', include('user.urls')),
     url(r'^applications/', include('organizers.urls')),
