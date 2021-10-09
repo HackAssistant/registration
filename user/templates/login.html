@@ -11,13 +11,15 @@
     <form action="" method="post" class="form " id="loginForm">
         {% csrf_token %}
         {% bootstrap_form_errors form %}
-        {% if form.email %}
-            {% bootstrap_field form.email %}
-        {% else %}
-            {% bootstrap_field form.username label='Email' %}
-        {% endif %}
-        {% bootstrap_field form.password label='Password' %}
-
+        {% for field in form %}
+            {% if field.name == 'username' %}
+                {% bootstrap_field field label='Email' %}
+            {% elif field.name == 'password' %}
+                {% bootstrap_field field label='Password' %}
+            {% else %}
+              {% bootstrap_field field %}
+            {% endif %}
+        {% endfor %}
         <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
 
         <button class="btn btn-primary btn-block" type="submit">{% trans "Log In" %}</button>
