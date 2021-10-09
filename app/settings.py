@@ -304,6 +304,7 @@ GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+CAS_SERVER = os.environ.get('CAS_SERVER', False)
 CAS_LOGIN_TEMPLATE = 'login_cas.html'
 CAS_LOGGED_TEMPLATE = 'login_cas_done.html'
 CAS_WARN_TEMPLATE = 'login_cas_done.html'

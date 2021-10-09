@@ -7,7 +7,6 @@ from django.views.generic import RedirectView
 from app import views
 
 urlpatterns = [
-    url(r'^cas/', include('cas_server.urls', namespace="cas_server")),
     url(r'^admin/', admin.site.urls),
     url(r'^user/', include('user.urls')),
     url(r'^applications/', include('organizers.urls')),
@@ -41,3 +40,6 @@ if settings.DEBUG:
 
 if settings.DISCORD_HACKATHON:
     urlpatterns.append(url(r'^discord/', include('discord.urls')))
+
+if settings.CAS_SERVER:
+    url(r'^cas/', include('cas_server.urls', namespace="cas_server")),

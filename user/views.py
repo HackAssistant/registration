@@ -37,9 +37,10 @@ def login(request):
             user = auth.authenticate(email=email, password=password)
             if user and user.is_active:
                 auth.login(request, user)
-                request.session['authenticated'] = True
-                request.session['username'] = email
-                User_cas(username=email, session_key=request.session.session_key).save()
+                if settings.CAS_SERVER:
+                    request.session['authenticated'] = True
+                    request.session['username'] = email
+                    User_cas(username=email, session_key=request.session.session_key).save()
                 resp = HttpResponseRedirect(next_)
                 c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', getattr(settings, 'HACKATHON_DOMAIN', None))
                 c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
@@ -91,7 +92,8 @@ def signup(request, u_type):
 class Logout(LogoutMixin, View):
     def get(self, request):
         auth.logout(request)
-        self.logout(all_session=True)
+        if settings.CAS_SERVER:
+            self.logout(all_session=True)
         messages.success(request, 'Successfully logged out!')
         resp = HttpResponseRedirect(reverse('account_login'))
         c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
