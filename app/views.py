@@ -71,7 +71,7 @@ def terms_and_conditions(request):
 def protectedMedia(request, file_):
     path, file_name = os.path.split(file_)
     downloadable_path = None
-    if path == "resumes":
+    if path.startswith("resumes"):
         try:
             app = HackerApplication.objects.get(resume=file_)
         except HackerApplication.DoesNotExist:
