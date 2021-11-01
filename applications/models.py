@@ -132,6 +132,9 @@ class BaseApplication(models.Model):
                               default=APP_PENDING,
                               max_length=2)
 
+    # Hacker will assist face-to-face or online
+    online = models.BooleanField(default=False)
+
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=23, choices=GENDERS, default=NO_ANSWER)

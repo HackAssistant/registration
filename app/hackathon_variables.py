@@ -122,6 +122,7 @@ MENTOR_EXPIRES = False
 VOLUNTEER_EXPIRES = False
 
 DISCORD_HACKATHON = True
+HYBRID_HACKATHON = False
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
 

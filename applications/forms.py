@@ -45,6 +45,15 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BetterModelForm):
         widget=forms.RadioSelect
     )
 
+    online = forms.TypedChoiceField(
+        required=True,
+        label='Will you attend the event live or online?',
+        initial=True,
+        coerce=lambda x: x == 'True',
+        choices=((False, 'Live'), (True, 'Online')),
+        widget=forms.RadioSelect
+    )
+
     terms_and_conditions = forms.BooleanField(
         required=False,
         label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
@@ -246,9 +255,12 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         # Fieldsets ordered and with description
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
         hardware = getattr(settings, 'HARDWARE_ENABLED', False)
+        hybrid = getattr(settings, 'HYBRID_HACKATHON', False)
         personal_info_fields = ['university', 'degree', 'graduation_year', 'gender', 'other_gender',
                                 'phone_number', 'under_age', 'lennyface']
         polices_fields = ['terms_and_conditions', 'cvs_edition', 'email_subscribe']
+        if hybrid:
+            personal_info_fields.append('online')
         if not discord:
             personal_info_fields.extend(['tshirt_size', 'diet', 'other_diet'])
             polices_fields.append('diet_notice')
