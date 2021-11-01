@@ -1,7 +1,7 @@
+import six
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.urls import reverse
-from django.utils import six
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 

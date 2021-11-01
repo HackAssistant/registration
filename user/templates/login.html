@@ -8,10 +8,18 @@
 
     <h1>Sign in</h1>
 
-    <form action="" method="post" class="form ">
+    <form action="" method="post" class="form " id="loginForm">
         {% csrf_token %}
-        {% bootstrap_form form %}
-
+        {% bootstrap_form_errors form %}
+        {% for field in form %}
+            {% if field.name == 'username' %}
+                {% bootstrap_field field label='Email' %}
+            {% elif field.name == 'password' %}
+                {% bootstrap_field field label='Password' %}
+            {% else %}
+              {% bootstrap_field field %}
+            {% endif %}
+        {% endfor %}
         <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
 
         <button class="btn btn-primary btn-block" type="submit">{% trans "Log In" %}</button>

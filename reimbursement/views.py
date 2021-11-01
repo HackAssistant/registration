@@ -34,7 +34,7 @@ class ReimbursementHacker(IsHackerMixin, TabsView):
     def post(self, request, *args, **kwargs):
         try:
             form = forms.ReceiptSubmissionReceipt(request.POST, request.FILES, instance=request.user.reimbursement)
-        except:
+        except Exception:
             form = forms.ReceiptSubmissionReceipt(request.POST, request.FILES)
         if form.is_valid():
             reimb = form.save(commit=False)

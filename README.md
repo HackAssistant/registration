@@ -22,6 +22,7 @@
 - (Optional) Separate applications from dubious hackers to manually contact them 🧐
 - (Optional) Automated slack invites on confirm #️⃣
 - (Optional) MyMLH sign up 📥
+- CAS server for other platforms
 
 
 
@@ -46,7 +47,7 @@ _Coming soon_
 
 - **SG_KEY**: SendGrid API Key. Mandatory if you want to use SendGrid as your email backend. You can manage them [here](https://app.sendgrid.com/settings/api_keys).  Note that if you don't add it the system will write all emails in the filesystem for preview.
 You can replace the email backend easily. See more [here](https://djangopackages.org/grids/g/email/).
-- **PROD_MODE**(optional): Disables Django debug mode. 
+- **PROD_MODE**(optional): Disables Django debug mode.
 - **SECRET**(optional): Sets web application secret. You can generate a random secret with python running: `os.urandom(24)`
 - **DATABASE_URL**(optional): URL to connect to the database. If not sets, defaults to django default SQLite database. See schema for different databases [here](https://github.com/kennethreitz/dj-database-url#url-schema).
 - **DATABASE_SECURE**(optional): Whether or not to use SSL to connect to the database. Defaults to `true`.
@@ -60,7 +61,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_BOT_DIRECTOR1**(optional): User ID of one of the directors.
 - **SL_BOT_DIRECTOR2**(optional): User ID of the other director.
 - **MLH_CLIENT_SECRET**(optional): Enables MyMLH as a sign up option. Format is `client_id@client_secret` (See "Set up MyMLH" below)
-
+- **CAS_SERVER**(optional): Enables login for other platforms
 
 
 ## Server
@@ -69,6 +70,12 @@ You can replace the email backend easily. See more [here](https://djangopackages
 
 - Set up (see above)
 - `python manage.py runserver`
+- Set cron for cas service:
+```
+0   0  * * * cd /home/user/project_folder/ && manage.py clearsessions
+*/5 *  * * * cd /home/user/project_folder/ && manage.py cas_clean_tickets
+5   0  * * * cd /home/user/project_folder/ && manage.py cas_clean_sessions
+```
 - Sit back, relax and enjoy. That's it!
 
 ### Heroku deploy
@@ -144,13 +151,13 @@ Other SQL engines may be used, we recommend PostgreSQL for it's robustness. To u
 
 ##### Automatic Dropbox backup
 
-Hackers data is really important. To ensure that you don't lose any data we encourage you to set up automatic backups. One option that is free and reliable is using the PostgresSQLDropboxBackup script. 
+Hackers data is really important. To ensure that you don't lose any data we encourage you to set up automatic backups. One option that is free and reliable is using the PostgresSQLDropboxBackup script.
 
 Find the script and usage instructions [here](https://github.com/casassg/PostgreSQL-Dropbox-Backup)
 
 #### Set up Dropbox storage for uploaded files
 
-This will need to be used for Heroku or some Docker deployments. File uploads sometimes don't work properly on containerized systems. 
+This will need to be used for Heroku or some Docker deployments. File uploads sometimes don't work properly on containerized systems.
 
 1. Create a [new Dropbox app](https://www.dropbox.com/developers/apps)
 2. Generate Access token [here](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/)
@@ -163,7 +170,7 @@ MyMLH is a centralized login system used by MLH.  It makes it easier for hackers
 This integration allows hackers to have part of their application completed using their information from MLH.
 
 As of the moment, MyMLH can only be used to sign up. This decision is due to the fact that MyMLH can have accounts with emails not verified. This can be a security concern as someone could create an account with someone else's email and it would totally invalidate our verification email system.
-In that direction the approach taken is to extract fields and use them for the application during the sign up process. 
+In that direction the approach taken is to extract fields and use them for the application during the sign up process.
 
 1. Create a [new MyMLH app](https://my.mlh.io/oauth/applications/new).
 2. Add `https://DOMAIN//user/callback/mlh/` as a Redirect URI. Replace `DOMAIN` for the domain used to deploy your system. Ex: `http://registration.gerard.space/user/callback/mlh/`.
@@ -190,11 +197,11 @@ server {
     location /static/ {
         alias /home/user/project_folder/staticfiles/;
     }
-    
+
     location /files/ {
         alias /home/user/project_folder/files/;
     }
-    
+
     location / {
         include proxy_params;
         proxy_pass http://unix:/home/user/project_folder/backend.sock;
@@ -236,7 +243,7 @@ server {
 
 ### Important SQL queries
 
-Here are several queries that may be useful during the hackathon application process. 
+Here are several queries that may be useful during the hackathon application process.
 
 1. `source ./env/bin/activate`
 2. `python manage.py dbshell`
@@ -251,7 +258,7 @@ Emails from users that have registered but have not completed the application.
 SELECT u.email
 FROM user_user u
 WHERE NOT is_director AND NOT is_volunteer AND NOT is_organizer
-AND u.id NOT IN 
+AND u.id NOT IN
 (SELECT a.user_id FROM applications_application a);
 ```
 
@@ -278,13 +285,13 @@ You can use this for your own hackathon. How?
 
 #### Update emails:
 
-You can update emails related to 
+You can update emails related to
 - Applications (application invite, event ticket, last reminder) at [applications/templates/mails/](applications/templates/mails/)
 - Reimbursements (reimbursement email, reject receipt) at [reimbursement/templates/mails/](reimbursement/templates/mails/)
 - User registration (email verification, password reset) at [user/templates/mails/](user/templates/mails/)
 
 #### Update hackathon variables
-Check all available variables at [app/hackathon_variables.py.template](app/hackathon_variables.py.template). 
+Check all available variables at [app/hackathon_variables.py.template](app/hackathon_variables.py.template).
 You can set the ones that you prefer at [app/hackathon_variables.py](app/hackathon_variables.py)
 
 #### Update registration form

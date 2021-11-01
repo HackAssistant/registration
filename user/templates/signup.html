@@ -23,8 +23,10 @@
             {% if not is_sposnor_form %}
 	              <p class="team-info team-info-margin"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to register separately.</p>
             {% endif %}
-            <script src='https://www.google.com/recaptcha/api.js'></script>
-            <div class="g-recaptcha" data-sitekey="{{ captcha_site_key }}"></div>
+            {% if captcha_site_key %}
+                <script src='https://www.google.com/recaptcha/api.js'></script>
+                <div class="g-recaptcha" data-sitekey="{{ captcha_site_key }}"></div>
+            {% endif %}
             <button class="btn btn-primary btn-block" type="submit">{% trans "Sign Up" %}</button>
             {%  if h_oauth_providers.mlh and h_oauth_providers.mlh.id and h_oauth_providers.mlh.auth_url %}
 

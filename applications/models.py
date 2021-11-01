@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import json
+import os
 import uuid as uuid
 from datetime import datetime
 
@@ -113,13 +114,24 @@ DEFAULT_YEAR = datetime.now().year
 ENGLISH_LEVEL = [(i, str(i)) for i in range(1, 5 + 1)]
 
 
+def resume_path_hackers(instance, filename):
+    (_, ext) = os.path.splitext(filename)
+    return 'resumes_hackers/{}_{}{}'.format(instance.user.name, instance.uuid, ext)
+
+
+def resume_path_mentors(instance, filename):
+    (_, ext) = os.path.splitext(filename)
+    return 'resumes_mentors/{}_{}{}'.format(instance.user.name, instance.uuid, ext)
+
+
 class BaseApplication(models.Model):
     class Meta:
         abstract = True
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True)
-    invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True)
+    user = models.OneToOneField(User, related_name='%(class)s_application', primary_key=True, on_delete=models.CASCADE)
+    invited_by = models.ForeignKey(User, related_name='%(class)s_invited_applications', blank=True, null=True,
+                                   on_delete=models.SET_NULL)
 
     # When was the application submitted
     submission_date = models.DateTimeField(default=timezone.now)
@@ -157,7 +169,7 @@ class BaseApplication(models.Model):
         super().__init__(*args, **kwargs)
         try:
             dict = args[0]['dict']
-        except:
+        except Exception:
             dict = None
         if dict is not None:
             for key in dict:
@@ -335,9 +347,6 @@ class _HackerMentorApplication(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     site = models.URLField(blank=True, null=True)
 
-    # Giv me a resume here!
-    resume = models.FileField(upload_to='resumes', null=True, blank=True, validators=[validate_file_extension])
-
 
 class _VolunteerMentorApplication(models.Model):
     class Meta:
@@ -364,10 +373,12 @@ class HackerApplication(
 
     # META
     contacted = models.BooleanField(default=False)  # If a dubious application has been contacted yet
-    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True)
+    contacted_by = models.ForeignKey(User, related_name='contacted_by', blank=True, null=True,
+                                     on_delete=models.SET_NULL)
 
     reviewed = models.BooleanField(default=False)  # If a blacklisted application has been reviewed yet
-    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True)
+    blacklisted_by = models.ForeignKey(User, related_name='blacklisted_by', blank=True, null=True,
+                                       on_delete=models.SET_NULL)
 
     # Why do you want to come to X?
     description = models.TextField(max_length=500)
@@ -381,6 +392,13 @@ class HackerApplication(
     hardware = models.CharField(max_length=300, null=True, blank=True)
 
     cvs_edition = models.BooleanField(default=False)
+
+    resume = models.FileField(
+        upload_to=resume_path_hackers,
+        null=True,
+        blank=True,
+        validators=[validate_file_extension],
+    )
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -459,6 +477,12 @@ class MentorApplication(
     university = models.CharField(max_length=300, null=True, blank=True)
     degree = models.CharField(max_length=300, null=True, blank=True)
     participated = models.TextField(max_length=500, blank=True, null=True)
+    resume = models.FileField(
+        upload_to=resume_path_mentors,
+        null=True,
+        blank=True,
+        validators=[validate_file_extension],
+    )
 
 
 class VolunteerApplication(
@@ -488,7 +512,7 @@ class SponsorApplication(
     # When was the last status update
     status_update_date = models.DateTimeField(blank=True, null=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True)
-    user = models.ForeignKey(User, related_name='%(class)s_application')
+    user = models.ForeignKey(User, related_name='%(class)s_application', null=True, on_delete=models.SET_NULL)
     # Application status
     status = models.CharField(choices=STATUS,
                               default=APP_CONFIRMED,
@@ -526,7 +550,7 @@ class SponsorApplication(
 
 class DraftApplication(models.Model):
     content = models.CharField(max_length=7000)
-    user = models.OneToOneField(User, primary_key=True)
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
 
     def save_dict(self, d):
         self.content = json.dumps(d)

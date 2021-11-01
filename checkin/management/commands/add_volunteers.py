@@ -44,6 +44,6 @@ class Command(BaseCommand):
 
                     print('User {0} successfully created.'.format(email))
 
-                except:
+                except Exception:
                     print('There was a problem creating the user: {0}.  Error: {1}.'
                           .format(email, sys.exc_info()[1]))

@@ -30,8 +30,6 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
-    'jet',
-    'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'form_utils',
     'bootstrap3',
     'django_tables2',
     'organizers',
@@ -55,6 +52,7 @@ INSTALLED_APPS = [
     'offer',
     'rest_framework',
     'rest_framework.authtoken',
+    'cas_server'
 ]
 
 if BAGGAGE_ENABLED:
@@ -223,14 +221,10 @@ else:
     else:
         EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-# Jet configs
-JET_SIDE_MENU_COMPACT = True
-JET_INDEX_DASHBOARD = 'app.jet_dashboard.CustomIndexDashboard'
-
 # Set up custom auth
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'account_login'
-PASSWORD_RESET_TIMEOUT_DAYS = 1
+PASSWORD_RESET_TIMEOUT = 86400  # 1 day
 
 BOOTSTRAP3 = {
     # Don't normally want placeholders.
@@ -307,3 +301,12 @@ if IP_SERVER:
 
 GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('GOOGLE_RECAPTCHA_SECRET_KEY', '')
 GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+CAS_SERVER = os.environ.get('CAS_SERVER', 'False') == 'True'
+CAS_LOGIN_TEMPLATE = 'login_cas.html'
+CAS_LOGGED_TEMPLATE = 'login_cas_done.html'
+CAS_WARN_TEMPLATE = 'login_cas_done.html'
+CAS_AUTH_CLASS = 'user.auth.MyHackUPCAuthUser'
+SESSION_COOKIE_AGE = 86400

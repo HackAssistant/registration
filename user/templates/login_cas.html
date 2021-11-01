@@ -1,0 +1,16 @@
+{% extends 'login.html' %}
+{% block navbar %}
+  {% with cas='True' %}
+    {{ block.super }}
+  {% endwith %}
+{% endblock %}
+{% block extra_scripts %}
+  <script>
+    $('document').ready(function(){
+      $('input#id_warn').parents('.form-group').hide()
+      $('input#id_username')[0].placeholder = '';
+      $('input#id_password')[0].placeholder = '';
+
+    });
+  </script>
+{% endblock %}

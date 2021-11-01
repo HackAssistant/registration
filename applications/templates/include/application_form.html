@@ -1,6 +1,4 @@
-{% load bootstrap3 %}
 {% load static %}
-{% load form_utils %}
 <style>
     #id_under_age > div, #id_tshirt_size > div, #id_graduation_year > div, #id_team > div, #id_first_timer > div,
     #id_scholarship > div, #id_reimb > div, #id_first_time_volunteer > div, #id_which_hack > div, #id_attendance > div,
@@ -17,19 +15,7 @@
 </style>
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
-    {% bootstrap_form_errors form %}
-    {% for fieldset in form.fieldsets %}
-        <fieldset>
-            <h3>{{ fieldset.name }}<small style="color: darkgray; font-style: italic;" class="pull-right saved-string"></small><br>
-                {% if fieldset.description %}
-                    <small>{{ fieldset.description }}</small>
-                {% endif %}
-            </h3>
-            {% for field in fieldset %}
-                {% bootstrap_field field %}
-            {% endfor %}
-        </fieldset>
-    {% endfor %}
+    {% include 'include/bootstrap_form.html' %}
     {% if is_hacker %}
     <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
     {% endif %}

@@ -4,7 +4,7 @@ from user.models import User
 
 
 class DiscordUser(models.Model):
-    user = models.OneToOneField(to=User, unique=True)
+    user = models.OneToOneField(to=User, unique=True, on_delete=models.CASCADE)
     discord_id = models.CharField(max_length=50, primary_key=True)
     discord_username = models.CharField(max_length=100, null=True)
     checked_in = models.BooleanField(default=False)
