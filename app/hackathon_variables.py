@@ -40,7 +40,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2021, 5, 14, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2022, 5, 14, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = 'Registration is at Friday on Discord'
 
@@ -57,8 +57,8 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
 # Baggage configuration
-BAGGAGE_ENABLED = False
-BAGGAGE_PICTURE = False
+BAGGAGE_ENABLED = True
+BAGGAGE_PICTURE = True
 
 # Reimbursement configuration
 REIMBURSEMENT_ENABLED = False
@@ -123,6 +123,7 @@ VOLUNTEER_EXPIRES = False
 
 DISCORD_HACKATHON = False
 HYBRID_HACKATHON = True
+N_MAX_LIVE_HACKERS = 100
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
 

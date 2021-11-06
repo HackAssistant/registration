@@ -18,7 +18,7 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED
+from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED, APP_INVITED, APP_LAST_REMIDER, APP_CONFIRMED
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
@@ -53,9 +53,9 @@ def add_comment(application, user, text):
 
 
 def hacker_tabs(user):
-    t = [('Application', reverse('app_list'), False), ('Review', reverse('review'),
-                                                       'new' if models.HackerApplication.objects.exclude(
-                                                           vote__user_id=user.id).filter(status=APP_PENDING) else '')]
+    new_app = models.HackerApplication.objects.exclude(vote__user_id=user.id)\
+        .filter(status=APP_PENDING, submission_date__lte=timezone.now() - timedelta(hours=2))
+    t = [('Application', reverse('app_list'), False), ('Review', reverse('review'), 'new' if new_app else '')]
     if user.has_dubious_access and getattr(settings, 'DUBIOUS_ENABLED', False):
         t.append(('Dubious', reverse('dubious'),
                   'new' if models.HackerApplication.objects.filter(status=APP_DUBIOUS,
@@ -102,6 +102,10 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
     def get_context_data(self, **kwargs):
         context = super(ApplicationsListView, self).get_context_data(**kwargs)
         context['otherApplication'] = False
+        list_email = ""
+        for u in context.get('object_list').values_list('user__email', flat=True):
+            list_email += "%s, " % u
+        context['emails'] = list_email
         return context
 
 
@@ -111,6 +115,14 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
     filterset_class = InviteFilter
     table_pagination = {'per_page': 100}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        n_live_hackers = models.HackerApplication.objects.filter(status__in=[APP_INVITED, APP_LAST_REMIDER,
+                                                                             APP_CONFIRMED], online=False).count()
+        context.update({'n_live_hackers': n_live_hackers,
+                        'n_live_per_hackers': n_live_hackers*100/getattr(settings, 'N_MAX_LIVE_HACKERS', 0)})
+        return context
+
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
 
@@ -119,13 +131,15 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
+        option = request.POST.get('hybrid', 'Live')
         apps = models.HackerApplication.objects.filter(pk__in=ids).all()
         mails = []
         errors = 0
         for app in apps:
             try:
+                option = app.change_online(option)
                 app.invite(request.user)
-                m = emails.create_invite_email(app, request)
+                m = emails.create_invite_email(app, request, hybrid_option=option)
                 mails.append(m)
             except ValidationError:
                 errors += 1
@@ -411,7 +425,6 @@ class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, F
     def get_context_data(self, **kwargs):
         context = super(_OtherApplicationsListView, self).get_context_data(**kwargs)
         context['otherApplication'] = True
-        context['emailCopy'] = True
         list_email = ""
         for u in context.get('object_list').values_list('user__email', flat=True):
             list_email += "%s, " % u

@@ -99,6 +99,8 @@ def get_substitutions_templates():
             'h_blacklist_enabled': getattr(settings, 'BLACKLIST_ENABLED', True),
             'h_discord': getattr(settings, 'DISCORD_HACKATHON', False),
             'captcha_site_key': getattr(settings, 'GOOGLE_RECAPTCHA_SITE_KEY', ''),
+            'h_hybrid': getattr(settings, 'HYBRID_HACKATHON', False),
+            'n_live_max_hackers': getattr(settings, 'N_MAX_LIVE_HACKERS', 0),
             }
 
 

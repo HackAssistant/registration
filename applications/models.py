@@ -144,9 +144,6 @@ class BaseApplication(models.Model):
                               default=APP_PENDING,
                               max_length=2)
 
-    # Hacker will assist face-to-face or online
-    online = models.BooleanField(default=False)
-
     # ABOUT YOU
     # Population analysis, optional
     gender = models.CharField(max_length=23, choices=GENDERS, default=NO_ANSWER)
@@ -347,6 +344,9 @@ class _HackerMentorApplication(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     site = models.URLField(blank=True, null=True)
 
+    # Hacker will assist face-to-face or online
+    online = models.BooleanField(default=False)
+
 
 class _VolunteerMentorApplication(models.Model):
     class Meta:
@@ -399,6 +399,15 @@ class HackerApplication(
         blank=True,
         validators=[validate_file_extension],
     )
+
+    def change_online(self, option):
+        if not self.online and option == 'Online':
+            self.online = True
+            self.save()
+            return 'Changed'
+        if self.online and option == 'Live':
+            raise ValidationError('Application not marked to be live')
+        return option
 
     @classmethod
     def annotate_vote(cls, qs):

@@ -572,8 +572,11 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
     def get_bootstrap_field_info(self):
         fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
+        hybrid = getattr(settings, 'HYBRID_HACKATHON', False)
         personal_info_fields = fields['Personal Info']['fields']
         polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'email_subscribe', 'space': 12}]
+        if hybrid:
+            personal_info_fields.append({'name': 'online', 'space': 12})
         if not discord:
             personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
             polices_fields.append({'name': 'diet_notice', 'space': 12})
