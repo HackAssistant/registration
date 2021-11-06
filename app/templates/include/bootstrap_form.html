@@ -15,7 +15,7 @@
     <fieldset>
         <h3 class="heading-primary">{{ title }}</h3>
         {% if zone.description %}
-            <p>{{ zone.description }}</p>
+            <p>{{ zone.description|safe }}</p>
         {% endif %}
         <div class="row">
         {% for field in zone.fields %}
