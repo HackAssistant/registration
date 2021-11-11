@@ -226,7 +226,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         initial=False,
-        widget=forms.RadioSelect
+        widget=forms.RadioSelect()
     )
 
     cvs_edition = forms.BooleanField(

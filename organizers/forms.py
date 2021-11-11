@@ -5,7 +5,7 @@ from app.mixins import BootstrapFormMixin
 
 
 class InviteFilterForm(BootstrapFormMixin, forms.Form):
-    bootstrap_field_info = {'': {'fields': [{'name': 'search', 'space': 8}, {'name': 'first_timer', 'space': 2}]}}
+    bootstrap_field_info = {'': {'fields': [{'name': 'search', 'space': 6}, {'name': 'first_timer', 'space': 2}]}}
 
     def get_bootstrap_field_info(self):
         fields = super().get_bootstrap_field_info()
