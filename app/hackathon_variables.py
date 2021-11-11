@@ -90,7 +90,7 @@ SLACK = {
 
 # Hardware configuration
 # Hardware request time length (in minutes)
-HARDWARE_ENABLED = False
+HARDWARE_ENABLED = True
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
@@ -123,7 +123,7 @@ VOLUNTEER_EXPIRES = False
 
 DISCORD_HACKATHON = False
 HYBRID_HACKATHON = True
-N_MAX_LIVE_HACKERS = 100
+N_MAX_LIVE_HACKERS = 350
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
 

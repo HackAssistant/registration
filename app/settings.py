@@ -282,7 +282,7 @@ MAX_UPLOAD_SIZE = 5242880
 MAX_VOTES = 5
 
 # Max number of votes that can have one application
-MAX_VOTES_TO_APP = 10
+MAX_VOTES_TO_APP = 30
 
 APPLICATION_EXPIRATION_TYPES = {
     'H': True,                  # Hacker allways expire, do not change this
