@@ -120,7 +120,7 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
         n_live_hackers = models.HackerApplication.objects.filter(status__in=[APP_INVITED, APP_LAST_REMIDER,
                                                                              APP_CONFIRMED], online=False).count()
         context.update({'n_live_hackers': n_live_hackers,
-                        'n_live_per_hackers': n_live_hackers*100/getattr(settings, 'N_MAX_LIVE_HACKERS', 0)})
+                        'n_live_per_hackers': n_live_hackers * 100 / getattr(settings, 'N_MAX_LIVE_HACKERS', 0)})
         return context
 
     def get_current_tabs(self):
