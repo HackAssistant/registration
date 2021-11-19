@@ -57,11 +57,11 @@ REGEX_HACKATHON_ORGANIZER_EMAIL = '^.*@hackupc\.com$'
 HACKATHON_DEV_EMAILS = ['devs@hackupc.com', ]
 
 # Baggage configuration
-BAGGAGE_ENABLED = False
-BAGGAGE_PICTURE = False
+BAGGAGE_ENABLED = True
+BAGGAGE_PICTURE = True
 
 # Reimbursement configuration
-REIMBURSEMENT_ENABLED = False
+REIMBURSEMENT_ENABLED = True
 DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRY_DAYS = 5
@@ -90,7 +90,7 @@ SLACK = {
 
 # Hardware configuration
 # Hardware request time length (in minutes)
-HARDWARE_ENABLED = False
+HARDWARE_ENABLED = True
 #Hardware request time length (in minutes)
 HARDWARE_REQUEST_TIME = 15
 
@@ -121,7 +121,9 @@ SUPPORTED_RESUME_EXTENSIONS = ['.pdf']
 MENTOR_EXPIRES = False
 VOLUNTEER_EXPIRES = False
 
-DISCORD_HACKATHON = True
+DISCORD_HACKATHON = False
+HYBRID_HACKATHON = True
+N_MAX_LIVE_HACKERS = 350
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
 

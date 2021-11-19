@@ -1,3 +1,5 @@
+import copy
+
 from django.forms import model_to_dict
 
 
@@ -49,7 +51,7 @@ class BootstrapFormMixin:
     read_only = []
 
     def get_bootstrap_field_info(self):
-        return self.bootstrap_field_info
+        return copy.deepcopy(self.bootstrap_field_info)
 
     def set_read_only(self):
         for field in self.fields.values():
@@ -62,7 +64,6 @@ class BootstrapFormMixin:
                 return False
         return True
 
-    @property
     def get_fields(self):
         result = self.get_bootstrap_field_info()
         for list_fields in result.values():

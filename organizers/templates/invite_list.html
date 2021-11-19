@@ -5,12 +5,26 @@
 
 {% block table_title %}Invite {% if teams %}teams{% else %}applications{% endif %}{% endblock %}
 
+{% block extra_panel %}
+  {% if h_hybrid %}
+    <div style="margin-top: 20px">
+        <p>Live hackers invited or confirmed out of {{ n_live_max_hackers }}</p>
+        <div class="progress">
+            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ n_live_hackers }}" aria-valuemin="0" aria-valuemax="{{ n_live_max_hackers }}" style="width:{{ n_live_per_hackers }}%">
+              {{ n_live_hackers|default:0 }}
+            </div>
+        </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
 
 {% block table_footer %}
     <div class="panel-footer">
-        <button name="invite" class="btn btn-success btn-block"
-                value="invite">Invite
-        </button>
+        <button name="hybrid" class="btn btn-success btn-block" value="Live">Invite Live</button>
+        {% if h_hybrid %}
+            <button name="hybrid" class="btn btn-success btn-block" value="Online">Invite Online</button>
+        {% endif %}
         {% if teams %}
             <a href="{% url 'invite_list' %}" class="btn btn-info btn-block">View applications</a>
         {% elif h_team_enabled %}

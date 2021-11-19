@@ -18,7 +18,11 @@
             }
         </style>
         <form action="" method="get" class="form text-left filter">
-            {% bootstrap_form filter.form %}
+            {% if filter.form.bootstrap_field_info %}
+                {% include 'include/bootstrap_form.html' with form=filter.form %}
+            {% else %}
+                {% bootstrap_form filter.form %}
+            {% endif %}
             <button type="submit" class="btn btn-info">Filter</button>
         </form>
     {% endif %}

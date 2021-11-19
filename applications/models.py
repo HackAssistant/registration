@@ -108,17 +108,20 @@ HACK_NAME = getattr(hackathon_variables, 'HACKATHON_NAME', "HackAssistant")
 EXTRA_NAME = [' 2016 Fall', ' 2016 Winter', ' 2017 Fall', ' 2017 Winter', ' 2018', ' 2019']
 PREVIOUS_HACKS = [(i, HACK_NAME + EXTRA_NAME[i]) for i in range(0, len(EXTRA_NAME))]
 
-YEARS = [(int(size), size) for size in ('2020 2021 2022 2023 2024 2025 2026'.split(' '))]
+YEARS = [(int(size), size) for size in ('2022 2023 2024 2025 2026 2027'.split(' '))]
 DEFAULT_YEAR = datetime.now().year
 
 ENGLISH_LEVEL = [(i, str(i)) for i in range(1, 5 + 1)]
 
 
-def resume_path(dir_suffix):
-    def _resume_path(instance, filename):
-        (_, ext) = os.path.splitext(filename)
-        return 'resumes_{}/{}_{}{}'.format(dir_suffix, instance.user.name, instance.uuid, ext)
-    return _resume_path
+def resume_path_hackers(instance, filename):
+    (_, ext) = os.path.splitext(filename)
+    return 'resumes_hackers/{}_{}{}'.format(instance.user.name, instance.uuid, ext)
+
+
+def resume_path_mentors(instance, filename):
+    (_, ext) = os.path.splitext(filename)
+    return 'resumes_mentors/{}_{}{}'.format(instance.user.name, instance.uuid, ext)
 
 
 class BaseApplication(models.Model):
@@ -341,6 +344,9 @@ class _HackerMentorApplication(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     site = models.URLField(blank=True, null=True)
 
+    # Hacker will assist face-to-face or online
+    online = models.BooleanField(default=False)
+
 
 class _VolunteerMentorApplication(models.Model):
     class Meta:
@@ -388,11 +394,20 @@ class HackerApplication(
     cvs_edition = models.BooleanField(default=False)
 
     resume = models.FileField(
-        upload_to=resume_path("hackers"),
+        upload_to=resume_path_hackers,
         null=True,
         blank=True,
         validators=[validate_file_extension],
     )
+
+    def change_online(self, option):
+        if not self.online and option == 'Online':
+            self.online = True
+            self.save()
+            return 'Changed'
+        if self.online and option == 'Live':
+            raise ValidationError('Application not marked to be live')
+        return option
 
     @classmethod
     def annotate_vote(cls, qs):
@@ -472,7 +487,7 @@ class MentorApplication(
     degree = models.CharField(max_length=300, null=True, blank=True)
     participated = models.TextField(max_length=500, blank=True, null=True)
     resume = models.FileField(
-        upload_to=resume_path("mentors"),
+        upload_to=resume_path_mentors,
         null=True,
         blank=True,
         validators=[validate_file_extension],

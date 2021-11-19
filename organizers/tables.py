@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from applications.models import HackerApplication, STATUS, VolunteerApplication, MentorApplication, SponsorApplication
+from organizers.forms import InviteFilterForm
 from user.models import User
 
 
@@ -19,7 +20,8 @@ class ApplicationFilter(django_filters.FilterSet):
 
     class Meta:
         model = HackerApplication
-        fields = ['search', 'status']
+        fields = ['search', 'status', 'online'] if getattr(settings, 'HYBRID_HACKATHON', False) else \
+            ['search', 'status']
 
 
 class DubiousApplicationFilter(django_filters.FilterSet):
@@ -51,6 +53,17 @@ class BlacklistApplicationFilter(django_filters.FilterSet):
         fields = ['search']
 
 
+def get_fields_invite_filter():
+    fields = ['search', 'first_timer']
+    reimbursement = getattr(settings, 'REIMBURSEMENT_ENABLED', False)
+    hybrid = getattr(settings, 'HYBRID_HACKATHON', False)
+    if reimbursement:
+        fields.append('reimb')
+    if hybrid:
+        fields.append('online')
+    return fields
+
+
 class InviteFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
@@ -60,8 +73,16 @@ class InviteFilter(django_filters.FilterSet):
 
     class Meta:
         model = HackerApplication
-        fields = ['search', 'first_timer', 'reimb'] if getattr(settings, 'REIMBURSEMENT_ENABLED', False) else \
-            ['search', 'first_timer']
+        form = InviteFilterForm
+        fields = get_fields_invite_filter()
+
+
+def get_application_list_fields():
+    fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin']
+    if getattr(settings, 'HYBRID_HACKATHON', False):
+        fields.append('online')
+    fields.extend(['votes', 'detail'])
+    return fields
 
 
 class ApplicationsListTable(tables.Table):
@@ -75,7 +96,7 @@ class ApplicationsListTable(tables.Table):
         model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['user.name', 'user.email', 'vote_avg', 'university', 'origin', 'votes', 'detail']
+        fields = get_application_list_fields()
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 
@@ -109,6 +130,16 @@ class BlacklistListTable(tables.Table):
         order_by = 'status_update_date'
 
 
+def get_admin_application_list_fields():
+    fields = ['selected', 'user.name', 'vote_avg']
+    if getattr(settings, 'HYBRID_HACKATHON', False):
+        fields.append('online')
+    if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
+        fields.append('reimb_amount')
+    fields.extend(['university', 'origin'])
+    return fields
+
+
 class AdminApplicationsListTable(tables.Table):
     selected = tables.CheckBoxColumn(accessor="pk", verbose_name='Select')
     counter = tables.TemplateColumn('{{ row_counter|add:1 }}', verbose_name='Position')
@@ -121,9 +152,7 @@ class AdminApplicationsListTable(tables.Table):
         model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'user.name', 'vote_avg', 'reimb_amount', 'university', 'origin'] \
-            if getattr(settings, 'REIMBURSEMENT_ENABLED', False) else \
-            ['selected', 'user.name', 'vote_avg', 'university', 'origin']
+        fields = get_admin_application_list_fields()
         empty_text = 'No applications available'
         order_by = '-vote_avg'
 

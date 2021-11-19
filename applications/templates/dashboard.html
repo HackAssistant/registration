@@ -101,11 +101,15 @@
 
         {% elif application.is_invited or application.is_last_reminder %}
             <div class="col-md-12">
-                <div class="alert alert-success ">Congrats! You have been officially invited to {{ h_name }}! Please
+                <div class="alert alert-success ">Congrats! You have been officially invited to {{ h_name }}{% if h_hybrid %} <strong>{{ application.online|yesno:'Online,Live' }}</strong>{% endif %}! Please
                     confirm
                     your attendance as soon as possible.
                 </div>
                 {% if application.user.is_hacker %}
+                    {% if h_hybrid %}
+                        <p>You have been invited to participate <strong>{{ application.online|yesno:'Online,Live' }}</strong>. If you applied to go lively and you are invited online, perhaps our live applications are already full.<br>
+                        If you applied live but want to go participate online, send a message to contact as soon as possible. Thank you.</p>
+                    {% endif %}
                     <p>Respond to this invitation by clicking on the "Confirm" button below. If you cannot make it,
                         please let us know by clicking "Cancel". We want as many people as possible to experience the
                         hackathon!
@@ -131,7 +135,7 @@
                 {% endif %}
 
                 <div class="col-md-5  no-padding"><a href="{% url 'confirm_app' application.uuid_str %}"
-                                                    class="btn  btn-success btn-block">Confirm</a>
+                                                    class="btn  btn-success btn-block">Confirm{% if h_hybrid %} <strong>{{ application.online|yesno:'Online,Live' }}</strong>{% endif %}</a>
                 </div>
                 <div class="col-md-offset-2 col-md-5 no-padding"><a href="{% url 'cancel_app' application.uuid_str %}"
                                                     class="btn  btn-danger btn-block">Cancel</a></div>
