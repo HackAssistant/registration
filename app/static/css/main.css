@@ -248,7 +248,7 @@ img {
     padding: 0.5em 1em;
     text-align: center;
     transition: bottom 1s;
-    background-color:#3f5182;
+    background-color:#8a69d4;
     z-index:1031; /*footer was set to 1030*/
     box-shadow: 0px 15px 15px 15px black;
     color:white;
