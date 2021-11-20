@@ -21,6 +21,9 @@ if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
 if getattr(settings, 'BAGGAGE_ENABLED', False):
     from baggage.models import Bag
 
+if getattr(settings, 'HARDWARE_ENABLED', False):
+    from hardware.models import ItemType
+
 
 def root_view(request):
     if not request.user.is_authenticated and not utils.is_app_closed():
@@ -95,6 +98,10 @@ def protectedMedia(request, file_):
     elif path == "offer/logo":
         offer = get_object_or_404(Offer, logo=file_)
         downloadable_path = offer.logo.path
+    elif path == "hw_images":
+        if getattr(settings, 'HARDWARE_ENABLED', False):
+            hardware = get_object_or_404(ItemType, image=file_)
+            downloadable_path = hardware.image.path
     if downloadable_path:
         (_, doc_extension) = file_name.rsplit('.', 1)
         if doc_extension == 'pdf':
@@ -102,7 +109,6 @@ def protectedMedia(request, file_):
                 response = HttpResponse(doc.read(), content_type='application/pdf')
                 response['Content-Disposition'] = 'inline;filename=%s' % quote(file_name)
                 return response
-            doc.closed
         else:
             response = StreamingHttpResponse(open(downloadable_path, 'rb'))
             response['Content-Type'] = ''
