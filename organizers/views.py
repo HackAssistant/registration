@@ -644,7 +644,7 @@ class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
         file = request.GET.get('files', False)
         if file:
             s = BytesIO()
-            accepted_resumes = models.AcceptedResume.objects.filter(accepted=True).select_related('application')
+            accepted_resumes = AcceptedResume.objects.filter(accepted=True).select_related('application')
             with ZipFile(s, "w") as zip_file:
                 for accepted_resume in accepted_resumes:
                     file_path = accepted_resume.application.resume.path
