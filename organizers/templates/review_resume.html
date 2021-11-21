@@ -1,0 +1,30 @@
+{% extends "base_tabs.html" %}
+{% load static %}
+{% block head_title %}{% if vote %}Review applications{% else %}{{ app.user.name }}'s application{% endif %}
+{% endblock %}
+{% block panel %}
+    {% if app %}
+        <div>
+            <h2>Review resume</h2>
+            <div class="container-iframe">
+               <iframe class="responsive-iframe" src="{{ app.resume.url }}"></iframe>
+            </div>
+            <form method="post" style="margin-top: 20px">
+                {% csrf_token %}
+                <input name="app_id" value="{{ app.pk }}" type="hidden">
+                <div class="col-lg-6"><button class="btn btn-block btn-success" type="submit" name="accepted" value="true">Accept resume</button></div>
+                <div class="col-lg-6"><button class="btn btn-block btn-danger" type="submit" name="accepted" value="false">Reject resume</button></div>
+            </form>
+        </div>
+
+
+
+
+    {% else %}
+        <h4 class="text-center">No resumes left to be voted.<br> Good job! Enjoy the
+            sun outside!</h4>
+        <a class="btn btn-block btn-success" href="?files=true">Download resumes</a>
+
+    {% endif %}
+
+{% endblock %}

@@ -310,3 +310,5 @@ CAS_LOGGED_TEMPLATE = 'login_cas_done.html'
 CAS_WARN_TEMPLATE = 'login_cas_done.html'
 CAS_AUTH_CLASS = 'user.auth.MyHackUPCAuthUser'
 SESSION_COOKIE_AGE = 86400
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'

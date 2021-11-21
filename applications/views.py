@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -21,9 +21,10 @@ from app.slack import SlackInvitationException
 from app.utils import reverse, hacker_tabs
 from app.views import TabsView
 from applications import models, emails, forms
+from applications.models import AcceptedResume
 from organizers.tables import SponsorFilter, SponsorListTableWithNoAction
 from organizers.views import _OtherApplicationsListView
-from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin, DashboardMixin
+from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin, DashboardMixin, HaveSponsorPermissionMixin
 from user import models as userModels
 
 VIEW_APPLICATION_TYPE = {
