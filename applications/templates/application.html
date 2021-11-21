@@ -7,18 +7,19 @@
 
 
     {% if h_app_timeleft and application.can_be_edit %}
-        <div class="alert alert-info">
+        <div class="alert alert-info" style="margin-left: 15px; margin-right: 15px">
             <p> Time until applications close: <strong
                     >{% include 'include/deadline_countdown.html' %}</strong></p>
         </div>
     {% endif %}
-
-    {% if application.can_be_edit %}
-        <p>It is still possible to modify your application.</p>
-    {% else %}
-        <p>Your application has been reviewed already. Editing has been disabled to make sure all reviewers get the
-            same data. If you would like to change something important, please email us at {{ h_contact_email|urlize }}.</p>
-    {% endif %}
+    <div style="padding-left: 15px; padding-right: 15px">
+      {% if application.can_be_edit %}
+          <p>It is still possible to modify your application.</p>
+      {% else %}
+          <p>Your application has been reviewed already. Editing has been disabled to make sure all reviewers get the
+              same data. If you would like to change something important, please email us at {{ h_contact_email|urlize }}.</p>
+      {% endif %}
+    </div>
     {% include 'include/application_form.html' %}
 
 {% endblock %}

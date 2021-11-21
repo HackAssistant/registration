@@ -37,6 +37,11 @@
                 {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                 {% if app.resume %}
                     {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
+                    {% if vote %}
+                        <div class="container-iframe" style="margin-top: 10px">
+                           <iframe class="responsive-iframe" src="{{ app.resume.url }}"></iframe>
+                        </div>
+                    {% endif %}
                 {% endif %}
                 <hr>
                 <dt>
