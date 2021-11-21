@@ -1,10 +1,15 @@
 # Create your views here.
+import os
+from io import BytesIO
+from zipfile import ZipFile
+
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Count, Avg, F, Q
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django_filters.views import FilterView
@@ -18,7 +23,8 @@ from app.mixins import TabsViewMixin
 from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
-from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED, APP_INVITED, APP_LAST_REMIDER, APP_CONFIRMED
+from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED, APP_INVITED, APP_LAST_REMIDER, \
+    APP_CONFIRMED, AcceptedResume
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
@@ -69,6 +75,9 @@ def hacker_tabs(user):
         t.extend([('Reimbursements', reverse('reimbursement_list'), False),
                   ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
                       status=RE_PEND_APPROVAL).count() else False), ])
+    if user.has_sponsor_access:
+        new_resume = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True).first()
+        t.append(('Review resume', reverse('review_resume'), 'new' if new_resume else ''))
     return t
 
 
@@ -611,3 +620,38 @@ class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, Temp
         context['app'] = application
         context['comments'] = models.ApplicationComment.objects.filter(mentor=application)
         return context
+
+
+class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
+    template_name = 'review_resume.html'
+
+    def get_current_tabs(self):
+        return hacker_tabs(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        app = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True).first()
+        context.update({'app': app})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        app_id = request.POST.get('app_id')
+        accepted = request.POST.get('accepted')
+        AcceptedResume(application_id=app_id, accepted=(accepted == 'true')).save()
+        return redirect(reverse('review_resume'))
+
+    def get(self, request, *args, **kwargs):
+        file = request.GET.get('files', False)
+        if file:
+            s = BytesIO()
+            accepted_resumes = AcceptedResume.objects.filter(accepted=True).select_related('application')
+            with ZipFile(s, "w") as zip_file:
+                for accepted_resume in accepted_resumes:
+                    file_path = accepted_resume.application.resume.path
+                    _, fname = os.path.split(file_path)
+                    zip_path = os.path.join("resumes", fname)
+                    zip_file.write(file_path, zip_path)
+            resp = HttpResponse(s.getvalue(), content_type="application/x-zip-compressed")
+            resp['Content-Disposition'] = 'attachment; filename=resumes.zip'
+            return resp
+        return super().get(request, *args, **kwargs)

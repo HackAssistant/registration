@@ -497,7 +497,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin': 'Where are you joining us from?',
             'which_hack': 'Which %s editions have you volunteered in?' % settings.HACKATHON_NAME,
-            'attendance': 'Will you be attending HackUPC for the whole event?',
+            'attendance': 'Which days will you attend to HackUPC?',
             'english_level': 'How much confident are you about talking in English?',
             'quality': 'Tell us a quality of yourself :)',
             'weakness': 'Now a weakness :(',

@@ -576,3 +576,8 @@ class DraftApplication(models.Model):
         d.user_id = instance.user_id
         d.save_dict(dict)
         d.save()
+
+
+class AcceptedResume(models.Model):
+    application = models.OneToOneField(HackerApplication, primary_key=True, on_delete=models.CASCADE)
+    accepted = models.BooleanField()
