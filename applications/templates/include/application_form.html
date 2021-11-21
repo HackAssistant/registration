@@ -16,10 +16,12 @@
 <form class="signup " enctype="multipart/form-data" id="signup_form" method="post" action="">
     {% csrf_token %}
     {% include 'include/bootstrap_form.html' %}
-    {% if is_hacker %}
-    <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
-    {% endif %}
-    <small><span style="color: red">*</span>Indicates required field.</small>
+    <div style="padding-left: 15px; padding-right: 15px">
+      {% if is_hacker %}
+      <p class="team-info"><i class="fa fa-exclamation-triangle"></i> <strong>Remember!</strong> Your team members still have to apply separately.</p>
+      {% endif %}
+      <small><span style="color: red">*</span>Indicates required field.</small>
+    </div>
 
     {% if not application or application.can_be_edit %}
         <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}

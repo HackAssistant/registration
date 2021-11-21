@@ -13,10 +13,13 @@
 {% endif %}
 {% for title, zone in form.get_fields.items %}
     <fieldset>
-        <h3 class="heading-primary">{{ title }}</h3>
-        {% if zone.description %}
+        <div style="padding-left: 15px; padding-right: 15px">
+          <h3 class="heading-primary">{{ title }}</h3>
+          {% if zone.description %}
             <p>{{ zone.description|safe }}</p>
-        {% endif %}
+          {% endif %}
+        </div>
+
         <div class="row">
         {% for field in zone.fields %}
             {% if field.new_row %}
