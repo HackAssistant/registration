@@ -437,8 +437,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
         personal_info_fields = fields['Personal Info']['fields']
-        polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'cvs_edition', 'space': 12},
-                          {'name': 'email_subscribe', 'space': 12}]
+        polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'email_subscribe', 'space': 12}]
         if not discord:
             personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
             polices_fields.append({'name': 'diet_notice', 'space': 12})
