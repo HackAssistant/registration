@@ -46,15 +46,6 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
         widget=forms.RadioSelect
     )
 
-    online = forms.TypedChoiceField(
-        required=True,
-        label='Will you attend the event live or online?',
-        initial=True,
-        coerce=lambda x: x == 'True',
-        choices=((False, 'Live'), (True, 'Online')),
-        widget=forms.RadioSelect
-    )
-
     terms_and_conditions = forms.BooleanField(
         required=False,
         label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
@@ -166,6 +157,15 @@ class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, ModelForm):
                'placeholder': 'https://www.linkedin.com/in/john_biene'}))
     site = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'https://biene.space'}))
+
+    online = forms.TypedChoiceField(
+        required=True,
+        label='Will you attend the event live or online?',
+        initial=True,
+        coerce=lambda x: x == 'True',
+        choices=((False, 'Live'), (True, 'Online')),
+        widget=forms.RadioSelect
+    )
 
     def clean_resume(self):
         resume = self.cleaned_data['resume']
@@ -333,7 +333,6 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
         help_texts = {
             'gender': 'This is for demographic purposes. You can skip this question if you want.',
-            'graduation_year': 'What year have you graduated on or when will you graduate',
             'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
@@ -463,8 +462,6 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         model = models.VolunteerApplication
         help_texts = {
             'gender': 'This is for demographic purposes.',
-            'graduation_year': 'What year have you graduated on or when will '
-                               'you graduate',
             'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
@@ -624,8 +621,6 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
         help_texts = {
             'gender': 'This is for demographic purposes.',
-            'graduation_year': 'What year have you graduated on or when will '
-                               'you graduate',
             'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
