@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.min.js"></script>
+{% endblock %}
+{% block body_plain %}
+    <div id="content-pdf" style="width: 100%; text-align: center">
+      <div id="pdf-div" style="width: 100%; text-align:center;">
+
+      </div>
+      <button class="btn btn-default btn-block" style="width: 90%; display: inline" onclick="close_tab();">Close tab</button>
+    </div>
+
+{% endblock %}
+{% block extra_scripts %}
+    <script>
+        pdfjsLib.getDocument('{{ app.resume.url }}').promise.then(doc => {
+            let pdf_div = $('#pdf-div');
+            let content = $('#content-pdf');
+            let size = pdf_div.width() * 0.9;
+            let footer_size = $('.footer').height() + 50;
+            let navbar_size = $('.navbar').height() + 50;
+            content.css('margin-top', navbar_size);
+            content.css('margin-bottom', footer_size);
+
+            for (let i = 0; i < doc._pdfInfo.numPages; i++) {
+                doc.getPage(i + 1).then(function(page) {
+                    pdf_div.append('<canvas id="page-' + i + '" style="display: inline; width: 90%"></canvas>');
+                    var canvas = document.getElementById('page-' + i);
+                    var scale = page.getViewport({ scale: 1.0, }).width;
+                    var viewport = page.getViewport({ scale: size / scale, });
+                    var outputScale = window.devicePixelRatio || 1;
+
+                    var context = canvas.getContext('2d');
+                    canvas.width = Math.floor(viewport.width * outputScale);
+                    canvas.height = Math.floor(viewport.height * outputScale);
+                    canvas.style.width = Math.floor(viewport.width) + "px";
+                    canvas.style.height =  Math.floor(viewport.height) + "px";
+
+                    var transform = outputScale !== 1
+                      ? [outputScale, 0, 0, outputScale, 0, 0]
+                      : null;
+
+                    var renderContext = {
+                      canvasContext: context,
+                      transform: transform,
+                      viewport: viewport
+                    };
+                    page.render(renderContext);
+                });
+
+            }
+        });
+        function close_tab() {
+          console.log('hola');
+          window.close();
+        }
+    </script>
+{% endblock %}

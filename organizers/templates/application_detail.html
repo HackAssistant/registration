@@ -36,7 +36,9 @@
                 {% endif %}
                 {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                 {% if app.resume %}
-                    {% include 'include/field.html' with desc='Resume' value='<a href="'|add:app.resume.url|add:'" target="_blank">'|add:app.resume.name|add:"</a>"|safe %}
+                    <dt>Resume</dt>
+                    <dd><a href="{% url 'app_resume' app.uuid %}" target="_blank">View resume</a></dd>
+
                 {% endif %}
                 <hr>
                 <dt>
