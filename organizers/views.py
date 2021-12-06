@@ -655,3 +655,22 @@ class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
             resp['Content-Disposition'] = 'attachment; filename=resumes.zip'
             return resp
         return super().get(request, *args, **kwargs)
+
+
+class VisualizeResume(IsOrganizerMixin, TemplateView):
+    template_name = 'pdf_view.html'
+
+    def get_application(self, kwargs):
+        application_id = kwargs.get('id', None)
+        if not application_id:
+            raise Http404
+        application = models.HackerApplication.objects.filter(uuid=application_id).first()
+        if not application:
+            raise Http404
+        return application
+
+    def get_context_data(self, **kwargs):
+        context = super(VisualizeResume, self).get_context_data(**kwargs)
+        application = self.get_application(kwargs)
+        context['app'] = application
+        return context

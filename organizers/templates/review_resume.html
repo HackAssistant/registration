@@ -7,7 +7,7 @@
         <div>
             <h2>Review resume</h2>
             <div class="container-iframe">
-               <iframe class="responsive-iframe" src="{{ app.resume.url }}"></iframe>
+               <iframe id="iframe" class="responsive-iframe" src="{{ app.resume.url }}"></iframe>
             </div>
             <form method="post" style="margin-top: 20px">
                 {% csrf_token %}
@@ -27,4 +27,29 @@
 
     {% endif %}
 
+{% endblock %}
+{% block extra_scripts %}
+  <script>
+      $(document).ready(function () {
+          if (detectMob()) {
+            $('#iframe').remove()
+            $('.container-iframe').append('<a href="{% url 'app_resume' app.uuid %}" target="_blank" class="btn btn-block btn-default">Open Resume</a>')
+          }
+      });
+      function detectMob() {
+          const toMatch = [
+              /Android/i,
+              /webOS/i,
+              /iPhone/i,
+              /iPad/i,
+              /iPod/i,
+              /BlackBerry/i,
+              /Windows Phone/i
+          ];
+
+          return toMatch.some((toMatchItem) => {
+              return navigator.userAgent.match(toMatchItem);
+          });
+      }
+  </script>
 {% endblock %}
