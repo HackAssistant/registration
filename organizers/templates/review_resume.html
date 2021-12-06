@@ -1,7 +1,6 @@
 {% extends "base_tabs.html" %}
 {% load static %}
-{% block head_title %}{% if vote %}Review applications{% else %}{{ app.user.name }}'s application{% endif %}
-{% endblock %}
+{% block head_title %}Review resume{% endblock %}
 {% block panel %}
     {% if app %}
         <div>

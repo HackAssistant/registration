@@ -37,7 +37,7 @@
                 {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                 {% if app.resume %}
                     <dt>Resume</dt>
-                    <dd><a href="{% url 'app_resume' app.uuid %}" target="_blank">View resume</a></dd>
+                    <dd><a href="{% url 'app_resume' app.uuid %}" target="_blank">{{ app.resume.name }}</a></dd>
 
                 {% endif %}
                 <hr>
@@ -54,8 +54,8 @@
                 </dt>
                 <dd></dd>
                 {% include 'include/field.html' with desc='First time' value=app.first_timer|yesno:'Yes,No,Maybe' %}
-                {% include 'include/field.html' with desc='Why excited?' showlength="true" value=app.description|safe|urlize %}
-                {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects|safe|urlize %}
+                {% include 'include/field.html' with desc='Why excited?' showlength="true" value=app.description %}
+                {% include 'include/field.html' with desc='Projects' showlength="true" value=app.projects %}
                 {% include 'include/field.html' with desc='Team mates' value=app.teammates %}
                 {% include 'include/field.html' with desc='Excited about' value=app.excited %}
                 {% if request.user.has_dubious_access  and app.is_dubious %}

@@ -2,9 +2,11 @@
 {% block head %}
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.min.js"></script>
 {% endblock %}
+{% block head_title %}{{ app.user.name }} resume{% endblock %}
 {% block body_plain %}
     <div id="content-pdf" style="width: 100%; text-align: center">
-      <div id="pdf-div" style="width: 100%; text-align:center;">
+      <button class="btn btn-default btn-block" style="width: 90%; display: inline" onclick="download()">Download</button>
+      <div id="pdf-div" style="width: 100%; text-align:center; margin-top: 5px">
 
       </div>
       <button class="btn btn-default btn-block" style="width: 90%; display: inline" onclick="close_tab();">Close tab</button>
@@ -51,8 +53,10 @@
             }
         });
         function close_tab() {
-          console.log('hola');
           window.close();
+        }
+        function download() {
+          window.location.href = '{{ app.resume.url }}';
         }
     </script>
 {% endblock %}
