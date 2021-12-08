@@ -27,7 +27,8 @@ def set_field_html_name(cls, new_name):
 
 def get_exclude_fields():
     discord = getattr(settings, 'DISCORD_HACKATHON', False)
-    exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status']
+    exclude = ['user', 'uuid', 'invited_by', 'submission_date', 'status_update_date', 'status', 'contacted_by',
+               'blacklisted_by']
     if discord:
         exclude.extend(['diet', 'other_diet', 'diet_notice'])
     return exclude
