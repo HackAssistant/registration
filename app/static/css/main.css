@@ -394,6 +394,10 @@ input:-webkit-autofill
     margin-right: 0px;
 }
 
+.tt-menu {
+    color: black;
+}
+
 .container-iframe {
     position: relative;
     overflow: hidden;
