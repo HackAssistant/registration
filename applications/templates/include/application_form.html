@@ -66,6 +66,13 @@
 
             var other_diet = $('#id_other_diet');
             var diet = $('#id_diet');
+            var hardware = $('#id_hardware');
+            conditional_field(hardware, online, function () {
+                return face_to_face.prop("checked");
+            }, 1);
+            conditional_field(hardware, face_to_face, function () {
+                return face_to_face.prop("checked");
+            }, 1);
             conditional_field(diet, online, function () {
                 return face_to_face.prop("checked");
             }, 1);
