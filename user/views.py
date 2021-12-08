@@ -20,7 +20,7 @@ from user import forms, models, tokens, providers
 from user.forms import SetPasswordForm, PasswordResetForm
 from user.mixins import HaveSponsorPermissionMixin, IsHackerMixin
 from user.models import User
-from user.verification import check_recaptcha, check_client_ip
+from user.verification import check_recaptcha, check_client_ip, reset_tries
 
 
 @check_client_ip
@@ -37,6 +37,7 @@ def login(request):
             user = auth.authenticate(email=email, password=password)
             if user and user.is_active:
                 auth.login(request, user)
+                reset_tries(request)
                 if settings.CAS_SERVER:
                     request.session['authenticated'] = True
                     request.session['username'] = email

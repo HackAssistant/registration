@@ -1,0 +1,15 @@
+{% extends "base_tabs.html" %}
+{% load static %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/hw.css' %}">
+    <script > window.CSRF_TOKEN = "{{ csrf_token }}"</script>
+    <script src="{% static 'lib/typeahead.jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/hw.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/hw_admin.js' %}"></script>
+{% endblock %}
+{% block head_title %}Hardware Admin{% endblock %}
+{% block panel %}
+<div id="hw-container">
+    {% include 'include/hardware_admin_init.html' %}
+</div>
+{% endblock %}

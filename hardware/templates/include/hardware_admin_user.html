@@ -1,0 +1,34 @@
+<a class="hw-back">Back</a>
+<div id='hw-user-lists' class='row'>
+	<div class='col-sm-6'>
+		<h1>Requests</h1>
+		<ul id="hw-requests-list">
+			{% for request in requests %}
+				<li class='hw-button' data-request-id="{{request.id}}">
+					<h1>{{request.item_type}}</h1>
+					<p>Remaining time: {{request.get_remaining_time}}</p>
+				</li>
+			{% empty %}
+			<li>
+				<h3>This hacker doesn't have any requests at the moment</h3>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class='col-sm-6'>
+		<h1>Borrowings</h1>
+		<ul id="hw-borrowings-list">
+			{% for borrowing in borrowings %}
+				<li class='hw-button' data-borrowing-id='{{borrowing.id}}'>
+					<h1>{{borrowing.item.item_type}}</h1>
+					<p>Label: {{borrowing.item.label}}</p>
+					<p>Picked up: {{borrowing.get_picked_up_time_ago}} ago</p>
+				</li>
+			{% empty %}
+			<li>
+				<h3>This hacker doesn't have any borrowings at the moment</h3>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>

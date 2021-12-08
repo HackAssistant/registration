@@ -1,0 +1,17 @@
+<a class="hw-back">Back</a>
+<div id='hw-admin-borrowing'>
+	<h1>Select the item to be borrowed</h1>
+	<!--We always have 1 item, otherwise we couldn't have accessed here-->
+	<h3>List of all available {{items.0.item_type.name}}'s:</h3>
+	{% if request_id %}
+	<ul data-request-id="{{request_id}}" id="hw-available-items-list">
+	{% else %}
+	<ul id="hw-available-items-list-noreq">
+	{% endif %}
+		{% for item in items %}
+			<li class='hw-button' data-item-id="{{item.id}}">
+				<span>{{item.label}}: </span> {{item.comments}}
+			</li>
+		{% endfor %}
+	</ul>
+</div>

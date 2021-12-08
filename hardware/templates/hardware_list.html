@@ -1,0 +1,54 @@
+{% extends "base_tabs.html" %}
+{% load static %}
+{% load hardware_extras %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/hw.css' %}">
+    <script > window.CSRF_TOKEN = "{{ csrf_token }}"</script>
+
+    <script type="text/javascript" src="{% static 'js/hw.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/hw_list.js' %}"></script>
+{% endblock %}
+{% block head_title %}Hardware List{% endblock %}
+{% block panel %}
+<div class='hw-toggle hw-toggle-help'>
+    <a href='#'><span>+</span> Help</a>
+</div>
+<div class='hw-help hw-toggle-actor'>
+    <h1>How does the Hardware Lab work?</h1>
+    <p>
+        In this page you can find a list of the hardware available. Once requested, the hardware is reserved for you for a certain amount of time. Before the time's up, you can go to the Hardware Lab desk to retrieve the item. To retrieve the item you will be asked to leave an ID in the desk, so don't forget to take it with you!
+    </p>
+    <h1>What do the numbers mean?</h1>
+    <p>
+        The numbers represent the availability of that kind of hardware:
+        <ul>
+            <li>The <span class='hw-help-color-bg hw-available-color'>first</span> number is the number of available items.</li>
+            <li>The <span class='hw-help-color-bg hw-request-color'>second</span> one is the number of requested items.</li>
+            <li>And the <span class='hw-help-color-bg hw-borrowing-color'>third</span> one is the number of already borrowed items.</li>
+        </ul>
+        If there is an available item, you can request it right away. The requested items may become available if the requester doesn't show up to pick them.
+    </p>
+    <h1>What 'LMK' means?</h1>
+    <p>
+        When we run out of a specific hardware, the request button changes into LMK (stands for 'Let Me Know'). You can toggle this button on and off. If it's on, we will let you know when the hardware becomes available again. Keep in mind that this only works with the site open (and reload will forget any LMK's enabled).
+    </p>
+    <h1>What is the 'Borrowings' tab?</h1>
+    <p>
+        In the borrowings section you see can our records about your own borrowings. You can see exactly what items have been borrowed to you and the relevant timestamps.
+    </p>
+    <h1>I want to return an item. What do I do?</h1>
+    <p>
+        Check that all the pieces are packed in the same way that were given to you (if not better) and take them back to the Hardware Lab desk. They will handle the operation. If you don't have any more borrowings, your ID will be returned to you.
+    </p>
+</div>
+<ul id='hw-list'>
+    {% for item_type in hw_list %}
+        <li class="hw-item" style="background-image:url({{ item_type.image.url }})">
+            {% include 'include/hardware_item.html'%}
+        </li>
+    {% empty %}
+        <li>There's no hardware yet</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

@@ -19,7 +19,7 @@
   {% if request.user.has_checked_in %}
       {% include 'include/baggage_tab.html' %}
   {% endif %}
-  {% if h_hw_enabled and request.user.is_hacker %}
+  {% if h_hw_enabled and request.user.is_hacker and request.user.has_checked_in %}
       {% include 'include/hardware_tab.html' %}
   {% endif %}
   {% if request.user.is_volunteer_accepted %}
