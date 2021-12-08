@@ -6,7 +6,7 @@ import uuid as uuid
 from datetime import datetime
 
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, MinValueValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.forms import model_to_dict
@@ -386,7 +386,8 @@ class HackerApplication(
     # Reimbursement
     reimb = models.BooleanField(default=False)
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
-        MinValueValidator(0, "Negative? Really? Please put a positive value")])
+        MinValueValidator(0, "Negative? Really? Please put a positive value"),
+        MaxValueValidator(200.0, "Not that much")])
 
     # Info for hardware
     hardware = models.CharField(max_length=300, null=True, blank=True)
