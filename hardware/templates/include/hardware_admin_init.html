@@ -1,0 +1,15 @@
+<h1>Did the hacker file a hardware request?</h1>
+<div class='hw-separator'>Yes</div>
+<div class='hw-subtitle'>Identify the hacker to formalize the request.</div>
+{% include 'include/hardware_user_email.html' %}
+<div class='hw-separator'>No</div>
+<div class='hw-subtitle'>Ask the hacker the desired hardware and inform about its availability. Then click on the item to proceed.</div>
+<ul id="hw-type-noreq">
+    {% for item_type in hw_list %}
+        <li class='hw-button hw-item-compact {% if item_type.get_available_count == 0 %} hw-item-unavailable {% endif %}' data-type-id="{{item_type.id}}">
+            {% include 'include/hardware_item.html' with compact=True%}
+        </li>
+    {% empty %}
+        <li>There's no hardware yet</li>
+    {% endfor %}
+</ul>

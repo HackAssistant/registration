@@ -1,0 +1,7 @@
+<li class="{% if 'hardware' in request.build_absolute_uri %}active{% endif %}">
+{% if request.user.is_hardware_admin or request.user.is_organizer %}
+	<a href="{% url 'hw_admin' %}">Hardware</a>
+{% else %}
+	<a href="{% url 'hw_list' %}">Hardware</a>
+{% endif %}
+</li>

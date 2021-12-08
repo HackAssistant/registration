@@ -44,6 +44,13 @@ def get_client_ip(request):
     return ip
 
 
+def reset_tries(request):
+    client_ip = get_client_ip(request)
+    login_request = LoginRequest.objects.get(ip=client_ip)
+    login_request.reset_tries()
+    login_request.save()
+
+
 def check_client_ip(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):

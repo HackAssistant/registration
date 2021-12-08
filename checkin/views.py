@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from django.http import HttpResponse, JsonResponse
 
 from app.mixins import TabsViewMixin
+from app.utils import reverse
 from app.views import TabsView
 from applications import models as appmodels
 from user import models
@@ -140,7 +141,7 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
                                            'you can move on :D')
         else:
             messages.success(self.request, 'The QR code is mandatory!')
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return HttpResponseRedirect(reverse('check_in_list'))
 
 
 class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):

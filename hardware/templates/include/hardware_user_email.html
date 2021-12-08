@@ -1,0 +1,52 @@
+{% load static %}
+
+<div class='hw-centered' id="form-container-id">
+    <label>Hacker:</label>
+    <input id="qr-result" class="typeahead" style="color: #0f0f0f" name="email" type="text"/><i id='{{ id }}-qr' class='fa fa-qrcode fa-2x qr-btn'></i>
+	<div id="popup-scan" style="display: none;">
+      <video muted playsinline id="qr-video"></video>
+      <!-- <p style="display: block; margin-top: 10px; font-size: 16px; text-align: center;"><span id="{{ id }}-timestamp"></span></p> -->
+    </div>
+	<script type="module">
+        import QrScanner from '/static/lib/qr-scanner.min.js';
+        QrScanner.WORKER_PATH = '/static/lib/qr-scanner-worker.min.js';
+        // Video stream
+        const video = document.getElementById('qr-video');
+        // Result elements and set function
+        const camQrResult = document.getElementById('qr-result');
+        function setResult(result) {
+            camQrResult.focus();
+            camQrResult.value = result;
+            hideQR();
+            $(".typeahead").typeahead('val', '')
+            $(".typeahead").focus().typeahead('val',result.toString()).focus();
+        }
+        // Scan
+        const scanner = new QrScanner(video, result => setResult(result));
+        $("#{{ id }}-qr").click(function () {
+            let veil = document.createElement("div");
+            document.body.appendChild(veil);
+            veil.classList.add('veil');
+            veil.id = 'veil';
+            $("#popup-scan").show();
+            document.getElementById("veil").addEventListener("click", function(){
+                hideQR();
+            });
+          scanner.start();
+        });
+        function hideQR() {
+            $("#popup-scan").hide();
+            var el = document.getElementById("veil");
+            el.parentNode.removeChild(el);
+            scanner.stop();
+        }
+    </script>
+    <div class='hw-centered'>
+    {% if item_id %}
+    	<button id="hw-user-send-noreq" data-item-id="{{item_id}}" class="btn btn-success">Send</button>
+    {% else %}
+    	<button id="hw-user-send" class="btn btn-success">Send</button>
+    {% endif %}
+	</div>
+
+</div>
