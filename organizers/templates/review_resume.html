@@ -29,12 +29,14 @@
 {% endblock %}
 {% block extra_scripts %}
   <script>
-      $(document).ready(function () {
-          if (detectMob()) {
-            $('#iframe').remove()
-            $('.container-iframe').append('<a href="{% url 'app_resume' app.uuid %}" target="_blank" class="btn btn-block btn-default">Open Resume</a>')
-          }
-      });
+      {% if app %}
+          $(document).ready(function () {
+              if (detectMob()) {
+                $('#iframe').remove()
+                $('.container-iframe').append('<a href="{% url 'app_resume' app.uuid %}" target="_blank" class="btn btn-block btn-default">Open Resume</a>')
+              }
+          });
+      {% endif %}
       function detectMob() {
           const toMatch = [
               /Android/i,

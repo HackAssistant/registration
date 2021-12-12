@@ -9,6 +9,9 @@
         <p class="lead">{{ team.team_code }}</p>
         <p>Send this to whoever you want to join this team. Remember that teams have a maximum size of {{ h_max_team }}
             hackers</p>
+
+        <p>Remember this teams are only to apply as a group to make sure your friends are accepted with you. You can change the team afterwards on the event.</p>
+        <p>When one of your teammate is accepted, any hackers <strong>will not be able to join the team</strong>.</p>
         <hr>
         <h3>Teammates ({{ teammates|length }}/{{ h_max_team }})</h3>
         <div class="table-responsive">
@@ -44,7 +47,8 @@
 
 
     {% elif not h_app_closed and not team %}
-        <p>Do you have a team already? Join it below. Otherwise you can create a new team. </p>
+        <p>Do you have already a team? Join it below. Otherwise you can create a new team. </p>
+        <p>This teams are only to apply as a group to make sure your friends are accepted with you. You can change the team afterwards on the event.</p>
         <form action="" method="post" class="form">
             {% csrf_token %}
             {% bootstrap_form form %}
