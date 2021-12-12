@@ -10,7 +10,7 @@ HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 36h. May 14th-16th.'
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 36h. 29th April - 1st May.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', None)
 HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME', None)
@@ -40,9 +40,9 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2021, 5, 14, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2022, 4, 15, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
-HACKATHON_ARRIVE = 'Registration is at Friday on Discord'
+HACKATHON_ARRIVE = ''
 
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_LEAVE = ''
@@ -66,7 +66,7 @@ DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2019, 9, 2, 3, 14, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_DEADLINE = timezone.datetime(2022, 4, 15, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True

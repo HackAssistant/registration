@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 
+from applications.models import APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS
 from teams.models import Team
 
 
@@ -13,6 +14,10 @@ class JoinTeamForm(forms.ModelForm):
         max_teammates = getattr(settings, 'HACKATHON_MAX_TEAMMATES', 4)
         if teammates == max_teammates:
             raise forms.ValidationError("Full team. Max teammates is %d" % max_teammates)
+        if Team.objects.filter(team_code=team_code).exclude(
+                user__hackerapplication_application__status__in=[APP_PENDING, APP_LAST_REMIDER, APP_DUBIOUS]).exists():
+            raise forms.ValidationError("Some members of this team are accepted or cancelled. You can't join their "
+                                        "team here but don't worry you still can join them on the event.")
         return team_code
 
     class Meta:
