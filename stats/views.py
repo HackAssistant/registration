@@ -12,7 +12,7 @@ from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, 
 from organizers.models import Vote
 from stats.tables import CheckinRankingListTable, OrganizerRankingListTable
 from user.mixins import is_organizer, IsOrganizerMixin
-from user.models import User
+from user.models import User, USR_HACKER, USR_MENTOR, USR_VOLUNTEER
 from checkin.models import CheckIn
 
 from collections import defaultdict
@@ -299,6 +299,17 @@ class ReimbStats(IsOrganizerMixin, TabsView):
 
 class UsersStats(IsOrganizerMixin, TabsView):
     template_name = 'users_stats.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        h_emails = ', '.join([user.email for user in User.objects.filter(hackerapplication_application__isnull=True,
+                                                                         type=USR_HACKER)])
+        m_emails = ', '.join([user.email for user in User.objects.filter(mentorapplication_application__isnull=True,
+                                                                         type=USR_MENTOR)])
+        v_emails = ', '.join([user.email for user in User.objects.filter(volunteerapplication_application__isnull=True,
+                                                                         type=USR_VOLUNTEER)])
+        context.update({'h_emails': h_emails, 'm_emails': m_emails, 'v_emails': v_emails})
+        return context
 
     def get_current_tabs(self):
         return stats_tabs()

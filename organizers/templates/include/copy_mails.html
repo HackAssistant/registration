@@ -1,0 +1,11 @@
+{% if emails %}
+  <div>
+    <h2>{{ type_name|title }} emails that have registered without applying</h2>
+    <div class="col-md-8" style="margin-top: 10px; margin-bottom: 10px">
+      <input class="form-control" id='copy-{{ type_name }}' type="text" value="{{ emails }}"/>
+    </div>
+    <div class="col-md-4"  style="margin-top: 10px; margin-bottom: 10px">
+      <a onclick="copy_mails('copy-{{ type_name }}')" style="margin: 0px" class="btn-block btn btn-info">Copy mails</a>
+    </div>
+  </div>
+{% endif %}
