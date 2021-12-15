@@ -1,6 +1,16 @@
 {% extends 'c3_base.html' %}
 
 {% block head_title %}Users stats{% endblock %}
+{% block extra_head %}
+  <script>
+    function copy_mails(id) {
+      var copyText = document.getElementById(id);
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+      document.execCommand("copy");
+    }
+  </script>
+{% endblock %}
 {% block panel %}
     <h1>Users stats</h1>
     <small class="pull-right"><b>Last updated:</b> <span id="update_date"></span></small>
@@ -11,6 +21,9 @@
             <p><b>Users count:</b> <span id="users_count"></span></p>
         </div>
     </div>
+    {% include 'include/copy_mails.html' with emails=h_emails type_name='hacker' %}
+    {% include 'include/copy_mails.html' with emails=m_emails type_name='mentor' %}
+    {% include 'include/copy_mails.html' with emails=v_emails type_name='volunteer' %}
 {% endblock %}
 {% block c3script %}
     <script>
