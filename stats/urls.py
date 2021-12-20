@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.conf.urls import url
 from django.views.decorators.cache import cache_page
+from django.views.generic import RedirectView
 
 from stats import views
 
 urlpatterns = [
+    url(r'^$', RedirectView.as_view(pattern_name='organizer_stats'), name='stats_home'),
     url(r'^api/apps/$', cache_page(5 * 60)(views.app_stats_api), name='api_app_stats'),
     url(r'^api/volunteer/$', cache_page(5 * 60)(views.volunteer_stats_api), name='api_volunteer_stats'),
     url(r'^api/mentor/$', cache_page(5 * 60)(views.mentor_stats_api), name='api_mentor_stats'),

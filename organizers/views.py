@@ -102,6 +102,10 @@ class ApplicationsListView(TabsViewMixin, IsOrganizerMixin, ExportMixin, SingleT
     exclude_columns = ('detail', 'status', 'vote_avg')
     export_name = 'applications'
 
+    def get(self, request, *args, **kwargs):
+        request.session['edit_app_back'] = 'app_list'
+        return super().get(request, *args, **kwargs)
+
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
 
@@ -168,7 +172,8 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
     template_name = 'application_detail.html'
 
     def get_back_url(self):
-        return reverse('app_list')
+        back = self.request.session.get('edit_app_back', 'app_list')
+        return reverse(back)
 
     def get_context_data(self, **kwargs):
         context = super(ApplicationDetailView, self).get_context_data(**kwargs)
@@ -403,6 +408,10 @@ class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, Exp
     exclude_columns = ('status', 'vote_avg')
     export_name = 'dubious_applications'
 
+    def get(self, request, *args, **kwargs):
+        request.session['edit_app_back'] = 'dubious'
+        return super().get(request, *args, **kwargs)
+
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
 
@@ -417,6 +426,10 @@ class BlacklistApplicationsListView(TabsViewMixin, IsBlacklistAdminMixin, Export
     table_pagination = {'per_page': 100}
     exclude_columns = ('status', 'vote_avg')
     export_name = 'blacklist_applications'
+
+    def get(self, request, *args, **kwargs):
+        request.session['edit_app_back'] = 'blacklist'
+        return super().get(request, *args, **kwargs)
 
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
