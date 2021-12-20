@@ -19,10 +19,10 @@ from collections import defaultdict
 
 
 def stats_tabs():
-    tabs = [('Hacker', reverse('app_stats'), False), ('Volunteer', reverse('volunteer_stats'), False),
-            ('Mentor', reverse('mentor_stats'), False), ('Sponsor', reverse('sponsor_stats'), False),
-            ('Users', reverse('users_stats'), False), ('Check-in', reverse('checkin_stats'), False),
-            ('Organizers', reverse('organizer_stats'), False), ]
+    tabs = [('Organizers', reverse('organizer_stats'), False), ('Hacker', reverse('app_stats'), False),
+            ('Volunteer', reverse('volunteer_stats'), False), ('Mentor', reverse('mentor_stats'), False),
+            ('Sponsor', reverse('sponsor_stats'), False), ('Users', reverse('users_stats'), False),
+            ('Check-in', reverse('checkin_stats'), False), ]
     if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
         tabs.append(('Reimbursements', reverse('reimb_stats'), False))
     return tabs

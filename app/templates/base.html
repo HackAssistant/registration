@@ -127,7 +127,7 @@
                             {% include 'include/activities_tab.html' %}
                             {% if request.user.is_organizer %}
                                 <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
-                                        href="{% url 'app_stats' %}">Stats</a></li>
+                                        href="{% url 'stats_home' %}">Stats</a></li>
                             {% endif %}
                         {% endif %}
                     {% elif cas != 'True' %}
