@@ -385,6 +385,13 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         widget=forms.CheckboxSelectMultiple,
         choices=models.PREVIOUS_HACKS
     )
+    night_shifts = forms.TypedChoiceField(
+        required=True,
+        label='Would you be okay with doing night shifts? (volunteering during 2am - 5am)',
+        coerce=lambda x: x == 'True',
+        choices=((False, 'No'), (True, 'Yes')),
+        widget=forms.RadioSelect
+    )
 
     bootstrap_field_info = {
         'Personal Info': {
@@ -400,8 +407,8 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                        {'name': 'which_hack', 'space': 12}, {'name': 'attendance', 'space': 12},
                        {'name': 'english_level', 'space': 12}, {'name': 'quality', 'space': 12},
                        {'name': 'weakness', 'space': 12}, {'name': 'cool_skill', 'space': 12},
-                       {'name': 'fav_movie', 'space': 12}, {'name': 'friends', 'space': 12},
-                       ],
+                       {'name': 'fav_movie', 'space': 12}, {'name': 'night_shifts', 'space': 12},
+                       {'name': 'hobbies', 'space': 12}, {'name': 'friends', 'space': 12}, ],
         }
     }
 
@@ -484,6 +491,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'friends': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'weakness': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'quality': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'hobbies': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
         }
 
         labels = {
@@ -501,7 +509,8 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'weakness': 'Now a weakness :(',
             'cool_skill': 'Do you have any cool skills we should know about?',
             'fav_movie': 'Which is your favorite movie?',
-            'friends': 'If you are applying with some of your friends, please mention their names'
+            'friends': 'If you are applying with some of your friends, please mention their names',
+            'hobbies': 'What are your hobbies or what do you do for fun?'
         }
 
 
