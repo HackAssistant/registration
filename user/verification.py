@@ -3,6 +3,7 @@ from functools import wraps
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.handlers.wsgi import WSGIRequest
 from django.utils import timezone
 
 from user.models import LoginRequest
@@ -54,6 +55,10 @@ def reset_tries(request):
 def check_client_ip(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
+        aux = None
+        if len(args) > 0 and isinstance(args[0], WSGIRequest):
+            aux = request
+            request = args[0]
         request.client_req_is_valid = None
         if request.method == 'POST':
             client_ip = get_client_ip(request)
@@ -66,8 +71,9 @@ def check_client_ip(view_func):
                     login_request.increment_tries()
                 else:
                     login_request.reset_tries()
-                login_request.set_latest_request(request_time)
-                login_request.save()
+                if login_request.login_tries < 4:
+                    login_request.set_latest_request(request_time)
+                    login_request.save()
             except LoginRequest.DoesNotExist:
                 login_request = LoginRequest.objects.create(ip=client_ip, latestRequest=request_time)
                 login_request.save()
@@ -75,6 +81,8 @@ def check_client_ip(view_func):
                 request.client_req_is_valid = True
             else:
                 request.client_req_is_valid = False
+            if aux:
+                request = aux
         return view_func(request, *args, **kwargs)
 
     return _wrapped_view

@@ -502,11 +502,13 @@ class VolunteerApplication(
     _HackerMentorVolunteerApplication
 ):
     cool_skill = models.CharField(max_length=100, null=False)
-    first_time_volunteer = models.BooleanField(null=False)
+    first_time_volunteer = models.BooleanField()
     quality = models.CharField(max_length=150, null=False)
     weakness = models.CharField(max_length=150, null=False)
     fav_movie = models.CharField(max_length=60, null=True, blank=True)
     friends = models.CharField(max_length=100, null=True, blank=True)
+    night_shifts = models.BooleanField()
+    hobbies = models.CharField(max_length=150, null=False)
 
 
 class SponsorApplication(
