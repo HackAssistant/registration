@@ -223,7 +223,7 @@ class MealSerializer(Serializer):
         self._current['eaten'] = obj.eaten()
         self.objects.append(self._current)
 
-
+@csrf_exempt
 class MealsApi(APIView):
     permission_classes = (AllowAny,)
 
