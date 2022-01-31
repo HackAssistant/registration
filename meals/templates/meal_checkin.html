@@ -132,7 +132,11 @@
             
                     function httpPost(theUrl, content)
                   {
-                      $.post(theUrl, {meal_id:'{{ meal.id }}', qr_id:content}, function(response, status){ 
+                      $.post(theUrl, {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        meal_id:'{{ meal.id }}', 
+                        qr_id:content,
+                      }, function(response, status){ 
                         return [response, status];
                       });
                   }
