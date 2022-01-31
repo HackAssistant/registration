@@ -29,26 +29,26 @@
                     <option value="null">--</option>
                   </select> 
                 </div>
-                <div class="alert alert-success alert-dismissible fade in" style="display:none;">
+                <div id="success" class="alert alert-success alert-dismissible fade in" style="display:none;">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Success!</strong> USER ALLOWED
+                    <strong>Success!</strong> <span id="succ"></span>
                 </div>
-                <div class="alert alert-danger alert-dismissible fade in" style="display:none;">
+                <div id="no" class="alert alert-danger alert-dismissible fade in" style="display:none;">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>FORBIDEN!</strong> USER NOT ALLOWED
+                    <strong>ERROR!</strong> <span id="deny"></span>
                 </div>
                 
                 <video id="preview" style="height: auto; width: 100%;"></video>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label class="control-label" for="company" > Scan Duration</label>
                   <input type="range" min="1000" max="5000" id="time" value="2000" step="100">
                   <span id="dtime">2000 ms</span>
-                </div>
+                </div> -->
                 <script>
                     
                   let opts = {
-                    // Whether to scan continuously for QR codes. If false, use scanner.scan() to manually scan.
-                    // If true, the scanner emits the "scan" event when a QR code is scanned. Default true.
+                    // OPTIONS OF QR CODE SCANNER
+                    // Leave this to true if you want to continiously scan qrs.. think so :)
                     continuous: true,
                     
                     // The HTML element to use for the camera's video preview. Must be a <video> element.
@@ -79,33 +79,28 @@
                     };
                     let scanner = new Instascan.Scanner(opts);
             
-                    scanner.addListener('scan', function (content) {
+                    // When scanner detects a qr code, call this function
+                    scanner.addListener('scan', function (content) {Scan(content);});
                     
-                      var response = httpPost("{% url 'cool_meals_api' %}",content);
-                      if(response){
-                        document.getElementById('success').style.display = "block";
-                        document.getElementById('no').style.display = "none";
-                        setTimeout(() => {
-                          document.getElementById('success').style.display = "none";
-                        }, document.getElementById('time').value);
-                      } else {
-                        document.getElementById('success').style.display = "none";
-                        document.getElementById('no').style.display = "block";
-                        setTimeout(() => {
-                          document.getElementById('success').style.display = "none";
-                        }, document.getElementById('time').value);
+                    function Scan(content) {
+                    
+                      // send data to api
+                      SuperScan("{% url 'cool_meals_api' %}",content);
+                      // get status code
+                      
+                      
                       }
-                    });
+
+                      
+                     
                     
                     Instascan.Camera.getCameras().then(function (cameras) {
                       if (cameras.length > 0) {
-                        // scanner.start(cameras[0]);
+                        // For every camera available, craete an option at the select input.
                         for (let c = 0; c < cameras.length; c++) {
                             var option = document.createElement('option');
                             option.innerText = cameras[c].name;
                             option.value = c;
-                            
-                            
                             document.getElementById('btndivs').appendChild(option);
                         } 
                       } else {
@@ -116,29 +111,61 @@
                     });
                     
                     function changeCam(){
+                      // Function called everytime select input changes from value. 
+                      // Used to start the scanner with the selected camera.
                       var x = document.getElementById('btndivs').value;
                       if(x != "null"){
-                        Instascan.Camera.getCameras().then(function (cameras) {
-                          scanner.start(cameras[x]);
-                        }).catch(function (e) {
-                          console.error(e);
-                        });
-                      }
+                          Instascan.Camera.getCameras().then(function (cameras) {
+                            scanner.start(cameras[x]);
+                          }).catch(function (e) {
+                            console.error(e);
+                          });
+                        }
                     }
+                    // Change text value to display range value im ms 
+                  //   document.getElementById("time").oninput = function() {
+                  //     document.getElementById("dtime").innerHTML = this.value+" ms";
+                  // }
             
-                    document.getElementById("time").oninput = function() {
-                      document.getElementById("dtime").innerHTML = this.value+" ms";
-                  }
-            
-                    function httpPost(theUrl, content)
+                  // Core function to send data to meals API
+                    function SuperScan(theUrl, content)
                   {
-                      $.post(theUrl, {
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                        meal_id:'{{ meal.id }}', 
-                        qr_id:content,
-                      }, function(response, status){ 
-                        return [response, status];
-                      });
+                    $.ajax({
+                      type: "POST",
+                      url: theUrl,
+                      data: {
+                          csrfmiddlewaretoken: '{{ csrf_token }}',
+                          meal_id:'{{ meal.id }}', 
+                          qr_id:content,
+                        },
+                      success: function (data, status, jqXHR) {
+                        if(status == undefined){
+                          document.getElementById('no').style.display = "block";
+                          document.getElementById('success').style.display = "none";
+                          document.getElementById('deny').innerHTML = "Something went wrong.";
+                        }
+                        if(status == 200){ // 200 ok means can eat
+                        // show success alert
+                        document.getElementById('success').style.display = "block";
+                        // Display user's diet
+                        console.log("user id "+content + " has "+data.diet);
+                        // console.log(data.responseText.diet);
+                        document.getElementById('succ').innerHTML = "User allowed to entry <br> Diet: <code>" + data.diet +"</code>";
+                        // hide no pass alert
+                        document.getElementById('no').style.display = "none";
+                        
+                      } else { // else, (may be 400). Has already eatern.
+                        // hide success alert 
+                        document.getElementById('success').style.display = "none";
+                        console.log("userid "+ content +" "+data.error);
+                        document.getElementById('deny').innerHTML = data.error;
+                        // show no pass alert
+                        document.getElementById('no').style.display = "block";
+                        // hide alert after time desired.
+                       
+                      }
+                      }
+                    });
                   }
                   
                    </script>
