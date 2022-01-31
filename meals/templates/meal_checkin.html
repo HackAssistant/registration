@@ -3,7 +3,8 @@
 {% load static %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/meals.css' %}">
+    
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 
 {% endblock %}
 
@@ -20,14 +21,124 @@
 {% block body_plain %}
 <div class="container-fluid full-screen">
     <div class="row full-screen">
-        <div class="col-md-offset-3 col-md-6 col full-screen">
-            <div id="meals-scan-image" class="meals-inside-scan" style="max-width: 100%;max-height: 100%;" data-mealid="{{ meal.id }}"
-            data-apiurl="{% url 'cool_meals_api' %}">
-                <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a>
-                <video id="meals-scan-video" style="width: 100%; max-height: 80%; margin:0 auto;">   </video>
-                <select class="form-control"></select>
+        
+            <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a>
+            <div class="container" style="margin-top:30px">
+                <div class="form-group">
+                  <label class="control-label" for="btndivs" > Select Camera</label>
+                  <select id="btndivs" class="form-control" onchange="changeCam();" >
+                    <option value="null">--</option>
+                  </select> 
+                </div>
+                <div id="success" class="alert alert-success" style="display:none;">
+                    <strong>Success!</strong> USER ALLOWED
+                </div>
+                <div id="no" class="alert alert-danger" style="display:none;">
+                    <strong>FORBIDEN!</strong> USER NOT ALLOWED
+                </div>
+                
+                <video id="preview" style="height: auto; width: 100%;"></video>
+                <div class="form-group">
+                  <label class="control-label" for="company" > Scan Duration</label>
+                  <input type="range" min="1000" max="5000" id="time" value="2000" step="100">
+                  <span id="dtime">2000 ms</span>
+                </div>
+                <script>
+                    
+                  let opts = {
+                    // Whether to scan continuously for QR codes. If false, use scanner.scan() to manually scan.
+                    // If true, the scanner emits the "scan" event when a QR code is scanned. Default true.
+                    continuous: true,
+                    
+                    // The HTML element to use for the camera's video preview. Must be a <video> element.
+                      // When the camera is active, this element will have the "active" CSS class, otherwise,
+                      // it will have the "inactive" class. By default, an invisible element will be created to
+                      // host the video.
+                      video: document.getElementById('preview'),
+                      
+                      // Whether to horizontally mirror the video preview. This is helpful when trying to
+                      // scan a QR code with a user-facing camera. Default true.
+                      mirror: true,
+                      
+                      // Whether to include the scanned image data as part of the scan result. See the "scan" event
+                      // for image format details. Default false.
+                      captureImage: false,
+                      
+                      // Only applies to continuous mode. Whether to actively scan when the tab is not active.
+                      // When false, this reduces CPU usage when the tab is not active. Default true.
+                      backgroundScan: true,
+                      
+                      // Only applies to continuous mode. The period, in milliseconds, before the same QR code
+                      // will be recognized in succession. Default 5000 (5 seconds).
+                      refractoryPeriod: 5000,
+                      
+                      // Only applies to continuous mode. The period, in rendered frames, between scans. A lower scan period
+                      // increases CPU usage but makes scan response faster. Default 1 (i.e. analyze every frame).
+                      scanPeriod: 1
+                    };
+                    let scanner = new Instascan.Scanner(opts);
+            
+                    scanner.addListener('scan', function (content) {
+                    
+                      var response = httpPost("{% url 'cool_meals_api' %}",content);
+                      if(response){
+                        document.getElementById('success').style.display = "block";
+                        document.getElementById('no').style.display = "none";
+                        setTimeout(() => {
+                          document.getElementById('success').style.display = "none";
+                        }, document.getElementById('time').value);
+                      } else {
+                        document.getElementById('success').style.display = "none";
+                        document.getElementById('no').style.display = "block";
+                        setTimeout(() => {
+                          document.getElementById('success').style.display = "none";
+                        }, document.getElementById('time').value);
+                      }
+                    });
+                    
+                    Instascan.Camera.getCameras().then(function (cameras) {
+                      if (cameras.length > 0) {
+                        // scanner.start(cameras[0]);
+                        for (let c = 0; c < cameras.length; c++) {
+                            var option = document.createElement('option');
+                            option.innerText = cameras[c].name;
+                            option.value = c;
+                            
+                            
+                            document.getElementById('btndivs').appendChild(option);
+                        } 
+                      } else {
+                        console.error('No cameras found.');
+                      }
+                    }).catch(function (e) {
+                      console.error(e);
+                    });
+                    
+                    function changeCam(){
+                      var x = document.getElementById('btndivs').value;
+                      if(x != "null"){
+                        Instascan.Camera.getCameras().then(function (cameras) {
+                          scanner.start(cameras[x]);
+                        }).catch(function (e) {
+                          console.error(e);
+                        });
+                      }
+                    }
+            
+                    document.getElementById("time").oninput = function() {
+                      document.getElementById("dtime").innerHTML = this.value+" ms";
+                  }
+            
+                    function httpPost(theUrl, content)
+                  {
+                      $.post(theUrl, {meal_id:'{{ meal.id }}', qr_id:content}, function(response){ 
+                        return response;
+                      });
+                  }
+                  
+                   </script>
             </div>
-        </div>
+      
     </div>
 </div>
 {% endblock %}
