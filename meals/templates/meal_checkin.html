@@ -10,7 +10,6 @@
 
 {% block extra_scripts %}
     <script src="{% static 'lib/instascan.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/meals_checkin.js' %}"></script>
 
 {% endblock %}
 
@@ -30,10 +29,12 @@
                     <option value="null">--</option>
                   </select> 
                 </div>
-                <div id="success" class="alert alert-success" style="display:none;">
+                <div class="alert alert-success alert-dismissible fade in" style="display:none;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <strong>Success!</strong> USER ALLOWED
                 </div>
-                <div id="no" class="alert alert-danger" style="display:none;">
+                <div class="alert alert-danger alert-dismissible fade in" style="display:none;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <strong>FORBIDEN!</strong> USER NOT ALLOWED
                 </div>
                 
@@ -131,8 +132,8 @@
             
                     function httpPost(theUrl, content)
                   {
-                      $.post(theUrl, {meal_id:'{{ meal.id }}', qr_id:content}, function(response){ 
-                        return response;
+                      $.post(theUrl, {meal_id:'{{ meal.id }}', qr_id:content}, function(response, status){ 
+                        return [response, status];
                       });
                   }
                   
