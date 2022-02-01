@@ -190,7 +190,7 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         if not hacker_checkin:
             return JsonResponse({'error': 'Invalid QR code!'}, status=400)
 
-        hacker_application = hacker_checkin.application()
+        hacker_application = hacker_checkin.application
         if not hacker_application:
             return JsonResponse({'error': 'No application found for current code'},  status=400)
 
