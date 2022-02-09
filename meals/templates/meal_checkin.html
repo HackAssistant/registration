@@ -13,29 +13,34 @@
 
 {% endblock %}
 
-{% block navbar %}{% endblock %}
+
 
 {% block head_title %}Check-in meal {{meal.name}}{% endblock %}
 
 {% block body_plain %}
+<style>
+  body {
+    margin-bottom: 30px !important;
+  }
+</style>
 <div class="container-fluid full-screen">
     <div class="row full-screen">
         
-            <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a>
-            <div class="container" style="margin-top:30px">
-                <div class="form-group">
-                  <label class="control-label" for="btndivs" > Select Camera</label>
-                  <select id="btndivs" class="form-control" onchange="changeCam();" >
-                    <option value="null">--</option>
-                  </select> 
-                </div>
+      <div class="container" style="margin-top:60px;">
+            <!-- <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a> -->
+            <div class="form-group">
+              <label class="control-label" for="btndivs" > Select Camera</label>
+              <select id="btndivs" class="form-control" onchange="changeCam();" >
+                <option value="null">--</option>
+              </select> 
+            </div>
                 <div id="success" class="alert alert-success alert-dismissible fade in" style="display:none; background-color: #367a3a;">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Success!</strong> <span id="succ"></span>
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  <strong>Success!</strong> <span id="succ"></span>
                 </div>
                 <div id="no" class="alert alert-danger alert-dismissible fade in" style="display:none; background-color: #691e1e;">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>ERROR!</strong> <span id="deny"></span>
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  <strong>ERROR!</strong> <span id="deny"></span>
                 </div>
                 
                 <video id="preview" style="height: auto; width: 100%;"></video>
@@ -181,7 +186,8 @@
                    </script>
             </div>
       
-    </div>
+          </div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+          <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a>
 </div>
 {% endblock %}
 
