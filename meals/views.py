@@ -181,25 +181,25 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         qrid = request.POST.get('qr_id', None)
 
         if not qrid or not mealid:
-            return JsonResponse({'error': 'Missing meal and/or QR. Trying to trick us?'})
+            return JsonResponse({'error': 'Missing meal and/or QR. Trying to trick us?', 'success' : False})
 
         current_meal = Meal.objects.filter(id=mealid).first()
         if not current_meal.opened and not self.request.user.is_organizer:
-            return JsonResponse({'error': 'Meal has been closed. Reach out to an organizer to activate it again'})
+            return JsonResponse({'error': 'Meal has been closed. Reach out to an organizer to activate it again', 'success' : False})
         hacker_checkin = CheckIn.objects.filter(qr_identifier=qrid).first()
         if not hacker_checkin:
-            return JsonResponse({'error': 'Invalid QR code!'})
+            return JsonResponse({'error': 'Invalid QR code!', 'success' : False})
 
-        hacker_application = hacker_checkin.application()
+        hacker_application = hacker_checkin.application
         if not hacker_application:
-            return JsonResponse({'error': 'No application found for current code'})
+            return JsonResponse({'error': 'No application found for current code', 'success' : False})
 
         times_hacker_ate = Eaten.objects.filter(meal=current_meal, user=hacker_application.user).count()
         if times_hacker_ate >= current_meal.times:
             error_message = 'Warning! Hacker already ate %d out of %d available times!' % \
                             (times_hacker_ate, current_meal.times)
 
-            return JsonResponse({'error': error_message})
+            return JsonResponse({'error': error_message, 'success' : False})
 
         checkin = Eaten(meal=current_meal, user=hacker_application.user)
         checkin.save()
@@ -211,7 +211,7 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         else:
             diet = hacker_application.diet
 
-        return JsonResponse({'success': True, 'diet': diet})
+        return JsonResponse({'diet': diet, 'success':True})
 
 
 class MealSerializer(Serializer):
@@ -222,7 +222,6 @@ class MealSerializer(Serializer):
         self._current['kind'] = obj.get_kind_display()
         self._current['eaten'] = obj.eaten()
         self.objects.append(self._current)
-
 
 class MealsApi(APIView):
     permission_classes = (AllowAny,)
