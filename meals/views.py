@@ -1,20 +1,15 @@
-import json
 from datetime import datetime
 
-from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.core.serializers.python import Serializer
 from django.http import Http404
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
-from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
 
 from app.mixins import TabsViewMixin
 from app.views import TabsView
@@ -181,25 +176,26 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         qrid = request.POST.get('qr_id', None)
 
         if not qrid or not mealid:
-            return JsonResponse({'error': 'Missing meal and/or QR. Trying to trick us?', 'success' : False})
+            return JsonResponse({'error': 'Missing meal and/or QR. Trying to trick us?', 'success': False})
 
         current_meal = Meal.objects.filter(id=mealid).first()
         if not current_meal.opened and not self.request.user.is_organizer:
-            return JsonResponse({'error': 'Meal has been closed. Reach out to an organizer to activate it again', 'success' : False})
+            return JsonResponse({'error': 'Meal has been closed. Reach out to an organizer to activate it again',
+                                 'success': False})
         hacker_checkin = CheckIn.objects.filter(qr_identifier=qrid).first()
         if not hacker_checkin:
-            return JsonResponse({'error': 'Invalid QR code!', 'success' : False})
+            return JsonResponse({'error': 'Invalid QR code!', 'success': False})
 
         hacker_application = hacker_checkin.application
         if not hacker_application:
-            return JsonResponse({'error': 'No application found for current code', 'success' : False})
+            return JsonResponse({'error': 'No application found for current code', 'success': False})
 
         times_hacker_ate = Eaten.objects.filter(meal=current_meal, user=hacker_application.user).count()
         if times_hacker_ate >= current_meal.times:
             error_message = 'Warning! Hacker already ate %d out of %d available times!' % \
                             (times_hacker_ate, current_meal.times)
 
-            return JsonResponse({'error': error_message, 'success' : False})
+            return JsonResponse({'error': error_message, 'success': False})
 
         checkin = Eaten(meal=current_meal, user=hacker_application.user)
         checkin.save()
@@ -211,73 +207,4 @@ class MealsCoolAPI(View, IsVolunteerMixin):
         else:
             diet = hacker_application.diet
 
-        return JsonResponse({'diet': diet, 'success':True})
-
-
-class MealSerializer(Serializer):
-    def end_object(self, obj):
-        self._current['id'] = obj._get_pk_val()
-        self._current['starts'] = str(obj.starts)
-        self._current['ends'] = str(obj.ends)
-        self._current['kind'] = obj.get_kind_display()
-        self._current['eaten'] = obj.eaten()
-        self.objects.append(self._current)
-
-class MealsApi(APIView):
-    permission_classes = (AllowAny,)
-
-    def get(self, request, format=None):
-        var_token = request.GET.get('token')
-        if var_token != settings.MEALS_TOKEN:
-            return HttpResponse(status=500)
-        var_object = request.GET.get('object')
-        if var_object not in ['meal']:
-            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
-
-        meals = Meal.objects.filter(ends__gt=datetime.now()).order_by('starts')
-        var_all = request.GET.get('all')
-        if var_all == '1':
-            meals = Meal.objects.all().order_by('starts')
-        serializer = MealSerializer()
-        meals_data = serializer.serialize(meals)
-        print(meals_data)
-        return HttpResponse(json.dumps({'code': 0, 'content': meals_data}), content_type='application/json')
-
-    def post(self, request, format=None):
-        var_token = request.GET.get('token')
-        if var_token != settings.MEALS_TOKEN:
-            return HttpResponse(status=500)
-        var_object = request.GET.get('object')
-        if var_object not in ['user', 'meal']:
-            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid object'}), content_type='application/json')
-
-        var_meal = request.GET.get('meal')
-        obj_meal = Meal.objects.filter(id=var_meal).first()
-        if obj_meal is None:
-            return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid meal'}), content_type='application/json')
-        if var_object == 'user':
-            var_repetitions = obj_meal.times
-            var_user = request.GET.get('user')
-            obj_checkin = CheckIn.objects.filter(qr_identifier=var_user).first()
-            if obj_checkin is None:
-                return HttpResponse(json.dumps({'code': 1, 'message': 'Invalid user'}), content_type='application/json')
-            obj_application = obj_checkin.application()
-            obj_user = obj_application.user
-            if obj_application:
-                var_diet = obj_application.diet
-            else:
-                var_diet = "UNKNOWN"
-            var_eatens = Eaten.objects.filter(meal=obj_meal, user=obj_user).count()
-            if var_eatens >= var_repetitions:
-                return HttpResponse(json.dumps({'code': 2, 'message': 'Hacker alreay ate'}),
-                                    content_type='application/json')
-            obj_eaten = Eaten()
-            obj_eaten.meal = obj_meal
-            obj_eaten.user = obj_user
-            obj_eaten.save()
-            return HttpResponse(json.dumps({'code': 0, 'content': {'diet': var_diet}}),
-                                content_type='application/json')
-        var_repetitions = request.GET.get('times')
-        obj_meal.times = var_repetitions
-        obj_meal.save()
-        return HttpResponse(json.dumps({'code': 0, 'message': 'Times updated'}), content_type='application/json')
+        return JsonResponse({'diet': diet, 'success': True})
