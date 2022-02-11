@@ -59,6 +59,8 @@ def get_stats(model):
     study_work_count_confirmed = defaultdict(int)
     attendance_count = defaultdict(int)
     attendance_count_confirmed = defaultdict(int)
+    online_count = defaultdict(int)
+    online_count_confirmed = defaultdict(int)
     other_diet = []
     for a in applications:
         origin = a.origin.split(", ")[-1] if "," in a.origin else a.origin
@@ -68,6 +70,9 @@ def get_stats(model):
         if hacker or volunteer or mentor:
             origin_count[origin] += 1
             gender_count[a.get_gender_display()] += 1
+        if hacker or mentor:
+            online_count['Online'] += a.online
+            online_count['Live'] += not a.online
         if hacker or volunteer:
             university_count[a.university] += 1
             grad_year_count[a.graduation_year] += 1
@@ -90,6 +95,9 @@ def get_stats(model):
             diet_count_confirmed[a.get_diet_display()] += 1
             if hacker or volunteer or mentor:
                 origin_count_confirmed[origin] += 1
+            if hacker or mentor:
+                online_count_confirmed['Online'] += a.online
+                online_count_confirmed['Live'] += not a.online
             if hacker or volunteer:
                 university_count_confirmed[a.university] += 1
                 grad_year_count_confirmed[a.graduation_year] += 1
@@ -172,6 +180,8 @@ def get_stats(model):
             'study_work_confirmed': study_work_count_confirmed,
             'attendance': attendance_count,
             'attendance_confirmed': attendance_count_confirmed,
+            'online': online_count,
+            'online_confirmed': online_count_confirmed,
         }
     )
 
