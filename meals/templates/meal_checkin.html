@@ -121,6 +121,7 @@
                       var x = document.getElementById('btndivs').value;
                       if(x != "null"){
                           Instascan.Camera.getCameras().then(function (cameras) {
+                            scanner.stop();
                             scanner.start(cameras[x]);
                           }).catch(function (e) {
                             console.error(e);
