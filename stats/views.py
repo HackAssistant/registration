@@ -1,3 +1,5 @@
+import datetime
+
 from django.conf import settings
 from django.db.models import Count, Sum, F, Value, IntegerField
 from django.db.models.functions import TruncDate, TruncHour
@@ -373,6 +375,7 @@ class OrganizerStats(IsOrganizerMixin, SingleTableMixin, TabsView):
                                skip_count=Count('application') - Count('calculated_vote'),
                                vote_count=Count('calculated_vote')).exclude(vote_count=0))
         zero = Value(0, output_field=IntegerField())
-        votes.extend(list(User.objects.filter(vote__isnull=True, type=USR_ORGANIZER)
+        year_ago = datetime.datetime.now() - datetime.timedelta(days=365)
+        votes.extend(list(User.objects.filter(vote__isnull=True, type=USR_ORGANIZER, last_login__gt=year_ago)
                           .annotate(total_count=zero, skip_count=zero, vote_count=zero)))
         return votes
