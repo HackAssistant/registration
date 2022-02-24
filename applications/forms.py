@@ -111,7 +111,10 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
         else:
             response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
             if response.status_code / 100 != 2:
-                return origin
+                if len(origin.split(',')) == 3:
+                    return origin
+                raise forms.ValidationError("If the dropdown doesn't show up, type following this schema: "
+                                            "city, nation, country")
             data = response.json()['_embedded']['city:search-results']
             if not data:
                 raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
