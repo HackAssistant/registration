@@ -110,6 +110,11 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
             origin_verified = origin
         else:
             response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
+            if response.status_code / 100 != 2:
+                if len(origin.split(',')) == 3:
+                    return origin
+                raise forms.ValidationError("If the dropdown doesn't show up, type following this schema: "
+                                            "city, nation, country")
             data = response.json()['_embedded']['city:search-results']
             if not data:
                 raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
@@ -344,7 +349,8 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                         '(we love links) Show us your passion! :D',
             'reimb_amount': 'We try our best to cover costs for all hackers, but our budget is limited',
             'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any'),
-            'origin': "Please select one of the dropdown options or write 'Others'"
+            'origin': "Please select one of the dropdown options or write 'Others'. If the dropdown doesn't show up,"
+                      " type following this schema: <strong>city, nation, country</strong>"
         }
 
         widgets = {

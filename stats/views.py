@@ -1,5 +1,7 @@
+import datetime
+
 from django.conf import settings
-from django.db.models import Count, Sum, F
+from django.db.models import Count, Sum, F, Value, IntegerField
 from django.db.models.functions import TruncDate, TruncHour
 from django.http import JsonResponse
 from django.urls import reverse
@@ -12,7 +14,7 @@ from applications.models import HackerApplication, APP_CONFIRMED, APP_ATTENDED, 
 from organizers.models import Vote
 from stats.tables import CheckinRankingListTable, OrganizerRankingListTable
 from user.mixins import is_organizer, IsOrganizerMixin
-from user.models import User, USR_HACKER, USR_MENTOR, USR_VOLUNTEER
+from user.models import User, USR_HACKER, USR_MENTOR, USR_VOLUNTEER, USR_ORGANIZER
 from checkin.models import CheckIn
 
 from collections import defaultdict
@@ -367,9 +369,13 @@ class OrganizerStats(IsOrganizerMixin, SingleTableMixin, TabsView):
         return stats_tabs()
 
     def get_queryset(self):
-        return Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED]) \
-            .annotate(email=F('user__email')) \
-            .values('email').annotate(total_count=Count('application'),
-                                      skip_count=Count('application') - Count('calculated_vote'),
-                                      vote_count=Count('calculated_vote')) \
-            .exclude(vote_count=0)
+        votes = list(Vote.objects.exclude(application__status__in=[APP_DUBIOUS, APP_INVALID, APP_BLACKLISTED])
+                     .annotate(email=F('user__email')).values('email')
+                     .annotate(total_count=Count('application'),
+                               skip_count=Count('application') - Count('calculated_vote'),
+                               vote_count=Count('calculated_vote')).exclude(vote_count=0))
+        zero = Value(0, output_field=IntegerField())
+        year_ago = datetime.datetime.now() - datetime.timedelta(days=365)
+        votes.extend(list(User.objects.filter(vote__isnull=True, type=USR_ORGANIZER, last_login__gt=year_ago)
+                          .annotate(total_count=zero, skip_count=zero, vote_count=zero)))
+        return votes
