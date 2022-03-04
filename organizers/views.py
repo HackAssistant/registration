@@ -7,7 +7,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count, Avg, F, Q, Case, When, IntegerField
+from django.db.models import Count, Avg, F, Q, CharField
+from django.db.models.functions import Concat
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -369,10 +370,10 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
             .exclude(user__team__team_code__isnull=True).values('user__team__team_code') \
             .annotate(vote_avg=Avg('vote__calculated_vote'),
                       members=Count('user', distinct=True),
-                      invited=Count(Case(When(status__in=[APP_INVITED, APP_LAST_REMIDER], then=1),
-                                         output_field=IntegerField())),
-                      accepted=Count(Case(When(status=APP_CONFIRMED, then=1), output_field=IntegerField())))\
-            .exclude(members=F('accepted'))
+                      invited=Count(Concat('status', 'user__id', output_field=CharField()),
+                                    filter=Q(status__in=[APP_INVITED, APP_LAST_REMIDER]), distinct=True),
+                      accepted=Count(Concat('status', 'user__id', output_field=CharField()),
+                                     filter=Q(status=APP_CONFIRMED), distinct=True)).exclude(members=F('accepted'))
 
     def get_context_data(self, **kwargs):
         context = super(InviteTeamListView, self).get_context_data(**kwargs)
