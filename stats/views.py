@@ -315,11 +315,11 @@ class UsersStats(IsOrganizerMixin, TabsView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         h_emails = ', '.join([user.email for user in User.objects.filter(hackerapplication_application__isnull=True,
-                                                                         type=USR_HACKER)])
+                                                                         type=USR_HACKER, email_verified=True)])
         m_emails = ', '.join([user.email for user in User.objects.filter(mentorapplication_application__isnull=True,
-                                                                         type=USR_MENTOR)])
+                                                                         type=USR_MENTOR, email_verified=True)])
         v_emails = ', '.join([user.email for user in User.objects.filter(volunteerapplication_application__isnull=True,
-                                                                         type=USR_VOLUNTEER)])
+                                                                         type=USR_VOLUNTEER, email_verified=True)])
         context.update({'h_emails': h_emails, 'm_emails': m_emails, 'v_emails': v_emails})
         return context
 

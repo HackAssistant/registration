@@ -52,7 +52,9 @@ INSTALLED_APPS = [
     'offer',
     'rest_framework',
     'rest_framework.authtoken',
-    'cas_server'
+    'django_jwt',
+    'django_jwt.server',
+    'corsheaders',
 ]
 
 if BAGGAGE_ENABLED:
@@ -74,6 +76,7 @@ AUTHENTICATION_BACKENDS = (
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -304,11 +307,11 @@ GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-CAS_SERVER = os.environ.get('CAS_SERVER', 'False') == 'True'
-CAS_LOGIN_TEMPLATE = 'login_cas.html'
-CAS_LOGGED_TEMPLATE = 'login_cas_done.html'
-CAS_WARN_TEMPLATE = 'login_cas_done.html'
-CAS_AUTH_CLASS = 'user.auth.MyHackUPCAuthUser'
+JWT_CLIENT = {
+    'OPENID2_URL': 'local',
+}
+DEFAULT_DOMAIN = 'http://127.0.0.1:8100'
 SESSION_COOKIE_AGE = 86400
+LOGOUT_URL = 'account_logout'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'

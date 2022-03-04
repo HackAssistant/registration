@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count, Avg, F, Q
+from django.db.models import Count, Avg, F, Q, Case, When, IntegerField
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -364,16 +364,25 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.objects.filter(status=APP_PENDING) \
+        return models.HackerApplication.objects.filter(status__in=[APP_PENDING, APP_CONFIRMED, APP_LAST_REMIDER,
+                                                                   APP_INVITED]) \
             .exclude(user__team__team_code__isnull=True).values('user__team__team_code').order_by() \
             .annotate(vote_avg=Avg('vote__calculated_vote'),
                       team=F('user__team__team_code'),
-                      members=Count('user', distinct=True))
+                      members=Count('user', distinct=True),
+                      invited=Count(Case(When(status__in=[APP_INVITED, APP_LAST_REMIDER], then=1),
+                                         output_field=IntegerField())),
+                      accepted=Count(Case(When(status=APP_CONFIRMED, then=1), output_field=IntegerField())))\
+            .exclude(members=F('accepted'))
 
     def get_context_data(self, **kwargs):
-        c = super(InviteTeamListView, self).get_context_data(**kwargs)
-        c.update({'teams': True})
-        return c
+        context = super(InviteTeamListView, self).get_context_data(**kwargs)
+        context.update({'teams': True})
+        n_live_hackers = models.HackerApplication.objects.filter(status__in=[APP_INVITED, APP_LAST_REMIDER,
+                                                                             APP_CONFIRMED], online=False).count()
+        context.update({'n_live_hackers': n_live_hackers,
+                        'n_live_per_hackers': n_live_hackers * 100 / getattr(settings, 'N_MAX_LIVE_HACKERS', 0)})
+        return context
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
