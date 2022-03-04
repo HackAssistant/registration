@@ -145,15 +145,13 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
-        option = request.POST.get('hybrid', 'Live')
         apps = models.HackerApplication.objects.filter(pk__in=ids).all()
         mails = []
         errors = 0
         for app in apps:
             try:
-                option = app.change_online(option)
-                app.invite(request.user)
-                m = emails.create_invite_email(app, request, hybrid_option=option)
+                app.invite(request.user, online=request.POST.get('force_online', 'false') == 'true')
+                m = emails.create_invite_email(app, request)
                 mails.append(m)
             except ValidationError:
                 errors += 1
@@ -373,7 +371,10 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
                       invited=Count(Concat('status', 'user__id', output_field=CharField()),
                                     filter=Q(status__in=[APP_INVITED, APP_LAST_REMIDER]), distinct=True),
                       accepted=Count(Concat('status', 'user__id', output_field=CharField()),
-                                     filter=Q(status=APP_CONFIRMED), distinct=True)).exclude(members=F('accepted'))
+                                     filter=Q(status=APP_CONFIRMED), distinct=True),
+                      live_pending=Count(Concat('status', 'user__id', output_field=CharField()),
+                                         filter=Q(status=APP_PENDING, online=False), distinct=True))\
+            .exclude(members=F('accepted'))
 
     def get_context_data(self, **kwargs):
         context = super(InviteTeamListView, self).get_context_data(**kwargs)
@@ -391,7 +392,7 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         errors = 0
         for app in apps:
             try:
-                app.invite(request.user)
+                app.invite(request.user, online=request.POST.get('force_online', 'false') == 'true')
                 m = emails.create_invite_email(app, request)
                 mails.append(m)
             except ValidationError:

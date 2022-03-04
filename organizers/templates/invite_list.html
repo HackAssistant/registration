@@ -21,9 +21,9 @@
 
 {% block table_footer %}
     <div class="panel-footer">
-        <button name="hybrid" class="btn btn-success btn-block" value="Live">Invite Live</button>
+        <button class="btn btn-success btn-block">Invite</button>
         {% if h_hybrid %}
-            <button name="hybrid" class="btn btn-success btn-block" value="Online">Invite Online</button>
+            <button name="force_online" class="btn btn-success btn-block" value="true">Invite Online</button>
         {% endif %}
         {% if teams %}
             <a href="{% url 'invite_list' %}" class="btn btn-info btn-block">View applications</a>

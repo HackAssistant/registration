@@ -6,13 +6,13 @@ from app.utils import reverse
 
 
 # online_option can be Live, Online, Changed
-def create_invite_email(application, request, hybrid_option='Live'):
+def create_invite_email(application, request):
     c = {
         'name': application.user.get_full_name,
         'reimb': getattr(application.user, 'reimbursement', None),
         'confirm_url': str(reverse('confirm_app', request=request, kwargs={'id': application.uuid_str})),
         'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str})),
-        'hybrid_option': hybrid_option,
+        'hybrid_option': 'Online' if application.online else 'Live',
     }
     if application.user.is_hacker():
         return emails.render_mail('mails/invitation_hacker', application.user.email, c)
