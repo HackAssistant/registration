@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count, Avg, F, Q, Case, When, IntegerField, ExpressionWrapper, CharField
+from django.db.models import Count, Avg, F, Q, CharField
 from django.db.models.functions import Concat
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
