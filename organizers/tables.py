@@ -166,7 +166,7 @@ class AdminTeamListTable(tables.Table):
         model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'team', 'vote_avg', 'members', 'invited', 'accepted']
+        fields = ['selected', 'team', 'vote_avg', 'members', 'live_pending', 'invited', 'accepted']
         empty_text = 'No pending teams'
         order_by = '-vote_avg'
 

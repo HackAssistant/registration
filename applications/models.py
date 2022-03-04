@@ -261,7 +261,7 @@ class BaseApplication(models.Model):
         self.status_update_date = timezone.now()
         self.save()
 
-    def invite(self, user):
+    def invite(self, user, online=False):
         # We can re-invite someone invited
         if self.status in [APP_CONFIRMED, APP_ATTENDED]:
             raise ValidationError('Application has already answered invite. '
@@ -269,6 +269,8 @@ class BaseApplication(models.Model):
         self.status = APP_INVITED
         if not self.invited_by:
             self.invited_by = user
+        if online:
+            self.online = online
         self.last_invite = timezone.now()
         self.last_reminder = None
         self.status_update_date = timezone.now()
@@ -400,15 +402,6 @@ class HackerApplication(
         blank=True,
         validators=[validate_file_extension],
     )
-
-    def change_online(self, option):
-        if not self.online and option == 'Online':
-            self.online = True
-            self.save()
-            return 'Changed'
-        if self.online and option == 'Live':
-            raise ValidationError('Application not marked to be live')
-        return option
 
     @classmethod
     def annotate_vote(cls, qs):
