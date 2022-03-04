@@ -160,6 +160,7 @@ class AdminApplicationsListTable(tables.Table):
 
 class AdminTeamListTable(tables.Table):
     selected = tables.CheckBoxColumn(accessor="team", verbose_name='Select')
+    team = tables.Column(accessor='user__team__team_code')
 
     class Meta:
         model = HackerApplication

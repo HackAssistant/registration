@@ -366,9 +366,8 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status__in=[APP_PENDING, APP_CONFIRMED, APP_LAST_REMIDER,
                                                                    APP_INVITED]) \
-            .exclude(user__team__team_code__isnull=True).values('user__team__team_code').order_by() \
+            .exclude(user__team__team_code__isnull=True).values('user__team__team_code') \
             .annotate(vote_avg=Avg('vote__calculated_vote'),
-                      team=F('user__team__team_code'),
                       members=Count('user', distinct=True),
                       invited=Count(Case(When(status__in=[APP_INVITED, APP_LAST_REMIDER], then=1),
                                          output_field=IntegerField())),
