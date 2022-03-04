@@ -310,7 +310,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 JWT_CLIENT = {
     'OPENID2_URL': 'local',
 }
-DEFAULT_DOMAIN = 'http://127.0.0.1:8100'
+DEFAULT_DOMAIN = HACKATHON_DOMAIN
 SESSION_COOKIE_AGE = 86400
 LOGOUT_URL = 'account_logout'
 
