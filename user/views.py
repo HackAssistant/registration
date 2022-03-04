@@ -1,7 +1,6 @@
 import random
 import string
 
-from cas_server.views import LogoutMixin
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
@@ -12,7 +11,6 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views import View
 from django.views.generic import TemplateView
-from cas_server.models import User as User_cas
 
 from app.utils import reverse
 from applications import models as a_models
@@ -38,10 +36,6 @@ def login(request):
             if user and user.is_active:
                 auth.login(request, user)
                 reset_tries(request)
-                if settings.CAS_SERVER:
-                    request.session['authenticated'] = True
-                    request.session['username'] = email
-                    User_cas(username=email, session_key=request.session.session_key).save()
                 resp = HttpResponseRedirect(next_)
                 c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', getattr(settings, 'HACKATHON_DOMAIN', None))
                 c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
@@ -81,7 +75,8 @@ def signup(request, u_type):
                 models.User.objects.create_user(email=email, password=password, name=name, u_type=u_type)
                 user = auth.authenticate(email=email, password=password)
                 auth.login(request, user)
-                return HttpResponseRedirect(reverse('root'))
+                next_url = request.GET.get('next', reverse('root'))
+                return HttpResponseRedirect(next_url)
         if not request.recaptcha_is_valid:
             form.add_error(None, 'Invalid reCAPTCHA. Please try again.')
     else:
@@ -90,13 +85,12 @@ def signup(request, u_type):
     return render(request, 'signup.html', {'form': form})
 
 
-class Logout(LogoutMixin, View):
+class Logout(View):
     def get(self, request):
         auth.logout(request)
-        if settings.CAS_SERVER:
-            self.logout(all_session=True)
         messages.success(request, 'Successfully logged out!')
-        resp = HttpResponseRedirect(reverse('account_login'))
+        next_url = request.GET.get('next', reverse('account_login'))
+        resp = HttpResponseRedirect(next_url)
         c_domain = getattr(settings, 'LOGGED_IN_COOKIE_DOMAIN', None) or getattr(settings, 'HACKATHON_DOMAIN', None)
         c_key = getattr(settings, 'LOGGED_IN_COOKIE_KEY', None)
         if c_domain and c_key:
