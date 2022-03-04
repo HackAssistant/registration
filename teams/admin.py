@@ -8,7 +8,7 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('team_code', 'user',)
     list_per_page = 200
     list_filter = ('team_code', 'user')
-    search_fields = ('team_code', 'user')
+    search_fields = ('team_code', 'user__name')
     actions = ['delete_selected', ]
 
 
