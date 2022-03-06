@@ -141,7 +141,8 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))
+        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))\
+            .order_by('-vote_avg')
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
@@ -374,7 +375,7 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
                                      filter=Q(status=APP_CONFIRMED), distinct=True),
                       live_pending=Count(Concat('status', 'user__id', output_field=CharField()),
                                          filter=Q(status=APP_PENDING, online=False), distinct=True))\
-            .exclude(members=F('accepted'))
+            .exclude(members=F('accepted')).order_by('-vote_avg')
 
     def get_context_data(self, **kwargs):
         context = super(InviteTeamListView, self).get_context_data(**kwargs)
