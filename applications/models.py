@@ -418,6 +418,7 @@ class HackerApplication(
         self.contacted = False
         self.status_update_date = timezone.now()
         self.vote_set.all().delete()
+        self.acceptedresume.delete()
         self.save()
 
     def unset_dubious(self):

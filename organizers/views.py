@@ -77,7 +77,8 @@ def hacker_tabs(user):
                   ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
                       status=RE_PEND_APPROVAL).count() else False), ])
     if user.has_sponsor_access:
-        new_resume = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True).first()
+        new_resume = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True)\
+            .exclude(status__in=[APP_DUBIOUS, APP_BLACKLISTED]).first()
         t.append(('Review resume', reverse('review_resume'), 'new' if new_resume else ''))
     return t
 
@@ -655,7 +656,8 @@ class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        app = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True).first()
+        app = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True)\
+            .exclude(status__in=[APP_DUBIOUS, APP_BLACKLISTED]).first()
         context.update({'app': app})
         return context
 
