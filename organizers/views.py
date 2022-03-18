@@ -388,7 +388,8 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
-        apps = models.HackerApplication.objects.filter(user__team__team_code__in=ids).all()
+        apps = models.HackerApplication.objects.filter(user__team__team_code__in=ids)\
+            .exclude(status__in=[APP_DUBIOUS, APP_BLACKLISTED]).annotate(count=Count('vote')).filter(count__gte=5)
         mails = []
         errors = 0
         for app in apps:
