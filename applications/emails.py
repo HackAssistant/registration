@@ -12,7 +12,7 @@ def create_invite_email(application, request):
         'reimb': getattr(application.user, 'reimbursement', None),
         'confirm_url': str(reverse('confirm_app', request=request, kwargs={'id': application.uuid_str})),
         'cancel_url': str(reverse('cancel_app', request=request, kwargs={'id': application.uuid_str})),
-        'hybrid_option': 'Online' if application.online else 'Live',
+        'hybrid_option': 'Online' if getattr(application, 'online', False) else 'Live',
     }
     if application.user.is_hacker():
         return emails.render_mail('mails/invitation_hacker', application.user.email, c)

@@ -429,7 +429,7 @@ class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, Exp
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
+        return models.HackerApplication.objects.filter(status=APP_DUBIOUS).order_by('-status_update_date')
 
 
 class BlacklistApplicationsListView(TabsViewMixin, IsBlacklistAdminMixin, ExportMixin, SingleTableMixin, FilterView):
