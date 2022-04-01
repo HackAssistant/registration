@@ -308,7 +308,7 @@ GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 JWT_CLIENT = {
-    'OPENID2_URL': ('http://' if DEBUG else 'https://') + HACKATHON_DOMAIN,
+    'OPENID2_URL': ('http://' if DEBUG else 'https://') + HACKATHON_DOMAIN + '/oidc',
     'TYPE': 'local',
 }
 SESSION_COOKIE_AGE = 86400
