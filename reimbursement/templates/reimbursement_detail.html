@@ -106,19 +106,21 @@
     {% endif %}
     <script src="{% static 'lib/typeahead.min.js' %}"></script>
     <script src="{% static 'js/form_modifiers.js' %}"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <script>
 
         $(document).ready(function () {
                 var exp_time = $('input[name="expiration_time"]');
+                let value = exp_time.val()
+                if (value === '') value = moment().startOf('day')
                 exp_time.daterangepicker({
                     timePicker: true,
                     singleDatePicker: true,
                     timePickerIncrement: 30,
-                    startDate: moment(exp_time.val()),
+                    startDate: value,
                     locale: {
                         format: 'YYYY-MM-DD H:mm:ss'
                     }
@@ -144,7 +146,3 @@
 {% block out_panel %}
 
 {% endblock %}
-
-
-
-
