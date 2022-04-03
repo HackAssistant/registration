@@ -416,3 +416,33 @@ input:-webkit-autofill
     width: 100%;
     height: 100%;
 }
+
+.daterangepicker.show-calendar {
+    background-color: #17141e;
+    border-color: #333333;
+}
+
+.daterangepicker .calendar-table {
+    background-color: #333333 !important;
+}
+
+.daterangepicker select {
+    background-color: #333333 !important;
+    border-color: #17141e !important;
+}
+
+.daterangepicker td.off, .daterangepicker td.off.in-range, .daterangepicker td.off.start-date, .daterangepicker td.off.end-date {
+    background-color: #333333 !important;
+    color: white !important;
+    opacity: 50%;
+}
+
+.daterangepicker .drp-buttons {
+    border-color: #333333 !important;
+}
+
+.daterangepicker td.available:hover, .daterangepicker th.available:hover {
+    background-color: #555555 !important;
+    border-color: transparent;
+    color: inherit;
+}
