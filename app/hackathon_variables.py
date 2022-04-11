@@ -41,6 +41,8 @@ HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
 HACKATHON_APP_DEADLINE = timezone.datetime(2022, 4, 15, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+# (OPTIONAL) Online checkin activated
+ONLINE_CHECKIN = timezone.datetime(2022, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = ''
 

@@ -70,7 +70,7 @@
               </div>
             {% endif %}
             <div class="col-md-8">
-                {% if not h_discord %}
+                {% if not h_discord and not h_hybrid %}
                   <p>Thank you {{ user.get_full_name }} for confirming your attendance
                       to {{ h_name }}! In order to make registration go smoother, please show us this QR code during the
                       process so we can
@@ -88,9 +88,11 @@
                   <div class="margin-bottom">
                     <p>Thank you {{ user.get_full_name }} for confirming your attendance
                         to {{ h_name }}!</p>
-                    {% if not user.discorduser %}
+                    {% if h_hybrid and application.is_confirmed and h_online_checkin %}
+                      {% include 'include/online_checkin.html' %}
+                    {% elif h_discord and not user.discorduser %}
                       {% include 'include/discord_button.html' %}
-                    {% else %}
+                    {% elif h_discord %}
                       {% include 'include/swag_button.html' %}
                     {% endif %}
                   </div>

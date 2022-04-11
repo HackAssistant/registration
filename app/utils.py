@@ -63,6 +63,15 @@ def is_app_closed():
     return False
 
 
+def is_online_checkin_closed():
+    opens = getattr(settings, 'ONLINE_CHECKIN', None)
+    if opens:
+        time_left = timezone.now() - opens
+        return time_left != timezone.timedelta() and time_left > timezone.timedelta()
+    else:
+        return False
+
+
 def get_substitutions_templates():
     return {'h_name': getattr(settings, 'HACKATHON_NAME', None),
             'h_app_name': getattr(settings, 'HACKATHON_APPLICATION_NAME', None),
@@ -101,6 +110,7 @@ def get_substitutions_templates():
             'captcha_site_key': getattr(settings, 'GOOGLE_RECAPTCHA_SITE_KEY', ''),
             'h_hybrid': getattr(settings, 'HYBRID_HACKATHON', False),
             'n_live_max_hackers': getattr(settings, 'N_MAX_LIVE_HACKERS', 0),
+            'h_online_checkin': is_online_checkin_closed()
             }
 
 
