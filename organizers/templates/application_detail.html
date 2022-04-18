@@ -90,17 +90,17 @@
 
                 <p class="text-center">
                     {% if app.github %}
-                        <a target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
+                        <a title="GitHub Link" target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
                     {% endif %}
                     {% if app.linkedin %}
-                        <a target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
+                        <a title="LinkedIn Link" target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
                     {% endif %}
                     {% if app.site %}
-                        <a target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
+                        <a title="Personal Site Link" target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
                     {% endif %}
                     {% if app.devpost %}
-                        <a target="_blank" href="{{ app.devpost }}" class="icon">
-                            <img class="icon" src="{% static 'img/devpost.svg' %}"/>
+                        <a title="Devpost Link" target="_blank" href="{{ app.devpost }}" class="icon">
+                            <img alt="devpost logo" class="icon" src="{% static 'img/devpost.svg' %}"/>
                         </a>
                     {% endif %}
                 </p>
