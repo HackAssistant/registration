@@ -155,16 +155,18 @@ class AdminApplicationsListTable(tables.Table):
         fields = get_admin_application_list_fields()
         empty_text = 'No applications available'
         order_by = '-vote_avg'
+        orderable = False
 
 
 class AdminTeamListTable(tables.Table):
-    selected = tables.CheckBoxColumn(accessor="team", verbose_name='Select')
+    selected = tables.CheckBoxColumn(accessor="user__team__team_code", verbose_name='Select')
+    team = tables.Column(accessor='user__team__team_code')
 
     class Meta:
         model = HackerApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['selected', 'team', 'vote_avg', 'members']
+        fields = ['selected', 'team', 'vote_avg', 'members', 'live_pending', 'invited', 'accepted']
         empty_text = 'No pending teams'
         order_by = '-vote_avg'
 
