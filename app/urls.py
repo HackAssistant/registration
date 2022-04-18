@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^meals/', include('meals.urls')),
     url(r'^judging/', include('judging.urls')),
     url(r'^offer/', include('offer.urls')),
+    url(r'^oidc/', include('django_jwt.server.urls')),
 ]
 
 if settings.BAGGAGE_ENABLED:
@@ -40,6 +41,3 @@ if settings.DEBUG:
 
 if settings.DISCORD_HACKATHON:
     urlpatterns.append(url(r'^discord/', include('discord.urls')))
-
-if settings.CAS_SERVER:
-    urlpatterns.append(url(r'^cas/', include('cas_server.urls', namespace="cas_server")))

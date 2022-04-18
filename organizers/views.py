@@ -7,7 +7,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.db.models import Count, Avg, F, Q
+from django.db.models import Count, Avg, F, Q, CharField
+from django.db.models.functions import Concat
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -76,7 +77,8 @@ def hacker_tabs(user):
                   ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
                       status=RE_PEND_APPROVAL).count() else False), ])
     if user.has_sponsor_access:
-        new_resume = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True).first()
+        new_resume = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True)\
+            .exclude(status__in=[APP_DUBIOUS, APP_BLACKLISTED]).first()
         t.append(('Review resume', reverse('review_resume'), 'new' if new_resume else ''))
     return t
 
@@ -140,19 +142,18 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))
+        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))\
+            .order_by('-vote_avg')
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
-        option = request.POST.get('hybrid', 'Live')
         apps = models.HackerApplication.objects.filter(pk__in=ids).all()
         mails = []
         errors = 0
         for app in apps:
             try:
-                option = app.change_online(option)
-                app.invite(request.user)
-                m = emails.create_invite_email(app, request, hybrid_option=option)
+                app.invite(request.user, online=request.POST.get('force_online', 'false') == 'true')
+                m = emails.create_invite_email(app, request)
                 mails.append(m)
             except ValidationError:
                 errors += 1
@@ -364,25 +365,37 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.objects.filter(status=APP_PENDING) \
-            .exclude(user__team__team_code__isnull=True).values('user__team__team_code').order_by() \
+        return models.HackerApplication.objects.filter(status__in=[APP_PENDING, APP_CONFIRMED, APP_LAST_REMIDER,
+                                                                   APP_INVITED]) \
+            .exclude(user__team__team_code__isnull=True).values('user__team__team_code') \
             .annotate(vote_avg=Avg('vote__calculated_vote'),
-                      team=F('user__team__team_code'),
-                      members=Count('user', distinct=True))
+                      members=Count('user', distinct=True),
+                      invited=Count(Concat('status', 'user__id', output_field=CharField()),
+                                    filter=Q(status__in=[APP_INVITED, APP_LAST_REMIDER]), distinct=True),
+                      accepted=Count(Concat('status', 'user__id', output_field=CharField()),
+                                     filter=Q(status=APP_CONFIRMED), distinct=True),
+                      live_pending=Count(Concat('status', 'user__id', output_field=CharField()),
+                                         filter=Q(status=APP_PENDING, online=False), distinct=True))\
+            .exclude(members=F('accepted')).order_by('-vote_avg')
 
     def get_context_data(self, **kwargs):
-        c = super(InviteTeamListView, self).get_context_data(**kwargs)
-        c.update({'teams': True})
-        return c
+        context = super(InviteTeamListView, self).get_context_data(**kwargs)
+        context.update({'teams': True})
+        n_live_hackers = models.HackerApplication.objects.filter(status__in=[APP_INVITED, APP_LAST_REMIDER,
+                                                                             APP_CONFIRMED], online=False).count()
+        context.update({'n_live_hackers': n_live_hackers,
+                        'n_live_per_hackers': n_live_hackers * 100 / getattr(settings, 'N_MAX_LIVE_HACKERS', 0)})
+        return context
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
-        apps = models.HackerApplication.objects.filter(user__team__team_code__in=ids).all()
+        apps = models.HackerApplication.objects.filter(user__team__team_code__in=ids)\
+            .exclude(status__in=[APP_DUBIOUS, APP_BLACKLISTED]).annotate(count=Count('vote')).filter(count__gte=5)
         mails = []
         errors = 0
         for app in apps:
             try:
-                app.invite(request.user)
+                app.invite(request.user, online=request.POST.get('force_online', 'false') == 'true')
                 m = emails.create_invite_email(app, request)
                 mails.append(m)
             except ValidationError:
@@ -416,7 +429,7 @@ class DubiousApplicationsListView(TabsViewMixin, HaveDubiousPermissionMixin, Exp
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.objects.filter(status=APP_DUBIOUS)
+        return models.HackerApplication.objects.filter(status=APP_DUBIOUS).order_by('-status_update_date')
 
 
 class BlacklistApplicationsListView(TabsViewMixin, IsBlacklistAdminMixin, ExportMixin, SingleTableMixin, FilterView):
@@ -643,7 +656,8 @@ class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        app = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True).first()
+        app = models.HackerApplication.objects.filter(acceptedresume__isnull=True, cvs_edition=True)\
+            .exclude(status__in=[APP_DUBIOUS, APP_BLACKLISTED]).first()
         context.update({'app': app})
         return context
 
