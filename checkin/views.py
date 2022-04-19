@@ -116,8 +116,12 @@ class CheckInOnlineView(IsHackerMixin, TabsView):
         appid = request.POST.get('app_id')
         type = request.POST.get('type')
         qrcode = 'online'
-        if checking_in_hacker(request, True, appid, qrcode, type):
-            messages.success(self.request, 'Checked-in successfully!')
+        app = get_application_by_type(type, appid)
+        if app.online:
+            if checking_in_hacker(request, True, appid, qrcode, type):
+                messages.success(self.request, 'Checked-in successfully!')
+            else:
+                messages.success(self.request, 'Oops! Something wrong happened.')
         else:
             messages.success(self.request, 'Oops! Something wrong happened.')
         return HttpResponseRedirect(reverse('dashboard'))

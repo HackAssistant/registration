@@ -66,8 +66,8 @@ def is_app_closed():
 def is_online_checkin_closed():
     opens = getattr(settings, 'ONLINE_CHECKIN', None)
     if opens:
-        time_left = timezone.now() - opens
-        return time_left != timezone.timedelta() and time_left > timezone.timedelta()
+        closes = opens + timezone.timedelta(days=1)
+        return opens <= timezone.now() <= closes
     else:
         return False
 
