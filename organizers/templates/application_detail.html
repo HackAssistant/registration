@@ -90,17 +90,17 @@
 
                 <p class="text-center">
                     {% if app.github %}
-                        <a target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
+                        <a title="GitHub Link" target="_blank" href="{{ app.github }}" class="icon fa fa-github"></a>
                     {% endif %}
                     {% if app.linkedin %}
-                        <a target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
+                        <a title="LinkedIn Link" target="_blank" href="{{ app.linkedin }}" class="icon fa fa-linkedin"></a>
                     {% endif %}
                     {% if app.site %}
-                        <a target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
+                        <a title="Personal Site Link" target="_blank" href="{{ app.site }}" class="icon fa fa-globe"></a>
                     {% endif %}
                     {% if app.devpost %}
-                        <a target="_blank" href="{{ app.devpost }}" class="icon">
-                            <img class="icon" src="{% static 'img/devpost.svg' %}"/>
+                        <a title="Devpost Link" target="_blank" href="{{ app.devpost }}" class="icon">
+                            <img alt="devpost logo" class="icon" src="{% static 'img/devpost.svg' %}"/>
                         </a>
                     {% endif %}
                 </p>
@@ -120,15 +120,32 @@
                 </p>
                 <hr>
             {% endfor %}
-            <form action="" method="post">
+            <form action="" method="post" id="commentsForm">
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.pk }}"/>
-                <textarea name="comment_text" class="form-control" placeholder="Write a comment..."
-                          rows="3" required maxlength="500"></textarea>
-                <button name="add_comment" class="btn btn-block btn-default" value="comment">Add comment
+                <textarea id="commentSection" name="comment_text" class="form-control" placeholder="Write a comment..." rows="3" required maxlength="500"></textarea>
+                <input type="hidden" name="add_comment" value="comment">
+                <button id="submitCommentButton" type="submit" class="btn btn-block btn-default">Add comment
                 </button>
             </form>
-        </div>
+            <script>
+                // JS script to allow submitting comments via pressing Ctrl+Enter
+                var formToFocusOn = document.getElementById("commentSection");
+                // Do something when a key is pressed down inside the textarea
+                formToFocusOn.addEventListener("keydown", function(event) {
+                    // 
+                    // When CTRl && Enter Key (value 13)
+                    // See list of number key values:
+                    // https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/#a-full-list-of-key-event-values
+                    // 
+                    if (event.ctrlKey && event.keyCode === 13) {
+                    // submit the form 
+                    $('#submitCommentButton').click();
+                    // document.getElementById('commentsForm').submit();
+                    }
+                });
+            </script>
+            </div>
 
 
 
