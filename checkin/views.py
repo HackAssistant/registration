@@ -19,8 +19,6 @@ from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, \
     SponsorApplicationsCheckInTable, SponsorApplicationCheckinFilter
 from user.mixins import IsVolunteerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
     HaveSponsorPermissionMixin, IsHackerMixin
-from app.slack import send_slack_message
-from multiprocessing import Pool
 from organizers.views import volunteer_tabs, mentor_tabs, hacker_tabs, sponsor_tabs
 
 
@@ -51,8 +49,7 @@ def checking_in_hacker(request, web, appid, qrcode, type):
     ci.qr_identifier = qrcode
     ci.save()
     try:
-        MessageManager().send_message(user=app.user, message=
-                                      'Hello ' + app.user.name +
+        MessageManager().send_message(user=app.user, message='Hello ' + app.user.name +
                                       ' :wave::skin-tone-3: and welcome to *HackUPC 2022* :bienee:!\n    '
                                       '- Opening ceremony :fast_forward: will be at 19h :clock6: on the '
                                       'Vèrtex building, more information on how to get there :world_map: at '

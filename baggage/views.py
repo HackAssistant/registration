@@ -22,10 +22,8 @@ from django.core.files.base import ContentFile
 import time
 from user.mixins import IsVolunteerMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from app.slack import send_slack_message
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
-from multiprocessing import Pool
 
 
 def baggage_checkIn(request, bag, bagrow, bagcol, bagroom, posmanual, bagspe):
