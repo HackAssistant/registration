@@ -3,6 +3,7 @@ import json
 from django.urls import reverse
 
 from app.mixins import TabsViewMixin
+from app.services.messages import MessageManager
 from baggage.tables import BaggageListTable, BaggageListFilter, BaggageUsersTable
 from baggage.tables import BaggageUsersFilter, BaggageCurrentHackerTable
 from baggage.models import Bag, BAG_ADDED, BAG_REMOVED, Room
@@ -14,7 +15,7 @@ from app.views import TabsView
 from rest_framework.views import APIView
 from django.contrib import messages
 from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from baggage import utils
 import base64
 from django.core.files.base import ContentFile
@@ -42,11 +43,11 @@ def baggage_checkIn(request, bag, bagrow, bagcol, bagroom, posmanual, bagspe):
         bag.row = position[2]
         bag.col = position[3]
         bag.save()
-        pool = Pool(processes=1)
-        pool.apply_async(send_slack_message, [bag.owner.email, '*Baggage check-in* :handbag:\nYou\'ve just '
-                                              'registered :memo: a bag with ID `' + str(bag.bid) + '` located '
-                                              ':world_map: at `' + position[1] + '-' + position[2] + str(position[3]) +
-                                              '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_'])
+        MessageManager().send_message(user=bag.owner,
+                                      message='*Baggage check-in* :handbag:\nYou\'ve just registered :memo: a bag '
+                                      'with ID `' + str(bag.bid) + '` located :world_map: at `' + position[1] +
+                                              '-' + position[2] + str(position[3]) +
+                                              '`!\n_Remember to take it before leaving :woman-running::skin-tone-3:!_')
         return 0
     return 2
 
@@ -59,9 +60,8 @@ def baggage_checkOut(request, web, bagid):
         bag.outby = request.user
     else:
         bag.outby = User.objects.filter(id=1).first()
-        pool = Pool(processes=1)
-        pool.apply_async(send_slack_message, [bag.owner.email, '*Baggage check-out* :handbag:\nYour bag with ID `' +
-                                              str(bagid) + '` has been checked-out :truck:!'])
+        MessageManager().send_message(user=bag.owner, message='*Baggage check-out* :handbag:\nYour bag with ID `' +
+                                                              str(bagid) + '` has been checked-out :truck:!')
     bag.save()
     return True
 
@@ -107,7 +107,7 @@ class BaggageHacker(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterVie
 
     def get_queryset(self):
         id_ = self.kwargs['user_id']
-        user = User.objects.filter(id=id_)
+        user = get_object_or_404(User, id=id_)
         return Bag.objects.filter(status=BAG_ADDED, owner=user)
 
 
@@ -188,13 +188,13 @@ class BaggageDetail(IsVolunteerMixin, TabsView):
     template_name = 'baggage_detail.html'
 
     def get_back_url(self):
-        if self.kwargs['first'] != 'first/':
+        if self.kwargs.get('first', '') != 'first/':
             return 'javascript:history.back()'
 
     def get_context_data(self, **kwargs):
         context = super(BaggageDetail, self).get_context_data(**kwargs)
         bagid = kwargs['id']
-        bagfirst = (kwargs['first'] == 'first/')
+        bagfirst = (self.kwargs.get('first', '') == 'first/')
         bag = Bag.objects.filter(bid=bagid).first()
         if not bag:
             raise Http404

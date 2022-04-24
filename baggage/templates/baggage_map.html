@@ -15,7 +15,7 @@
             }
         {% endfor %}
     </style>
-    
+
     {% for bag in bags %}
         <script>
             $(document).ready(function(){
@@ -41,7 +41,7 @@
             <div class="baggage-header">
                 <h3 class="baggage-title">Room {{ room }}</h3>
             </div>
-            <div style="overflow-x: hidden;">
+            <div style="overflow-x: auto;">
                 <table class="baggage-table">
                     {% for i in "x"|ljust:room.row %}
                         <tr class="baggage-table-tr baggage-table-tr-{{ room }}-{{ forloop.parentloop.counter0|itoa }} baggage-table-tr-{{ forloop.parentloop.counter0|itoa }}">
@@ -54,25 +54,25 @@
             </div>
         </div>
     {% endfor %}
-    
+
     <script>
         function openRoom(evt, tabName) {
             var i, tabcontent, tablinks;
-            
+
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
-            
+
             tablinks = document.getElementsByClassName("tablinks");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
-            
+
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
-        
+
         document.getElementsByClassName("tablinks")[0].click();
     </script>
 {% endblock %}

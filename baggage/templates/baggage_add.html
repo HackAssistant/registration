@@ -7,6 +7,7 @@
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
     {% if h_b_picture %}
+        <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
         <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
     {% endif %}
     <script src="{% static 'lib/typeahead.min.js' %}"></script>
@@ -48,7 +49,13 @@
 	    <div class="form-group">
 	        <label class="control-label" for="baggage-scan-image">Image</label>
 	        <p class="image-info"><i class="fa fa-info-circle"></i> Picture will be taken automatically on check-in.</p>
-	        <div id="baggage-scan-image"></div>
+	        <div id="baggage-scan-image">
+            <label class="control-label" for="btndivs" > Select Camera</label>
+            <select id="btndivs" class="form-control">
+              <option value="null">--</option>
+            </select>
+            <video style="width: 100%; margin-top: 10px; border-radius: 5px" id="preview"></video>
+          </div>
 	        <input type="hidden" class="form-control" id="baggage-scan-file" name="bag_image" />
 	    </div>
 	{% endif %}

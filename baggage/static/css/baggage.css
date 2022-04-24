@@ -101,7 +101,7 @@
 }
 
 .baggage-table-tr {
-    
+
 }
 
 .baggage-table-th {
@@ -110,6 +110,7 @@
     vertical-align: center;
     background-color: #e7e7e7;
     border: 5px solid #FFF;
+    color: black;
 }
 
 .baggage-table-th a {
