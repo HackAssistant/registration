@@ -88,7 +88,7 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return appmodels.HackerApplication.objects.filter(status=appmodels.APP_CONFIRMED)
+        return appmodels.HackerApplication.objects.filter(status=appmodels.APP_CONFIRMED).exclude(online=True)
 
 
 class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
