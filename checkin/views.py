@@ -17,7 +17,7 @@ from checkin.models import CheckIn
 from checkin.tables import ApplicationsCheckInTable, ApplicationCheckinFilter, \
     SponsorApplicationsCheckInTable, SponsorApplicationCheckinFilter
 from user.mixins import IsVolunteerMixin, HaveVolunteerPermissionMixin, HaveMentorPermissionMixin, \
-    HaveSponsorPermissionMixin
+    HaveSponsorPermissionMixin, IsHackerMixin
 from app.slack import send_slack_message
 from multiprocessing import Pool
 from organizers.views import volunteer_tabs, mentor_tabs, hacker_tabs, sponsor_tabs
@@ -104,6 +104,27 @@ class CheckInJudgeList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, Filter
     def get_queryset(self):
         checkins = CheckIn.objects.values_list("application__user__id", flat=True)
         return models.User.objects.filter(is_judge=True).exclude(id__in=checkins)
+
+
+class CheckInOnlineView(IsHackerMixin, TabsView):
+    template_name = 'online_checkin.html'
+
+    def get_back_url(self):
+        return reverse('dashboard')
+
+    def post(self, request, *args, **kwargs):
+        appid = request.POST.get('app_id')
+        type = request.POST.get('type')
+        qrcode = 'online'
+        app = get_application_by_type(type, appid)
+        if app.online:
+            if checking_in_hacker(request, True, appid, qrcode, type):
+                messages.success(self.request, 'Checked-in successfully!')
+            else:
+                messages.success(self.request, 'Oops! Something wrong happened.')
+        else:
+            messages.success(self.request, 'Oops! Something wrong happened.')
+        return HttpResponseRedirect(reverse('dashboard'))
 
 
 class CheckInHackerView(IsVolunteerMixin, TabsView):

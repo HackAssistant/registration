@@ -40,7 +40,9 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2022, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2022, 4, 15, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+# (OPTIONAL) Online checkin activated
+ONLINE_CHECKIN = timezone.datetime(2022, 4, 29, 17, 00, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = ''
 
@@ -66,7 +68,7 @@ DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2022, 4, 29, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_DEADLINE = timezone.datetime(2022, 4, 15, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
