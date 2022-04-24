@@ -1,0 +1,22 @@
+{% extends 'base_tabs.html' %}
+{% load static %}
+{% block head_title %}Online check-in confirmation{% endblock %}
+{% block panel %}
+
+    {% if error %}
+
+        {{ error }}.Oops! Some error has occurred. Please contact: {{ h_contact_email|urlize }}.
+        <a href="{% url 'dashboard' %}" class="btn btn-info btn-block"> Back to your profile</a>
+
+    {% else %}
+
+        <p class="lead">Welcome to HackUPC! Please, confirm your online attendance below:</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="app_id" value="{{ application.uuid }}"/>
+            <input type="hidden" name="type" value="{{ application.user.type }}"/>
+            <button class="btn btn-success btn-lg btn-block">Check in</button>
+        </form>
+    {% endif %}
+{% endblock %}
+
