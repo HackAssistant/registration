@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    {% if h_app_closed %}
+    {% if h_app_closed and not is_sposnor_form %}
         <h1>Applications are closed</h1>
         {% include 'include/applications_closed.html' %}
         <a class="btn btn-default btn-block"
