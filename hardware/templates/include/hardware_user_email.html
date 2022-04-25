@@ -3,44 +3,83 @@
 <div class='hw-centered' id="form-container-id">
     <label>Hacker:</label>
     <input id="qr-result" class="typeahead" style="color: #0f0f0f" name="email" type="text"/><i id='{{ id }}-qr' class='fa fa-qrcode fa-2x qr-btn'></i>
-	<div id="popup-scan" style="display: none;">
-      <video muted playsinline id="qr-video"></video>
-      <!-- <p style="display: block; margin-top: 10px; font-size: 16px; text-align: center;"><span id="{{ id }}-timestamp"></span></p> -->
+	  <div id="popup-scan" style="display: none;">
+      <label class="control-label" for="qr-camara-select" > Select Camera</label>
+      <select id="qr-camara-select" class="form-control">
+        <option value="null">---</option>
+      </select>
+      <video id="qr-video" style="margin-top: 10px; border-radius: 5px"></video>
+      <button id="qr-close-button" class="btn btn-block btn-info">Close</button>
     </div>
-	<script type="module">
-        import QrScanner from '/static/lib/qr-scanner.min.js';
-        QrScanner.WORKER_PATH = '/static/lib/qr-scanner-worker.min.js';
-        // Video stream
-        const video = document.getElementById('qr-video');
-        // Result elements and set function
-        const camQrResult = document.getElementById('qr-result');
-        function setResult(result) {
-            camQrResult.focus();
-            camQrResult.value = result;
-            hideQR();
-            $(".typeahead").typeahead('val', '')
-            $(".typeahead").focus().typeahead('val',result.toString()).focus();
-        }
-        // Scan
-        const scanner = new QrScanner(video, result => setResult(result));
-        $("#{{ id }}-qr").click(function () {
-            let veil = document.createElement("div");
-            document.body.appendChild(veil);
-            veil.classList.add('veil');
-            veil.id = 'veil';
-            $("#popup-scan").show();
-            document.getElementById("veil").addEventListener("click", function(){
-                hideQR();
+
+    <script>
+      document.addEventListener("DOMContentLoaded", ()=>{
+            function stop() {
+              $('#popup-scan').hide();
+              $('#veil').hide();
+              scanner.stop()
+            }
+            $(document).on('keyup', function(e) {
+              if (e.key === "Escape") stop()
             });
-          scanner.start();
-        });
-        function hideQR() {
-            $("#popup-scan").hide();
-            var el = document.getElementById("veil");
-            el.parentNode.removeChild(el);
-            scanner.stop();
-        }
+            const div = document.createElement('div')
+            div.style = 'display: none;'
+            div.className = 'veil'
+            div.id = 'veil'
+            div.onclick = stop
+
+            document.body.appendChild(div)
+
+            let scanner = new Scanner('qr-video', 'qr-camara-select', (content) => {
+              let input = $('#qr-result')
+              stop()
+              input.val('')
+              input.focus().typeahead('val',content.toString()).focus();
+            })
+            let qrButton = document.getElementById("{{ id }}-qr");
+            qrButton.onclick = function () {
+              $('#popup-scan').show();
+              $('#veil').show();
+              scanner.start()
+            }
+            let closeButton = document.getElementById("qr-close-button");
+            closeButton.onclick = stop
+        })
     </script>
+{#	<script type="module">#}
+{#        import QrScanner from '/static/lib/qr-scanner.min.js';#}
+{#        QrScanner.WORKER_PATH = '/static/lib/qr-scanner-worker.min.js';#}
+{#        // Video stream#}
+{#        const video = document.getElementById('qr-video');#}
+{#        // Result elements and set function#}
+{#        const camQrResult = document.getElementById('qr-result');#}
+{#        function setResult(result) {#}
+{#            camQrResult.focus();#}
+{#            camQrResult.value = result;#}
+{#            hideQR();#}
+{#            $(".typeahead").typeahead('val', '')#}
+{#            $(".typeahead").focus().typeahead('val',result.toString()).focus();#}
+{#        }#}
+{#        // Scan#}
+{#        const scanner = new QrScanner(video, result => setResult(result));#}
+{#        $("#{{ id }}-qr").click(function () {#}
+{#            let veil = document.createElement("div");#}
+{#            document.body.appendChild(veil);#}
+{#            veil.classList.add('veil');#}
+{#            veil.id = 'veil';#}
+{#            $("#popup-scan").show();#}
+{#            document.getElementById("veil").addEventListener("click", function(){#}
+{#                hideQR();#}
+{#            });#}
+{#          scanner.start();#}
+{#        });#}
+{#        function hideQR() {#}
+{#            $("#popup-scan").hide();#}
+{#            var el = document.getElementById("veil");#}
+{#            el.parentNode.removeChild(el);#}
+{#            scanner.stop();#}
+{#        }#}
+{#    </script>#}
     <div class='hw-centered'>
     {% if item_id %}
     	<button id="hw-user-send-noreq" data-item-id="{{item_id}}" class="btn btn-success">Send</button>

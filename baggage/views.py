@@ -56,6 +56,8 @@ def baggage_checkOut(request, web, bagid):
     bag.status = BAG_REMOVED
     if web:
         bag.outby = request.user
+        MessageManager().send_message(user=bag.owner, message='*Baggage check-out* :handbag:\nYour bag with ID `' +
+                                                              str(bagid) + '` has been checked-out :truck:!')
     else:
         bag.outby = User.objects.filter(id=1).first()
         MessageManager().send_message(user=bag.owner, message='*Baggage check-out* :handbag:\nYour bag with ID `' +

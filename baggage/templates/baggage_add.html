@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/baggage.css' %}">
     {% if h_b_picture %}
         <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-        <script type="text/javascript" src="{% static 'js/baggage_add.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/scanner.js' %}"></script>
     {% endif %}
     <script src="{% static 'lib/typeahead.min.js' %}"></script>
     <script src="{% static 'js/form_modifiers.js' %}"></script>
@@ -50,9 +50,8 @@
 	        <label class="control-label" for="baggage-scan-image">Image</label>
 	        <p class="image-info"><i class="fa fa-info-circle"></i> Picture will be taken automatically on check-in.</p>
 	        <div id="baggage-scan-image">
-            <label class="control-label" for="btndivs" > Select Camera</label>
-            <select id="btndivs" class="form-control">
-              <option value="null">--</option>
+            <label class="control-label" for="camera-select" > Select Camera</label>
+            <select id="camera-select" class="form-control">
             </select>
             <video style="width: 100%; margin-top: 10px; border-radius: 5px" id="preview"></video>
           </div>
@@ -102,6 +101,10 @@
     </form>
 
     <script>
+        document.addEventListener("DOMContentLoaded", ()=>{
+           let scanner = new Scanner('preview', 'camera-select', null, true)
+            scanner.addPhotoToForm('baggage-form', 'baggage-scan-file')
+        })
         var room = document.getElementById("baggage-rooms");
         room.addEventListener("change", function(){
 	    {% for room in rooms %}

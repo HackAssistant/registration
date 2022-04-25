@@ -5,6 +5,8 @@
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/checkin.css' %}">
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/scanner.js' %}"></script>
 {% endblock %}
 
 {% block head_title %}Check-in {{ app.user.name }}{% endblock %}
