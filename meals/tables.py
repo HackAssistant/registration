@@ -1,5 +1,7 @@
 import django_filters
 import django_tables2 as tables
+
+from checkin.models import CheckIn
 from meals.models import Meal, MEAL_TYPE
 from django.db.models import Q
 
@@ -49,8 +51,12 @@ class MealsUsersFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter((Q(meal__name__icontains=value) | Q(user__name__icontains=value) |
-                                Q(user__email__icontains=value)))
+        try:
+            checkin = CheckIn.objects.get(qr_identifier=value)
+            return queryset.filter(user=checkin.application.user)
+        except CheckIn.DoesNotExist:
+            return queryset.filter(Q(meal__name__icontains=value) |
+                                   Q(user__name__icontains=value) | Q(user__email__icontains=value))
 
     class Meta:
         model = Meal

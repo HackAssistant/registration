@@ -6,8 +6,12 @@ MEAL_TYPE = (
     ('L', 'Lunch'),
     ('D', 'Dinner'),
     ('S', 'Snack'),
-    ('O', 'Other')
+    ('O', 'Other'),
+    ('SH', 'Shower'),
+    ('A', 'Activity')
 )
+
+ACTIVITIES = ['SH', 'A']
 
 
 class Meal(models.Model):
@@ -31,6 +35,9 @@ class Meal(models.Model):
 
     def eaten(self):
         return Eaten.objects.filter(meal=self).count()
+
+    def activity(self):
+        return self.kind in ACTIVITIES
 
 
 class Eaten(models.Model):
