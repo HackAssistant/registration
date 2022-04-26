@@ -768,6 +768,7 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
         model = models.SponsorApplication
         help_texts = {
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
+            'email': 'This is needed in order to invite you to our message service'
         }
         labels = {
             'tshirt_size': 'What\'s your t-shirt size?',
