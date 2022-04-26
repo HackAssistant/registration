@@ -15,7 +15,7 @@ from app.mixins import TabsViewMixin
 from app.views import TabsView
 from applications import models as models_app
 from checkin.models import CheckIn
-from meals.models import Meal, Eaten, MEAL_TYPE
+from meals.models import Meal, Eaten, MEAL_TYPE, ACTIVITIES
 from meals.tables import MealsListTable, MealsListFilter, MealsUsersTable, MealsUsersFilter
 from user.mixins import IsOrganizerMixin, IsVolunteerMixin
 
@@ -23,7 +23,9 @@ from user.mixins import IsOrganizerMixin, IsVolunteerMixin
 def organizer_tabs(user):
     if user.is_organizer:
         return [('Meals', reverse('meals_list'), False),
-                ('Users', reverse('meals_users'), False)]
+                ('Users', reverse('meals_users'), False),
+                ('Activities', reverse('activity_list'), False),
+                ('Activity users', reverse('activity_users'), False)]
     return [('Meals', reverse('meals_list'), False), ]
 
 
@@ -37,9 +39,23 @@ class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        if self.request.user.is_organizer:
-            return Meal.objects.all()
-        return Meal.objects.filter(opened=True)
+        queryset = Meal.objects.exclude(kind__in=ACTIVITIES)
+        if not self.request.user.is_organizer:
+            queryset = queryset.filter(opened=True)
+        return queryset
+
+
+class ActivitiesList(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
+    template_name = 'meals_list.html'
+    table_class = MealsListTable
+    filterset_class = MealsListFilter
+    table_pagination = {'per_page': 100}
+
+    def get_current_tabs(self):
+        return organizer_tabs(self.request.user)
+
+    def get_queryset(self):
+        return Meal.objects.filter(kind__in=ACTIVITIES)
 
 
 class MealsUsers(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -52,7 +68,12 @@ class MealsUsers(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
         return organizer_tabs(self.request.user)
 
     def get_queryset(self):
-        return Eaten.objects.all()
+        return Eaten.objects.exclude(meal__kind__in=ACTIVITIES)
+
+
+class ActivitiesUsers(MealsUsers):
+    def get_queryset(self):
+        return Eaten.objects.filter(meal__kind__in=ACTIVITIES)
 
 
 class MealDetail(IsOrganizerMixin, TabsView):
@@ -105,7 +126,7 @@ class MealAdd(IsOrganizerMixin, TabsView):
     template_name = 'meal_add.html'
 
     def get_back_url(self):
-        return redirect('meals_list')
+        return reverse('meals_list')
 
     def get_context_data(self, **kwargs):
         context = super(MealAdd, self).get_context_data(**kwargs)
@@ -138,7 +159,7 @@ class MealAdd(IsOrganizerMixin, TabsView):
             meal.opened = (mealopened == 'opened')
         meal.save()
         messages.success(self.request, 'Meal added!')
-        return redirect('meals_list')
+        return redirect('activity_list' if meal.kind in ACTIVITIES else 'meals_list')
 
 
 class MealsCheckin(IsVolunteerMixin, TemplateView):
@@ -156,6 +177,7 @@ class MealsCheckin(IsVolunteerMixin, TemplateView):
 
         context.update({
             'meal': meal,
+            'back': 'meals_list' if not meal.activity() else 'activity_list'
         })
         if self.request.GET.get('success', False):
             context.update({

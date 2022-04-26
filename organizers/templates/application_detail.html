@@ -33,6 +33,7 @@
                     {% include 'include/field.html' with desc='Email' value=app.user.email %}
                     {% include 'include/field.html' with desc='Travel reimbursement?' value=app.reimb|yesno:'Yes,No,Maybe' %}
                     {% include 'include/field.html' with desc='Money needed' value=app.reimb_amount %}
+                  {% include 'include/field.html' with desc='Origin' value=app.origin %}
                 {% endif %}
                 {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
                 {% if app.resume %}
@@ -133,13 +134,13 @@
                 var formToFocusOn = document.getElementById("commentSection");
                 // Do something when a key is pressed down inside the textarea
                 formToFocusOn.addEventListener("keydown", function(event) {
-                    // 
+                    //
                     // When CTRl && Enter Key (value 13)
                     // See list of number key values:
                     // https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/#a-full-list-of-key-event-values
-                    // 
+                    //
                     if (event.ctrlKey && event.keyCode === 13) {
-                    // submit the form 
+                    // submit the form
                     $('#submitCommentButton').click();
                     // document.getElementById('commentsForm').submit();
                     }

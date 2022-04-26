@@ -3,4 +3,43 @@
 {% load static %}
 {% load bootstrap3 %}
 
+{% block extra_head %}
+    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/scanner.js' %}"></script>
+{% endblock %}
+
 {% block head_title %}Users list{% endblock %}
+
+{% block panel %}
+    <div id="baggage-container">
+        <form id="baggage-search" action="" method="get" class="form text-left filter">
+            {% include 'include/input.html' with type='qr' desc='Search' name='search' id='id_search' %}
+            <button type="submit" class="btn btn-info">Filter</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <style>
+  .button-qr {
+    vertical-align: middle;
+    padding: 5px 7px 3px;
+    border: thin solid #ddd;
+    cursor: pointer;
+    float: left;
+    font-size: 24px;
+    border-radius: 4px;
+}
+
+.button-qr-success {
+    color: #3c763d;
+    border-color: #3c763d;
+}
+
+.input-qr {
+    display: block;
+    overflow: hidden;
+    padding-left: 10px;
+}
+  </style>
+{% endblock %}
