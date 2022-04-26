@@ -697,7 +697,8 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
 
     bootstrap_field_info = {
         'Personal Info': {
-            'fields': [{'name': 'name', 'space': 12}, {'name': 'phone_number', 'space': 12},
+            'fields': [{'name': 'name', 'space': 12}, {'name': 'email', 'space': 12},
+                       {'name': 'phone_number', 'space': 12},
                        {'name': 'tshirt_size', 'space': 12}, {'name': 'diet', 'space': 12},
                        {'name': 'other_diet', 'space': 12}, {'name': 'position', 'space': 12},
                        {'name': 'attendance', 'space': 12}, ],
@@ -767,6 +768,7 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
         model = models.SponsorApplication
         help_texts = {
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
+            'email': 'This is needed in order to invite you to our message service'
         }
         labels = {
             'tshirt_size': 'What\'s your t-shirt size?',
