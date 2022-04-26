@@ -456,12 +456,13 @@ class _OtherApplicationsListView(TabsViewMixin, ExportMixin, SingleTableMixin, F
     table_pagination = {'per_page': 100}
     exclude_columns = ('detail', 'status')
     export_name = 'applications'
+    email_field = 'user__email'
 
     def get_context_data(self, **kwargs):
         context = super(_OtherApplicationsListView, self).get_context_data(**kwargs)
         context['otherApplication'] = True
         list_email = ""
-        for u in context.get('object_list').values_list('user__email', flat=True):
+        for u in context.get('object_list').values_list(self.email_field, flat=True):
             list_email += "%s, " % u
         context['emails'] = list_email
         return context
@@ -481,6 +482,7 @@ class VolunteerApplicationsListView(HaveVolunteerPermissionMixin, _OtherApplicat
 class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplicationsListView):
     table_class = SponsorListTable
     filterset_class = SponsorFilter
+    email_field = 'email'
 
     def get_queryset(self):
         return models.SponsorApplication.objects.all()
@@ -488,7 +490,6 @@ class SponsorApplicationsListView(HaveSponsorPermissionMixin, _OtherApplications
     def get_context_data(self, **kwargs):
         context = super(SponsorApplicationsListView, self).get_context_data(**kwargs)
         context['otherApplication'] = True
-        context['emailCopy'] = False
         return context
 
     def get_current_tabs(self):
@@ -509,7 +510,6 @@ class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin
     def get_context_data(self, **kwargs):
         context = super(SponsorUserListView, self).get_context_data(**kwargs)
         context['otherApplication'] = True
-        context['emailCopy'] = False
         context['createUser'] = True
         return context
 

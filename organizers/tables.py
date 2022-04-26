@@ -215,7 +215,7 @@ class SponsorFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(Q(user__email__icontains=value) | Q(user__name__icontains=value) |
+        return queryset.filter(Q(email__icontains=value) | Q(user__name__icontains=value) |
                                Q(name__icontains=value))
 
     class Meta:
@@ -230,7 +230,7 @@ class SponsorListTableWithNoAction(tables.Table):
         model = SponsorApplication
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
-        fields = ['name', 'user.email', 'status']
+        fields = ['name', 'email', 'status']
         empty_text = 'No Sponsor Application available'
         order_by = '-submission_date'
 
