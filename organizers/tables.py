@@ -20,8 +20,8 @@ class ApplicationFilter(django_filters.FilterSet):
 
     class Meta:
         model = HackerApplication
-        fields = ['search', 'status', 'online'] if getattr(settings, 'HYBRID_HACKATHON', False) else \
-            ['search', 'status']
+        fields = ['search', 'status', 'under_age', 'online'] if getattr(settings, 'HYBRID_HACKATHON', False) else \
+            ['search', 'status', 'under_age']
 
 
 class DubiousApplicationFilter(django_filters.FilterSet):
