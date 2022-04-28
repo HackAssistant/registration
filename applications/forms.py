@@ -701,7 +701,7 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
                        {'name': 'phone_number', 'space': 12},
                        {'name': 'tshirt_size', 'space': 12}, {'name': 'diet', 'space': 12},
                        {'name': 'other_diet', 'space': 12}, {'name': 'position', 'space': 12},
-                       {'name': 'attendance', 'space': 12}, {'name': 'terms_and_conditions', 'space': 12}],
+                       {'name': 'attendance', 'space': 12}],
             'description': 'Hey there, before we begin we would like to know a little more about you.'
         },
     }
