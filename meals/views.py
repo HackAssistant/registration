@@ -26,7 +26,7 @@ def organizer_tabs(user):
                 ('Users', reverse('meals_users'), False),
                 ('Activities', reverse('activity_list'), False),
                 ('Activity users', reverse('activity_users'), False)]
-    return [('Meals', reverse('meals_list'), False), ]
+    return [('Meals', reverse('meals_list'), False), ('Activities', reverse('activity_list'), False),]
 
 
 class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
