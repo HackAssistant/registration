@@ -45,17 +45,12 @@ class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
         return queryset
 
 
-class ActivitiesList(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
-    template_name = 'meals_list.html'
-    table_class = MealsListTable
-    filterset_class = MealsListFilter
-    table_pagination = {'per_page': 100}
-
-    def get_current_tabs(self):
-        return organizer_tabs(self.request.user)
-
+class ActivitiesList(MealsList):
     def get_queryset(self):
-        return Meal.objects.filter(kind__in=ACTIVITIES)
+        queryset = Meal.objects.filter(kind__in=ACTIVITIES)
+        if not self.request.user.is_organizer:
+            queryset = queryset.filter(opened=True)
+        return queryset
 
 
 class MealsUsers(IsOrganizerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -119,7 +114,7 @@ class MealDetail(IsOrganizerMixin, TabsView):
         meal.opened = (mealopened == 'opened')
         meal.save()
         messages.success(self.request, 'Meal updated!')
-        return redirect('meals_list')
+        return redirect('activity_list' if meal.kind in ACTIVITIES else 'meals_list')
 
 
 class MealAdd(IsOrganizerMixin, TabsView):
