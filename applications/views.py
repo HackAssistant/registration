@@ -144,7 +144,7 @@ class HackerDashboard(DashboardMixin, TabsView):
             form = ApplicationForm(instance=app)
         except Exception:
             form = ApplicationForm()
-        context.update({'form': form, 'is_hacker': self.request.user.is_hacker()})
+        context.update({'form': form, 'is_hacker': self.request.user.is_hacker(), 'app_type': self.request.user.type})
         try:
             application = Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
