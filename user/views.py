@@ -89,7 +89,7 @@ def signup(request, u_type):
     else:
         form = forms.RegisterForm()
 
-    return render(request, 'signup.html', {'form': form, 'app_type': APPLICATION_TYPE.get(u_type)})
+    return render(request, 'signup.html', {'form': form, 'app_type': APPLICATION_TYPE.get(u_type, 'H')})
 
 
 class Logout(View):
