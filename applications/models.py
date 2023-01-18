@@ -206,7 +206,7 @@ class BaseApplication(models.Model):
     def is_pending(self):
         return self.status == APP_PENDING
 
-    def can_be_edit(self):
+    def can_be_edit(self, app_type='H'):
         return self.status == APP_PENDING
 
     def is_invited(self):
@@ -462,8 +462,8 @@ class HackerApplication(
     def is_blacklisted(self):
         return self.status == APP_BLACKLISTED
 
-    def can_be_edit(self):
-        return self.status in [APP_PENDING, APP_DUBIOUS] and not self.vote_set.exists() and not utils.is_app_closed()
+    def can_be_edit(self, app_type="H"):
+        return self.status in [APP_PENDING, APP_DUBIOUS] and not self.vote_set.exists() and not utils.is_app_closed(app_type)
 
 
 class MentorApplication(
@@ -505,6 +505,8 @@ class VolunteerApplication(
     night_shifts = models.BooleanField()
     hobbies = models.CharField(max_length=150, null=False)
 
+    def can_be_edit(self, app_type="V"):
+        return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(app_type)
 
 class SponsorApplication(
     _VolunteerMentorSponsorApplication,
