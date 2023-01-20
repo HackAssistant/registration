@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, Http404
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
@@ -23,14 +24,17 @@ from organizers.views import volunteer_tabs, mentor_tabs, hacker_tabs, sponsor_t
 
 
 def get_application_by_type(type, uuid):
-    if type == models.USR_HACKER:
-        return appmodels.HackerApplication.objects.filter(uuid=uuid).first()
-    elif type == models.USR_VOLUNTEER:
-        return appmodels.VolunteerApplication.objects.filter(uuid=uuid).first()
-    elif type == models.USR_SPONSOR:
-        return appmodels.SponsorApplication.objects.filter(uuid=uuid).first()
-    elif type == models.USR_MENTOR:
-        return appmodels.MentorApplication.objects.filter(uuid=uuid).first()
+    try:
+        if type == models.USR_HACKER:
+            return appmodels.HackerApplication.objects.filter(uuid=uuid).first()
+        elif type == models.USR_VOLUNTEER:
+            return appmodels.VolunteerApplication.objects.filter(uuid=uuid).first()
+        elif type == models.USR_SPONSOR:
+            return appmodels.SponsorApplication.objects.filter(uuid=uuid).first()
+        elif type == models.USR_MENTOR:
+            return appmodels.MentorApplication.objects.filter(uuid=uuid).first()
+    except ValidationError:
+        pass
     return None
 
 
@@ -78,6 +82,11 @@ class CheckInList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
     table_class = ApplicationsCheckInTable
     filterset_class = ApplicationCheckinFilter
     table_pagination = {'per_page': 50}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'type': 'Hacker'})
+        return context
 
     def get_current_tabs(self):
         if self.request.user.is_volunteer_accepted:
@@ -169,6 +178,11 @@ class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):
 
 
 class CheckinVolunteerList(HaveVolunteerPermissionMixin, CheckinOtherUserList):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'type': 'Volunteer'})
+        return context
+
     def get_queryset(self):
         return appmodels.VolunteerApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
@@ -177,6 +191,11 @@ class CheckinVolunteerList(HaveVolunteerPermissionMixin, CheckinOtherUserList):
 
 
 class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'type': 'Mentor'})
+        return context
+
     def get_queryset(self):
         return appmodels.MentorApplication.objects.filter(status=appmodels.APP_CONFIRMED)
 
@@ -187,6 +206,11 @@ class CheckinMentorList(HaveMentorPermissionMixin, CheckinOtherUserList):
 class CheckinSponsorList(HaveSponsorPermissionMixin, CheckinOtherUserList):
     table_class = SponsorApplicationsCheckInTable
     filterset_class = SponsorApplicationCheckinFilter
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'type': 'Sponsor'})
+        return context
 
     def get_queryset(self):
         return appmodels.SponsorApplication.objects.filter(status=appmodels.APP_CONFIRMED)
