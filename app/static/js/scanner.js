@@ -26,7 +26,7 @@ function Scanner(videoId, scanFunction=null, extraOpts={}) {
 
         all.wrapAll(`<div id="popup-scan-container" class="${extraOpts.popup_class ?? ''} p-2 col-lg-4 mt-lg-5 text-center">`).first().parent()
             .wrap('<div class="row justify-content-center m-0">').parent()
-            .wrap('<div id="popup-scan" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none">')
+            .wrap('<div id="popup-scan" display: none">')
 
         $(document).on('keyup', function(e) {
             if (e.key === "Escape") self.hide()
