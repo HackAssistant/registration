@@ -35,7 +35,7 @@
     <script nonce="{{ request.csp_nonce }}">
         $(document).ready(() => {
             let qr_button = $('#qr_button')
-            qr_button.css('margin-top', `${$('label[for="qr_code"]').outerHeight(true)}px`)
+            {#qr_button.css('margin-top', `${$('label[for="qr_code"]').outerHeight(true)}px`)#}
 
             let scanner = new Scanner('qr-video', (content) => {
                 if (content.data) {
