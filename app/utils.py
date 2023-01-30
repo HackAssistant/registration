@@ -53,6 +53,8 @@ def application_timeleft(app_type="H"):
         deadline = getattr(settings, 'HACKATHON_APP_DEADLINE', None)
     elif app_type == "V":
         deadline = getattr(settings, 'VOLUNTEER_APP_DEADLINE', None)
+    elif app_type == "M":
+        deadline = getattr(settings, 'MENTOR_APP_DEADLINE', None)
     else:
         deadline = getattr(settings, 'HACKATHON_APP_DEADLINE', None)
 
@@ -91,9 +93,11 @@ def get_substitutions_templates():
             'h_repo': getattr(settings, 'HACKATHON_GITHUB_REPO', None),
             'h_app_closed': is_app_closed(),
             'h_app_volunteer_closed': is_app_closed("V"),
+            'h_app_mentor_closed': is_app_closed("M"),
             'h_app_sponsor_closed': is_app_closed("S"),
             'h_app_timeleft': application_timeleft(),
             'h_app_volunteer_timeleft': application_timeleft("V"),
+            'h_app_mentor_timeleft': application_timeleft("M"),
             'h_app_sponsor_timeleft': application_timeleft("S"),
             'h_arrive': getattr(settings, 'HACKATHON_ARRIVE', None),
             'h_leave': getattr(settings, 'HACKATHON_LEAVE', None),

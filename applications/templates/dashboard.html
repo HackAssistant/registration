@@ -13,6 +13,10 @@
             <div class="col-md-12">
                 {% include 'include/applications_closed.html' %}
             </div>
+        {% elif app_type == "M" and not application and h_app_mentor_closed and not is_sponsor %}
+            <div class="col-md-12">
+                {% include 'include/applications_closed.html' %}
+            </div>
         {% elif not user.email_verified %}
             <div class="col-md-12">
                 <p>
@@ -33,6 +37,11 @@
                     <div class="alert alert-info">
                         <p> Time until applications close: <strong
                                 >{% include 'include/deadline_countdown.html' with timeleft=h_app_volunteer_timeleft %}</strong></p>
+                    </div>
+                {% elif app_type == "M" and h_app_mentor_timeleft and not is_sponsor %}
+                    <div class="alert alert-info">
+                        <p> Time until applications close: <strong
+                                >{% include 'include/deadline_countdown.html' with timeleft=h_app_mentor_timeleft %}</strong></p>
                     </div>
                 {% endif %}
                 {% include 'include/application_form.html' %}

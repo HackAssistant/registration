@@ -489,6 +489,8 @@ class MentorApplication(
         validators=[validate_file_extension],
     )
 
+    def can_be_edit(self, app_type="M"):
+        return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(app_type)
 
 class VolunteerApplication(
     BaseApplication,

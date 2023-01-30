@@ -16,6 +16,11 @@
         {% include 'include/applications_closed.html' %}
         <a class="btn btn-default btn-block"
             href="{% url 'account_login' %}">{% trans "Log in " %}</a>
+    {% elif app_type == 'M' and h_app_mentor_closed and not is_sposnor_form %}
+        <h1>Applications are closed</h1>
+        {% include 'include/applications_closed.html' %}
+        <a class="btn btn-default btn-block"
+            href="{% url 'account_login' %}">{% trans "Log in " %}</a>
     {% else %}
         <h1>Sign up</h1>
         {% if app_type == 'H' and h_app_timeleft and not is_sposnor_form %}
@@ -23,6 +28,9 @@
         {% endif %}
         {% if app_type == 'V' and h_app_volunteer_timeleft and not is_sposnor_form %}
             <p class="lead">Application deadline:{% include 'include/deadline_countdown.html' with timeleft=h_app_volunteer_timeleft %}</p>
+        {% endif %}
+        {% if app_type == 'M' and h_app_mentor_timeleft and not is_sposnor_form %}
+            <p class="lead">Application deadline:{% include 'include/deadline_countdown.html' with timeleft=h_app_mentor_timeleft %}</p>
         {% endif %}
 
         <form action="" method="post" class="form">
