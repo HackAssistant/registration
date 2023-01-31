@@ -40,7 +40,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2022, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2023, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) Online checkin activated
 ONLINE_CHECKIN = timezone.datetime(2022, 4, 29, 17, 00, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
@@ -124,7 +124,7 @@ MENTOR_EXPIRES = False
 VOLUNTEER_EXPIRES = False
 
 DISCORD_HACKATHON = False
-HYBRID_HACKATHON = True
+HYBRID_HACKATHON = False
 N_MAX_LIVE_HACKERS = 350
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'

@@ -1,21 +1,52 @@
 {% extends "base_table.html" %}
 
+{% load i18n %}
 {% load static %}
 {% load bootstrap3 %}
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/checkin.css' %}">
-    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-    <script type="text/javascript" src="{% static 'js/scanner.js' %}"></script>
+    {% include 'include/import_qr_scanner.html' %}
 {% endblock %}
 
 {% block head_title %}Check-in{% endblock %}
 
 {% block panel %}
-    <div id="checkin-container">
-        <form id="checkin-search" action="" method="get" class="form text-left filter">
-            {% include 'include/input.html' with type='qr' desc='Search' name='search' id='id_search' %}
-            <button type="submit" class="btn btn-info">Filter</button>
-        </form>
-    </div>
+    <form id="checkin-search" action="" method="get" class="form text-left filter">
+        <div style="display: flex">
+            <div style="width: 100%; margin-right: 10px" >
+                {% include 'include/input.html' with desc='Search' name='search' id='id_search' %}
+            </div>
+            <div class="ms-2">
+                <button type="button" id="qr_button" class="btn btn-primary"><i class="fa fa-qrcode"></i></button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-info">Filter</button>
+    </form>
+{% endblock %}
+
+{% block body_plain %}
+    {{ block.super }}
+    <video id="qr-video" style="width: 100%; height: 100%; display: none"></video>
+
+    <script nonce="{{ request.csp_nonce }}">
+        $(document).ready(() => {
+            let qr_button = $('#qr_button')
+            qr_button.css('margin-top', `${$('label[for="id_search"]').outerHeight(true)}px`)
+
+            let scanner = new Scanner('qr-video', (content) => {
+                if (content.data) {
+                    scanner.stop()
+                    window.location.href = '{% url 'check_in_hacker' type|lower 'replace' %}'.replace('replace', encodeURIComponent(content.data))
+                }
+            }, {
+                popup: true,
+                popup_title: '{% translate 'QR scanner' %}',
+                popup_class: 'bg-dark',
+            })
+
+            qr_button.on('click', () => {scanner.show()})
+        })
+    </script>
 {% endblock %}

@@ -287,8 +287,9 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         hardware = getattr(settings, 'HARDWARE_ENABLED', False)
         hybrid = getattr(settings, 'HYBRID_HACKATHON', False)
         personal_info_fields = fields['Personal Info']['fields']
-        if hybrid:
-            personal_info_fields.append({'name': 'online', 'space': 12})
+        personal_info_fields.append({'name': 'online', 'space': 12})
+        if not hybrid:
+            self.fields['online'].widget = forms.HiddenInput()
         polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'cvs_edition', 'space': 12},
                           {'name': 'email_subscribe', 'space': 12}]
         if not discord:

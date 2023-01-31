@@ -2,11 +2,11 @@
 
 {% load static %}
 {% load bootstrap3 %}
+{% load i18n %}
 
 {% block extra_head %}
     <link rel="stylesheet" href="{% static 'css/checkin.css' %}">
-    <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-    <script type="text/javascript" src="{% static 'js/scanner.js' %}"></script>
+    {% include 'include/import_qr_scanner.html' %}
 {% endblock %}
 
 {% block head_title %}Check-in {{ app.user.name }}{% endblock %}
@@ -53,16 +53,47 @@
                 {% endif %}
             </div>
         {% else %}
-            <form action="" method="post" style="padding-top: 1.5em;">
+            <form id="checkin-search" action="" method="post" style="padding-top: 1.5em;" class="form text-left filter">
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
                 <input type="hidden" name="type" value="{{ app.user.type }}"/>
-                <div class="form-group">
-                    {% include 'include/input.html' with type='qr' desc='QR code' name='qr_code' id='qr_code' %}
-                </div>
                 <input type="hidden" name="user_id" value="{{ user.id }}"/>
+                <div style="display: flex">
+                    <div style="width: 100%; margin-right: 10px" >
+                        {% include 'include/input.html' with desc='QR code' name='qr_code' id='qr_code' %}
+                    </div>
+                    <div class="ms-2">
+                        <button type="button" id="qr_button" class="btn btn-primary"><i class="fa fa-qrcode"></i></button>
+                    </div>
+                </div>
                 <button class="btn btn-success btn-block" name="checkin">Check In</button>
             </form>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block body_plain %}
+    {{ block.super }}
+    <video id="qr-video" style="width: 100%; height: 100%; display: none"></video>
+
+    <script nonce="{{ request.csp_nonce }}">
+        $(document).ready(() => {
+            let qr_button = $('#qr_button')
+            qr_button.css('margin-top', `${$('label[for="qr_code"]').outerHeight(true)}px`)
+
+            let scanner = new Scanner('qr-video', (content) => {
+                if (content.data) {
+                    $('input[name="qr_code"]').val(content.data)
+                    scanner.hide()
+                    $('#button-rescan').show()
+                }
+            }, {
+                popup: true,
+                popup_title: '{% translate 'QR scanner' %}',
+                popup_class: 'bg-dark',
+            })
+
+            qr_button.on('click', () => {scanner.show()})
+        })
+    </script>
 {% endblock %}
