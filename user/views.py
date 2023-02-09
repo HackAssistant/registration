@@ -21,6 +21,13 @@ from user.models import User
 from user.verification import check_recaptcha, check_client_ip, reset_tries
 
 
+APPLICATION_TYPE = {
+    'hacker': 'H',
+    'volunteer': 'V',
+    'mentor': 'M',
+}
+
+
 @check_client_ip
 def login(request):
     if request.user.is_authenticated:
@@ -82,7 +89,7 @@ def signup(request, u_type):
     else:
         form = forms.RegisterForm()
 
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form, 'app_type': APPLICATION_TYPE.get(u_type, 'H')})
 
 
 class Logout(View):

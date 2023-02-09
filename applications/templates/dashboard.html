@@ -5,7 +5,15 @@
 
 {% block panel %}
     <div class="row">
-        {% if not application and h_app_closed and not is_sponsor %}
+        {% if app_type == "H" and not application and h_app_closed and not is_sponsor %}
+            <div class="col-md-12">
+                {% include 'include/applications_closed.html' %}
+            </div>
+        {% elif app_type == "V" and not application and h_app_volunteer_closed and not is_sponsor %}
+            <div class="col-md-12">
+                {% include 'include/applications_closed.html' %}
+            </div>
+        {% elif app_type == "M" and not application and h_app_mentor_closed and not is_sponsor %}
             <div class="col-md-12">
                 {% include 'include/applications_closed.html' %}
             </div>
@@ -20,10 +28,20 @@
             </div>
         {% elif not application %}
             <div class="col-md-12">
-                {% if h_app_timeleft and not is_sponsor %}
+                {% if app_type == 'H' and h_app_timeleft and not is_sponsor %}
                     <div class="alert alert-info">
                         <p> Time until applications close: <strong
                                 >{% include 'include/deadline_countdown.html' %}</strong></p>
+                    </div>
+                {% elif app_type == "V" and h_app_volunteer_timeleft and not is_sponsor %}
+                    <div class="alert alert-info">
+                        <p> Time until applications close: <strong
+                                >{% include 'include/deadline_countdown.html' with timeleft=h_app_volunteer_timeleft %}</strong></p>
+                    </div>
+                {% elif app_type == "M" and h_app_mentor_timeleft and not is_sponsor %}
+                    <div class="alert alert-info">
+                        <p> Time until applications close: <strong
+                                >{% include 'include/deadline_countdown.html' with timeleft=h_app_mentor_timeleft %}</strong></p>
                     </div>
                 {% endif %}
                 {% include 'include/application_form.html' %}
