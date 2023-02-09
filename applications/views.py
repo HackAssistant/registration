@@ -206,7 +206,8 @@ class HackerApplication(IsHackerMixin, TabsView):
         if not application.can_be_edit(app_type=self.request.user.type):
             form.set_read_only()
         context.update(
-            {'invite_timeleft': deadline - timezone.now(), 'form': form, 'is_hacker': self.request.user.is_hacker(), 'app_type': self.request.user.type})
+            {'invite_timeleft': deadline - timezone.now(), 'form': form, 'is_hacker': self.request.user.is_hacker(),
+             'app_type': self.request.user.type})
         return context
 
     def post(self, request, *args, **kwargs):

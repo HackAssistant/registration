@@ -463,7 +463,8 @@ class HackerApplication(
         return self.status == APP_BLACKLISTED
 
     def can_be_edit(self, app_type="H"):
-        return self.status in [APP_PENDING, APP_DUBIOUS] and not self.vote_set.exists() and not utils.is_app_closed(app_type)
+        return self.status in [APP_PENDING, APP_DUBIOUS] and not self.vote_set.exists() and not \
+            utils.is_app_closed(app_type)
 
 
 class MentorApplication(
@@ -492,6 +493,7 @@ class MentorApplication(
     def can_be_edit(self, app_type="M"):
         return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(app_type)
 
+
 class VolunteerApplication(
     BaseApplication,
     _VolunteerMentorSponsorApplication,
@@ -509,6 +511,7 @@ class VolunteerApplication(
 
     def can_be_edit(self, app_type="V"):
         return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(app_type)
+
 
 class SponsorApplication(
     _VolunteerMentorSponsorApplication,
