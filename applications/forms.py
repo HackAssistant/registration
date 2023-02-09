@@ -214,7 +214,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                        {'name': 'lennyface', 'space': 12}, ],
             'description': 'Hey there, before we begin we would like to know a little more about you.'
         },
-        'Hackathons?': {
+        'Hackathons': {
             'fields': [{'name': 'description', 'space': 12}, {'name': 'first_timer', 'space': 12},
                        {'name': 'projects', 'space': 12}, ]
         },
@@ -238,7 +238,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
     cvs_edition = forms.BooleanField(
         required=False,
-        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2021 Sponsors.'
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2023 Sponsors.'
     )
 
     def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList,
