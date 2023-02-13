@@ -50,7 +50,8 @@
         <label class="control-label" for="baggage-scan-image">Image</label>
         <p class="image-info"><i class="fa fa-info-circle"></i> Picture will be taken automatically on check-in.</p>
         <video id="qr-video" style="width: 100%; height: 100%;"></video>
-        <button id="snap" class="btn btn-info" type="button">Snap</button>
+        <button id="snap" class="btn btn-info btn-block" type="button">Snap</button>
+        <button style="display: none" id="reload" class="btn btn-info btn-block" type="button">Reload</button>
         <input type="hidden" class="form-control" id="baggage-scan-file" name="bag_image"/>
       </div>
     {% endif %}
@@ -98,7 +99,7 @@
     <button class="btn btn-success" name="checkin" id="trigger">Bag check-in</button>
   </form>
 
-  <script>
+{#  <script>#}
     {#        document.addEventListener("DOMContentLoaded", ()=>{#}
     {#           let scanner = new Scanner('preview', 'camera-select', null, true)#}
     {#            scanner.addPhotoToForm('baggage-form', 'baggage-scan-file')#}
@@ -151,14 +152,13 @@
 
 
     <script nonce="{{ request.csp_nonce }}">
-      document.addEventListener('DOMContentLoaded', () => {
-      let scanner = new Scanner('qr-video', () => {
-    }, {
-      popup: false,
-    })
-      scanner.show();
-      scanner.addPhotoToForm("trigger", "baggage-scan-file");
-    })
+        document.addEventListener('DOMContentLoaded', () => {
+            let scanner = new Scanner('qr-video', undefined, {
+              popup: false,
+            })
+            scanner.show();
+            scanner.addPhotoToForm("snap", "baggage-scan-file", "reload");
+        })
 
-  </script>
+    </script>
 {% endblock %}

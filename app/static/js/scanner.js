@@ -119,10 +119,21 @@ Scanner.prototype.addPhotoToForm = function (triggerId, inputId, reloadId=null) 
     if (trigger.is('form')) {
         trigger.on('submit', (ev) => {save_image(ev, false)})
     } else {
-        trigger.on('click', (ev) => {save_image(ev, true)})
+        let reload;
+        trigger.on('click', (ev) => {
+            save_image(ev, true);
+            trigger.hide()
+            if (reloadId !== null) {
+                reload.show()
+            }
+        })
         if (reloadId !== null) {
-            $(`#${reloadId}`).on('click', () => {
+            reload = $(`#${reloadId}`)
+
+            reload.on('click', () => {
                 self.scanner.start()
+                trigger.show()
+                reload.hide()
             })
         }
     }

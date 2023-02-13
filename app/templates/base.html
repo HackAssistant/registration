@@ -18,7 +18,7 @@
     <link rel="mask-icon" href="{% static 'img/favicon/safari-pinned-tab.svg' %}" color="#5f723f">
     <link rel="shortcut icon" href="{% static 'img/favicon/favicon.ico' %}">
     <meta name="apple-mobile-web-app-title" content="My HackUPC">
-	<meta name="application-name" content="My HackUPC">
+	  <meta name="application-name" content="My HackUPC">
     <meta name="msapplication-TileColor" content="#f8f8f8">
     <meta name="msapplication-config" content="{% static 'img/favicon/browserconfig.xml' %}">
 
@@ -57,6 +57,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="{% static 'lib/snackbar.min.js' %}"></script>
+    <script>
+      CSS.paintWorklet.addModule("https://unpkg.com/css-houdini-voronoi/dist/worklet.js");
+    </script>
 
     {% block head %}
     {% endblock %}
@@ -66,7 +69,8 @@
 </head>
 
 
-<body>
+<body style="min-height: 100%">
+<div class="bg" style="display: flex; flex-direction: column; width: 100%; min-height: 100vh;">
 {% if messages %}
     <script>
         $(function () {
@@ -278,5 +282,6 @@
 
     </script>
 {% endif %}
+</div>
 </body>
 </html>
