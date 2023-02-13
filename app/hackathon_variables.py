@@ -10,7 +10,7 @@ HACKATHON_APPLICATION_NAME = 'My HackUPC'
 # Hackathon timezone
 TIME_ZONE = 'CET'
 # This description will be used on the html and sharing meta tags
-HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 36h. 29th April - 1st May.'
+HACKATHON_DESCRIPTION = 'Join us for BarcelonaTech\'s hackathon. 36h. May 12 - 14.'
 # Domain where application is deployed, can be set by env variable
 HACKATHON_DOMAIN = os.environ.get('DOMAIN', None)
 HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME', None)
@@ -37,12 +37,12 @@ HACKATHON_INSTAGRAM_ACCOUNT = 'hackupc'
 # (OPTIONAL) Hackathon Medium user
 HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 # (OPTIONAL) Github Repo for this project (so meta)
-HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/registration/'
+HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/myhackupc/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2023, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
-VOLUNTEER_APP_DEADLINE = timezone.datetime(2023, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
-MENTOR_APP_DEADLINE = timezone.datetime(2023, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2023, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+VOLUNTEER_APP_DEADLINE = timezone.datetime(2022, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+MENTOR_APP_DEADLINE = timezone.datetime(2022, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) Online checkin activated
 ONLINE_CHECKIN = timezone.datetime(2022, 4, 29, 17, 00, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
@@ -70,7 +70,7 @@ DEFAULT_REIMBURSEMENT_AMOUNT = 100
 CURRENCY = '€'
 REIMBURSEMENT_EXPIRY_DAYS = 5
 REIMBURSEMENT_REQUIREMENTS = 'You have to submit a project and demo it during the event in order to get reimbursed'
-REIMBURSEMENT_DEADLINE = timezone.datetime(2022, 4, 22, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+REIMBURSEMENT_DEADLINE = timezone.datetime(2023, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 
 # (OPTIONAL) Max team members. Defaults to 4
 TEAMS_ENABLED = True
@@ -127,7 +127,7 @@ VOLUNTEER_EXPIRES = False
 
 DISCORD_HACKATHON = False
 HYBRID_HACKATHON = False
-N_MAX_LIVE_HACKERS = 350
+N_MAX_LIVE_HACKERS = 600
 
 SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
 
