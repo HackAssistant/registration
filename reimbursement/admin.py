@@ -34,7 +34,8 @@ class ReimbursementAdmin(admin.ModelAdmin):
     name.short_description = 'Hacker info'  # Renames column head
 
     def application_status(self, obj):
-        return obj.hacker.application.get_status_display()
+        application = obj.hacker.application
+        return application.get_status_display() if application is not None else None
 
     # application_status.admin_order_field = 'hacker__application__status'  # Allows column order sorting
 
