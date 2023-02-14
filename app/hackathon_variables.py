@@ -19,7 +19,7 @@ if HEROKU_APP_NAME and not HACKATHON_DOMAIN:
 elif not HACKATHON_DOMAIN:
     HACKATHON_DOMAIN = 'localhost:8000'
 # Hackathon contact email: where should all hackers contact you. It will also be used as a sender for all emails
-HACKATHON_CONTACT_EMAIL = 'contact@hackupc.com'
+HACKATHON_CONTACT_EMAIL = 'noreply@hackupc.com'
 # Hackathon logo url, will be used on all emails
 HACKATHON_LOGO_URL = 'https://my.hackupc.com/static/logo.png'
 
@@ -129,7 +129,7 @@ DISCORD_HACKATHON = False
 HYBRID_HACKATHON = False
 N_MAX_LIVE_HACKERS = 600
 
-SERVER_EMAIL = 'MyHackUPC <server@my.hackupc.com>'
+SERVER_EMAIL = 'HackUPC Team <noreply@hackupc.com>'
 
 CODE_CONDUCT_LINK = 'https://legal.hackersatupc.org/hackupc/code_of_conduct'
 LEGAL_LINK = 'https://legal.hackersatupc.org/hackupc/legal_notice'
