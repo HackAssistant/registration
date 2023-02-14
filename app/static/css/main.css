@@ -5,19 +5,8 @@
 
 .bg {
     overflow: hidden;
-    --voronoi-cell-colors: white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, white, #fcd4ae, #f8bcad, #b2ac79;
-    --voronoi-number-of-cells: 1000;
-    --voronoi-line-color: #e8e2d7;
-    --voronoi-line-width: 5;
-    --voronoi-dot-color: white;
-    --voronoi-dot-size:0;
-    background: paint(voronoi);
 }
 @media (max-width: 992px) {
-    .bg {
-        --voronoi-number-of-cells: 200;
-        background: paint(voronoi);
-    }
     .content.container {
         margin-left: 0;
         margin-right: 0;
@@ -29,11 +18,7 @@
 
 body {
 
-    /*background-image: url("../img/background.png");*/
-    /*background-position: center center;*/
-    /*background-attachment: fixed;*/
-    /*!*background: linear-gradient(#26ADB5 0%, #1DA3AD 33%, #1597A3 67%, #0E8C99 100%) no-repeat center center fixed;*!*/
-    /*background-repeat: repeat repeat;*/
+    background: url("../img/background.svg") #f2ede6 center / 640px repeat;
     font-family: ProximaNovaRegular, 'Roboto', sans-serif;
     font-size: 15px;
 }
