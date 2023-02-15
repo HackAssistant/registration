@@ -40,7 +40,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     under_age = forms.TypedChoiceField(
         required=True,
-        label='How old are you?',
+        label='How old will you be at time of the event?',
         initial=False,
         coerce=lambda x: x == 'True',
         choices=((False, '18 or over'), (True, 'Between 14 (included) and 18')),
