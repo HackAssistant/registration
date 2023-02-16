@@ -167,7 +167,7 @@ class _HackerMentorApplicationForm(OverwriteOnlyModelFormMixin, ModelForm):
     online = forms.TypedChoiceField(
         required=True,
         label='How would you like to attend the event: live or online?',
-        initial=True,
+        initial=False,
         coerce=lambda x: x == 'True',
         choices=((False, 'Live'), (True, 'Online')),
         widget=forms.RadioSelect
