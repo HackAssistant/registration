@@ -78,19 +78,19 @@
             var diet = $('#id_diet');
             var hardware = $('#id_hardware');
             conditional_field(hardware, online, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(hardware, face_to_face, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(diet, online, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(diet, face_to_face, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(other_diet, online, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(other_diet, diet, function () {
                 return diet.val() === 'Others';
@@ -115,13 +115,13 @@
             var reimb_amout = $('#id_reimb_amount');
             var reimb = $('#id_reimb');
             conditional_field(reimb, online, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(reimb, face_to_face, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(reimb_amout, online, function () {
-                return face_to_face.prop("checked");
+                return face_to_face.length > 0;
             }, 1);
             conditional_field(reimb_amout, needs_reimb, function () {
                 return needs_reimb.prop("checked");
