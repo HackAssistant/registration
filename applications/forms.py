@@ -458,11 +458,11 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            fields['HackUPC Polices'] = {
+            fields['HackUPC Policies'] = {
                 'fields': polices_fields,
                 'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
-                               'process your information to organize an awesome hackaton. It '
+                               'process your information to organize an awesome hackathon. It '
                                'will also include images and videos of yourself during the event. '
                                'Your data will be used for admissions mainly. We may also reach '
                                'out to you (sending you an e-mail) about other events that we are '
