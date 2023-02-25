@@ -28,6 +28,8 @@
                 {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                 {% include 'include/field.html' with desc='Email' value=app.user.email %}
                 {% if app.user.is_volunteer %}
+                    {% include 'include/field.html' with desc='Gender' value=app.get_gender_display %}
+                    {% include 'include/field.html' with desc='Other gender' value=app.other_gender %}
                     <hr>
                     <dt>
                     <h3>Academic</h3>
@@ -50,14 +52,17 @@
                     {% include 'include/field.html' with desc='Weakness' value=app.weakness %}
                     {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
                     {% include 'include/field.html' with desc='Friends' value=app.friends %}
+                    {% include 'include/field.html' with desc='Night Shifts' value=app.night_shifts|yesno %}
+                    {% include 'include/field.html' with desc='Motivation' value=app.volunteer_motivation %}
                     <hr>
                     <dt>
                     <h3>Extra</h3>
                     </dt>
                     <dd></dd>
                     {% include 'include/field.html' with desc='Lennyface' value=app.lennyface %}
-                    {% include 'include/field.html' with desc='Favorite movie' value=app.fav_movie %}
+                    {% include 'include/field.html' with desc='Favorite movie or series' value=app.fav_movie %}
                     {% include 'include/field.html' with desc='Cool skill' value=app.cool_skill %}
+                    {% include 'include/field.html' with desc='Hobbies' value=app.hobbies %}
 
                 {% endif %}
                 {% if app.user.is_sponsor %}
@@ -80,9 +85,8 @@
                     {% include 'include/field.html' with desc='University' value=app.university %}
                     {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
                     {% include 'include/field.html' with desc='Degree' value=app.degree %}
-                    {% include 'include/field.html' with desc='Company' value=app.company %}
-                    {% include 'include/field.html' with desc='Position' value=app.position %}
-                    {% include 'include/field.html' with desc='Fisrt hack?' value=app.first_timer|yesno %}
+                    {% include 'include/field.html' with desc='Position' value=app.company %}
+                    {% include 'include/field.html' with desc='First hack?' value=app.first_timer|yesno %}
                     {% include 'include/field.html' with desc='Experienced mentor?' value=app.first_time_mentor|yesno %}
                     {% if app.first_time_mentor %}
                       {% include 'include/field.html' with desc='Which hackathons' value=app.which_hack %}
@@ -95,7 +99,7 @@
                     <h3>Experience</h3>
                     </dt>
                     <dd></dd>
-                    {% include 'include/field.html' with desc='Fluent languages' value=app.fluent %}
+                    {% include 'include/field.html' with desc='Speaking languages' value=app.fluent %}
                     {% include 'include/field.html' with desc='Experienced languages' value=app.experience %}
                     {% include 'include/field.html' with desc='English Level' value=app.english_level %}
                     {% if app.resume %}

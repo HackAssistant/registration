@@ -381,7 +381,7 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerApplicationForm):
     first_time_volunteer = forms.TypedChoiceField(
         required=True,
-        label='Have you volunteered at %s before?' % settings.HACKATHON_NAME,
+        label='Is it your first time volunteering in %s?' % settings.HACKATHON_NAME,
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect
@@ -393,29 +393,39 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         choices=models.PREVIOUS_HACKS
     )
     night_shifts = forms.TypedChoiceField(
-        required=True,
-        label='Would you be okay with doing night shifts? (volunteering during 2am - 5am)',
+        required=False,
+        label='Would you be okay with doing night shifts?',
         coerce=lambda x: x == 'True',
-        choices=((False, 'No'), (True, 'Yes')),
+        choices=((False, 'No'), (True, 'Yes'), (None, 'Maybe')),
         widget=forms.RadioSelect
     )
+    university = forms.CharField(initial='NA', widget=forms.HiddenInput(), required=False)
+    degree = forms.CharField(initial='NA', widget=forms.HiddenInput(), required=False)
 
     bootstrap_field_info = {
         'Personal Info': {
-            'fields': [{'name': 'origin', 'space': 12}, {'name': 'university', 'space': 12},
-                       {'name': 'degree', 'space': 12}, {'name': 'graduation_year', 'space': 12},
-                       {'name': 'gender', 'space': 12}, {'name': 'other_gender', 'space': 12},
-                       {'name': 'phone_number', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
-                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}, ],
-            'description': 'Hey there, before we begin we would like to know a little more about you.'
+            'fields': [{'name': 'under_age', 'space': 12}, {'name': 'gender', 'space': 12},
+                       {'name': 'other_gender', 'space': 12}, {'name': 'origin', 'space': 12}],
+            'description': 'Hey there, we need some information before we start :)'
         },
-        'Volunteer Skills': {
-            'fields': [{'name': 'first_timer', 'space': 12}, {'name': 'first_time_volunteer', 'space': 12},
-                       {'name': 'which_hack', 'space': 12}, {'name': 'attendance', 'space': 12},
-                       {'name': 'english_level', 'space': 12}, {'name': 'quality', 'space': 12},
-                       {'name': 'weakness', 'space': 12}, {'name': 'cool_skill', 'space': 12},
-                       {'name': 'fav_movie', 'space': 12}, {'name': 'night_shifts', 'space': 12},
-                       {'name': 'hobbies', 'space': 12}, {'name': 'friends', 'space': 12}, ],
+        'Volunteering': {
+            'fields': [{'name': 'first_time_volunteer', 'space': 12}, {'name': 'which_hack', 'space': 12},
+                       {'name': 'english_level', 'space': 12}, {'name': 'attendance', 'space': 12},
+                       {'name': 'volunteer_motivation', 'space': 12},],
+        },
+        'Some other questions': {
+            'fields': [{'name': 'friends', 'space': 12},{'name': 'night_shifts', 'space': 12}, {'name': 'tshirt_size', 'space': 12}],
+            'description': 'Don’t panic! There are just a few more questions 🤯'
+        },
+        'Personal Interests': {
+            'fields': [{'name': 'fav_movie', 'space': 12}, {'name': 'quality', 'space': 12},
+                       {'name': 'weakness', 'space': 12}, {'name': 'hobbies', 'space': 12},
+                       {'name': 'cool_skill', 'space': 12},
+                       # Hidden
+                       {'name': 'graduation_year', 'space': 12},
+                       {'name': 'university', 'space': 12}, {'name': 'degree', 'space': 12},
+                       {'name': 'first_timer', 'space': 12}, {'name': 'lennyface', 'space': 12},],
+            'description': 'We want to get to know you!'
         }
     }
 
@@ -450,10 +460,10 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
     def get_bootstrap_field_info(self):
         fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
-        personal_info_fields = fields['Personal Info']['fields']
+        other_fields = fields['Some other questions']['fields']
         polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'email_subscribe', 'space': 12}]
         if not discord:
-            personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
+            other_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
             polices_fields.append({'name': 'diet_notice', 'space': 12})
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -485,20 +495,24 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                           "but it is ok if you can't make it the whole weekend!",
             'english_level': "No English level needed to volunteer, we just want to check which of you would be"
                              " comfortable doing tasks that require communication in English!",
-            'fav_movie': 'e.g.: Interstellar, Pirates of the Caribbean, Mulan, Twilight, etc.',
-            'cool_skill': 'e.g: can lift 300kg deadweight, have web development skills, can read minds, '
-                          'time traveler...',
-            'friends': '*Remember that you all have to apply separately'
+            'fav_movie': 'e.g.: Interstellar, Game of Thrones,  Avatar, La Casa de Papel, etc.',
+            'cool_skill': 'The 3 most original will have a small prize to be given',
+            'friends': 'Remember that you all have to apply separately',
+            'origin': 'We are just checking if you will be in Barcelona from April to May',
+            'volunteer_motivation': 'It can be a short answer, we are just curious 😛!'
         }
 
         widgets = {
             'origin': forms.TextInput(attrs={'autocomplete': 'off'}),
-            'graduation_year': forms.RadioSelect(),
             'english_level': forms.RadioSelect(),
             'friends': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'weakness': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'quality': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'hobbies': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'graduation_year': forms.HiddenInput(),
+            'phone_number': forms.HiddenInput(),
+            'first_timer': forms.HiddenInput(),
+            'lennyface': forms.HiddenInput(),
         }
 
         labels = {
@@ -506,25 +520,26 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'other_gender': 'Self-describe',
             'graduation_year': 'What year will you graduate?',
             'tshirt_size': 'What\'s your t-shirt size?',
-            'diet': 'Dietary requirements',
+            'diet': 'Do you have any dietary restrictions? ',
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin': 'Where are you joining us from?',
             'which_hack': 'Which %s editions have you volunteered in?' % settings.HACKATHON_NAME,
             'attendance': 'Which days will you attend to HackUPC?',
-            'english_level': 'How much confident are you about talking in English?',
-            'quality': 'Tell us a quality of yourself :)',
-            'weakness': 'Now a weakness :(',
-            'cool_skill': 'Do you have any cool skills we should know about?',
-            'fav_movie': 'Which is your favorite movie?',
-            'friends': 'If you are applying with some of your friends, please mention their names',
-            'hobbies': 'What are your hobbies or what do you do for fun?'
+            'english_level': 'What is your English level?',
+            'quality': 'Name a quality of yours:',
+            'weakness': 'Now a weakness:',
+            'cool_skill': 'What is a cool skill or fun fact about you? Surprise us 🎉 ',
+            'fav_movie': 'What is your favorite movie or series?',
+            'friends': 'Are you applying with some friends? Enter their complete names',
+            'hobbies': 'What are your hobbies or what do you do for fun?',
+            'volunteer_motivation': 'Why do you want to volunteer at HackUPC?'
         }
 
 
 class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
     first_time_mentor = forms.TypedChoiceField(
         required=True,
-        label='Have you mentored at %s before?' % settings.HACKATHON_NAME,
+        label='Have you participated as mentor in other hackathons or tech events?',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect)
@@ -537,8 +552,8 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         widget=forms.RadioSelect)
 
     company = forms.CharField(required=False,
-                              help_text='Current or most recent company you attended.',
-                              label='Where are you working at?')
+                              help_text='Backend developer, DevOps…',
+                              label='What is your current role?')
 
     university = forms.CharField(required=False,
                                  label='What university do you study at?',
@@ -546,7 +561,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                                  widget=forms.TextInput(
                                      attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
 
-    degree = forms.CharField(required=False, label='What\'s your major/degree?',
+    degree = forms.CharField(required=False, label='What\'s your major/degree of study?',
                              help_text='Current or most recent degree you\'ve received',
                              widget=forms.TextInput(
                                  attrs={'class': 'typeahead-degrees', 'autocomplete': 'off'}))
@@ -557,27 +572,27 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                                         widget=forms.RadioSelect())
 
     bootstrap_field_info = {
-        'Personal Info': {
-            'fields': [{'name': 'origin', 'space': 12}, {'name': 'study_work', 'space': 12},
-                       {'name': 'company', 'space': 12}, {'name': 'university', 'space': 12},
-                       {'name': 'degree', 'space': 12}, {'name': 'graduation_year', 'space': 12},
-                       {'name': 'gender', 'space': 12}, {'name': 'other_gender', 'space': 12},
-                       {'name': 'phone_number', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
-                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}, ],
+        'Personal Information': {
+            'fields': [{'name': 'origin', 'space': 12}, {'name': 'gender', 'space': 12},
+                       {'name': 'other_gender', 'space': 12}, {'name': 'tshirt_size', 'space': 12},
+                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12}],
             'description': 'Hey there, before we begin we would like to know a little more about you.'
         },
-        'Mentor Skills': {
+        'Background information': {
+            'fields': [{'name': 'study_work', 'space': 12}, {'name': 'company', 'space': 12},
+                       {'name': 'university', 'space': 12}, {'name': 'degree', 'space': 12},
+                       {'name': 'graduation_year', 'space': 12}, {'name': 'english_level', 'space': 12},
+                       {'name': 'fluent', 'space': 12}, {'name': 'experience', 'space': 12},
+                       {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
+                       {'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
+                       {'name': 'resume', 'space': 12},],
+        },
+        'Hackathons': {
             'fields': [{'name': 'why_mentor', 'space': 12}, {'name': 'first_timer', 'space': 12},
                        {'name': 'first_time_mentor', 'space': 12}, {'name': 'which_hack', 'space': 12},
                        {'name': 'participated', 'space': 12}, {'name': 'attendance', 'space': 12},
-                       {'name': 'english_level', 'space': 12}, {'name': 'fluent', 'space': 12},
-                       {'name': 'experience', 'space': 12}, ],
+                        ],
         },
-        'Show us what you\'ve built': {
-            'fields': [{'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
-                       {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
-                       {'name': 'resume', 'space': 12}, ]
-        }
     }
 
     def mentor(self):
@@ -587,10 +602,11 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         fields = super().get_bootstrap_field_info()
         discord = getattr(settings, 'DISCORD_HACKATHON', False)
         hybrid = getattr(settings, 'HYBRID_HACKATHON', False)
-        personal_info_fields = fields['Personal Info']['fields']
+        personal_info_fields = fields['Personal Information']['fields']
         polices_fields = [{'name': 'terms_and_conditions', 'space': 12}, {'name': 'email_subscribe', 'space': 12}]
-        if hybrid:
-            personal_info_fields.append({'name': 'online', 'space': 12})
+        personal_info_fields.append({'name': 'online', 'space': 12})
+        if not hybrid:
+            self.fields['online'].widget = forms.HiddenInput()
         if not discord:
             personal_info_fields.extend([{'name': 'diet', 'space': 12}, {'name': 'other_diet', 'space': 12}, ])
             polices_fields.append({'name': 'diet_notice', 'space': 12})
@@ -644,6 +660,8 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                          ' http://textsmili.es/</a>',
             'participated': 'You can talk about about past hackathons or any other events. ',
             'resume': 'Accepted file formats: %s' % (', '.join(extensions) if extensions else 'Any'),
+            'fluent': 'Catalan, French, Chinese, Arabic…',
+            'experience': 'C++, Java, Docker, Vue, AWS…'
         }
 
         widgets = {
@@ -654,6 +672,9 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'fluent': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'experience': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'why_mentor': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'first_timer': forms.HiddenInput(),
+            'resume': forms.HiddenInput(),
+            'lennyface': forms.HiddenInput(),
         }
 
         labels = {
@@ -669,10 +690,10 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'resume': 'Upload your resume',
             'why_mentor': 'Why do you want to participate as mentor?',
             'which_hack': 'Which editions have you mentored?',
-            'attendance': 'Will you be attending HackUPC for the whole event?',
-            'english_level': 'How much confident are you about talking in English?',
-            'fluent': 'What program languages are you fluent on?',
-            'experience': 'Which program languages have you experience on?'
+            'attendance': 'Which days will you be attending HackUPC?',
+            'english_level': 'How confident are you speaking in English?',
+            'fluent': 'What languages do you speak?',
+            'experience': 'What technologies/programming languages do you know?'
         }
 
 
