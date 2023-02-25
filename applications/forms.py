@@ -411,10 +411,11 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         'Volunteering': {
             'fields': [{'name': 'first_time_volunteer', 'space': 12}, {'name': 'which_hack', 'space': 12},
                        {'name': 'english_level', 'space': 12}, {'name': 'attendance', 'space': 12},
-                       {'name': 'volunteer_motivation', 'space': 12},],
+                       {'name': 'volunteer_motivation', 'space': 12}, ],
         },
         'Some other questions': {
-            'fields': [{'name': 'friends', 'space': 12},{'name': 'night_shifts', 'space': 12}, {'name': 'tshirt_size', 'space': 12}],
+            'fields': [{'name': 'friends', 'space': 12}, {'name': 'night_shifts', 'space': 12},
+                       {'name': 'tshirt_size', 'space': 12}],
             'description': 'Don’t panic! There are just a few more questions 🤯'
         },
         'Personal Interests': {
@@ -422,9 +423,9 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                        {'name': 'weakness', 'space': 12}, {'name': 'hobbies', 'space': 12},
                        {'name': 'cool_skill', 'space': 12},
                        # Hidden
-                       {'name': 'graduation_year', 'space': 12},
-                       {'name': 'university', 'space': 12}, {'name': 'degree', 'space': 12},
-                       {'name': 'first_timer', 'space': 12}, {'name': 'lennyface', 'space': 12},],
+                       {'name': 'graduation_year', 'space': 12}, {'name': 'university', 'space': 12},
+                       {'name': 'degree', 'space': 12}, {'name': 'first_timer', 'space': 12},
+                       {'name': 'lennyface', 'space': 12}, ],
             'description': 'We want to get to know you!'
         }
     }
@@ -585,13 +586,12 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                        {'name': 'fluent', 'space': 12}, {'name': 'experience', 'space': 12},
                        {'name': 'linkedin', 'space': 12}, {'name': 'site', 'space': 12},
                        {'name': 'github', 'space': 12}, {'name': 'devpost', 'space': 12},
-                       {'name': 'resume', 'space': 12},],
+                       {'name': 'resume', 'space': 12}, ],
         },
         'Hackathons': {
             'fields': [{'name': 'why_mentor', 'space': 12}, {'name': 'first_timer', 'space': 12},
                        {'name': 'first_time_mentor', 'space': 12}, {'name': 'which_hack', 'space': 12},
-                       {'name': 'participated', 'space': 12}, {'name': 'attendance', 'space': 12},
-                        ],
+                       {'name': 'participated', 'space': 12}, {'name': 'attendance', 'space': 12}, ],
         },
     }
 
