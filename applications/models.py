@@ -105,7 +105,7 @@ ATTENDANCE = [
 ]
 
 HACK_NAME = getattr(hackathon_variables, 'HACKATHON_NAME', "HackAssistant")
-EXTRA_NAME = [' 2016 Fall', ' 2016 Winter', ' 2017 Fall', ' 2017 Winter', ' 2018', ' 2019', '2021', '2022']
+EXTRA_NAME = [' 2016 Fall', ' 2016 Winter', ' 2017 Fall', ' 2017 Winter', ' 2018', ' 2019', ' 2021', ' 2022']
 PREVIOUS_HACKS = [(i, HACK_NAME + EXTRA_NAME[i]) for i in range(0, len(EXTRA_NAME))]
 
 YEARS = [(int(size), size) for size in ('2022 2023 2024 2025 2026 2027 2028 2029'.split(' '))]
@@ -463,7 +463,7 @@ class HackerApplication(
         return self.status == APP_BLACKLISTED
 
     def can_be_edit(self, app_type="H"):
-        return self.status in [APP_PENDING, APP_DUBIOUS] and not self.vote_set.exists() and not \
+        return self.status in [APP_PENDING, APP_DUBIOUS, APP_INVITED] and not self.vote_set.exists() and not \
             utils.is_app_closed(app_type)
 
 
@@ -506,8 +506,9 @@ class VolunteerApplication(
     weakness = models.CharField(max_length=150, null=False)
     fav_movie = models.CharField(max_length=60, null=True, blank=True)
     friends = models.CharField(max_length=100, null=True, blank=True)
-    night_shifts = models.BooleanField()
+    night_shifts = models.BooleanField(null=True)
     hobbies = models.CharField(max_length=150, null=False)
+    volunteer_motivation = models.CharField(max_length=500)
 
     def can_be_edit(self, app_type="V"):
         return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(app_type)
