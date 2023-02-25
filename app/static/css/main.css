@@ -386,16 +386,16 @@ input:-webkit-autofill
 }
 
 .c3-axis-y text {
-   fill: #eeeeee;
+   fill: #000000;
 }
 .c3-axis-x text {
-    fill: #eeeeee;
+    fill: #000000;
 }
 .c3-legend-item {
-    fill: #eeeeee;
+    fill: #000000;
 }
 .c3 .c3-axis line, .c3 .c3-axis path {
-    stroke: #EEEEEE;
+    stroke: #000000;
 }
 .c3-tooltip tr {
     color: #222222;

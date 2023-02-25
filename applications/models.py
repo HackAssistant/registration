@@ -62,7 +62,7 @@ GENDERS = [
 ]
 
 D_NONE = 'None'
-D_VEGETERIAN = 'Vegeterian'
+D_VEGETERIAN = 'Vegetarian'
 D_VEGAN = 'Vegan'
 D_NO_PORK = 'No pork'
 D_GLUTEN_FREE = 'Gluten-free'
