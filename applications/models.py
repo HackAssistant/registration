@@ -62,7 +62,7 @@ GENDERS = [
 ]
 
 D_NONE = 'None'
-D_VEGETERIAN = 'Vegeterian'
+D_VEGETERIAN = 'Vegetarian'
 D_VEGAN = 'Vegan'
 D_NO_PORK = 'No pork'
 D_GLUTEN_FREE = 'Gluten-free'
@@ -105,7 +105,7 @@ ATTENDANCE = [
 ]
 
 HACK_NAME = getattr(hackathon_variables, 'HACKATHON_NAME', "HackAssistant")
-EXTRA_NAME = [' 2016 Fall', ' 2016 Winter', ' 2017 Fall', ' 2017 Winter', ' 2018', ' 2019', '2021']
+EXTRA_NAME = [' 2016 Fall', ' 2016 Winter', ' 2017 Fall', ' 2017 Winter', ' 2018', ' 2019', '2021', '2022']
 PREVIOUS_HACKS = [(i, HACK_NAME + EXTRA_NAME[i]) for i in range(0, len(EXTRA_NAME))]
 
 YEARS = [(int(size), size) for size in ('2022 2023 2024 2025 2026 2027 2028 2029'.split(' '))]
