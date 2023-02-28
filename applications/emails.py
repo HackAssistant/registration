@@ -16,9 +16,9 @@ def create_invite_email(application, request):
     }
     if application.user.is_hacker():
         return emails.render_mail('mails/invitation_hacker', application.user.email, c)
-    if application.user.is_mentor():
-        return emails.render_mail('mails/invitation_mentor', application.user.email, c)
-    return emails.render_mail('mails/invitation_volunteer', application.user.email, c)
+    #if application.user.is_mentor():
+    #    return emails.render_mail('mails/invitation_mentor', application.user.email, c)
+    #return emails.render_mail('mails/invitation_volunteer', application.user.email, c)
 
 
 def create_confirmation_email(application, request):
@@ -31,8 +31,8 @@ def create_confirmation_email(application, request):
         'is_hacker': application.user.is_hacker(),
         'is_sponsor': application.user.is_sponsor(),
     }
-    return emails.render_mail('mails/confirmation',
-                              application.user.email, c)
+    if application.user.is_hacker():
+        return emails.render_mail('mails/confirmation',application.user.email, c)
 
 
 def create_lastreminder_email(application):
@@ -47,8 +47,8 @@ def create_lastreminder_email(application):
         'is_hacker': application.user.is_hacker(),
         'is_sponsor': application.user.is_sponsor(),
     }
-    return emails.render_mail('mails/last_reminder',
-                              application.user.email, c, action_required=True)
+    if application.user.is_hacker():
+        return emails.render_mail('mails/last_reminder',application.user.email, c, action_required=True)
 
 
 def send_batch_emails(emails):
