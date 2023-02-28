@@ -650,7 +650,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
         help_texts = {
             'gender': 'This is for demographic purposes.',
-            #'degree': 'What\'s your major/degree?',
+            # 'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
