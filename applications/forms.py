@@ -383,7 +383,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         required=True,
         label='Is it your first time volunteering in %s?' % settings.HACKATHON_NAME,
         coerce=lambda x: x == 'True',
-        choices=((False, 'No'), (True, 'Yes')),
+        choices=((True, 'Yes'), (False, 'No')),
         widget=forms.RadioSelect
     )
     which_hack = forms.MultipleChoiceField(
@@ -540,7 +540,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
 class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, _HackerMentorVolunteerApplicationForm):
     first_time_mentor = forms.TypedChoiceField(
         required=True,
-        label='Have you participated as mentor in other hackathons or tech events?',
+        label='Have you participated as mentor in past HackUPC editions?',
         coerce=lambda x: x == 'True',
         choices=((False, 'No'), (True, 'Yes')),
         widget=forms.RadioSelect)
@@ -556,11 +556,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
                               help_text='Backend developer, DevOps…',
                               label='What is your current role?')
 
-    university = forms.CharField(required=False,
-                                 label='What university do you study at?',
-                                 help_text='Current or most recent school you attended.',
-                                 widget=forms.TextInput(
-                                     attrs={'class': 'typeahead-schools', 'autocomplete': 'off'}))
+    university = forms.CharField(initial='NA', widget=forms.HiddenInput(), required=False)
 
     degree = forms.CharField(required=False, label='What\'s your major/degree of study?',
                              help_text='Current or most recent degree you\'ve received',
@@ -613,11 +609,11 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
         if not self.instance.pk:
-            fields['HackUPC Polices'] = {
+            fields['HackUPC Policies'] = {
                 'fields': polices_fields,
                 'description': '<p style="color: margin-top: 1em;display: block;'
                                'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
-                               'process your information to organize an awesome hackaton. It '
+                               'process your information to organize an awesome hackathon. It '
                                'will also include images and videos of yourself during the event. '
                                'Your data will be used for admissions mainly. We may also reach '
                                'out to you (sending you an e-mail) about other events that we are '
@@ -654,7 +650,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
         help_texts = {
             'gender': 'This is for demographic purposes.',
-            'degree': 'What\'s your major/degree?',
+            # 'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
                          ' http://textsmili.es/</a>',
@@ -681,7 +677,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
             'gender': 'What gender do you identify as?',
             'other_gender': 'Self-describe',
             'graduation_year': 'What year will you graduate?',
-            'tshirt_size': 'What\'s your t-shirt size?',
+            'tshirt_size': 'What is your t-shirt size?',
             'diet': 'Dietary requirements',
             'lennyface': 'Describe yourself in one "lenny face"?',
             'origin': 'Where are you joining us from?',
@@ -770,11 +766,11 @@ class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
             polices_fields.append({'name': 'diet_notice', 'space': 12})
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
-        fields['HackUPC Polices'] = {
+        fields['HackUPC Policies'] = {
             'fields': polices_fields,
             'description': '<p style="color: margin-top: 1em;display: block;'
                            'margin-bottom: 1em;line-height: 1.25em;">We, Hackers at UPC, '
-                           'process your information to organize an awesome hackaton. It '
+                           'process your information to organize an awesome hackathon. It '
                            'will also include images and videos of yourself during the event. '
                            'Your data will be used for admissions mainly. We may also reach '
                            'out to you (sending you an e-mail) about other events that we are '
