@@ -506,6 +506,7 @@ class VolunteerApplication(
     weakness = models.CharField(max_length=150, null=False)
     fav_movie = models.CharField(max_length=60, null=True, blank=True)
     friends = models.CharField(max_length=100, null=True, blank=True)
+    pronouns = models.CharField(max_length=100, null=True, blank=True)
     night_shifts = models.BooleanField(null=True)
     hobbies = models.CharField(max_length=150, null=False)
     volunteer_motivation = models.CharField(max_length=500)

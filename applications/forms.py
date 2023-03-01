@@ -392,6 +392,14 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         widget=forms.CheckboxSelectMultiple,
         choices=models.PREVIOUS_HACKS
     )
+    under_age = forms.TypedChoiceField(
+        required=True,
+        label='Are you over the age of 18 years old?',
+        initial=False,
+        coerce=lambda x: x == 'True',
+        choices=((False, 'No'), (True, 'Yes')),
+        widget=forms.RadioSelect
+    )
     night_shifts = forms.TypedChoiceField(
         required=False,
         label='Would you be okay with doing night shifts?',
@@ -399,12 +407,21 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         choices=((False, 'No'), (True, 'Yes'), (None, 'Maybe')),
         widget=forms.RadioSelect
     )
+    lennyface = forms.TypedChoiceField(
+        required=False,
+        label='Will you be in Barcelona from April to May?',
+        coerce=lambda x: x == 'True',
+        choices=((False, 'Doubtful'), (True, 'Yes')),
+        help_text='The event is in May, however, we kindly request your presence at the preceding meetings in person!',
+        widget=forms.RadioSelect
+    )
     university = forms.CharField(initial='NA', widget=forms.HiddenInput(), required=False)
     degree = forms.CharField(initial='NA', widget=forms.HiddenInput(), required=False)
 
     bootstrap_field_info = {
         'Personal Info': {
-            'fields': [{'name': 'under_age', 'space': 12}, {'name': 'gender', 'space': 12},
+            'fields': [{'name': 'pronouns', 'space': 12}, {'name': 'under_age', 'space': 12}, 
+                       {'name': 'gender', 'space': 12}, {'name': 'lennyface', 'space': 12},
                        {'name': 'other_gender', 'space': 12}, {'name': 'origin', 'space': 12}],
             'description': 'Hey there, we need some information before we start :)'
         },
@@ -424,8 +441,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                        {'name': 'cool_skill', 'space': 12},
                        # Hidden
                        {'name': 'graduation_year', 'space': 12}, {'name': 'university', 'space': 12},
-                       {'name': 'degree', 'space': 12}, {'name': 'first_timer', 'space': 12},
-                       {'name': 'lennyface', 'space': 12}, ],
+                       {'name': 'degree', 'space': 12}, ],
             'description': 'We want to get to know you!'
         }
     }
@@ -490,16 +506,14 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'gender': 'This is for demographic purposes.',
             'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
-            'lennyface': 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
-                         ' http://textsmili.es/</a>',
             'attendance': "It will be a great experience to enjoy from beginning to end with lots of things to do, "
                           "but it is ok if you can't make it the whole weekend!",
             'english_level': "No English level needed to volunteer, we just want to check which of you would be"
                              " comfortable doing tasks that require communication in English!",
             'fav_movie': 'e.g.: Interstellar, Game of Thrones,  Avatar, La Casa de Papel, etc.',
-            'cool_skill': 'The 3 most original will have a small prize to be given',
+            'cool_skill': 'The 3 most original will have a small prize to be given at the 2nd volunteer meeting :P',
             'friends': 'Remember that you all have to apply separately',
-            'origin': 'We are just checking if you will be in Barcelona from April to May',
+            'origin': 'This is for demographic purposes',
             'volunteer_motivation': 'It can be a short answer, we are just curious 😛!'
         }
 
@@ -510,19 +524,20 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'weakness': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'quality': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'hobbies': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
+            'pronouns': forms.Textarea(attrs={'rows': 1, 'cols': 40, 'placeholder': 'their/them'}),
             'graduation_year': forms.HiddenInput(),
             'phone_number': forms.HiddenInput(),
             'first_timer': forms.HiddenInput(),
-            'lennyface': forms.HiddenInput(),
+            'lennyface': forms.RadioSelect()
         }
 
         labels = {
+            'pronouns': 'Enter your pronouns',
             'gender': 'What gender do you identify as?',
             'other_gender': 'Self-describe',
             'graduation_year': 'What year will you graduate?',
             'tshirt_size': 'What\'s your t-shirt size?',
             'diet': 'Do you have any dietary restrictions? ',
-            'lennyface': 'Describe yourself in one "lenny face"?',
             'origin': 'Where are you joining us from?',
             'which_hack': 'Which %s editions have you volunteered in?' % settings.HACKATHON_NAME,
             'attendance': 'Which days will you attend to HackUPC?',

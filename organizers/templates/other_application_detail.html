@@ -28,8 +28,10 @@
                 {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
                 {% include 'include/field.html' with desc='Email' value=app.user.email %}
                 {% if app.user.is_volunteer %}
+                    {% include 'include/field.html' with desc='Pronouns' value=app.pronouns %}
                     {% include 'include/field.html' with desc='Gender' value=app.get_gender_display %}
                     {% include 'include/field.html' with desc='Other gender' value=app.other_gender %}
+                    {% include 'include/field.html' with desc='Lennyface' value=app.lennyface %}
                     <hr>
                     <dt>
                     <h3>Academic</h3>
@@ -44,7 +46,7 @@
                     <h3>Volunteer Info</h3>
                     </dt>
                     <dd></dd>
-                    {% include 'include/field.html' with desc='First Time Volunteer' value=app.first_time_volunteer|yesno %}
+                    {% include 'include/field.html' with desc='First Time' value=app.first_time_volunteer|yesno %}
                     {% if not app.first_time_volunteer %}
                       {% include 'include/field.html' with desc='Which Hackathons' value=app.which_hack %}
                     {% endif %}
@@ -59,7 +61,6 @@
                     <h3>Extra</h3>
                     </dt>
                     <dd></dd>
-                    {% include 'include/field.html' with desc='Lennyface' value=app.lennyface %}
                     {% include 'include/field.html' with desc='Favorite movie or series' value=app.fav_movie %}
                     {% include 'include/field.html' with desc='Cool skill' value=app.cool_skill %}
                     {% include 'include/field.html' with desc='Hobbies' value=app.hobbies %}
