@@ -524,7 +524,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'weakness': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'quality': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
             'hobbies': forms.Textarea(attrs={'rows': 2, 'cols': 40}),
-            'pronouns': forms.Textarea(attrs={'rows': 1, 'cols': 40, 'placeholder': 'their/them'}),
+            'pronouns': forms.TextInput(attrs={'autocomplete': 'off', 'placeholder': 'their/them'}),
             'graduation_year': forms.HiddenInput(),
             'phone_number': forms.HiddenInput(),
             'first_timer': forms.HiddenInput(),
