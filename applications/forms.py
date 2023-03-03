@@ -420,7 +420,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
 
     bootstrap_field_info = {
         'Personal Info': {
-            'fields': [{'name': 'pronouns', 'space': 12}, {'name': 'under_age', 'space': 12}, 
+            'fields': [{'name': 'pronouns', 'space': 12}, {'name': 'under_age', 'space': 12},
                        {'name': 'gender', 'space': 12}, {'name': 'lennyface', 'space': 12},
                        {'name': 'other_gender', 'space': 12}, {'name': 'origin', 'space': 12}],
             'description': 'Hey there, we need some information before we start :)'
@@ -441,7 +441,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                        {'name': 'cool_skill', 'space': 12},
                        # Hidden
                        {'name': 'graduation_year', 'space': 12}, {'name': 'university', 'space': 12},
-                       {'name': 'degree', 'space': 12}, ],
+                       {'name': 'degree', 'space': 12}, {'name': 'first_timer', 'space': 12}, ],
             'description': 'We want to get to know you!'
         }
     }
@@ -449,7 +449,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
     def clean(self):
         data = self.cleaned_data['which_hack']
         volunteer = self.cleaned_data['first_time_volunteer']
-        if volunteer and not data:
+        if not volunteer and not data:
             self.add_error('which_hack', "Choose the hackathons you volunteered")
 
         return super(VolunteerApplicationForm, self).clean()
