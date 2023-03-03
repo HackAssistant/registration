@@ -420,8 +420,8 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
 
     bootstrap_field_info = {
         'Personal Info': {
-            'fields': [{'name': 'pronouns', 'space': 12}, {'name': 'under_age', 'space': 12},
-                       {'name': 'gender', 'space': 12}, {'name': 'lennyface', 'space': 12},
+            'fields': [{'name': 'pronouns', 'space': 12}, {'name': 'gender', 'space': 12},
+                       {'name': 'under_age', 'space': 12}, {'name': 'lennyface', 'space': 12},
                        {'name': 'other_gender', 'space': 12}, {'name': 'origin', 'space': 12}],
             'description': 'Hey there, we need some information before we start :)'
         },
@@ -441,7 +441,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
                        {'name': 'cool_skill', 'space': 12},
                        # Hidden
                        {'name': 'graduation_year', 'space': 12}, {'name': 'university', 'space': 12},
-                       {'name': 'degree', 'space': 12}, {'name': 'first_timer', 'space': 12}, ],
+                       {'name': 'degree', 'space': 12}, ],
             'description': 'We want to get to know you!'
         }
     }
@@ -503,7 +503,6 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
     class Meta(_BaseApplicationForm.Meta):
         model = models.VolunteerApplication
         help_texts = {
-            'gender': 'This is for demographic purposes.',
             'degree': 'What\'s your major/degree?',
             'other_diet': 'Please fill here in your dietary requirements. We want to make sure we have food for you!',
             'attendance': "It will be a great experience to enjoy from beginning to end with lots of things to do, "
@@ -511,7 +510,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'english_level': "No English level needed to volunteer, we just want to check which of you would be"
                              " comfortable doing tasks that require communication in English!",
             'fav_movie': 'e.g.: Interstellar, Game of Thrones,  Avatar, La Casa de Papel, etc.',
-            'cool_skill': 'The 3 most original will have a small prize to be given at the 2nd volunteer meeting :P',
+            'cool_skill': 'The 3 most original will have a small prize to be given at the 2nd volunteer meeting 😛',
             'friends': 'Remember that you all have to apply separately',
             'origin': 'This is for demographic purposes',
             'volunteer_motivation': 'It can be a short answer, we are just curious 😛!'
