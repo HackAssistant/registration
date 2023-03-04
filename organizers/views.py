@@ -154,7 +154,8 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
             try:
                 app.invite(request.user, online=request.POST.get('force_online', 'false') == 'true')
                 m = emails.create_invite_email(app, request)
-                mails.append(m)
+                if m:
+                    mails.append(m)
             except ValidationError:
                 errors += 1
         if mails:
@@ -281,7 +282,8 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             application.confirm()
             messages.success(self.request, "Ticket to %s successfully sent" % application.user.email)
             m = emails.create_confirmation_email(application, self.request)
-            m.send()
+            if m:
+                m.send()
         except ValidationError as e:
             messages.error(self.request, e.message)
 
@@ -290,7 +292,8 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
             application.invite(self.request.user)
             messages.success(self.request, "Invite to %s successfully sent" % application.user.email)
             m = emails.create_invite_email(application, self.request)
-            m.send()
+            if m:
+                m.send()
         except ValidationError as e:
             messages.error(self.request, e.message)
 
@@ -549,8 +552,9 @@ class ReviewVolunteerApplicationView(TabsViewMixin, HaveVolunteerPermissionMixin
             application.invite(request.user)
             application.save()
             m = emails.create_invite_email(application, self.request)
-            m.send()
-            messages.success(request, 'Volunteer invited!')
+            if m:
+                m.send()
+                messages.success(request, 'Volunteer invited!')
         elif request.POST.get('cancel_invite') and request.user.is_organizer:
             application.move_to_pending()
             messages.success(request, 'Volunteer invite canceled')
@@ -626,8 +630,9 @@ class ReviewMentorApplicationView(TabsViewMixin, HaveMentorPermissionMixin, Temp
             application.invite(request.user)
             application.save()
             m = emails.create_invite_email(application, self.request)
-            m.send()
-            messages.success(request, 'sponsor invited!')
+            if m:
+                m.send()
+                messages.success(request, 'sponsor invited!')
         elif request.POST.get('cancel_invite') and request.user.is_organizer:
             application.move_to_pending()
             messages.success(request, 'Sponsor invite canceled')
