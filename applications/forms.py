@@ -408,7 +408,7 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
         widget=forms.RadioSelect
     )
     lennyface = forms.TypedChoiceField(
-        required=False,
+        required=True,
         label='Will you be in Barcelona from April to May?',
         coerce=lambda x: x == 'True',
         choices=((False, 'Doubtful'), (True, 'Yes')),
