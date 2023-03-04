@@ -35,7 +35,7 @@ def get_exclude_fields():
 
 
 class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
-    diet = forms.ChoiceField(label='Dietary requirements', choices=models.DIETS, required=False)
+    diet = forms.ChoiceField(label='Dietary requirements', choices=models.DIETS, required=True)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
     under_age = forms.TypedChoiceField(
@@ -708,7 +708,7 @@ class MentorApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
 
 class SponsorForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
-    diet = forms.ChoiceField(required=False, choices=models.DIETS)
+    diet = forms.ChoiceField(required=True, choices=models.DIETS)
     tshirt_size = forms.ChoiceField(required=False, choices=models.TSHIRT_SIZES)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}))
