@@ -379,6 +379,11 @@ class HackerApplicationForm(_BaseApplicationForm, _HackerMentorApplicationForm, 
 
 
 class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerApplicationForm):
+    first_timer = forms.BooleanField(
+        required=False,
+        initial=False,
+        widget=forms.HiddenInput
+    )
     first_time_volunteer = forms.TypedChoiceField(
         required=True,
         label='Is it your first time volunteering in %s?' % settings.HACKATHON_NAME,
@@ -526,7 +531,6 @@ class VolunteerApplicationForm(_BaseApplicationForm, _HackerMentorVolunteerAppli
             'pronouns': forms.TextInput(attrs={'autocomplete': 'off', 'placeholder': 'their/them'}),
             'graduation_year': forms.HiddenInput(),
             'phone_number': forms.HiddenInput(),
-            'first_timer': forms.HiddenInput(),
             'lennyface': forms.RadioSelect()
         }
 
