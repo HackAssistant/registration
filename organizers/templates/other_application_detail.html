@@ -18,6 +18,9 @@
                 <dd></dd>
                 {% if app.user.is_sponsor %}
                   {% include 'include/field.html' with desc='Name' value=app.name %}
+                {% elif app.user.is_volunteer %}
+                  {% include 'include/field.html' with desc='Name' value=app.user.name %}
+                  {% include 'include/field.html' with desc='Is over 18?' value=app.under_age|yesno %}
                 {% else %}
                   {% include 'include/field.html' with desc='Name' value=app.user.name %}
                   {% include 'include/field.html' with desc='Under age (-18)' value=app.under_age|yesno:'Yes,No,Maybe' %}
@@ -31,39 +34,39 @@
                     {% include 'include/field.html' with desc='Pronouns' value=app.pronouns %}
                     {% include 'include/field.html' with desc='Gender' value=app.get_gender_display %}
                     {% include 'include/field.html' with desc='Other gender' value=app.other_gender %}
-                    {% include 'include/field.html' with desc='Lennyface' value=app.lennyface %}
+                    {% include 'include/field.html' with desc='In BCN Apr-May' value=app.lennyface|yesno %}
                     <hr>
                     <dt>
-                    <h3>Academic</h3>
+                    <h3>Volunteering</h3>
                     </dt>
                     <dd></dd>
-                    {% include 'include/field.html' with desc='University' value=app.university %}
-                    {% include 'include/field.html' with desc='Graduation' value=app.graduation_year %}
-                    {% include 'include/field.html' with desc='Degree' value=app.degree %}
-                    {% include 'include/field.html' with desc='English Level' value=app.english_level %}
-                    <hr>
-                    <dt>
-                    <h3>Volunteer Info</h3>
-                    </dt>
-                    <dd></dd>
-                    {% include 'include/field.html' with desc='First Time' value=app.first_time_volunteer|yesno %}
+                    {% include 'include/field.html' with desc='First time' value=app.first_time_volunteer|yesno %}
                     {% if not app.first_time_volunteer %}
-                      {% include 'include/field.html' with desc='Which Hackathons' value=app.which_hack %}
+                      {% include 'include/field.html' with desc='Other editions' value=app.which_hack %}
                     {% endif %}
-                    {% include 'include/field.html' with desc='Quality' value=app.quality %}
-                    {% include 'include/field.html' with desc='Weakness' value=app.weakness %}
+                    {% include 'include/field.html' with desc='English Level' value=app.english_level %}
                     {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
+                    {% include 'include/field.html' with desc='Motivation' value=app.volunteer_motivation %}
+                    <hr>
+                    <dt>
+                    <h3>Other questions</h3>
+                    </dt>
+                    <dd></dd>
                     {% include 'include/field.html' with desc='Friends' value=app.friends %}
                     {% include 'include/field.html' with desc='Night Shifts' value=app.night_shifts|yesno %}
-                    {% include 'include/field.html' with desc='Motivation' value=app.volunteer_motivation %}
+                    {% include 'include/field.html' with desc='T-shirt size' value=app.tshirt_size %}
+                    {% include 'include/field.html' with desc='Dietary restrictions' value=app.diet %}
+                    {% include 'include/field.html' with desc='Other diet' value=app.other_diet %}
                     <hr>
                     <dt>
                     <h3>Extra</h3>
                     </dt>
                     <dd></dd>
                     {% include 'include/field.html' with desc='Favorite movie or series' value=app.fav_movie %}
-                    {% include 'include/field.html' with desc='Cool skill' value=app.cool_skill %}
+                    {% include 'include/field.html' with desc='Quality' value=app.quality %}
+                    {% include 'include/field.html' with desc='Weakness' value=app.weakness %}
                     {% include 'include/field.html' with desc='Hobbies' value=app.hobbies %}
+                    {% include 'include/field.html' with desc='Cool skill/fun fact' value=app.cool_skill %}
 
                 {% endif %}
                 {% if app.user.is_sponsor %}
