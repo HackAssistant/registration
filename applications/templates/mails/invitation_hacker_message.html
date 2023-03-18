@@ -13,7 +13,7 @@
     <p>
       After clicking, you will be redirected to our site and asked to confirm your dietary requirements, travel reimbursement amount and t-shirt size. We need to make sure that information’s right!
     </p>
-    {% include 'mails/include/email_button.html' with text='Confirm' url=confirm_url %}
+    {% include 'mails/include/email_button.html' with text='Review & Confirm' url=confirm_url %}
     {% include 'mails/include/cancel.html' %}
     {% if reimb.waitlisted %}
         {% include 'include/waitlisted_reimbursement.html' %}
