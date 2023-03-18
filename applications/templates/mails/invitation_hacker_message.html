@@ -10,6 +10,9 @@
         <b>Please confirm your spot within 5 days of receiving this email. Otherwise we will give your spot to another
             hacker on the waitlist.</b>
     </p>
+    <p>
+      After clicking, you will be redirected to our site and asked to confirm your dietary requirements, travel reimbursement amount and t-shirt size. We need to make sure that information’s right!
+    </p>
     {% include 'mails/include/email_button.html' with text='Confirm' url=confirm_url %}
     {% include 'mails/include/cancel.html' %}
     {% if reimb.waitlisted %}
@@ -17,7 +20,7 @@
     {% elif reimb %}
         <p>
             Your reimbursement petition is being reviewed by our staff. Check your email in the next few days for an
-            update.
+            update. For any doubts regarding travel reimbursement, you can email us at <a href="mailto:reimbursements@hackupc.com">reimbursements@hackupc.com</a>, and we’ll be happy to help!
         </p>
     {% endif %}
     {% include 'mails/include/arrival_departure_info.html' %}
