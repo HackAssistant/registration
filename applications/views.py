@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
 from django.http import Http404, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -149,6 +149,8 @@ class HackerDashboard(DashboardMixin, TabsView):
             application = Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
             context.update({'invite_timeleft': deadline - timezone.now(), 'application': application})
+            if self.request.user.type == userModels.USR_HACKER:
+                context.update({'confirm_form': forms.ConfirmationInvitationForm(instance=application)})
         except Exception:
             # We ignore this as we are okay if the user has not created an application yet
             pass
@@ -156,6 +158,9 @@ class HackerDashboard(DashboardMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
+        action = self.request.POST.get('action', None)
+        if action == 'confirm' and request.user.application is not None:
+            return self.confirm_application(request, request.user.application)
         ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
 
         new_application = True
@@ -186,6 +191,17 @@ class HackerDashboard(DashboardMixin, TabsView):
             c = self.get_context_data()
             c.update({'form': form})
             return render(request, self.template_name, c)
+
+    def confirm_application(self, request, application):
+        if request.user.type != userModels.USR_HACKER:
+            return redirect(reverse('confirm_app', kwargs={'id': application.uuid_str}))
+        form = forms.ConfirmationInvitationForm(request.POST, instance=application)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('confirm_app', kwargs={'id': application.uuid_str}))
+        c = self.get_context_data()
+        c.update({'confirm_form': form})
+        return render(request, self.template_name, c)
 
 
 class HackerApplication(IsHackerMixin, TabsView):
