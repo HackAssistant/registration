@@ -24,7 +24,9 @@ class Command(BaseCommand):
                 self.stdout.write('Checking reminders...%s found' % reminders.count())
                 for app in reminders:
                     app.last_reminder()
-                    msgs.append(emails.create_lastreminder_email(app))
+                    m = emails.create_lastreminder_email(app)
+                    if m:
+                        msgs.append(m)
             else:
                 self.stdout.write('Skiping %s applications' % type_app)
         self.stdout.write('Sending reminders...')
