@@ -72,7 +72,7 @@ def hacker_tabs(user):
                   'new' if models.HackerApplication.objects.filter(status=APP_BLACKLISTED, contacted=False).count()
                   else ''))
     t.append(('Check-in', reverse('check_in_list'), False))
-    if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
+    if user.has_reimbursement_access:
         t.extend([('Reimbursements', reverse('reimbursement_list'), False),
                   ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
                       status=RE_PEND_APPROVAL).count() else False), ])
