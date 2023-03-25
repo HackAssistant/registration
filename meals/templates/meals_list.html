@@ -1,13 +1,13 @@
 {% extends "base_table.html" %}
 
 
-{% block head_title %}Meals list{% endblock %}
+{% block head_title %}{% if activities %}Activities{% else %}Meals{% endif %} list{% endblock %}
 
 
 {% block table_footer %}
     {%  if user.is_organizer %}
     <div class="panel-footer">
-	    <a href="{% url 'meal_add' %}" class="btn btn-success btn-block">Add new meal</a>
+	    <a href="{% url 'meal_add' %}?next={{ request.path }}" class="btn btn-success btn-block">Add new {% if activities %}activity{% else %}meal{% endif %}</a>
     </div>
     {% endif %}
 {% endblock %}

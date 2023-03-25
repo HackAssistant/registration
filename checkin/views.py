@@ -135,6 +135,13 @@ class CheckInOnlineView(IsHackerMixin, TabsView):
 class CheckInHackerView(IsVolunteerMixin, TabsView):
     template_name = 'checkin/hacker.html'
 
+    response_redirect = {
+        models.USR_HACKER: 'check_in_list',
+        models.USR_VOLUNTEER: 'check_in_volunteer_list',
+        models.USR_MENTOR: 'check_in_mentor_list',
+        models.USR_SPONSOR: 'check_in_sponsor_list'
+    }
+
     def get_back_url(self):
         return 'javascript:history.back()'
 
@@ -161,13 +168,16 @@ class CheckInHackerView(IsVolunteerMixin, TabsView):
         appid = request.POST.get('app_id')
         type = request.POST.get('type')
         qrcode = request.POST.get('qr_code')
+        response_redirect = self.response_redirect.get(type, 'check_in_list')
         if checking_in_hacker(request, True, appid, qrcode, type):
             messages.success(self.request, 'Hacker checked-in! Good job! '
                                            'Nothing else to see here, '
                                            'you can move on :D')
         else:
-            messages.success(self.request, 'The QR code is mandatory!')
-        return HttpResponseRedirect(reverse('check_in_list'))
+            context = self.get_context_data(**kwargs)
+            context.update({'error': True})
+            return self.render_to_response(context)
+        return HttpResponseRedirect(reverse(response_redirect))
 
 
 class CheckinOtherUserList(TabsViewMixin, SingleTableMixin, FilterView):

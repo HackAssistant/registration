@@ -244,8 +244,10 @@ class User(AbstractBaseUser):
 
     def has_applications_left(self):
         if self.is_sponsor() and self.sponsorapplication_application is not None:
-            return len(self.sponsorapplication_application.all()) < self.max_applications
-        return False
+            regex_email_find = '\+\d*@'.join(self.email.replace('.', '\.').split('@'))
+            applied = self.sponsorapplication_application.model.objects.filter(email__iregex=regex_email_find).count()
+            return applied < self.max_applications, applied
+        return False, 0
 
     @property
     def current_applications(self):

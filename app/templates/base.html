@@ -282,6 +282,13 @@
 
     </script>
 {% endif %}
+<script nonce="{{ CSP_NONCE }}">
+    $(document).ready(() => {
+        // Timezone settings
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "America/New_York"
+        document.cookie = "django_timezone=" + timezone;
+    })
+</script>
 </div>
 </body>
 </html>

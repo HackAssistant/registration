@@ -54,6 +54,14 @@
             </div>
         {% else %}
             <form id="checkin-search" action="" method="post" style="padding-top: 1.5em;" class="form text-left filter">
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissible show" role="alert">
+                        QR code is required
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endif %}
                 {% csrf_token %}
                 <input type="hidden" name="app_id" value="{{ app.uuid }}"/>
                 <input type="hidden" name="type" value="{{ app.user.type }}"/>
