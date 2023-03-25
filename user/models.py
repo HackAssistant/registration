@@ -187,6 +187,10 @@ class User(AbstractBaseUser):
         return self.can_review_sponsors or self.is_director
 
     @property
+    def has_reimbursement_access(self):
+        return self.is_director
+
+    @property
     def is_organizer(self):
         return self.type == USR_ORGANIZER
 
