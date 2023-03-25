@@ -29,14 +29,16 @@
         <!-- <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a> -->
 
         <div id="success" class="alert alert-success alert-dismissible fade in"
-             style="display:none; background-color: #367a3a;">
+             style="display:none;">
           <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
           <strong>Success!</strong> <span id="succ"></span>
+          <button class="btn btn-block btn-primary scan-again">Scan again</button>
         </div>
         <div id="no" class="alert alert-danger alert-dismissible fade in"
-             style="display:none; background-color: #691e1e;">
+             style="display:none;">
           <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
           <strong>ERROR!</strong> <span id="deny"></span>
+          <button class="btn btn-block btn-primary scan-again">Scan again</button>
         </div>
 
         <video id="qr-video" style="width: 100%; height: 100%; "></video>
@@ -48,7 +50,7 @@
           document.addEventListener('DOMContentLoaded', () => {
             let scanner = new Scanner('qr-video', (content) => {
               if (content.data && isReady) {
-                SuperScan('{% url 'cool_meals_api' %}', content.data)
+                SuperScan('{% url 'cool_meals_api' %}', content.data, scanner)
                 isReady = false;
                 setTimeout(()=>{
                   isReady = true;
@@ -59,10 +61,16 @@
               popup: false,
             })
             scanner.show();
+            $('.scan-again').click(() => {
+              scanner.show()
+              document.getElementById('no').style.display = "none";
+              document.getElementById('success').style.display = "none";
+            })
           })
 
+
           // Core function to send data to meals API
-          function SuperScan(theUrl, content) {
+          function SuperScan(theUrl, content, scanner) {
             $.ajax({
               type: "POST",
               url: theUrl,
@@ -72,6 +80,7 @@
                 qr_id: content,
               },
               success: function (data, status, jqXHR) {
+                scanner.hide()
                 if (jqXHR.status != 200) {
                   $('#no').fadeOut("fast");
                   $('#no').fadeIn("fast");

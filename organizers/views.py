@@ -514,7 +514,7 @@ class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin
         return context
 
     def get_queryset(self):
-        return User.objects.filter(type=USR_SPONSOR)
+        return User.objects.filter(type=USR_SPONSOR).exclude(max_applications=0)
 
 
 class MentorApplicationsListView(HaveMentorPermissionMixin, _OtherApplicationsListView):
