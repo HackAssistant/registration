@@ -25,7 +25,7 @@ from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED, APP_INVITED, APP_LAST_REMIDER, \
-    APP_CONFIRMED, AcceptedResume
+    APP_CONFIRMED, AcceptedResume, APP_ATTENDED
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
@@ -676,7 +676,8 @@ class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
         file = request.GET.get('files', False)
         if file:
             s = BytesIO()
-            accepted_resumes = AcceptedResume.objects.filter(accepted=True).select_related('application')
+            accepted_resumes = AcceptedResume.objects.filter(accepted=True, application__status__in=[
+                APP_CONFIRMED, APP_ATTENDED]).select_related('application')
             with ZipFile(s, "w") as zip_file:
                 for accepted_resume in accepted_resumes:
                     file_path = accepted_resume.application.resume.path
