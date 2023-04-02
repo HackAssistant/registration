@@ -819,7 +819,9 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
         '': {
             'fields': [{'name': 'tshirt_size', 'space': 4}, {'name': 'diet', 'space': 4},
                        {'name': 'other_diet', 'space': 4},
-                       {'name': 'reimb', 'space': 12}, {'name': 'reimb_amount', 'space': 12}],
+                       {'name': 'reimb', 'space': 12}, {'name': 'reimb_amount', 'space': 12},
+                       {'name': 'mlh_required_terms', 'space': 6}
+                ],
         },
     }
 
@@ -834,6 +836,22 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
         help_text='We only provide travel reimbursement if you attend from outside of catalonia, '
                   'you can find more info in our website\'s FAQ'
     )
+
+    mlh_required_terms =  forms.ChoiceField(
+        required=True,
+        label='I have read and agree to the MLH <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a>.',
+        widget=forms.CheckboxInput,
+        choices=((False, 'No'), (True, 'Yes'))
+    )
+
+    # mlh_required_privacy =  forms.ChoiceField(
+    #     required=True,
+    #     label="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH <a href=\"https://mlh.io/privacy\"></a>. I further agree to the terms of both the MLH Contest Terms and Conditionshttps://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy).",
+    #     widget=forms.CheckboxInput,
+    #     choices=((False, 'No'), (True, 'Yes'))
+    # )
+
+
 
     def clean_other_diet(self):
         data = self.cleaned_data.get('other_diet', '')
