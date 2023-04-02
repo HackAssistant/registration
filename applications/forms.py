@@ -820,8 +820,10 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
             'fields': [{'name': 'tshirt_size', 'space': 4}, {'name': 'diet', 'space': 4},
                        {'name': 'other_diet', 'space': 4},
                        {'name': 'reimb', 'space': 12}, {'name': 'reimb_amount', 'space': 12},
-                       {'name': 'mlh_required_terms', 'space': 6}
-                ],
+                       {'name': 'mlh_required_terms', 'space': 12},
+                       {'name': 'mlh_required_privacy', 'space': 12},
+                       {'name': 'mlh_optional_communications', 'space': 12}
+                       ],
         },
     }
 
@@ -837,19 +839,53 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
                   'you can find more info in our website\'s FAQ'
     )
 
-    mlh_required_terms =  forms.ChoiceField(
+    mlh_required_terms = forms.BooleanField(
         required=True,
-        label='I have read and agree to the MLH <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a>.',
-        widget=forms.CheckboxInput,
-        choices=((False, 'No'), (True, 'Yes'))
+        label='I have read and agree to the MLH <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a>.'
     )
 
-    # mlh_required_privacy =  forms.ChoiceField(
-    #     required=True,
-    #     label="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH <a href=\"https://mlh.io/privacy\"></a>. I further agree to the terms of both the MLH Contest Terms and Conditionshttps://github.com/MLH/mlh-policies/blob/main/contest-terms.md)and the MLH Privacy Policy (https://mlh.io/privacy).",
-    #     widget=forms.CheckboxInput,
-    #     choices=((False, 'No'), (True, 'Yes'))
-    # )
+    mlh_optional_communications = forms.BooleanField(
+        required=False,
+        label="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or Organizer Newsletters and other communications from MLH."
+    )
+    mlh_required_privacy = forms.BooleanField(
+        required=True,
+        label="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH <a href=\"https://mlh.io/privacy\"></a>. I further agree to the terms of both the MLH Contest <a href=\"https://github.com/MLH/mlh-policies/blob/main/contest-terms.md\">Terms and Conditions</a> and the MLH <a href=\"https://mlh.io/privacy\">Privacy Policy</a>."
+    )
+    def clean_mlh_required_terms(self):
+        cc = self.cleaned_data.get('mlh_required_terms', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept MLH's Terms & Conditions."
+            )
+        return cc
+
+    def clean_mlh_required_privacy(self):
+        cc = self.cleaned_data.get('mlh_required_privacy', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept MLH's Privacy and Cookies Policy"
+            )
+        return cc
+
+    def clean_mlh_optional_communications(self):
+        cc = self.cleaned_data.get('mlh_optional_communications', False)
+        # Check that if it's the first submission hackers checks terms and conditions checkbox
+        # self.instance.pk is None if there's no Application existing before
+        # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
+        if not cc and not self.instance.pk:
+            raise forms.ValidationError(
+                "In order to apply and attend you have to accept MLH's mlh_optional_communications"
+            )
+        return cc
+
+
 
 
 
