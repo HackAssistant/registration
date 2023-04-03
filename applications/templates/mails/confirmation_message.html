@@ -10,7 +10,9 @@
           you:</p>
       {% include 'mails/include/email_image.html' with url=qr_url %}
     {% endif %}
+    <p>If you are traveling from abroad and need a visa letter, email us your <b>passport number, university and full name</b> to <a href="mailto:reimbursements@hackupc.com">reimbursements@hackupc.com</a> so we can process it.</p>
+
     {% include 'mails/include/cancel.html' %}
     {% include 'mails/include/arrival_departure_info.html' %}
-    {% include 'mails/include/closing.html' %}
+  {% include 'mails/include/closing.html' %}
 {% endblock %}

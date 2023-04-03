@@ -834,7 +834,7 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
         choices=((False, 'No'), (True, 'Yes')),
         initial=False,
         widget=forms.RadioSelect(),
-        help_text='We only provide travel reimbursement if you attend from outside of catalonia, '
+        help_text='We only provide travel reimbursement if you attend from outside of Catalonia, '
                   'you can find more info in our website\'s FAQ'
     )
 

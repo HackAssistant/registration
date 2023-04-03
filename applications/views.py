@@ -275,7 +275,7 @@ class SponsorApplicationView(TemplateView):
             raise Http404('Invalid url')
         if token != real_token:
             raise Http404('Invalid url')
-        if not user.has_applications_left():
+        if not user.has_applications_left()[0]:
             raise Http404('You have no applications left')
         return super(SponsorApplicationView, self).get(request, *args, **kwargs)
 
@@ -286,7 +286,8 @@ class SponsorApplicationView(TemplateView):
             user = userModels.User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
             return Http404('How did you get here?')
-        if not user.has_applications_left():
+        has_applications_left, applied = user.has_applications_left()
+        if not has_applications_left:
             form.add_error(None, 'You have no applications left')
         elif form.is_valid():
             name = form.cleaned_data['name']
@@ -294,7 +295,12 @@ class SponsorApplicationView(TemplateView):
             if app:
                 form.add_error('name', 'This name is already taken. Have you applied?')
             else:
+                user.email = ('+%s@' % applied).join(user.email.split('@'))
+                user.pk = None
+                user.max_applications = 0
                 application = form.save(commit=False)
+                user.password = ''
+                user.save()
                 application.user = user
                 application.save()
                 messages.success(request, 'We have now received your application. ')

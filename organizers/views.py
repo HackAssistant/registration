@@ -25,7 +25,7 @@ from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED, APP_INVITED, APP_LAST_REMIDER, \
-    APP_CONFIRMED, AcceptedResume
+    APP_CONFIRMED, AcceptedResume, APP_ATTENDED
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
@@ -72,7 +72,7 @@ def hacker_tabs(user):
                   'new' if models.HackerApplication.objects.filter(status=APP_BLACKLISTED, contacted=False).count()
                   else ''))
     t.append(('Check-in', reverse('check_in_list'), False))
-    if getattr(settings, 'REIMBURSEMENT_ENABLED', False):
+    if user.has_reimbursement_access:
         t.extend([('Reimbursements', reverse('reimbursement_list'), False),
                   ('Receipts', reverse('receipt_review'), 'new' if Reimbursement.objects.filter(
                       status=RE_PEND_APPROVAL).count() else False), ])
@@ -517,7 +517,7 @@ class SponsorUserListView(HaveSponsorPermissionMixin, TabsViewMixin, ExportMixin
         return context
 
     def get_queryset(self):
-        return User.objects.filter(type=USR_SPONSOR)
+        return User.objects.filter(type=USR_SPONSOR).exclude(max_applications=0)
 
 
 class MentorApplicationsListView(HaveMentorPermissionMixin, _OtherApplicationsListView):
@@ -676,7 +676,8 @@ class ReviewResume(TabsViewMixin, HaveSponsorPermissionMixin, TemplateView):
         file = request.GET.get('files', False)
         if file:
             s = BytesIO()
-            accepted_resumes = AcceptedResume.objects.filter(accepted=True).select_related('application')
+            accepted_resumes = AcceptedResume.objects.filter(accepted=True, application__status__in=[
+                APP_CONFIRMED, APP_ATTENDED]).select_related('application')
             with ZipFile(s, "w") as zip_file:
                 for accepted_resume in accepted_resumes:
                     file_path = accepted_resume.application.resume.path

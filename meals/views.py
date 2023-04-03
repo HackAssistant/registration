@@ -6,6 +6,7 @@ from django.http import Http404
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 from django_filters.views import FilterView
@@ -34,6 +35,12 @@ class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
     table_class = MealsListTable
     filterset_class = MealsListFilter
     table_pagination = {'per_page': 100}
+    activities = False
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'activities': self.activities})
+        return context
 
     def get_current_tabs(self):
         return organizer_tabs(self.request.user)
@@ -46,6 +53,8 @@ class MealsList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
 
 
 class ActivitiesList(MealsList):
+    activities = True
+
     def get_queryset(self):
         queryset = Meal.objects.filter(kind__in=ACTIVITIES)
         if not self.request.user.is_organizer:
@@ -83,11 +92,14 @@ class MealDetail(IsOrganizerMixin, TabsView):
         meal = Meal.objects.filter(id=mealid).first()
         if not meal:
             raise Http404
+        types = [(x, y) for (x, y) in MEAL_TYPE
+                 if (x in ACTIVITIES) == (meal.kind in ACTIVITIES)]
+        current_timezone = timezone.get_current_timezone()
         context.update({
             'meal': meal,
-            'types': MEAL_TYPE,
-            'starts': meal.starts.strftime("%Y-%m-%d %H:%M:%S"),
-            'ends': meal.ends.strftime("%Y-%m-%d %H:%M:%S"),
+            'types': types,
+            'starts': meal.starts.astimezone(current_timezone).strftime("%Y-%m-%d %H:%M:%S"),
+            'ends': meal.ends.astimezone(current_timezone).strftime("%Y-%m-%d %H:%M:%S"),
             'eaten': meal.eaten()
         })
         return context
@@ -103,10 +115,10 @@ class MealDetail(IsOrganizerMixin, TabsView):
             meal.kind = mealtype
         mealstarts = request.POST.get('meal_starts')
         if mealstarts:
-            meal.starts = mealstarts
+            meal.starts = timezone.make_aware(datetime.strptime(mealstarts, '%Y-%m-%d %H:%M:%S'))
         mealends = request.POST.get('meal_ends')
         if mealends:
-            meal.ends = mealends
+            meal.ends = timezone.make_aware(datetime.strptime(mealends, '%Y-%m-%d %H:%M:%S'))
         mealtimes = request.POST.get('meal_times')
         if mealtimes:
             meal.times = mealtimes
@@ -121,12 +133,17 @@ class MealAdd(IsOrganizerMixin, TabsView):
     template_name = 'meal_add.html'
 
     def get_back_url(self):
+        _back = self.request.GET.get('next', None)
+        if _back is not None:
+            return _back
         return reverse('meals_list')
 
     def get_context_data(self, **kwargs):
         context = super(MealAdd, self).get_context_data(**kwargs)
+        types = [(x, y) for (x, y) in MEAL_TYPE
+                 if (x in ACTIVITIES) == ('activity' in self.request.GET.get('next', ''))]
         context.update({
-            'types': MEAL_TYPE,
+            'types': types,
             'time1': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'time2': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         })
@@ -142,10 +159,10 @@ class MealAdd(IsOrganizerMixin, TabsView):
             meal.kind = mealtype
         mealstarts = request.POST.get('meal_starts')
         if mealstarts:
-            meal.starts = mealstarts
+            meal.starts = timezone.make_aware(datetime.strptime(mealstarts, '%Y-%m-%d %H:%M:%S'))
         mealends = request.POST.get('meal_ends')
         if mealends:
-            meal.ends = mealends
+            meal.ends = timezone.make_aware(datetime.strptime(mealends, '%Y-%m-%d %H:%M:%S'))
         mealtimes = request.POST.get('meal_times')
         if mealtimes:
             meal.times = mealtimes
