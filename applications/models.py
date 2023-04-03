@@ -403,12 +403,6 @@ class HackerApplication(
         validators=[validate_file_extension],
     )
 
-    # MLH stuff
-    mlh_required_terms = models.BooleanField(default=False)
-    mlh_required_privacy = models.BooleanField(default=False)
-    mlh_optional_communications = models.BooleanField(default=False)
-
-
     @classmethod
     def annotate_vote(cls, qs):
         return qs.annotate(vote_avg=Avg('vote__calculated_vote'))

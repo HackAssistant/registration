@@ -820,9 +820,8 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
             'fields': [{'name': 'tshirt_size', 'space': 4}, {'name': 'diet', 'space': 4},
                        {'name': 'other_diet', 'space': 4},
                        {'name': 'reimb', 'space': 12}, {'name': 'reimb_amount', 'space': 12},
-                       {'name': 'mlh_required_terms', 'space': 12},
-                       {'name': 'mlh_required_privacy', 'space': 12},
-                       {'name': 'mlh_optional_communications', 'space': 12}
+                       {'name': 'terms_and_conditions', 'space': 12}, {'name': 'mlh_required_terms', 'space': 12},
+                       {'name': 'mlh_required_privacy', 'space': 12}, {'name': 'mlh_subscribe', 'space': 12}
                        ],
         },
     }
@@ -840,18 +839,33 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
     )
 
     mlh_required_terms = forms.BooleanField(
-        required=True,
-        label='I have read and agree to the MLH <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a>.'
+        label='I have read and agree to the MLH <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of '
+              'Conduct</a>. <span style="color: red; font-weight: bold;"> *</span>'
     )
 
-    mlh_optional_communications = forms.BooleanField(
+    mlh_subscribe = forms.BooleanField(
         required=False,
-        label="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or Organizer Newsletters and other communications from MLH."
+        label="I authorize MLH to send me an email where I can further opt into the MLH Hacker, Events, or "
+              "Organizer Newsletters and other communications from MLH."
     )
+
     mlh_required_privacy = forms.BooleanField(
-        required=True,
-        label="I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH <a href=\"https://mlh.io/privacy\"></a>. I further agree to the terms of both the MLH Contest <a href=\"https://github.com/MLH/mlh-policies/blob/main/contest-terms.md\">Terms and Conditions</a> and the MLH <a href=\"https://mlh.io/privacy\">Privacy Policy</a>."
+        label="I authorize you to share my application/registration information with Major League Hacking for "
+              "event administration, ranking, and MLH administration in-line with the MLH "
+              "<a href=\"https://mlh.io/privacy\"></a>. I further agree to the terms of both the MLH Contest "
+              "<a href=\"https://github.com/MLH/mlh-policies/blob/main/contest-terms.md\">Terms and Conditions</a> "
+              "and the MLH <a href=\"https://mlh.io/privacy\">Privacy Policy</a>. "
+              "<span style=\"color: red; font-weight: bold;\"> *</span>"
     )
+
+    terms_and_conditions = forms.BooleanField(
+        label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
+              'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
+              'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
+                  settings.HACKATHON_NAME, settings.HACKATHON_NAME
+              )
+    )
+
     def clean_mlh_required_terms(self):
         cc = self.cleaned_data.get('mlh_required_terms', False)
         # Check that if it's the first submission hackers checks terms and conditions checkbox
@@ -884,10 +898,6 @@ class ConfirmationInvitationForm(BootstrapFormMixin, forms.ModelForm):
                 "In order to apply and attend you have to accept MLH's mlh_optional_communications"
             )
         return cc
-
-
-
-
 
     def clean_other_diet(self):
         data = self.cleaned_data.get('other_diet', '')
