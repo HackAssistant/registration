@@ -197,7 +197,9 @@ class HackerDashboard(DashboardMixin, TabsView):
             return redirect(reverse('confirm_app', kwargs={'id': application.uuid_str}))
         form = forms.ConfirmationInvitationForm(request.POST, instance=application)
         if form.is_valid():
+            request.user.mlh_subscribed = form.cleaned_data.get('mlh_subscribe', False)
             form.save()
+            request.user.save()
             return redirect(reverse('confirm_app', kwargs={'id': application.uuid_str}))
         c = self.get_context_data()
         c.update({'confirm_form': form})
