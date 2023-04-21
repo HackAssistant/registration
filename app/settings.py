@@ -309,11 +309,16 @@ GOOGLE_RECAPTCHA_SITE_KEY = os.environ.get('GOOGLE_RECAPTCHA_SITE_KEY', '')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-JWT_CLIENT = {
-    'OPENID2_URL': ('http://' if DEBUG else 'https://') + HACKATHON_DOMAIN + '/oidc',
-    'TYPE': 'local',
+JWT_OIDC = {
+    'DISCOVERY_ENDPOINT': os.environ.get('OIDC_DISCOVERY_ENDPOINT',
+                                         'http://localhost:8000/openid/.well-known/openid-configuration'),
+    'TYPE': 'provider',
 }
 SESSION_COOKIE_AGE = 86400
 LOGOUT_URL = 'account_logout'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# Security
+SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = not DEBUG
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"

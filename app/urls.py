@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^meals/', include('meals.urls')),
     url(r'^judging/', include('judging.urls')),
     url(r'^offer/', include('offer.urls')),
-    url(r'^oidc/', include('django_jwt.server.urls')),
+    url(r'^openid/', include('django_jwt.server.urls')),
 ]
 
 if settings.BAGGAGE_ENABLED:
