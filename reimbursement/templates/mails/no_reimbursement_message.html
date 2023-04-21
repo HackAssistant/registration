@@ -4,14 +4,9 @@
 {% block content %}
     <p> Dear {{ app.user.get_full_name }},</p>
     <p>Unfortunately, we aren’t able to offer you travel reimbursement for this edition of {{ h_name }}.
-        We still hope you can join us at {{ h_name }}!</p>
-    <p>Please remember to <a href="{{ confirm_url }}">confirm</a> your spot if you will be joining us. If your plans
+        We still hope you can join us!</p>
+    <p>Please remember to <a href="{{ confirm_url }}">confirm</a> your spot if you haven't already. If your plans
         have changed, please let us know by cancelling your invite <a href="{{ cancel_url }}">here</a>.
-    </p>
-    <p>
-        If you need an invite letter for your visa, answer this email with your full name, university name and passport
-        number,
-        as shown in your passport.
     </p>
     {% include 'mails/include/closing.html' %}
 {% endblock %}
