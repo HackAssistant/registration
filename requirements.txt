@@ -13,7 +13,7 @@ django-multiselectfield==0.1.12
 django-storages @ git+https://github.com/jschneier/django-storages.git@b116e3a235323144cda6d3cc5a5cb27baf076ee2
 django-tables2==2.4.0
 djangorestframework==3.12.4
-django-jwt-oidc==0.3.10
+django-jwt-oidc==1.0.4
 django-cors-headers
 dropbox==8.7.1
 et-xmlfile==1.0.1
