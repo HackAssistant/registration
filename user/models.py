@@ -251,8 +251,9 @@ class User(AbstractBaseUser):
 
     @property
     def current_applications(self):
-        if self.is_sponsor():
-            return len(self.sponsorapplication_application.all())
+        if self.is_sponsor() and self.sponsorapplication_application is not None:
+            regex_email_find = '\+\d*@'.join(self.email.replace('.', '\.').split('@'))
+            return self.sponsorapplication_application.model.objects.filter(email__iregex=regex_email_find).count()
         return self.application is not None
 
     def set_mentor(self):
