@@ -255,7 +255,7 @@ class SponsorUserFilter(django_filters.FilterSet):
 class SponsorUserListTable(tables.Table):
 
     class Meta:
-        model = SponsorApplication
+        model = User
         attrs = {'class': 'table table-hover'}
         template = 'django_tables2/bootstrap-responsive.html'
         fields = ['name', 'email', 'max_applications', 'current_applications']
