@@ -8,6 +8,7 @@ from django import http
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
@@ -295,12 +296,18 @@ class SponsorApplicationView(TemplateView):
             if app:
                 form.add_error('name', 'This name is already taken. Have you applied?')
             else:
-                user.email = ('+%s@' % applied).join(user.email.split('@'))
                 user.pk = None
                 user.max_applications = 0
                 application = form.save(commit=False)
                 user.password = ''
-                user.save()
+                error = True
+                while error:
+                    user.email = ('+%s@' % applied).join(user.email.split('@'))
+                    try:
+                        user.save()
+                        error = False
+                    except IntegrityError:
+                        applied += 1
                 application.user = user
                 application.save()
                 messages.success(request, 'We have now received your application. ')
