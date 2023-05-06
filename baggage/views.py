@@ -146,7 +146,7 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
         context.update({
             'user': user,
             'rooms': Room.objects.all(),
-            'defaults' : {
+            'defaults': {
                 'room': self.request.GET.get('room'),
                 'col': self.request.GET.get('col'),
                 'row': self.request.GET.get('row'),
