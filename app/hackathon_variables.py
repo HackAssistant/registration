@@ -40,7 +40,7 @@ HACKATHON_MEDIUM_ACCOUNT = 'hackupc'
 HACKATHON_GITHUB_REPO = 'https://github.com/hackupc/myhackupc/'
 
 # (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(2023, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+HACKATHON_APP_DEADLINE = timezone.datetime(2023, 5, 3, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 VOLUNTEER_APP_DEADLINE = timezone.datetime(2023, 5, 9, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 MENTOR_APP_DEADLINE = timezone.datetime(2023, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) Online checkin activated
