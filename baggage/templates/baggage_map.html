@@ -19,7 +19,7 @@
     {% for bag in bags %}
         <script>
             $(document).ready(function(){
-                document.getElementById('baggage-cell-{{ bag.room }}-{{ bag.position }}').innerHTML = "<a href=\"{% url 'baggage_detail' bag.bid %}\">{{ bag.position }}</a>";
+                document.getElementById('baggage-cell-{{ bag.room }}-{{ bag.position }}').innerHTML = "<a href=\"{% url 'baggage_list' %}?room={{ bag.room }}&row={{ bag.row }}&col={{ bag.col }}\">{{ bag.position }}</a>";
             });
         </script>
     {% endfor %}

@@ -20,7 +20,8 @@
 {% block out_panel %}
     <div class="panel-footer">
         {% if checkedout or first %}
-            <a class="btn btn-default btn-block" href="{% url 'baggage_search' %}">Search another user</a>
+            <a class="btn btn-info btn-block" href="{% url 'baggage_search' %}">Search another user</a>
+            <a class="btn btn-default btn-block" href="{% url 'baggage_new' bag.owner_id %}?room={{ bag.room }}&row={{ bag.row }}&col={{ bag.col }}">Add another item to {{ bag.room }} - {{ bag.position }}</a>
         {% else %}
             <form action="" method="post">
                 {% csrf_token %}

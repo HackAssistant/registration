@@ -27,10 +27,10 @@ from django.conf import settings
 
 
 def baggage_checkIn(request, bag, bagrow, bagcol, bagroom, posmanual, bagspe):
-    position = ()
     if posmanual == 'manual' and bagspe != 'special' and bagroom and bagrow and bagcol:
         position = (3, bagroom, bagrow, bagcol)
-        posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol).count()
+        posempty = Bag.objects.filter(status=BAG_ADDED, room=bagroom, row=bagrow, col=bagcol)\
+            .exclude(owner_id=bag.owner_id).count()
         if posempty > 0:
             return 1
     else:
@@ -93,7 +93,14 @@ class BaggageList(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView)
             id_ = self.kwargs['user_id']
             user = User.objects.filter(id=id_)
             return Bag.objects.filter(status=BAG_ADDED, owner=user)
-        return Bag.objects.filter(status=BAG_ADDED)
+        filter_kwargs = {'status': BAG_ADDED}
+        col = self.request.GET.get('col', None)
+        if col is not None:
+            filter_kwargs['col'] = col
+        row = self.request.GET.get('row', None)
+        if row is not None:
+            filter_kwargs['row'] = row
+        return Bag.objects.filter(**filter_kwargs)
 
 
 class BaggageHacker(IsVolunteerMixin, TabsViewMixin, SingleTableMixin, FilterView):
@@ -138,7 +145,12 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
             raise Http404
         context.update({
             'user': user,
-            'rooms': Room.objects.all()
+            'rooms': Room.objects.all(),
+            'defaults': {
+                'room': self.request.GET.get('room'),
+                'col': self.request.GET.get('col'),
+                'row': self.request.GET.get('row'),
+            }
         })
         return context
 
@@ -177,10 +189,10 @@ class BaggageAdd(IsVolunteerMixin, TabsView):
             messages.success(self.request, 'Bag checked-in!')
             return redirect('baggage_detail', id=(str(bag.bid,)), first='first/')
         elif (result == 1):
-            messages.success(self.request, 'Error! Position is already taken!')
+            messages.error(self.request, 'Error! Position is already taken!', extra_tags='danger')
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         else:
-            messages.success(self.request, 'Error! Couldn\'t add the bag!')
+            messages.error(self.request, 'Error! Couldn\'t add the bag!', extra_tags='danger')
             return redirect('baggage_list')
 
 

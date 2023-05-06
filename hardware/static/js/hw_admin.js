@@ -47,6 +47,11 @@ let hw_admin = ((hw)=>{
                 obj.initListeners()
                 obj.initTypeaheads()
                 $('#hw-container').fadeTo(200, 1)
+
+                window.document.dispatchEvent(new Event("DOMContentLoaded", {
+                  bubbles: true,
+                  cancelable: true
+                }));
             })
         }
     }

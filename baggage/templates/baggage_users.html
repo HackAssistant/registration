@@ -39,9 +39,10 @@
 
             let scanner = new Scanner('qr-video', (content) => {
                 if (content.data) {
-                    $('input[name="qr_code"]').val(content.data)
+                    $('input[name="search"]').val(content.data)
                     scanner.hide()
                     $('#button-rescan').show()
+                    $('#baggage-search').submit()
                 }
             }, {
                 popup: true,
