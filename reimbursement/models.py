@@ -99,7 +99,7 @@ class Reimbursement(models.Model):
     def friend_emails_list(self):
         if not self.multiple_hackers:
             return None
-        return self.friend_emails.replace(' ', '').split(',')
+        return (self.friend_emails or '').replace(' ', '').split(',')
 
     @property
     def timeleft_expiration(self):
