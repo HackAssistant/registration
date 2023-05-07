@@ -174,6 +174,13 @@ class BaseApplication(models.Model):
                 if atr != 'NOT_EXIST':
                     setattr(self, key, dict[key])
 
+    def get_diet_color(self):
+        colors = {
+            D_NONE: 'white',
+            D_VEGETERIAN: '#7ABE6F',
+        }
+        return colors.get(self.diet, '#42A2CB')
+
     def __str__(self):
         return self.user.email
 
@@ -561,6 +568,13 @@ class SponsorApplication(
         self.status = APP_ATTENDED
         self.status_update_date = timezone.now()
         self.save()
+
+    def get_diet_color(self):
+        colors = {
+            D_NONE: 'white',
+            D_VEGETERIAN: '#7ABE6F',
+        }
+        return colors.get(self.diet, '#42A2CB')
 
     class META:
         unique_together = [['name', 'user']]

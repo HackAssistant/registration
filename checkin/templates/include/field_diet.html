@@ -1,0 +1,4 @@
+{% if value %}
+    <dt>{{ desc }} {% if showlength %} ({{ value | length}}) {% endif %}</dt>
+    <dd><span style="background-color: {{ color }}; padding: 2px; border-radius: 5px; {% if value != 'None' %}color: white{% endif %}">{{ value }}</span></dd>
+{% endif %}
