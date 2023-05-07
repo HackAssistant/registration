@@ -63,7 +63,7 @@ def baggage_checkOut(request, web, bagid):
         MessageManager().send_message(user=bag.owner, message='*Baggage check-out* :handbag:\nYour bag with ID `' +
                                                               str(bagid) + '` has been checked-out :truck:!')
     bag.save()
-    return True
+    return bag
 
 
 def organizer_tabs(user):
@@ -220,9 +220,9 @@ class BaggageDetail(IsVolunteerMixin, TabsView):
 
     def post(self, request, *args, **kwargs):
         bagid = request.POST.get('bag_id')
-        baggage_checkOut(request, True, bagid)
+        bag = baggage_checkOut(request, True, bagid)
         messages.success(self.request, 'Bag checked-out!')
-        return redirect('baggage_search')
+        return redirect(reverse('baggage_hacker', kwargs={'user_id': bag.owner_id}))
 
 
 class BaggageMap(IsVolunteerMixin, TabsView):

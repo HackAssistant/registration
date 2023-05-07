@@ -25,7 +25,7 @@
 
         {% include 'include/field.html' with desc='Email' value=app.user.email %}
         {% include 'include/field.html' with desc='Shirt Size' value=app.tshirt_size %}
-        {% include 'include/field.html' with desc='Diet' value=app.diet %}
+        {% include 'include/field_diet.html' with desc='Diet' value=app.diet color=app.get_diet_color %}
         {% include 'include/field.html' with desc='Other' value=app.other_diet %}
         {% include 'include/field.html' with desc='Status' value=app.get_status_display %}
     </dl>
