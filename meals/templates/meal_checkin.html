@@ -14,7 +14,7 @@
 
 
 
-{% block head_title %}Check-in meal {{ meal.name }}{% endblock %}
+{% block head_title %}Check-in meal {{ meal_name }}{% endblock %}
 
 {% block body_plain %}
   <style>
@@ -26,7 +26,9 @@
     <div class="row full-screen">
 
       <div class="container" style="margin-top:60px;">
-        <!-- <a class="btn btn-default btn-block" href="{% url 'meals_list' %}">< Back</a> -->
+        <div style="background-color: white" id="success" class="alert">
+          <h1 style="font-size: larger">{{ meal_name }}</h1>
+        </div>
 
         <div id="success" class="alert alert-success alert-dismissible fade in"
              style="display:none;">
