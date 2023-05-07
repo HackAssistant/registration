@@ -184,11 +184,12 @@ class MealsCheckin(IsVolunteerMixin, TemplateView):
         if not meal:
             raise Http404
 
-        if not meal.opened and not self.request.user.is_organizer:
+        if not meal.opened:
             raise PermissionDenied('Meal is not active')
 
         context.update({
             'meal': meal,
+            'meal_name': meal.name,
             'back': 'meals_list' if not meal.activity() else 'activity_list'
         })
         if self.request.GET.get('success', False):

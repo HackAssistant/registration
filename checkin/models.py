@@ -10,10 +10,11 @@ from user.models import User
 
 
 class CheckIn(models.Model):
-    hacker = models.OneToOneField('applications.HackerApplication', null=True, on_delete=models.CASCADE)
-    mentor = models.OneToOneField('applications.MentorApplication', null=True, on_delete=models.CASCADE)
-    volunteer = models.OneToOneField('applications.VolunteerApplication', null=True, on_delete=models.CASCADE)
-    sponsor = models.OneToOneField('applications.SponsorApplication', null=True, on_delete=models.CASCADE)
+    hacker = models.OneToOneField('applications.HackerApplication', blank=True, null=True, on_delete=models.CASCADE)
+    mentor = models.OneToOneField('applications.MentorApplication', blank=True, null=True, on_delete=models.CASCADE)
+    volunteer = models.OneToOneField('applications.VolunteerApplication', blank=True, null=True,
+                                     on_delete=models.CASCADE)
+    sponsor = models.OneToOneField('applications.SponsorApplication', blank=True, null=True, on_delete=models.CASCADE)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     update_time = models.DateTimeField()
     # QR identifier for wristband identification
