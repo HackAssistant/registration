@@ -25,7 +25,7 @@ from app.slack import SlackInvitationException
 from applications import emails
 from applications.emails import send_batch_emails
 from applications.models import APP_PENDING, APP_DUBIOUS, APP_BLACKLISTED, APP_INVITED, APP_LAST_REMIDER, \
-    APP_CONFIRMED, AcceptedResume, APP_ATTENDED
+    APP_CONFIRMED, AcceptedResume, APP_ATTENDED, APP_REJECTED
 from organizers import models
 from organizers.tables import ApplicationsListTable, ApplicationFilter, AdminApplicationsListTable, \
     AdminTeamListTable, InviteFilter, DubiousListTable, DubiousApplicationFilter, VolunteerFilter,\
@@ -142,8 +142,8 @@ class InviteListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, FilterVie
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.annotate_vote(models.HackerApplication.objects.filter(status=APP_PENDING))\
-            .order_by('-vote_avg')
+        return models.HackerApplication.annotate_vote(
+            models.HackerApplication.objects.filter(status__in=[APP_PENDING, APP_REJECTED])).order_by('-vote_avg')
 
     def post(self, request, *args, **kwargs):
         ids = request.POST.getlist('selected')
@@ -369,7 +369,7 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
 
     def get_queryset(self):
         return models.HackerApplication.objects.filter(status__in=[APP_PENDING, APP_CONFIRMED, APP_LAST_REMIDER,
-                                                                   APP_INVITED]) \
+                                                                   APP_INVITED, APP_REJECTED]) \
             .exclude(user__team__team_code__isnull=True).values('user__team__team_code') \
             .annotate(vote_avg=Avg('vote__calculated_vote'),
                       members=Count('user', distinct=True),
@@ -378,7 +378,8 @@ class InviteTeamListView(TabsViewMixin, IsDirectorMixin, SingleTableMixin, Templ
                       accepted=Count(Concat('status', 'user__id', output_field=CharField()),
                                      filter=Q(status=APP_CONFIRMED), distinct=True),
                       live_pending=Count(Concat('status', 'user__id', output_field=CharField()),
-                                         filter=Q(status=APP_PENDING, online=False), distinct=True))\
+                                         filter=Q(status__in=[APP_PENDING, APP_REJECTED], online=False),
+                                         distinct=True))\
             .exclude(members=F('accepted')).order_by('-vote_avg')
 
     def get_context_data(self, **kwargs):
