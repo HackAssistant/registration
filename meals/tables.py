@@ -44,7 +44,7 @@ class MealsListTable(tables.Table):
         template = 'templates/meals_list.html'
         fields = ['name', 'kind', 'opened', 'eaten', 'times', 'starts', 'ends', ]
         empty_text = 'No meals available'
-        order_by = '-starts'
+        order_by = 'starts'
 
 
 class MealsUsersFilter(django_filters.FilterSet):
