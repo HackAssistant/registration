@@ -11,5 +11,5 @@ urlpatterns = [
     url(r'^map/$', views.BaggageMap.as_view(), name='baggage_map'),
     url(r'^history/$', views.BaggageHistory.as_view(), name='baggage_history'),
     url(r'^current/$', views.BaggageCurrentHacker.as_view(), name='baggage_currenthacker'),
-    url(r'^api/$', views.BaggageAPI.as_view(), name='baggage_api'),
+    # url(r'^api/$', views.BaggageAPI.as_view(), name='baggage_api'),
 ]

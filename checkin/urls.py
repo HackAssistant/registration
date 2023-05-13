@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^volunteer/all/$', views.CheckinVolunteerList.as_view(), name='check_in_volunteer_list'),
     url(r'^mentor/all/$', views.CheckinMentorList.as_view(), name='check_in_mentor_list'),
     url(r'^sponsor/all/$', views.CheckinSponsorList.as_view(), name='check_in_sponsor_list'),
-    url(r'^api/$', views.CheckInAPI.as_view(), name='check_in_api'),
+    # url(r'^api/$', views.CheckInAPI.as_view(), name='check_in_api'),
 ]
