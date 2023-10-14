@@ -1,11 +1,10 @@
 appdirs==1.4.0
-backports.zoneinfo==0.2.1
 cachetools==3.1.1
-certifi==2019.9.11
+certifi==2023.07.22
 chardet==3.0.4
 defusedxml==0.6.0
 dj-database-url==0.5.0
-Django==3.2.7
+Django==3.2.21
 django-bootstrap3==15.0.0
 django-filter==2.4.0
 django-ha-hardware @ git+https://github.com/hackupc/hardware.git@c07aa873d8785ecbae06692b430afb6f29207854
@@ -32,16 +31,16 @@ odfpy==1.4.0
 openpyxl==2.6.4
 packaging==16.8
 psycopg2-binary~=2.8.3
-Pillow==2.0.0
+Pillow==9.3.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.1
 pycodestyle==2.7.0
 pyparsing==2.4.7
 python-http-client==2.2.1
 python-openid==2.2.5
-pytz==2017.2
+pytz==2023.3
 PyYAML>=5.4
-requests==2.26.0
+requests==2.31.0
 requests-oauthlib==0.8.0
 rsa>=4.7
 sendgrid==3.6.3
