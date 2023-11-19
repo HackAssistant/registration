@@ -28,7 +28,9 @@
 
 ## Setup
 
-Needs: Python 3.X, virtualenv
+Needs: Python 3.X (), virtualenv
+
+Stable at v. 3.8.10
 
 - `git clone https://github.com/hackupc/registration && cd registration`
 - `virtualenv env --python=python3`
@@ -38,6 +40,22 @@ Needs: Python 3.X, virtualenv
 - `python manage.py migrate`
 - `python manage.py createsuperuser` (creates super user to manage all the app)
 
+### FAQ
+**The library backports.zoneinfo fails to install**
+If you are experiencing an error similar to this one: 
+
+``
+ERROR: Could not build wheels for backports.zoneinfo, which is required to install pyproject.toml-based projects
+``
+
+Plase make sure to use *Python **3.8.10***
+
+
+**The library Pillow fails to install**
+Ths did the trick (note the python and -m flag are placed in purpouse to make sure you install it using the correct virtualenv python version):
+```
+python -m pip install --upgrade Pillow
+```
 
 ### Dummy data
 
@@ -303,6 +321,9 @@ If you need extra labels for your hackathon, you can change the model and add yo
    - Update model with specific fields: [applications/models.py](applications/models.py)
    - `python manage.py makemigrations`
    - `python manage.py migrate`
+
+
+####
 
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
