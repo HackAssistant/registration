@@ -32,7 +32,7 @@ Needs: Python 3.X (), virtualenv
 
 Stable at v. 3.8.10
 
-- `git clone https://github.com/hackupc/registration && cd registration`
+- `git clone https://github.com/hackupc/myhackupc && cd myhackupc`
 - `virtualenv env --python=python3`
 - `source ./env/bin/activate`
 - `pip install -r requirements.txt`
