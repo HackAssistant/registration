@@ -187,3 +187,126 @@ def hacker_tabs(user):
         tabs_list.append(('Offers', reverse('codes'), False))
 
     return tabs_list
+
+
+def generateGTickettUrl(qrValue: str):
+    """
+    Generates a url for the google ticketing system
+    :param qrValue: the value of the qr code
+    :return: url
+    """
+    ticketEvent = DemoEventTicket()
+    ticketEvent.auth()
+    return ticketEvent.create_jwt_new_objects('3388000000022289823', 'myhackupc', '',qrValue)
+
+import json
+import os
+import uuid
+
+from google.auth.transport.requests import AuthorizedSession
+from google.oauth2.service_account import Credentials
+from google.auth import jwt, crypt
+
+
+class DemoEventTicket:
+    """Demo class for creating and managing Event tickets in Google Wallet.
+
+    Attributes:
+        key_file_path: Path to service account key file from Google Cloud
+            Console. Environment variable: GOOGLE_APPLICATION_CREDENTIALS.
+        base_url: Base URL for Google Wallet API requests.
+    """
+
+    def __init__(self):
+        self.key_file_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS',
+                                            '/home/jaume/Desktop/CODE/myhackupc/.google-service.account.json')
+        self.base_url = 'https://walletobjects.googleapis.com/walletobjects/v1'
+        self.batch_url = 'https://walletobjects.googleapis.com/batch'
+        self.class_url = f'{self.base_url}/eventTicketClass'
+        self.object_url = f'{self.base_url}/eventTicketObject'
+
+        # Set up authenticated client
+        self.auth()
+
+    def auth(self):
+        """Create authenticated HTTP client using a service account file."""
+        self.credentials = Credentials.from_service_account_file(
+            self.key_file_path,
+            scopes=['https://www.googleapis.com/auth/wallet_object.issuer'])
+
+        self.http_client = AuthorizedSession(self.credentials)
+    def create_jwt_new_objects(self, issuer_id: str, class_suffix: str,
+                           object_suffix: str, qrValue: str) -> str:
+        """Generate a signed JWT that creates a new pass class and object.
+
+        When the user opens the "Add to Google Wallet" URL and saves the pass to
+        their wallet, the pass class and object defined in the JWT are
+        created. This allows you to create multiple pass classes and objects in
+        one API call when the user saves the pass to their wallet.
+
+        Args:
+            issuer_id (str): The issuer ID being used for this request.
+            class_suffix (str): Developer-defined unique ID for the pass class.
+            object_suffix (str): Developer-defined unique ID for the pass object.
+
+        Returns:
+            An "Add to Google Wallet" link.
+        """
+
+        # See link below for more information on required properties
+        # https://developers.google.com/wallet/tickets/events/rest/v1/eventticketclass
+        new_class = {
+            'id': f'{issuer_id}.{class_suffix}',
+            'issuerName': issuer_id,
+            'reviewStatus': 'UNDER_REVIEW',
+            'eventName': {
+                'defaultValue': {
+                    'language': 'en-US',
+                    'value': settings.HACKATHON_NAME,
+                }
+            }
+        }
+
+        # See link below for more information on required properties
+        # https://developers.google.com/wallet/tickets/events/rest/v1/eventticketobject
+        new_object = {
+            'id': f'{issuer_id}.{object_suffix}',
+            'classId': f'{issuer_id}.{class_suffix}',
+            'state': 'ACTIVE',
+            'heroImage': {},
+            'textModulesData': [],
+            'linksModuleData': {},
+            'imageModulesData': [],
+            'barcode': {
+                'type': 'QR_CODE',
+                'value': qrValue,
+            },
+            'locations': [],
+            'seatInfo': {},
+            'ticketHolderName': 'Ticket holder name',
+            'ticketNumber': 'Ticket number'
+        }
+
+        # Create the JWT claims
+        claims = {
+            'iss': self.credentials.service_account_email,
+            'aud': 'google',
+            'origins': ['my.hackupc.com'],
+            'typ': 'savetowallet',
+            'payload': {
+                # The listed classes and objects will be created
+                'eventTicketClasses': [new_class],
+                'eventTicketObjects': [new_object]
+            }
+        }
+
+        # The service account credentials are used to sign the JWT
+        signer = crypt.RSASigner.from_service_account_file(self.key_file_path)
+        token = jwt.encode(signer, claims).decode('utf-8')
+
+        print('Add to Google Wallet link')
+        print(f'https://pay.google.com/gp/v/save/{token}')
+
+        return f'https://pay.google.com/gp/v/save/{token}'
+
+

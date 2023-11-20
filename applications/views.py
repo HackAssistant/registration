@@ -27,6 +27,8 @@ from organizers.views import _OtherApplicationsListView
 from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin, DashboardMixin
 from user import models as userModels
 
+from app.utils import generateGTickettUrl
+
 VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
     userModels.USR_VOLUNTEER: models.VolunteerApplication,
@@ -152,9 +154,15 @@ class HackerDashboard(DashboardMixin, TabsView):
             context.update({'invite_timeleft': deadline - timezone.now(), 'application': application})
             if self.request.user.type == userModels.USR_HACKER:
                 context.update({'confirm_form': forms.ConfirmationInvitationForm(instance=application)})
+
+            # generate a google pay ticket entrance with a QR code
         except Exception:
             # We ignore this as we are okay if the user has not created an application yet
             pass
+            
+        if application.status == models.APP_CONFIRMED:
+            context.update({'gwalleturl': generateGTickettUrl(application.uuid_str)})
+        
 
         return context
 
