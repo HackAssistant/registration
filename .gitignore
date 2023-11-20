@@ -25,3 +25,5 @@ files/*
 *.log
 cache/
 *.sh
+
+.google-service.account.json
