@@ -327,7 +327,7 @@ class DemoGeneric:
 
     def __init__(self):
         self.key_file_path = os.environ.get(
-            "GOOGLE_APPLICATION_CREDENTIALS", "/path/to/key.json"
+            "GOOGLE_WALLET_APPLICATION_CREDENTIALS", "/path/to/key.json"
         )
         self.base_url = "https://walletobjects.googleapis.com/walletobjects/v1"
         self.batch_url = "https://walletobjects.googleapis.com/batch"
@@ -392,8 +392,8 @@ class DemoGeneric:
         # Create the object
         response = self.http_client.post(url=self.object_url, json=new_object)
 
-        print("Object insert response")
-        print(response.text)
+        print("Object created successfully!")
+        # print(response.text)
 
         return response.json().get("id")
 

@@ -27,6 +27,8 @@ from organizers.views import _OtherApplicationsListView
 from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin, DashboardMixin
 from user import models as userModels
 
+from django.conf import settings
+
 from app.utils import generateGTickettUrl
 
 VIEW_APPLICATION_TYPE = {
@@ -202,7 +204,9 @@ class HackerDashboard(DashboardMixin, TabsView):
             # We ignore this as we are okay if the user has not created an application yet
             pass
 
-        if application.status == models.APP_CONFIRMED:
+        # Google Wallet Pass API
+        context.update({"gwallet_enabled": settings.GOOGLE_WALLET_ENABLED})
+        if application.status == models.APP_CONFIRMED and settings.GOOGLE_WALLET_ENABLED:
             context.update({"gwalleturl": generateGTickettUrl(application.uuid_str)})
 
         return context

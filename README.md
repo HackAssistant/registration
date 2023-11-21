@@ -19,11 +19,11 @@
 - Automatic control of confirmation, expiration and cancellation flows 🔄
 - Django Admin dashboard to manually edit applications, reimbursement and users 👓
 - Flexible email backend (SendGrid is the default and recommended supported backend) 📮
+- CAS server for other platforms
 - (Optional) Separate applications from dubious hackers to manually contact them 🧐
 - (Optional) Automated slack invites on confirm #️⃣
 - (Optional) MyMLH sign up 📥
-- CAS server for other platforms
-
+- (Optional) Google Wallet Pass API Integration
 
 
 ## Setup
@@ -80,6 +80,10 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **SL_BOT_DIRECTOR2**(optional): User ID of the other director.
 - **MLH_CLIENT_SECRET**(optional): Enables MyMLH as a sign up option. Format is `client_id@client_secret` (See "Set up MyMLH" below)
 - **CAS_SERVER**(optional): Enables login for other platforms
+- **GOOGLE_WALLET_APPLICATION_CREDENTIALS**(optional): The path to the json key file containing all google-related API credentials
+- **GOOGLE_WALLET_ISSUER_ID**(optional): The issuer ID of Google Wallet Pass API
+- **GOOGLE_WALLET_CLASS_SUFFIX**(optional): The name of the class created at the []()
+
 
 
 ## Server
@@ -195,6 +199,50 @@ In that direction the approach taken is to extract fields and use them for the a
 3. Set **MLH_CLIENT_SECRET** using the strings in `Application ID` and `Secret` fields, concatenated with a `@`. Ex: `application_id@secret`.
 
 Note that to test locally you will need to add a line where `DOMAIN` is `localhost:8000`.
+
+#### Set up Google Wallet Pass API
+1. Sign up for a Google Wallet API Issuer account. [Click here](https://pay.google.com/business/console)
+2. Enable the Wallet API 
+    - Sign into the [Google Cloud Platform](https://console.cloud.google.com/) and enable the Google Wallet API for your GCP project.
+    - If you don’t already have a GCP project, create one.
+    - Enable the [Google Wallet API](https://console.cloud.google.com/apis/library/walletobjects.googleapis.com).
+3. Create a service account and export its keys into a json file
+    - Create a service account:
+
+        1. [Create a service account](https://console.cloud.google.com/iam-admin/serviceaccounts/create) in the Google Cloud Console, providing the following details:
+            Service account name - example: Wallet Web Client
+            Service account ID - example: my-service-account
+        2. Click CREATE AND CONTINUE.
+        3. Click DONE.
+
+    - Create a service account key:
+
+        1. Select your service account. For example: my-service-account@my-project-id.iam.gserviceaccount.com.
+        2. Click on the **KEYS** menu item at the top of the page.
+        3. Click **ADD KEY** and Create new key.
+        4. Select key type **JSON**.
+        5. Click **CREATE** to create and download the service account key.
+
+        > **Remember** to set the **GOOGLE_WALLET_APPLICATION_CREDENTIALS** enviroment variable as the correct path of this Json file, which is recommended to be set on the root of the hosted project to make sure read perms are ok
+
+4. Authorize the service account
+
+    You must authorize the service account in order to call the API. To authorize it, grant the service account access to manage your Issuer Account.
+
+    Visit the Users page in the [Google Pay and Wallet Console](https://pay.google.com/business/console).
+    1. Click Invite a **user**.
+    2. Add the service account's email address. For example: ``my-service-account@my-project-id.iam.gserviceaccount.com``.
+    3. Select **Developer** for Access level.
+    4. Click **Invite**.
+
+5. Create a class
+    Enter to the [Google Wallet Console](https://pay.google.com/business/console/passes/) and click on **create class** with type **GENERIC** (it is very important to be generic-type, otherwise it won't work).
+
+    >Fill the gaps and click on create, make sure to remember the **CLASS_ID** value since it is the **GOOGLE_WALLET_CLASS_SUFFIX** you'll need to set up on the enviroment variables.
+
+    >At this point you can also set the **GOOGLE_WALLET_ISSUER_ID** enviroment variable, which Google tells you when visiting the [Google Wallet Console](https://pay.google.com/business/console/passes/)
+
+
 
 #### Set up nginx
 
