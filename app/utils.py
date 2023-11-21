@@ -5,6 +5,7 @@ from django.forms import forms
 from django.urls import reverse as django_reverse
 from django.utils import timezone
 from django.utils.functional import keep_lazy_text
+from datetime import datetime
 
 from offer.models import Code
 
@@ -195,10 +196,110 @@ def generateGTickettUrl(qrValue: str):
     :param qrValue: the value of the qr code
     :return: url
     """
-    ticketEvent = DemoEventTicket()
-    ticketEvent.auth()
-    return ticketEvent.create_jwt_new_objects('3388000000022289823', 'myhackupc', '',qrValue)
+    generic = DemoGeneric()
+    objSufix = 'user'+qrValue
+    issuer_id = os.environ.get('GOOGLE_WALLET_ISSUER_ID', '')
+    class_suffix = os.environ.get('GOOGLE_WALLET_CLASS_SUFFIX','')
+    cardObject = {
+            'id': f'{issuer_id}.{objSufix}',
+            'classId': f'{issuer_id}.{class_suffix}',
+            'state': 'ACTIVE',
+            'heroImage': {
+                'sourceUri': {
+                    'uri':
+                        'https://i.ibb.co/CwwGY33/Fondo-2.png'
+                },
+                'contentDescription': {
+                    'defaultValue': {
+                        'language': 'en-US',
+                        'value': f'{settings.HACKATHON_NAME} {datetime.now().year} is here!'
+                    }
+                }
+            },
+            'textModulesData': [{
+                'header': 'Disclaimer',
+                'body': 'This is a copy of the official ticket, do not treat this as the official ticket since it is not updated in real time.',
+                'id': 'TEXT_MODULE_ID'
+            }],
+            'linksModuleData': {
+                'uris': [{
+                    'uri': 'https://live.hackupc.com/',
+                    'description': 'Live HackUPC',
+                    'id': 'LINK_MODULE_URI_ID'
+                }, {
+                    'uri': 'https://my.hackupc.com/',
+                    'description': 'MyHackUPC',
+                    'id': 'LINK_MODULE_URI_ID'
+                }, ]
+            },
+            'imageModulesData': [{
+                'mainImage': {
+                    'sourceUri': {
+                        'uri':
+                            'https://hackupc.com/ogimage.png'
+                    },
+                    'contentDescription': {
+                        'defaultValue': {
+                            'language': 'en-US',
+                            'value': 'Event picture'
+                        }
+                    }
+                },
+                'id': 'IMAGE_MODULE_ID'
+            }],
+            'barcode': {
+                'type': 'QR_CODE',
+                'value': objSufix,
+            },
+            'cardTitle': {
+                'defaultValue': {
+                    'language': 'en-US',
+                    'value': 'An event of Hackers@UPC'
+                }
+            },
+            'header': {
+                'defaultValue': {
+                    'language': 'en-US',
+                    'value': 'HackUPC 2024'
+                }
+            },
+            'hexBackgroundColor': '#fff',
+            'logo': {
+                'sourceUri': {
+                    'uri':
+                        'https://my.hackupc.com/static/img/favicon/apple-touch-icon.0d0372730c66.png'
+                },
+                'contentDescription': {
+                    'defaultValue': {
+                        'language': 'en-US',
+                        'value': 'HackUPC Logo'
+                    }
+                }
+            }
+        }
 
+    generic.create_object(issuer_id, class_suffix, objSufix, cardObject, objSufix)
+    return generic.create_jwt_new_objects(issuer_id, class_suffix, objSufix, cardObject, objSufix)
+
+#
+# Copyright 2022 Google Inc. All rights reserved.
+#
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License. You may obtain a copy of
+# the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations under
+# the License.
+#
+
+# [START setup]
+# [START imports]
 import json
 import os
 import uuid
@@ -206,10 +307,11 @@ import uuid
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2.service_account import Credentials
 from google.auth import jwt, crypt
+# [END imports]
 
 
-class DemoEventTicket:
-    """Demo class for creating and managing Event tickets in Google Wallet.
+class DemoGeneric:
+    """Demo class for creating and managing Generic passes in Google Wallet.
 
     Attributes:
         key_file_path: Path to service account key file from Google Cloud
@@ -219,15 +321,18 @@ class DemoEventTicket:
 
     def __init__(self):
         self.key_file_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS',
-                                            '/home/jaume/Desktop/CODE/myhackupc/.google-service.account.json')
+                                            '/path/to/key.json')
         self.base_url = 'https://walletobjects.googleapis.com/walletobjects/v1'
         self.batch_url = 'https://walletobjects.googleapis.com/batch'
-        self.class_url = f'{self.base_url}/eventTicketClass'
-        self.object_url = f'{self.base_url}/eventTicketObject'
+        self.class_url = f'{self.base_url}/genericClass'
+        self.object_url = f'{self.base_url}/genericObject'
 
         # Set up authenticated client
         self.auth()
 
+    # [END setup]
+
+    # [START auth]
     def auth(self):
         """Create authenticated HTTP client using a service account file."""
         self.credentials = Credentials.from_service_account_file(
@@ -235,8 +340,53 @@ class DemoEventTicket:
             scopes=['https://www.googleapis.com/auth/wallet_object.issuer'])
 
         self.http_client = AuthorizedSession(self.credentials)
+
+    # [END auth]
+
+    # [START createObject]
+    def create_object(self, issuer_id: str, class_suffix: str,
+                      object_suffix: str, cardObject: dict, qrValue: str) -> str:
+        """Create an object.
+
+        Args:
+            issuer_id (str): The issuer ID being used for this request.
+            class_suffix (str): Developer-defined unique ID for the pass class.
+            object_suffix (str): Developer-defined unique ID for the pass object.
+
+        Returns:
+            The pass object ID: f"{issuer_id}.{object_suffix}"
+        """
+
+        # Check if the object exists
+        response = self.http_client.get(
+            url=f'{self.object_url}/{issuer_id}.{object_suffix}')
+
+        if response.status_code == 200:
+            print(f'Object {issuer_id}.{object_suffix} already exists!')
+            print(response.text)
+            return f'{issuer_id}.{object_suffix}'
+        elif response.status_code != 404:
+            # Something else went wrong...
+            print(response.text)
+            return f'{issuer_id}.{object_suffix}'
+
+        # See link below for more information on required properties
+        # https://developers.google.com/wallet/generic/rest/v1/genericobject
+        new_object = cardObject
+        
+        # Create the object
+        response = self.http_client.post(url=self.object_url, json=new_object)
+
+        print('Object insert response')
+        print(response.text)
+
+        return response.json().get('id')
+
+    # [END createObject]
+
+    # [START jwtNew]
     def create_jwt_new_objects(self, issuer_id: str, class_suffix: str,
-                           object_suffix: str, qrValue: str) -> str:
+                               object_suffix: str, cardObject: dict,  qrValue: str) -> str:
         """Generate a signed JWT that creates a new pass class and object.
 
         When the user opens the "Add to Google Wallet" URL and saves the pass to
@@ -254,38 +404,12 @@ class DemoEventTicket:
         """
 
         # See link below for more information on required properties
-        # https://developers.google.com/wallet/tickets/events/rest/v1/eventticketclass
-        new_class = {
-            'id': f'{issuer_id}.{class_suffix}',
-            'issuerName': issuer_id,
-            'reviewStatus': 'UNDER_REVIEW',
-            'eventName': {
-                'defaultValue': {
-                    'language': 'en-US',
-                    'value': settings.HACKATHON_NAME,
-                }
-            }
-        }
+        # https://developers.google.com/wallet/generic/rest/v1/genericclass
+        new_class = {'id': f'{issuer_id}.{class_suffix}'}
 
         # See link below for more information on required properties
-        # https://developers.google.com/wallet/tickets/events/rest/v1/eventticketobject
-        new_object = {
-            'id': f'{issuer_id}.{object_suffix}',
-            'classId': f'{issuer_id}.{class_suffix}',
-            'state': 'ACTIVE',
-            'heroImage': {},
-            'textModulesData': [],
-            'linksModuleData': {},
-            'imageModulesData': [],
-            'barcode': {
-                'type': 'QR_CODE',
-                'value': qrValue,
-            },
-            'locations': [],
-            'seatInfo': {},
-            'ticketHolderName': 'Ticket holder name',
-            'ticketNumber': 'Ticket number'
-        }
+        # https://developers.google.com/wallet/generic/rest/v1/genericobject
+        new_object = cardObject
 
         # Create the JWT claims
         claims = {
@@ -295,8 +419,8 @@ class DemoEventTicket:
             'typ': 'savetowallet',
             'payload': {
                 # The listed classes and objects will be created
-                'eventTicketClasses': [new_class],
-                'eventTicketObjects': [new_object]
+                'genericClasses': [new_class],
+                'genericObjects': [new_object]
             }
         }
 
@@ -304,9 +428,6 @@ class DemoEventTicket:
         signer = crypt.RSASigner.from_service_account_file(self.key_file_path)
         token = jwt.encode(signer, claims).decode('utf-8')
 
-        print('Add to Google Wallet link')
-        print(f'https://pay.google.com/gp/v/save/{token}')
-
         return f'https://pay.google.com/gp/v/save/{token}'
 
-
+    # [END jwtNew]
