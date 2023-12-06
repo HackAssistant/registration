@@ -221,7 +221,7 @@ def generateGTickettUrl(qrValue: str):
     """
     generic = GenericPass()
     objSufix = (
-        str("TEST") + qrValue if not settings.DEBUG else str("PROD" + qrValue)
+        str("TEST") + qrValue if settings.DEBUG else str("PROD" + qrValue)
     )  # TEST/PROD+uuid.uuid4().hex
     issuer_id = os.environ.get("GOOGLE_WALLET_ISSUER_ID", "")
     class_suffix = os.environ.get("GOOGLE_WALLET_CLASS_SUFFIX", "")
