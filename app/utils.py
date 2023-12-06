@@ -212,8 +212,8 @@ def generateGTickettUrl(qrValue: str):
     :param qrValue: the value of the qr code
     :return: url
     """
-    generic = DemoGeneric()
-    objSufix = "user" + qrValue
+    generic = GenericPass()
+    objSufix = str("TEST")+qrValue if not settings.DEBUG else str("PROD"+qrValue) # TEST/PROD+uuid.uuid4().hex
     issuer_id = os.environ.get("GOOGLE_WALLET_ISSUER_ID", "")
     class_suffix = os.environ.get("GOOGLE_WALLET_CLASS_SUFFIX", "")
     cardObject = {
@@ -316,8 +316,8 @@ from google.auth import jwt, crypt
 # [END imports]
 
 
-class DemoGeneric:
-    """Demo class for creating and managing Generic passes in Google Wallet.
+class GenericPass:
+    """Class for creating and managing Generic passes in Google Wallet.
 
     Attributes:
         key_file_path: Path to service account key file from Google Cloud
@@ -377,12 +377,12 @@ class DemoGeneric:
         )
 
         if response.status_code == 200:
-            print(f"Object {issuer_id}.{object_suffix} already exists!")
-            print(response.text)
+            print(f"[GOOGLE_WALLET]: Object {issuer_id}.{object_suffix} already exists!")
+            # print(response.text)
             return f"{issuer_id}.{object_suffix}"
         elif response.status_code != 404:
             # Something else went wrong...
-            print(response.text)
+            print("[GOOGLE_WALLET]:", response.text)
             return f"{issuer_id}.{object_suffix}"
 
         # See link below for more information on required properties
@@ -452,3 +452,11 @@ class DemoGeneric:
         return f"https://pay.google.com/gp/v/save/{token}"
 
     # [END jwtNew]
+
+def isset(variable):
+    try:
+        variable
+    except NameError:
+        return False
+    else:
+        return True

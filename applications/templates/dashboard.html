@@ -83,7 +83,9 @@
                        src="http://chart.googleapis.com/chart?cht=qr&chs=350x350&chld=L|0&chl={{ application.uuid_str }}"/>
                     {% if gwallet_enabled %}
                        <a href="{{ gwalleturl }}">
-                           <img src='{% static '/img/button.svg' %}'>
+                            
+                            
+                           <img src='{% static '/img/button.svg' %}' class="img-responsive">
                        </a>
                     {% endif %}
               </div>
