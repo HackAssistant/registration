@@ -209,7 +209,6 @@ class HackerDashboard(DashboardMixin, TabsView):
         except Exception:
             # We ignore this as we are okay if the user has not created an application yet
             pass
-        
 
         return context
 

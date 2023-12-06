@@ -7,6 +7,13 @@ from django.utils import timezone
 from django.utils.functional import keep_lazy_text
 from datetime import datetime
 
+import os
+
+from google.auth.transport.requests import AuthorizedSession
+from google.oauth2.service_account import Credentials
+from google.auth import jwt, crypt
+
+
 from offer.models import Code
 
 
@@ -213,7 +220,9 @@ def generateGTickettUrl(qrValue: str):
     :return: url
     """
     generic = GenericPass()
-    objSufix = str("TEST")+qrValue if not settings.DEBUG else str("PROD"+qrValue) # TEST/PROD+uuid.uuid4().hex
+    objSufix = (
+        str("TEST") + qrValue if not settings.DEBUG else str("PROD" + qrValue)
+    )  # TEST/PROD+uuid.uuid4().hex
     issuer_id = os.environ.get("GOOGLE_WALLET_ISSUER_ID", "")
     class_suffix = os.environ.get("GOOGLE_WALLET_CLASS_SUFFIX", "")
     cardObject = {
@@ -232,7 +241,8 @@ def generateGTickettUrl(qrValue: str):
         "textModulesData": [
             {
                 "header": "Disclaimer",
-                "body": "This is a copy of the official ticket, do not treat this as the official ticket since it is not updated in real time.",
+                "body": "This is a copy of the official ticket, do not treat this as the official ticket "
+                        "since it is not updated in real time.",
                 "id": "TEXT_MODULE_ID",
             }
         ],
@@ -303,19 +313,6 @@ def generateGTickettUrl(qrValue: str):
 # the License.
 #
 
-# [START setup]
-# [START imports]
-import json
-import os
-import uuid
-
-from google.auth.transport.requests import AuthorizedSession
-from google.oauth2.service_account import Credentials
-from google.auth import jwt, crypt
-
-# [END imports]
-
-
 class GenericPass:
     """Class for creating and managing Generic passes in Google Wallet.
 
@@ -377,7 +374,9 @@ class GenericPass:
         )
 
         if response.status_code == 200:
-            print(f"[GOOGLE_WALLET]: Object {issuer_id}.{object_suffix} already exists!")
+            print(
+                f"[GOOGLE_WALLET]: Object {issuer_id}.{object_suffix} already exists!"
+            )
             # print(response.text)
             return f"{issuer_id}.{object_suffix}"
         elif response.status_code != 404:
@@ -452,6 +451,7 @@ class GenericPass:
         return f"https://pay.google.com/gp/v/save/{token}"
 
     # [END jwtNew]
+
 
 def isset(variable):
     try:
