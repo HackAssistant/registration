@@ -213,16 +213,14 @@ def hacker_tabs(user):
     return tabs_list
 
 
-def generateGTickettUrl(qrValue: str):
+def generateGTicketUrl(qrValue: str):
     """
     Generates a url for the google ticketing system
     :param qrValue: the value of the qr code
     :return: url
     """
     generic = GenericPass()
-    objSufix = (
-        str("TEST") + qrValue if settings.DEBUG else str("PROD" + qrValue)
-    )  # TEST/PROD+uuid.uuid4().hex
+    objSufix = qrValue  # uuid.uuid4().hex
     issuer_id = os.environ.get("GOOGLE_WALLET_ISSUER_ID", "")
     class_suffix = os.environ.get("GOOGLE_WALLET_CLASS_SUFFIX", "")
     cardObject = {
@@ -290,9 +288,9 @@ def generateGTickettUrl(qrValue: str):
         },
     }
 
-    generic.create_object(issuer_id, class_suffix, objSufix, cardObject, objSufix)
+    generic.create_object(issuer_id, objSufix, cardObject)
     return generic.create_jwt_new_objects(
-        issuer_id, class_suffix, objSufix, cardObject, objSufix
+        issuer_id, class_suffix, cardObject
     )
 
 
@@ -352,10 +350,8 @@ class GenericPass:
     def create_object(
         self,
         issuer_id: str,
-        class_suffix: str,
         object_suffix: str,
-        cardObject: dict,
-        qrValue: str,
+        cardObject: dict
     ) -> str:
         """Create an object.
 
@@ -379,22 +375,22 @@ class GenericPass:
             )
             # print(response.text)
             return f"{issuer_id}.{object_suffix}"
-        elif response.status_code != 404:
+        elif response.status_code == 404:
+            # Object does not exist, let's create it
+            # See link below for more information on required properties
+            # https://developers.google.com/wallet/generic/rest/v1/genericobject
+            new_object = cardObject
+
+            # Create the object
+            response = self.http_client.post(url=self.object_url, json=new_object)
+
+            print("Object created successfully!")
+
+            return response.json().get("id")
+        else:
             # Something else went wrong...
             print("[GOOGLE_WALLET]:", response.text)
             return f"{issuer_id}.{object_suffix}"
-
-        # See link below for more information on required properties
-        # https://developers.google.com/wallet/generic/rest/v1/genericobject
-        new_object = cardObject
-
-        # Create the object
-        response = self.http_client.post(url=self.object_url, json=new_object)
-
-        print("Object created successfully!")
-        # print(response.text)
-
-        return response.json().get("id")
 
     # [END createObject]
 
@@ -403,9 +399,7 @@ class GenericPass:
         self,
         issuer_id: str,
         class_suffix: str,
-        object_suffix: str,
         cardObject: dict,
-        qrValue: str,
     ) -> str:
         """Generate a signed JWT that creates a new pass class and object.
 

@@ -29,7 +29,7 @@ from user import models as userModels
 
 from django.conf import settings
 
-from app.utils import generateGTickettUrl, isset
+from app.utils import generateGTicketUrl, isset
 
 VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
@@ -204,7 +204,7 @@ class HackerDashboard(DashboardMixin, TabsView):
                 # Google Wallet Pass API
                 context.update({"gwallet_enabled": settings.GOOGLE_WALLET_ENABLED})
                 if application.status == models.APP_CONFIRMED and settings.GOOGLE_WALLET_ENABLED:
-                    context.update({"gwalleturl": generateGTickettUrl(application.uuid_str)})
+                    context.update({"gwalleturl": generateGTicketUrl(application.uuid_str)})
                     # generate a google pay ticket entrance with a QR code
         except Exception:
             # We ignore this as we are okay if the user has not created an application yet

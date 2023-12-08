@@ -13,7 +13,8 @@ export SL_TEAM="test-team"
 export DOMAIN="my.hackupc.com"
 
 
-# Modify this when GOOGLE_WALLET Is enabled
+# These credentials need to be set up if you have enabled GOOGLE_WALLET_ENABLED inside app/settings.py
+# Read the README to know how to get them
 export GOOGLE_WALLET_ISSUER_ID="XXXXXXXXXXXXXXXXXXX"
 export GOOGLE_WALLET_CLASS_SUFFIX="XXXXXXXXXXXXXXXXX"
 export GOOGLE_WALLET_APPLICATION_CREDENTIALS="/path/to/credentials.json" # remember to allow read perms
