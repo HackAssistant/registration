@@ -28,7 +28,7 @@
 
 ## Setup
 
-Needs: Python 3.X (), virtualenv
+Needs: Python 3.X, virtualenv
 
 Stable at v. 3.8.10
 
@@ -82,7 +82,7 @@ You can replace the email backend easily. See more [here](https://djangopackages
 - **CAS_SERVER**(optional): Enables login for other platforms
 - **GOOGLE_WALLET_APPLICATION_CREDENTIALS**(optional): The path to the json key file containing all google-related API credentials
 - **GOOGLE_WALLET_ISSUER_ID**(optional): The issuer ID of Google Wallet Pass API
-- **GOOGLE_WALLET_CLASS_SUFFIX**(optional): The name of the class created at the []()
+- **GOOGLE_WALLET_CLASS_SUFFIX**(optional): The name of the class created at the [Google Wallet Console](https://pay.google.com/business/console/passes/)
 
 
 
@@ -371,7 +371,6 @@ If you need extra labels for your hackathon, you can change the model and add yo
    - `python manage.py migrate`
 
 
-####
 
 # Want to Contribute?
 Read these [guidelines](.github/CONTRIBUTING.md) carefully.
