@@ -42,7 +42,7 @@ Stable at v. 3.8.10
 
 ### FAQ
 **The library backports.zoneinfo fails to install**
-If you are experiencing an error similar to this one: 
+If you are experiencing an error similar to this one:
 
 ``
 ERROR: Could not build wheels for backports.zoneinfo, which is required to install pyproject.toml-based projects
@@ -202,7 +202,7 @@ Note that to test locally you will need to add a line where `DOMAIN` is `localho
 
 #### Set up Google Wallet Pass API
 1. Sign up for a Google Wallet API Issuer account. [Click here](https://pay.google.com/business/console)
-2. Enable the Wallet API 
+2. Enable the Wallet API
     - Sign into the [Google Cloud Platform](https://console.cloud.google.com/) and enable the Google Wallet API for your GCP project.
     - If you don’t already have a GCP project, create one.
     - Enable the [Google Wallet API](https://console.cloud.google.com/apis/library/walletobjects.googleapis.com).
@@ -366,7 +366,7 @@ You can change the form, titles, texts in [applications/forms.py](applications/f
 #### Update application model
 If you need extra labels for your hackathon, you can change the model and add your own fields.
 
-   - Update model with specific fields: [applications/models.py](applications/models.py)
+   - Update model with specific fields: [applications/models.py](applications/models_old.py)
    - `python manage.py makemigrations`
    - `python manage.py migrate`
 
