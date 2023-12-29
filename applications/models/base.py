@@ -17,7 +17,7 @@ from app import utils, hackathon_variables
 from user.models import User, BlacklistUser
 from user import models as userModels
 from applications.validators import validate_file_extension
-from .CONSTANTS import *
+from .constants import *
 
 
 def resume_path_hackers(instance, filename):
