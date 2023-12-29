@@ -1,11 +1,8 @@
 from .base import *
-#from .base import _HackerMentorApplication, _HackerMentorVolunteerApplication, _VolunteerMentorApplication, _VolunteerMentorSponsorApplication
+
+
 class MentorApplication(
     BaseApplication,
- #   _HackerMentorApplication,
- #   _HackerMentorVolunteerApplication,
- #   _VolunteerMentorApplication,
- #   _VolunteerMentorSponsorApplication
 ):
 
     attendance = MultiSelectField(choices=ATTENDANCE)

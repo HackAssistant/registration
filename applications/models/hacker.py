@@ -1,11 +1,9 @@
 from .base import *
 from .base import BaseApplication
-#from .rest import _HackerMentorApplication, _HackerMentorVolunteerApplication
+
 
 class HackerApplication(
     BaseApplication
-   # _HackerMentorVolunteerApplication,
-   # _HackerMentorApplication
 ):
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
@@ -126,7 +124,6 @@ class HackerApplication(
     def can_be_edit(self, app_type="H"):
         return self.status in [APP_PENDING, APP_DUBIOUS, APP_INVITED] and not self.vote_set.exists() and not \
             utils.is_app_closed(app_type)
-
 
 
 class AcceptedResume(models.Model):

@@ -1,4 +1,6 @@
 from .base import *
+
+
 class SponsorApplication(models.Model):
     attendance = MultiSelectField(choices=ATTENDANCE)
 
