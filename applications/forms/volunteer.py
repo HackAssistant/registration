@@ -74,7 +74,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
                 {"name": "night_shifts", "space": 12},
                 {"name": "tshirt_size", "space": 12},
             ],
-            "description": "Don’t panic! There are just a few more questions ",'
+            "description": "Don’t panic! There are just a few more questions ",
         },
         "Personal Interests": {
             "fields": [
@@ -174,7 +174,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
             "cool_skill": "The 3 most original will have a small prize to be given at the 2nd volunteer meeting ",
             "friends": "Remember that you all have to apply separately",
             "origin": "This is for demographic purposes",
-            "volunteer_motivation": "It can be a short answer, we are just curious 😛",'
+            "volunteer_motivation": "It can be a short answer, we are just curious 😛",
         }
 
         widgets = {

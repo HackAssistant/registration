@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from django.conf import settings
 from applications.models.hacker import *
-from applications.models.sponsor import  *
+from applications.models.sponsor import *
 from applications.models.mentor import *
 from applications.models.volunteer import *
 from user.models import User
