@@ -19,16 +19,9 @@ from user import models as userModels
 from applications.validators import validate_file_extension
 
 from .base import *
-#from .base import _VolunteerMentorSponsorApplication, _VolunteerMentorApplication, _HackerMentorVolunteerApplication
 
 
-class VolunteerApplication(
-    BaseApplication
-#    _VolunteerMentorSponsorApplication,
-#    _VolunteerMentorApplication,
-#    _HackerMentorVolunteerApplication
-):
-
+class VolunteerApplication(BaseApplication):
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
 
@@ -36,13 +29,12 @@ class VolunteerApplication(
     first_timer = models.BooleanField(default=False)
 
     # Random lenny face
-    lennyface = models.CharField(max_length=300, default='-.-')
+    lennyface = models.CharField(max_length=300, default="-.-")
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
-
 
     attendance = MultiSelectField(choices=ATTENDANCE)
 
@@ -61,4 +53,6 @@ class VolunteerApplication(
     volunteer_motivation = models.CharField(max_length=500)
 
     def can_be_edit(self, app_type="V"):
-        return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(app_type)
+        return self.status in [APP_PENDING, APP_DUBIOUS] and not utils.is_app_closed(
+            app_type
+        )

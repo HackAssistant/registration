@@ -366,7 +366,7 @@ You can change the form, titles, texts in [applications/forms.py](applications/f
 #### Update application model
 If you need extra labels for your hackathon, you can change the model and add your own fields.
 
-   - Update model with specific fields: [applications/models.py](applications/models_old.py)
+   - Create a file inside the application/models folder, and update the model with specific fields (see already created examples): [applications/models.py](applications/models/__init__.py)
    - `python manage.py makemigrations`
    - `python manage.py migrate`
 

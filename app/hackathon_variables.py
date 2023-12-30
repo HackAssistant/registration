@@ -44,7 +44,7 @@ HACKATHON_APP_DEADLINE = timezone.datetime(2023, 5, 3, 23, 59, tzinfo=timezone.p
 VOLUNTEER_APP_DEADLINE = timezone.datetime(2023, 5, 9, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 MENTOR_APP_DEADLINE = timezone.datetime(2023, 5, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) Online checkin activated
-ONLINE_CHECKIN = timezone.datetime(2023, 4, 29, 17, 00, tzinfo=timezone.pytz.timezone(TIME_ZONE))
+ONLINE_CHECKIN = timezone.datetime(2022, 4, 29, 17, 00, tzinfo=timezone.pytz.timezone(TIME_ZONE))
 # (OPTIONAL) When to arrive at the hackathon
 HACKATHON_ARRIVE = ''
 
