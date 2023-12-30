@@ -190,30 +190,34 @@ class HackerApplicationForm(_BaseApplicationForm):
         deadline = getattr(settings, "REIMBURSEMENT_DEADLINE", False)
         r_enabled = getattr(settings, "REIMBURSEMENT_ENABLED", False)
         personal_info_fields.append({"name": "origin", "space": 12})
-        # if (
-        #     r_enabled
-        #     and deadline
-        #     and deadline <= timezone.now()
-        #     and not self.instance.pk
-        # ):
+        if (
+            r_enabled
+            and deadline
+            and deadline <= timezone.now()
+            and not self.instance.pk
+        ):
+            fields["Traveling"] = {
+                "fields": [],
+                "description": "Reimbursement applications are now closed. "
+                "Sorry for the inconvenience.",
+            }
             
-        #     "description": "Reimbursement applications are now closed. "
-        #         "Sorry for the inconvenience.",
+        elif self.instance.pk and r_enabled: 
+            fields["Traveling"] = {
+                "fields": [],
+                
+                "description": "If you applied for reimbursement, check out the Travel tab. "
+                "Email us at %s for any change needed on reimbursements."
+                % settings.HACKATHON_CONTACT_EMAIL,
+            }
             
-        # elif self.instance.pk and r_enabled: 
-            
-        #         "description": "If you applied for reimbursement, check out the Travel tab. "
-        #         "Email us at %s for any change needed on reimbursements."
-        #         % settings.HACKATHON_CONTACT_EMAIL,
-            
-        #     elif not r_enabled:
-        # else:
-        #     fields["Traveling"] = {
-        #         "fields": [
-        #             {"name": "reimb", "space": 12},
-        #             {"name": "reimb_amount", "space": 12},
-        #         ],
-        #     }
+        else:
+            fields["Traveling"] = {
+                    "fields": [
+                    {"name": "reimb", "space": 12},
+                    {"name": "reimb_amount", "space": 12},
+                ],
+            }
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
