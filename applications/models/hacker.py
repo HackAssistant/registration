@@ -28,6 +28,8 @@ class HackerApplication(
     # Hacker will assist face-to-face or online
     online = models.BooleanField(default=False)
 
+    # Where did the hacker discover us?
+    discover = models.IntegerField(default=False)
 
     # Explain a little bit what projects have you done lately
     projects = models.TextField(max_length=500, blank=True, null=True)

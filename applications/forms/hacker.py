@@ -11,7 +11,6 @@ class HackerApplicationForm(_BaseApplicationForm):
                 {"name": "graduation_year", "space": 12},
                 {"name": "gender", "space": 12},
                 {"name": "other_gender", "space": 12},
-                {"name": "phone_number", "space": 12},
                 {"name": "tshirt_size", "space": 12},
                 {"name": "under_age", "space": 12},
                 {"name": "lennyface", "space": 12},
@@ -38,22 +37,12 @@ class HackerApplicationForm(_BaseApplicationForm):
         },
     }
 
-    github = social_media_field("github", "https://github.com/johnBiene")
-    devpost = social_media_field("devpost", "https://devpost.com/JohnBiene")
-    linkedin = social_media_field("linkedin", "https://www.linkedin.com/in/john_biene")
+    github = social_media_field("github", "https://github.com/biene")
+    devpost = social_media_field("devpost", "https://devpost.com/biene")
+    linkedin = social_media_field("linkedin", "https://www.linkedin.com/in/biene")
     site = social_media_field("site", "https://biene.space")
 
     online = common_online()
-
-    def clean_resume(self):
-        resume = self.cleaned_data["resume"]
-        size = getattr(resume, "_size", 0)
-        if size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError(
-                "Please keep resume size under %s. Current filesize %s"
-                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
-            )
-        return resume
 
     def clean_github(self):
         data = self.cleaned_data["github"]
@@ -178,7 +167,6 @@ class HackerApplicationForm(_BaseApplicationForm):
         fields = super().get_bootstrap_field_info()
         # Fieldsets ordered and with description
         discord = getattr(settings, "DISCORD_HACKATHON", False)
-        hardware = getattr(settings, "HARDWARE_ENABLED", False)
         hybrid = getattr(settings, "HYBRID_HACKATHON", False)
         personal_info_fields = fields["Personal Info"]["fields"]
         personal_info_fields.append({"name": "online", "space": 12})
@@ -197,46 +185,35 @@ class HackerApplicationForm(_BaseApplicationForm):
                 ]
             )
             polices_fields.append({"name": "diet_notice", "space": 12})
-        if hardware:
-            personal_info_fields.append({"name": "hardware", "space": 12})
+
+        personal_info_fields.append({"name": "discover", "space": 12})
         deadline = getattr(settings, "REIMBURSEMENT_DEADLINE", False)
         r_enabled = getattr(settings, "REIMBURSEMENT_ENABLED", False)
-        if (
-            r_enabled
-            and deadline
-            and deadline <= timezone.now()
-            and not self.instance.pk
-        ):
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                ],
-                "description": "Reimbursement applications are now closed. "
-                "Sorry for the inconvenience.",
-            }
-        elif self.instance.pk and r_enabled:
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                ],
-                "description": "If you applied for reimbursement, check out the Travel tab. "
-                "Email us at %s for any change needed on reimbursements."
-                % settings.HACKATHON_CONTACT_EMAIL,
-            }
-        elif not r_enabled:
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                ],
-            }
-        else:
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                    {"name": "reimb", "space": 12},
-                    {"name": "reimb_amount", "space": 12},
-                ],
-            }
+        personal_info_fields.append({"name": "origin", "space": 12})
+        # if (
+        #     r_enabled
+        #     and deadline
+        #     and deadline <= timezone.now()
+        #     and not self.instance.pk
+        # ):
+            
+        #     "description": "Reimbursement applications are now closed. "
+        #         "Sorry for the inconvenience.",
+            
+        # elif self.instance.pk and r_enabled: 
+            
+        #         "description": "If you applied for reimbursement, check out the Travel tab. "
+        #         "Email us at %s for any change needed on reimbursements."
+        #         % settings.HACKATHON_CONTACT_EMAIL,
+            
+        #     elif not r_enabled:
+        # else:
+        #     fields["Traveling"] = {
+        #         "fields": [
+        #             {"name": "reimb", "space": 12},
+        #             {"name": "reimb_amount", "space": 12},
+        #         ],
+        #     }
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -267,8 +244,6 @@ class HackerApplicationForm(_BaseApplicationForm):
             "other_diet": "Please fill here in your dietary requirements. We want to make sure we have food for you!",
             "lennyface": 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
             " http://textsmili.es/</a>",
-            "hardware": "Any hardware that you would like us to have. We can't promise anything, "
-            "but at least we'll try!",
             "projects": "You can talk about about past hackathons, personal projects, awards etc. "
             "(we love links) Show us your passion! :D",
             "reimb_amount": "We try our best to cover costs for all hackers, but our budget is limited",
@@ -278,21 +253,33 @@ class HackerApplicationForm(_BaseApplicationForm):
             " type following this schema: <strong>city, nation, country</strong>",
         }
 
+        discover_choices = (
+            (1, "HackUPC's social media"),
+            (2, "Through your university (social media, emails...)"),
+            (3, "Friends"),
+            (4, "Posters"),
+            (5, "Other hackathons"),
+            (6, "Online ads"),
+            (7, "Past editions"),
+            (8, "Other"),
+        )
+
         widgets = {
             "origin": forms.TextInput(attrs={"autocomplete": "off"}),
             "description": forms.Textarea(attrs={"rows": 3, "cols": 40}),
             "projects": forms.Textarea(attrs={"rows": 3, "cols": 40}),
+            "discover": forms.Select(choices=discover_choices),
             "graduation_year": forms.RadioSelect(),
         }
 
         labels = {
             "gender": "What gender do you identify as?",
             "other_gender": "Self-describe",
-            "graduation_year": "What year will you graduate?",
+            "graduation_year": "What year are you expecting to graduate?",
             "tshirt_size": "What's your t-shirt size?",
             "diet": "Dietary requirements",
-            "lennyface": 'Describe yourself in one "lenny face"?',
-            "hardware": "Hardware you would like us to have",
+            "lennyface": 'Describe yourself with a "lenny face":',
+            "discover": "How did you hear about us?",
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,
             "projects": "What projects have you worked on?",
