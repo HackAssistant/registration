@@ -1,0 +1,40 @@
+version: '3'
+
+networks:
+  common-net: {}
+
+services:
+    web:
+        build: .
+        ports:
+            - "8000:8000"  # Map Gunicorn port
+        env_file:
+            - .env
+        depends_on:
+            db:
+                condition: service_healthy
+        command: >
+            sh -c "python manage.py migrate &&
+            gunicorn --bind :8000 --workers 3 app.wsgi"
+            # Apply migrations and then start the application
+#        networks:
+#            - common-net
+    db:
+        image: postgres:alpine
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        env_file:
+            -  .env
+        ports:
+            - "5432:5432"
+        expose:
+            - "5432"
+#        networks:
+#            - common-net
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+volumes:
+    postgres_data:
