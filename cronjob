@@ -1,0 +1,4 @@
+# Run expire applications job at 6 minutes past the hour, every 2 hours
+6 */2 * * * root /usr/local/bin/python manage.py expire_applications
+# Run expire reimbursements job at 6 minutes past the hour, every 2 hours
+36 */2 * * * root /usr/local/bin/python manage.py expire_reimbursements
