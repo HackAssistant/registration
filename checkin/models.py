@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 
-from applications.models import APP_CONFIRMED, APP_ATTENDED
+from applications.models.constants import APP_CONFIRMED, APP_ATTENDED
 from offer.models import Code
 from user.models import User
 
