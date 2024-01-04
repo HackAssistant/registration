@@ -1,0 +1,8 @@
+db.sqlite3
+staticfiles
+*.template
+.env
+env
+.github
+.circleci
+tmp
