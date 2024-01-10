@@ -37,7 +37,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
         widget=forms.RadioSelect,
     )
     night_shifts = forms.TypedChoiceField(
-        required=False,
+        required=True,
         label="¿Estarías de acuerdo en irte a dormir más tarde de las 00h?",
         coerce=lambda x: x == "True",
         choices=((False, "No"), (True, "Sí"), (None, "Puede ser")),
@@ -49,13 +49,14 @@ class VolunteerApplicationForm(_BaseApplicationForm):
     hear_about_us = forms.TypedChoiceField(
         required=True,
         label="¿Cómo nos has conocido?",
-        coerce=lambda x: x == "True",
-        choices=(("Posters", "Posters"), ("Redes Sociales", "Redes Sociales"), ("Mesas en el bar de la FIB","Mesas en el bar de la FIB"),("Whatsapp, amigos u otras personas","Whatsapp, amigos u otras personas"), ("Web", "Web"), ("Otros", "Otros")),
+        choices=models.HEARABOUTUS_ES,
         widget=forms.RadioSelect,
     )
+
     university = forms.CharField(
         initial="NA", widget=forms.HiddenInput(), required=False
     )
+
     degree = forms.CharField(initial="NA", widget=forms.HiddenInput(), required=False)
 
     terms_and_conditions = forms.BooleanField(
@@ -129,6 +130,9 @@ class VolunteerApplicationForm(_BaseApplicationForm):
         return super(VolunteerApplicationForm, self).clean()
 
 
+    def volunteer(self):
+        return True
+
     def clean_reimb_amount(self):
         data = self.cleaned_data["reimb_amount"]
         reimb = self.cleaned_data.get("reimb", False)
@@ -159,7 +163,6 @@ class VolunteerApplicationForm(_BaseApplicationForm):
         polices_fields = [
             {"name": "terms_and_conditions", "space": 12},
             {"name": "email_subscribe", "space": 12},
-            {"name": "diet_notice", "space": 12}
         ]
         if not discord:
             other_fields.extend(

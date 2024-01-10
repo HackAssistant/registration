@@ -40,6 +40,16 @@ ATTENDANCE_ES = [
     (2, "Domingo")
 ]
 
+HEARABOUTUS_ES = [
+("Posters", "Posters"),
+("Redes Sociales", "Redes Sociales"),
+("Mesas en el bar de la FIB","Mesas en el bar de la FIB"),
+("Whatsapp, amigos u otras personas","Whatsapp, amigos u otras personas"),
+("Web", "Web"),
+("Otros", "Otros")
+]
+
+
 DIETS_ES = [
     (D_NONE, 'Sin requerimientos'),
     (D_VEGETERIAN, 'Vegetariano'),
@@ -65,7 +75,7 @@ class VolunteerApplication(BaseApplication):
     lennyface = models.CharField(max_length=300, default="-.-")
 
     #About us
-    hear_about_us = models.CharField(max_length=300, default="")
+    hear_about_us = models.CharField(max_length=300, choices=HEARABOUTUS_ES, default="")
 
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
