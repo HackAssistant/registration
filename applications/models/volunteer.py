@@ -20,8 +20,41 @@ from applications.validators import validate_file_extension
 
 from .base import *
 
+GENDERS_ES = [
+    (NO_ANSWER, 'Prefiero no responder'),
+    (MALE, 'Hombre'),
+    (FEMALE, 'Mujer'),
+    (NON_BINARY, 'No binario'),
+    (GENDER_OTHER, 'Prefiero describirme'),
+]
+
+LENGUAGUES_ES = [
+("Spanish", "Español"),
+("Catalan", "Catalán"),
+("English", "Inglés")
+]
+
+ATTENDANCE_ES = [
+    (0, "Viernes"),
+    (1, "Sábado"),
+    (2, "Domingo")
+]
+
+DIETS_ES = [
+    (D_NONE, 'Sin requerimientos'),
+    (D_VEGETERIAN, 'Vegetariano'),
+    (D_VEGAN, 'Vegano'),
+    (D_GLUTEN_FREE, 'Sin gluten'),
+    (D_OTHER, 'Otros')
+]
 
 class VolunteerApplication(BaseApplication):
+
+    # gender
+    gender = models.CharField(max_length=23, choices=GENDERS_ES, default=NO_ANSWER)
+
+    # diet
+    diet = models.CharField(max_length=300, choices=DIETS_ES, default=D_NONE)
     # Where is this person coming from?
     origin = models.CharField(max_length=300)
 
@@ -31,15 +64,18 @@ class VolunteerApplication(BaseApplication):
     # Random lenny face
     lennyface = models.CharField(max_length=300, default="-.-")
 
+    #About us
+    hear_about_us = models.CharField(max_length=300, default="")
+
     # University
     graduation_year = models.IntegerField(choices=YEARS, default=DEFAULT_YEAR)
     university = models.CharField(max_length=300)
     degree = models.CharField(max_length=300)
 
-    attendance = MultiSelectField(choices=ATTENDANCE)
+    attendance = MultiSelectField(choices=ATTENDANCE_ES)
 
-    english_level = models.IntegerField(default=0, null=False, choices=ENGLISH_LEVEL)
-    which_hack = MultiSelectField(choices=PREVIOUS_HACKS, null=True, blank=True)
+    languages = MultiSelectField(choices=LENGUAGUES_ES)
+    which_hack = MultiSelectField(choices=PREVIOUS_HACKS)
 
     cool_skill = models.CharField(max_length=100, null=False)
     first_time_volunteer = models.BooleanField()
