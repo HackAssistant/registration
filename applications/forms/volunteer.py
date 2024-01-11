@@ -23,7 +23,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
         widget=forms.RadioSelect,
     )
     which_hack = forms.MultipleChoiceField(
-        required=True,
+        required=False,
         label="¿En qué ediciones de %s has participado como voluntari@?" % settings.HACKATHON_NAME,
         widget=forms.CheckboxSelectMultiple,
         choices=models.PREVIOUS_HACKS,
@@ -122,9 +122,9 @@ class VolunteerApplicationForm(_BaseApplicationForm):
     }
 
     def clean(self):
-        data = self.cleaned_data["which_hack"]
         volunteer = self.cleaned_data["first_time_volunteer"]
-        if not volunteer and not data:
+        if not volunteer:
+            data = self.cleaned_data["which_hack"]
             self.add_error("which_hack", "Choose the hackathons you volunteered")
 
         return super(VolunteerApplicationForm, self).clean()
