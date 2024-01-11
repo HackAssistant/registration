@@ -1,13 +1,12 @@
 version: '3'
 
-networks:
-  common-net: {}
-
 services:
     web:
         build: .
         ports:
-            - "8000:8000"  # Map Gunicorn port
+            - "${MYHACKUPC_PORT}:8000"  # Map Gunicorn port
+        expose:
+            - "${MYHACKUPC_PORT}"
         env_file:
             - .env
         depends_on:
@@ -17,8 +16,6 @@ services:
             sh -c "python manage.py migrate &&
             gunicorn --bind :8000 --workers 3 app.wsgi"
             # Apply migrations and then start the application
-#        networks:
-#            - common-net
     db:
         image: postgres:alpine
         volumes:
@@ -26,11 +23,9 @@ services:
         env_file:
             -  .env
         ports:
-            - "5432:5432"
+            - "${POSTGRES_PORT}:5432"
         expose:
-            - "5432"
-#        networks:
-#            - common-net
+            - "${POSTGRES_PORT}"
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
             interval: 10s

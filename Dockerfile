@@ -34,8 +34,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=biene:biene . code
 WORKDIR /code
 
-EXPOSE 8000
-
 # Generate static files in the container
 RUN python manage.py collectstatic --noinput
 
