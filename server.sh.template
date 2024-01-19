@@ -12,4 +12,13 @@ export SL_TEAM="test-team"
 # Domain where running
 export DOMAIN="my.hackupc.com"
 
+
+# These credentials need to be set up if you have enabled GOOGLE_WALLET_ENABLED inside app/settings.py
+# Read the README to know how to get them
+export GOOGLE_WALLET_ISSUER_ID="XXXXXXXXXXXXXXXXXXX"
+export GOOGLE_WALLET_CLASS_SUFFIX="XXXXXXXXXXXXXXXXX"
+export GOOGLE_WALLET_APPLICATION_CREDENTIALS="/path/to/credentials.json" # remember to allow read perms
+
+
+
 ./env/bin/gunicorn --workers 3 --log-file=gunicorn.log --bind unix:backend.sock app.wsgi:application

@@ -63,7 +63,6 @@ def check_client_ip(view_func):
         if request.method == 'POST':
             client_ip = get_client_ip(request)
             request_time = timezone.now()
-            print(request_time)
             try:
                 login_request = LoginRequest.objects.get(ip=client_ip)
                 latest_request = login_request.get_latest_request()

@@ -27,6 +27,10 @@ from organizers.views import _OtherApplicationsListView
 from user.mixins import IsHackerMixin, is_hacker, IsSponsorMixin, DashboardMixin
 from user import models as userModels
 
+from django.conf import settings
+
+from app.utils import generateGTicketUrl, isset
+
 VIEW_APPLICATION_TYPE = {
     userModels.USR_HACKER: models.HackerApplication,
     userModels.USR_VOLUNTEER: models.VolunteerApplication,
@@ -42,9 +46,15 @@ VIEW_APPLICATION_FORM_TYPE = {
 
 def check_application_exists(user, uuid):
     try:
-        application = VIEW_APPLICATION_TYPE.get(user.type, models.HackerApplication).objects.get(user=user)
-    except (models.HackerApplication.DoesNotExist or models.VolunteerApplication.DoesNotExist or
-            models.SponsorApplication.DoesNotExist or models.MentorApplication.DoesNotExist):
+        application = VIEW_APPLICATION_TYPE.get(
+            user.type, models.HackerApplication
+        ).objects.get(user=user)
+    except (
+        models.HackerApplication.DoesNotExist
+        or models.VolunteerApplication.DoesNotExist
+        or models.SponsorApplication.DoesNotExist
+        or models.MentorApplication.DoesNotExist
+    ):
         raise Http404
     if not application or uuid != application.uuid_str:
         raise Http404
@@ -52,11 +62,13 @@ def check_application_exists(user, uuid):
 
 class ConfirmApplication(IsHackerMixin, UserPassesTestMixin, View):
     def test_func(self):
-        check_application_exists(self.request.user, self.kwargs.get('id', None))
+        check_application_exists(self.request.user, self.kwargs.get("id", None))
         return True
 
     def get(self, request, *args, **kwargs):
-        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        Application = VIEW_APPLICATION_TYPE.get(
+            self.request.user.type, models.HackerApplication
+        )
         application = Application.objects.get(user=request.user)
         msg = None
         if application.can_confirm():
@@ -74,41 +86,54 @@ class ConfirmApplication(IsHackerMixin, UserPassesTestMixin, View):
             except SlackInvitationException as e:
                 logging.error(e)
 
-        return http.HttpResponseRedirect(reverse('dashboard'))
+        return http.HttpResponseRedirect(reverse("dashboard"))
 
 
 class CancelApplication(IsHackerMixin, UserPassesTestMixin, TabsView):
-    template_name = 'cancel.html'
+    template_name = "cancel.html"
 
     def test_func(self):
-        check_application_exists(self.request.user, self.kwargs.get('id', None))
+        check_application_exists(self.request.user, self.kwargs.get("id", None))
         return True
 
     def get_back_url(self):
-        return reverse('dashboard')
+        return reverse("dashboard")
 
     def get_context_data(self, **kwargs):
         context = super(CancelApplication, self).get_context_data(**kwargs)
 
-        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        Application = VIEW_APPLICATION_TYPE.get(
+            self.request.user.type, models.HackerApplication
+        )
 
         application = Application.objects.get(user=self.request.user)
-        context.update({'application': application, })
+        context.update(
+            {
+                "application": application,
+            }
+        )
         if application.status == models.APP_CANCELLED:
-            context.update({'error': "Thank you for responding. We're sorry you won't be able to make it."
-                                     " Hope to see you next edition!"
-                            })
+            context.update(
+                {
+                    "error": "Thank you for responding. We're sorry you won't be able to make it."
+                    " Hope to see you next edition!"
+                }
+            )
         elif application.status == models.APP_EXPIRED:
-            context.update({'error': "Unfortunately your invite has expired."})
+            context.update({"error": "Unfortunately your invite has expired."})
         elif not application.can_be_cancelled():
-            context.update({
-                'error': "You found a glitch! You can't cancel this invitation. Is this the question for 42?",
-                'application': None
-            })
+            context.update(
+                {
+                    "error": "You found a glitch! You can't cancel this invitation. Is this the question for 42?",
+                    "application": None,
+                }
+            )
         return context
 
     def post(self, request, *args, **kwargs):
-        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
+        Application = VIEW_APPLICATION_TYPE.get(
+            self.request.user.type, models.HackerApplication
+        )
 
         application = Application.objects.get(user=self.request.user)
         try:
@@ -116,7 +141,7 @@ class CancelApplication(IsHackerMixin, UserPassesTestMixin, TabsView):
         except ValidationError:
             pass
 
-        return http.HttpResponseRedirect(reverse('dashboard'))
+        return http.HttpResponseRedirect(reverse("dashboard"))
 
 
 def get_deadline(application):
@@ -129,29 +154,58 @@ def get_deadline(application):
 
 
 class HackerDashboard(DashboardMixin, TabsView):
-    template_name = 'dashboard.html'
+    template_name = "dashboard.html"
 
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(HackerDashboard, self).get_context_data(**kwargs)
-        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
-        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
+        Application = VIEW_APPLICATION_TYPE.get(
+            self.request.user.type, models.HackerApplication
+        )
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(
+            self.request.user.type, forms.HackerApplicationForm
+        )
         try:
             draft = models.DraftApplication.objects.get(user=self.request.user)
             dict = draft.get_dict()
-            app = Application({'dict': dict})
+            app = Application({"dict": dict})
             form = ApplicationForm(instance=app)
         except Exception:
             form = ApplicationForm()
-        context.update({'form': form, 'is_hacker': self.request.user.is_hacker(), 'app_type': self.request.user.type})
+        context.update(
+            {
+                "form": form,
+                "is_hacker": self.request.user.is_hacker(),
+                "app_type": self.request.user.type,
+            }
+        )
         try:
             application = Application.objects.get(user=self.request.user)
             deadline = get_deadline(application)
-            context.update({'invite_timeleft': deadline - timezone.now(), 'application': application})
+            context.update(
+                {
+                    "invite_timeleft": deadline - timezone.now(),
+                    "application": application,
+                }
+            )
             if self.request.user.type == userModels.USR_HACKER:
-                context.update({'confirm_form': forms.ConfirmationInvitationForm(instance=application)})
+                context.update(
+                    {
+                        "confirm_form": forms.ConfirmationInvitationForm(
+                            instance=application
+                        )
+                    }
+                )
+            # Google Wallet Pass API
+            context.update({"gwallet_enabled": settings.GOOGLE_WALLET_ENABLED})
+            if isset(application) and application.status == models.APP_CONFIRMED and settings.GOOGLE_WALLET_ENABLED:
+                # Google Wallet Pass API
+                context.update({"gwallet_enabled": settings.GOOGLE_WALLET_ENABLED})
+                if application.status == models.APP_CONFIRMED and settings.GOOGLE_WALLET_ENABLED:
+                    context.update({"gwalleturl": generateGTicketUrl(application.uuid_str)})
+                    # generate a google pay ticket entrance with a QR code
         except Exception:
             # We ignore this as we are okay if the user has not created an application yet
             pass
@@ -159,19 +213,23 @@ class HackerDashboard(DashboardMixin, TabsView):
         return context
 
     def post(self, request, *args, **kwargs):
-        action = self.request.POST.get('action', None)
-        if action == 'confirm' and request.user.application is not None:
+        action = self.request.POST.get("action", None)
+        if action == "confirm" and request.user.application is not None:
             return self.confirm_application(request, request.user.application)
-        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(
+            self.request.user.type, forms.HackerApplicationForm
+        )
 
         new_application = True
         try:
-            form = ApplicationForm(request.POST, request.FILES, instance=request.user.application)
+            form = ApplicationForm(
+                request.POST, request.FILES, instance=request.user.application
+            )
             new_application = False
         except Exception:
             form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
-            email_subscribe = form.cleaned_data.get('email_subscribe', False)
+            email_subscribe = form.cleaned_data.get("email_subscribe", False)
             application = form.save(commit=False)
             application.user = request.user
             application.save()
@@ -179,36 +237,38 @@ class HackerDashboard(DashboardMixin, TabsView):
                 application.user.email_subscribed = email_subscribe
                 application.user.save()
             if new_application:
-                messages.success(request,
-                                 'We have now received your application. '
-                                 'Processing your application will take some time, so please be patient.')
+                messages.success(
+                    request,
+                    "We have now received your application. "
+                    "Processing your application will take some time, so please be patient.",
+                )
             else:
-                messages.success(request, 'Application changes saved successfully!')
+                messages.success(request, "Application changes saved successfully!")
             if user_is_in_blacklist(application.user):
                 application.set_blacklist()
 
-            return HttpResponseRedirect(reverse('root'))
+            return HttpResponseRedirect(reverse("root"))
         else:
             c = self.get_context_data()
-            c.update({'form': form})
+            c.update({"form": form})
             return render(request, self.template_name, c)
 
     def confirm_application(self, request, application):
         if request.user.type != userModels.USR_HACKER:
-            return redirect(reverse('confirm_app', kwargs={'id': application.uuid_str}))
+            return redirect(reverse("confirm_app", kwargs={"id": application.uuid_str}))
         form = forms.ConfirmationInvitationForm(request.POST, instance=application)
         if form.is_valid():
-            request.user.mlh_subscribed = form.cleaned_data.get('mlh_subscribe', False)
+            request.user.mlh_subscribed = form.cleaned_data.get("mlh_subscribe", False)
             form.save()
             request.user.save()
-            return redirect(reverse('confirm_app', kwargs={'id': application.uuid_str}))
+            return redirect(reverse("confirm_app", kwargs={"id": application.uuid_str}))
         c = self.get_context_data()
-        c.update({'confirm_form': form})
+        c.update({"confirm_form": form})
         return render(request, self.template_name, c)
 
 
 class HackerApplication(IsHackerMixin, TabsView):
-    template_name = 'application.html'
+    template_name = "application.html"
 
     def get_current_tabs(self):
         return hacker_tabs(self.request.user)
@@ -216,8 +276,12 @@ class HackerApplication(IsHackerMixin, TabsView):
     def get_context_data(self, **kwargs):
         context = super(HackerApplication, self).get_context_data(**kwargs)
 
-        Application = VIEW_APPLICATION_TYPE.get(self.request.user.type, models.HackerApplication)
-        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
+        Application = VIEW_APPLICATION_TYPE.get(
+            self.request.user.type, models.HackerApplication
+        )
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(
+            self.request.user.type, forms.HackerApplicationForm
+        )
 
         application = get_object_or_404(Application, user=self.request.user)
         deadline = get_deadline(application)
@@ -225,15 +289,23 @@ class HackerApplication(IsHackerMixin, TabsView):
         if not application.can_be_edit(app_type=self.request.user.type):
             form.set_read_only()
         context.update(
-            {'invite_timeleft': deadline - timezone.now(), 'form': form, 'is_hacker': self.request.user.is_hacker(),
-             'app_type': self.request.user.type})
+            {
+                "invite_timeleft": deadline - timezone.now(),
+                "form": form,
+                "is_hacker": self.request.user.is_hacker(),
+                "app_type": self.request.user.type,
+            }
+        )
         return context
 
     def post(self, request, *args, **kwargs):
-        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(self.request.user.type, forms.HackerApplicationForm)
+        ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(
+            self.request.user.type, forms.HackerApplicationForm
+        )
         try:
-            form = ApplicationForm(request.POST, request.FILES,
-                                   instance=request.user.application)
+            form = ApplicationForm(
+                request.POST, request.FILES, instance=request.user.application
+            )
         except Exception:
             form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -241,26 +313,26 @@ class HackerApplication(IsHackerMixin, TabsView):
             application.user = request.user
             application.save()
 
-            messages.success(request, 'Application changes saved successfully!')
+            messages.success(request, "Application changes saved successfully!")
 
-            return HttpResponseRedirect(reverse('application'))
+            return HttpResponseRedirect(reverse("application"))
         else:
             c = self.get_context_data()
-            c.update({'form': form})
+            c.update({"form": form})
             return render(request, self.template_name, c)
 
 
 class SponsorApplicationView(TemplateView):
-    template_name = 'dashboard.html'
+    template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super(SponsorApplicationView, self).get_context_data(**kwargs)
         form = forms.SponsorForm()
-        context.update({'form': form, 'is_sponsor': True})
+        context.update({"form": form, "is_sponsor": True})
         try:
-            uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
+            uid = force_text(urlsafe_base64_decode(self.kwargs.get("uid", None)))
             user = userModels.User.objects.get(pk=uid)
-            context.update({'user': user})
+            context.update({"user": user})
         except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
             pass
 
@@ -268,41 +340,47 @@ class SponsorApplicationView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         try:
-            uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
+            uid = force_text(urlsafe_base64_decode(self.kwargs.get("uid", None)))
             user = userModels.User.objects.get(pk=uid)
             real_token = userModels.Token.objects.get(pk=user).uuid_str()
-            token = self.kwargs.get('token', None)
-        except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist, userModels.Token.DoesNotExist):
-            raise Http404('Invalid url')
+            token = self.kwargs.get("token", None)
+        except (
+            TypeError,
+            ValueError,
+            OverflowError,
+            userModels.User.DoesNotExist,
+            userModels.Token.DoesNotExist,
+        ):
+            raise Http404("Invalid url")
         if token != real_token:
-            raise Http404('Invalid url')
+            raise Http404("Invalid url")
         if not user.has_applications_left()[0]:
-            raise Http404('You have no applications left')
+            raise Http404("You have no applications left")
         return super(SponsorApplicationView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         form = forms.SponsorForm(request.POST, request.FILES)
         try:
-            uid = force_text(urlsafe_base64_decode(self.kwargs.get('uid', None)))
+            uid = force_text(urlsafe_base64_decode(self.kwargs.get("uid", None)))
             user = userModels.User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, userModels.User.DoesNotExist):
-            return Http404('How did you get here?')
+            return Http404("How did you get here?")
         has_applications_left, applied = user.has_applications_left()
         if not has_applications_left:
-            form.add_error(None, 'You have no applications left')
+            form.add_error(None, "You have no applications left")
         elif form.is_valid():
-            name = form.cleaned_data['name']
+            name = form.cleaned_data["name"]
             app = models.SponsorApplication.objects.filter(user=user, name=name).first()
             if app:
-                form.add_error('name', 'This name is already taken. Have you applied?')
+                form.add_error("name", "This name is already taken. Have you applied?")
             else:
                 user.pk = None
                 user.max_applications = 0
                 application = form.save(commit=False)
-                user.password = ''
+                user.password = ""
                 error = True
                 while error:
-                    user.email = ('+%s@' % applied).join(user.email.split('@'))
+                    user.email = ("+%s@" % applied).join(user.email.split("@"))
                     try:
                         user.save()
                         error = False
@@ -310,15 +388,15 @@ class SponsorApplicationView(TemplateView):
                         applied += 1
                 application.user = user
                 application.save()
-                messages.success(request, 'We have now received your application. ')
-                return render(request, 'sponsor_submitted.html')
+                messages.success(request, "We have now received your application. ")
+                return render(request, "sponsor_submitted.html")
         c = self.get_context_data()
-        c.update({'form': form})
+        c.update({"form": form})
         return render(request, self.template_name, c)
 
 
 class ConvertHackerToMentor(TemplateView):
-    template_name = 'convert_mentor.html'
+    template_name = "convert_mentor.html"
 
     def get(self, request, *args, **kwargs):
         if request.user.application.is_invalid():
@@ -329,10 +407,10 @@ class ConvertHackerToMentor(TemplateView):
         if request.user.application.is_invalid():
             request.user.set_mentor()
             request.user.save()
-            messages.success(request, 'Thanks for coming as mentor!')
+            messages.success(request, "Thanks for coming as mentor!")
         else:
-            messages.error(request, 'You have no permissions to do this')
-        return HttpResponseRedirect(reverse('dashboard'))
+            messages.error(request, "You have no permissions to do this")
+        return HttpResponseRedirect(reverse("dashboard"))
 
 
 class SponsorDashboard(IsSponsorMixin, _OtherApplicationsListView):
@@ -347,22 +425,30 @@ class SponsorDashboard(IsSponsorMixin, _OtherApplicationsListView):
 
     def get_context_data(self, **kwargs):
         context = super(SponsorDashboard, self).get_context_data(**kwargs)
-        context['otherApplication'] = True
-        context['emailCopy'] = False
+        context["otherApplication"] = True
+        context["emailCopy"] = False
         return context
 
 
 @is_hacker
 def save_draft(request):
     Application = VIEW_APPLICATION_TYPE.get(request.user.type, models.HackerApplication)
-    ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(request.user.type, forms.HackerApplicationForm)
+    ApplicationForm = VIEW_APPLICATION_FORM_TYPE.get(
+        request.user.type, forms.HackerApplicationForm
+    )
     d = models.DraftApplication()
     d.user = request.user
     form_keys = set(dict(ApplicationForm().fields).keys())
     valid_keys = set([field.name for field in Application()._meta.get_fields()])
-    d.save_dict(dict((k, v) for k, v in request.POST.items() if k in valid_keys.intersection(form_keys) and v))
+    d.save_dict(
+        dict(
+            (k, v)
+            for k, v in request.POST.items()
+            if k in valid_keys.intersection(form_keys) and v
+        )
+    )
     d.save()
-    return JsonResponse({'saved': True})
+    return JsonResponse({"saved": True})
 
 
 def user_is_in_blacklist(user):

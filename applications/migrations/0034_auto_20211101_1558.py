@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='hackerapplication',
             name='resume',
-            field=models.FileField(blank=True, null=True, upload_to=applications.models.resume_path_hackers, validators=[applications.validators.validate_file_extension]),
+            field=models.FileField(blank=True, null=True, upload_to=applications.models.base.resume_path_hackers, validators=[applications.validators.validate_file_extension]),
         ),
         migrations.AlterField(
             model_name='mentorapplication',
             name='resume',
-            field=models.FileField(blank=True, null=True, upload_to=applications.models.resume_path_mentors, validators=[applications.validators.validate_file_extension]),
+            field=models.FileField(blank=True, null=True, upload_to=applications.models.base.resume_path_mentors, validators=[applications.validators.validate_file_extension]),
         ),
     ]
