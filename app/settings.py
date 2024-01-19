@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-GOOGLE_WALLET_ENABLED=True #Set to false to disable google wallet
+GOOGLE_WALLET_ENABLED = False  # Set to false to disable google wallet
 
 if BAGGAGE_ENABLED:
     INSTALLED_APPS.append('baggage')
@@ -200,7 +200,7 @@ if os.environ.get('ADMIN_EMAIL', None):
     try:
         HACKATHON_DEV_EMAILS.append(os.environ['ADMIN_EMAIL'])
     except NameError:
-        HACKATHON_DEV_EMAILS = [os.environ['ADMIN_EMAIL'],]
+        HACKATHON_DEV_EMAILS = [os.environ['ADMIN_EMAIL'], ]
 
 #  File upload configuration
 MEDIA_ROOT = 'files'
@@ -294,9 +294,9 @@ MAX_VOTES = 5
 MAX_VOTES_TO_APP = 30
 
 APPLICATION_EXPIRATION_TYPES = {
-    'H': True,                  # Hacker allways expire, do not change this
-    'M': MENTOR_EXPIRES,        # Mentor can expire
-    'V': VOLUNTEER_EXPIRES,     # Volunteer can expire
+    'H': True,  # Hacker allways expire, do not change this
+    'M': MENTOR_EXPIRES,  # Mentor can expire
+    'V': VOLUNTEER_EXPIRES,  # Volunteer can expire
 }
 
 MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)
