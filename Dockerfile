@@ -1,6 +1,5 @@
 FROM python:3.10-alpine
 
-RUN apk add git
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 
 # set environment variables
