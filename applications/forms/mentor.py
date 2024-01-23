@@ -36,9 +36,11 @@ class MentorApplicationForm(_BaseApplicationForm):
         return data
 
     def clean_linkedin(self):
+        self.fields["linkedin"].required = True,
         data = self.cleaned_data["linkedin"]
         validate_url(data, "linkedin.com")
         return data
+
 
     def clean_projects(self):
         data = self.cleaned_data["projects"]
@@ -221,8 +223,8 @@ class MentorApplicationForm(_BaseApplicationForm):
             "experience": forms.Textarea(attrs={"rows": 2, "cols": 40}),
             "why_mentor": forms.Textarea(attrs={"rows": 2, "cols": 40}),
             "first_timer": forms.HiddenInput(),
-            "resume": forms.HiddenInput(),
             "lennyface": forms.HiddenInput(),
+            "resume": forms.FileInput(),
         }
 
         labels = {
