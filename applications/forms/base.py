@@ -101,8 +101,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
 
     def clean_other_gender(self):
         data = self.cleaned_data['other_gender']
-        gender = self.cleaned_data['gender']
-        if gender == models.GENDER_OTHER and not data:
+        if not data:
             raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
         return data
 
