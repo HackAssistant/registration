@@ -7,7 +7,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
 
     diet = forms.ChoiceField(
         required=True,
-        label='Restricciones alimenticias',
+        label='Restricciones alimentarias',
         choices=models.DIETS_ES,
         help_text="Estas son las diferentes opciones que tenemos. No podemos asegurar que la carne sea hallal."
     )
@@ -38,7 +38,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
     )
     night_shifts = forms.TypedChoiceField(
         required=True,
-        label="¿Estarías de acuerdo en irte a dormir más tarde de las 00h?",
+        label=" ¿Estarias dispuesto a hacer algun turno de noche?",
         coerce=lambda x: x == "True",
         choices=((False, "No"), (True, "Sí"), (None, "Puede ser")),
         help_text="No exigimos a nadie quedarse hasta ninguna hora en particular",
@@ -61,7 +61,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
 
     terms_and_conditions = forms.BooleanField(
         required=False,
-        label='He leído, entensdido y acepto los <a href="/terms_and_conditions" target="_blank">%s '
+        label='He leído, entendido y acepto los <a href="/terms_and_conditions" target="_blank">%s '
               'Términos y Condiciones</a> '
               'y la <a href="/privacy_and_cookies" '
               'target="_blank">%s Política de Privacidad y Cookies'
@@ -73,7 +73,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
 
     diet_notice = forms.BooleanField(
         required=False,
-        label='Autorizo a "Hackers en UPC" a utilizar mi información sobre alergias e intolerancias alimentarias únicamente para gestionar el servicio de catering.<span style="color: red; font-weight: bold;"> *</span>'
+        label='Autorizo a "HackersAtUpc" a utilizar mi información sobre alergias e intolerancias alimentarias únicamente para gestionar el servicio de catering.<span style="color: red; font-weight: bold;"> *</span>'
     )
 
     bootstrap_field_info = {
@@ -225,7 +225,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
             "other_gender": "Me quiero describir",
             "graduation_year": "What year will you graduate?",
             "tshirt_size": "¿Cuál es tu talla de camiseta?",
-            "diet": "Restricciones alimenticias",
+            "diet": "Restricciones alimentarias",
             "origin": "¿Cuál es tu lugar de residencia actual?",
             "which_hack": "¿En qué ediciones de %s has participado como voluntari@?" % settings.HACKATHON_NAME,
             "attendance": "¿Qué días asistirás a HackUPC?",
