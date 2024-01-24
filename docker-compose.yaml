@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+    web:
+        build: .
+        ports:
+            - "${MYHACKUPC_PORT}:8000"  # Map Gunicorn port
+        expose:
+            - "${MYHACKUPC_PORT}"
+        env_file:
+            - .env
+        depends_on:
+            db:
+                condition: service_healthy
+        command: >
+            sh -c "python manage.py migrate &&
+            gunicorn --bind :8000 --workers 3 app.wsgi"
+            # Apply migrations and then start the application
+    db:
+        image: postgres:alpine
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        env_file:
+            -  .env
+        ports:
+            - "${POSTGRES_PORT}:5432"
+        expose:
+            - "${POSTGRES_PORT}"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+volumes:
+    postgres_data:

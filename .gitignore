@@ -26,4 +26,5 @@ files/*
 cache/
 *.sh
 
+.env
 .google-service.account.json

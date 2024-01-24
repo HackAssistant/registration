@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +58,7 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-GOOGLE_WALLET_ENABLED=True #Set to false to disable google wallet
+GOOGLE_WALLET_ENABLED = False  # Set to false to disable google wallet
 
 if BAGGAGE_ENABLED:
     INSTALLED_APPS.append('baggage')
@@ -79,6 +80,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -126,14 +128,14 @@ if os.environ.get('DATABASE_URL', None):
         ssl_require=os.environ.get('DATABASE_SECURE', 'true').lower() != 'false',
     )
 
-if os.environ.get('PG_PWD', None):
+if os.environ.get('POSTGRES_PASSWORD', None):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('PG_NAME', 'backend'),
-            'USER': os.environ.get('PG_USER', 'backenduser'),
-            'PASSWORD': os.environ.get('PG_PWD'),
-            'HOST': os.environ.get('PG_HOST', 'localhost'),
+            'NAME': os.environ.get('POSTGRES_DB', 'backend'),
+            'USER': os.environ.get('POSTGRES_USER', 'backenduser'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
             'PORT': '5432',
         }
     }
@@ -191,14 +193,14 @@ STATIC_ROOT = BASE_DIR + '/staticfiles'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, os.path.join('app', "static")),
 ]
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Dev emails set up
 if os.environ.get('ADMIN_EMAIL', None):
     try:
         HACKATHON_DEV_EMAILS.append(os.environ['ADMIN_EMAIL'])
     except NameError:
-        HACKATHON_DEV_EMAILS = [os.environ['ADMIN_EMAIL'],]
+        HACKATHON_DEV_EMAILS = [os.environ['ADMIN_EMAIL'], ]
 
 #  File upload configuration
 MEDIA_ROOT = 'files'
@@ -292,9 +294,9 @@ MAX_VOTES = 5
 MAX_VOTES_TO_APP = 30
 
 APPLICATION_EXPIRATION_TYPES = {
-    'H': True,                  # Hacker allways expire, do not change this
-    'M': MENTOR_EXPIRES,        # Mentor can expire
-    'V': VOLUNTEER_EXPIRES,     # Volunteer can expire
+    'H': True,  # Hacker allways expire, do not change this
+    'M': MENTOR_EXPIRES,  # Mentor can expire
+    'V': VOLUNTEER_EXPIRES,  # Volunteer can expire
 }
 
 MEALS_TOKEN = os.environ.get('MEALS_TOKEN', None)
