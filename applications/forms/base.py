@@ -1,3 +1,5 @@
+import os 
+import json
 from django import forms
 from django.conf import settings
 from django.forms import ModelForm
@@ -108,21 +110,22 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
 
     def clean_origin(self):
         origin = self.cleaned_data['origin']
-        if origin == "Others":
-            origin_verified = origin
-        else:
-            response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
-            if response.status_code / 100 != 2:
-                if len(origin.split(',')) == 3:
-                    return origin
-                raise forms.ValidationError("If the dropdown doesn't show up, type following this schema: "
-                                            "city, nation, country")
-            data = response.json()['_embedded']['city:search-results']
-            if not data:
-                raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
-            else:
-                origin_verified = data[0]['matching_full_name']
-        return origin_verified
+        # read from json file on local machine
+
+        # actual file path 
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        
+        # get static relative path
+        STATIC_ROOT = os.path.join(dir_path, "../static")
+
+        # open relative file
+        with open(os.path.join(STATIC_ROOT,'cities.json')) as f:
+            countries = json.load(f)
+
+            # check if is part of the list
+            if origin not in countries:
+                raise forms.ValidationError("Please select one of the dropdown options and don't forget to add commas")
+            return origin
 
     def __getitem__(self, name):
         item = super(_BaseApplicationForm, self).__getitem__(name)
