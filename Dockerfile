@@ -14,7 +14,7 @@ RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 
 # Run the cron service in the background
-CMD ["cron", "-f"]
+RUN crond
 
 # Create biene user to not install requirements via root
 RUN addgroup -S biene && adduser -S biene -G biene
