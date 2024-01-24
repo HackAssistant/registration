@@ -6,11 +6,12 @@ class MentorApplicationForm(_BaseApplicationForm):
     first_timer = common_first_timer()
     university = common_university()
     degree = common_degree()
+    #Mandatory social fields
+    linkedin = social_required("linkedin", "https://www.linkedin.com/in/john_biene")
 
     # Socials
     github = social_media_field("github", "https://github.com/johnBiene")
     devpost = social_media_field("devpost", "https://devpost.com/JohnBiene")
-    linkedin = social_media_field("linkedin", "https://www.linkedin.com/in/john_biene")
     site = social_media_field("site", "https://biene.space")
 
     online = common_online()
@@ -39,6 +40,7 @@ class MentorApplicationForm(_BaseApplicationForm):
         data = self.cleaned_data["linkedin"]
         validate_url(data, "linkedin.com")
         return data
+
 
     def clean_projects(self):
         data = self.cleaned_data["projects"]
@@ -221,8 +223,8 @@ class MentorApplicationForm(_BaseApplicationForm):
             "experience": forms.Textarea(attrs={"rows": 2, "cols": 40}),
             "why_mentor": forms.Textarea(attrs={"rows": 2, "cols": 40}),
             "first_timer": forms.HiddenInput(),
-            "resume": forms.HiddenInput(),
             "lennyface": forms.HiddenInput(),
+            "resume": forms.FileInput(),
         }
 
         labels = {
