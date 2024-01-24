@@ -44,6 +44,7 @@ GENDERS = [
     (GENDER_OTHER, 'Prefer to self-describe'),
 ]
 
+
 D_NONE = 'None'
 D_VEGETERIAN = 'Vegetarian'
 D_VEGAN = 'Vegan'
