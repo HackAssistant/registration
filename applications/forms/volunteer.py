@@ -38,7 +38,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
     )
     night_shifts = forms.TypedChoiceField(
         required=True,
-        label=" ¿Estarias dispuesto a hacer algun turno de noche?",
+        label=" ¿Estarías dispuesto a hacer algun turno de noche?",
         coerce=lambda x: x == "True",
         choices=((False, "No"), (True, "Sí"), (None, "Puede ser")),
         help_text="No exigimos a nadie quedarse hasta ninguna hora en particular",
@@ -194,7 +194,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
         model = models.VolunteerApplication
         help_texts = {
             "degree": "What's your major/degree?",
-            "other_diet": "Porfavor indica tus restricciones alimentarias. Queremos assegurarnos que tenemos comida para ti!",
+            "other_diet": "Porfavor indica tus restricciones alimentarias. ¡Queremos assegurarnos que tenemos comida para ti!",
             "attendance": "Será una gran experiencia disfrutar de principio a fin con muchas cosas que hacer, pero está bien si no puedes venir todo el fin de semana",
             "languages": "No se necesita nivel de inglés para ser voluntari@, solo queremos comprobar quién se sentiría cómod@ realizando tareas que requieran comunicación en inglés",
             "fav_movie": "e.g.: Interstellar, Juego de Tronos,  Avatar, La Casa de Papel, etc.",
