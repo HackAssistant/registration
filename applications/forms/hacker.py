@@ -253,8 +253,8 @@ class HackerApplicationForm(_BaseApplicationForm):
             "reimb_amount": "We try our best to cover costs for all hackers, but our budget is limited",
             "resume": "Accepted file formats: %s"
             % (", ".join(extensions) if extensions else "Any"),
-            "origin": "Please select one of the dropdown options or write 'Others'. If the dropdown doesn't show up,"
-            " type following this schema: <strong>city, nation, country</strong>",
+            "origin": "If you don’t see your city, choose the closest one! "
+            "Plase type following this schema: <strong>city, province, country</strong>",
         }
 
         discover_choices = (
