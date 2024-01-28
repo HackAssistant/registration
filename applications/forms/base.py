@@ -102,10 +102,11 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
         return data
 
     def clean_other_gender(self):
-        data = self.cleaned_data['other_gender']
-        if not data:
+        gender = self.cleaned_data.get('gender')
+        other_gender = self.cleaned_data.get('other_gender', None)
+        if gender == "X" and not other_gender:
             raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
-        return data
+        return other_gender
 
     def clean_origin(self):
         origin = self.cleaned_data['origin']
