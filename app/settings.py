@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 # Application definition
 INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
+    'django_crontab',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -326,3 +327,9 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 # Security
 SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = not DEBUG
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# Cron configuration to expire invitations and reimbursements
+CRONJOBS = [
+    ('6 */2 * * *', 'django.core.management.call_command', ['expire_reimbursements']),
+    ('6 */2 * * *', 'django.core.management.call_command', ['expire_applications']),
+]

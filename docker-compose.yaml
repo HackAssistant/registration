@@ -14,8 +14,10 @@ services:
                 condition: service_healthy
         command: >
             sh -c "python manage.py migrate &&
+            crond && syslogd &&
             gunicorn --bind :8000 --workers 3 app.wsgi"
             # Apply migrations and then start the application
+            # Initialize crond and syslogd to be able to schedule jobs
     db:
         image: postgres:alpine
         volumes:
