@@ -44,6 +44,17 @@ class HackerApplicationForm(_BaseApplicationForm):
 
     online = common_online()
 
+
+    def clean_resume(self):
+        resume = self.cleaned_data["resume"]
+        size = getattr(resume, "_size", 0)
+        if size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError(
+                "Please keep resume size under %s. Current filesize %s"
+                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
+            )
+        return resume
+
     def clean_github(self):
         data = self.cleaned_data["github"]
         validate_url(data, "github.com")
@@ -81,14 +92,6 @@ class HackerApplicationForm(_BaseApplicationForm):
         ),
     )
 
-    reimb = forms.TypedChoiceField(
-        required=False,
-        label="Do you need a travel reimbursement to attend?",
-        coerce=lambda x: x == "True",
-        choices=((False, "No"), (True, "Yes")),
-        initial=False,
-        widget=forms.RadioSelect(),
-    )
 
     cvs_edition = forms.BooleanField(
         required=False,
@@ -260,7 +263,5 @@ class HackerApplicationForm(_BaseApplicationForm):
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,
             "projects": "What projects have you worked on?",
-            "resume": "Upload your resume",
-            "reimb_amount": "How much money (%s) would you need to afford traveling to %s?"
-            % (getattr(settings, "CURRENCY", "$"), settings.HACKATHON_NAME),
+            "resume": "Upload your resume"
         }
