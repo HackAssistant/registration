@@ -123,8 +123,8 @@ class VolunteerApplicationForm(_BaseApplicationForm):
 
     def clean(self):
         volunteer = self.cleaned_data["first_time_volunteer"]
-        if not volunteer:
-            data = self.cleaned_data["which_hack"]
+        data = self.cleaned_data["which_hack"]
+        if not volunteer and not data:
             self.add_error("which_hack", "Choose the hackathons you volunteered")
 
         return super(VolunteerApplicationForm, self).clean()
