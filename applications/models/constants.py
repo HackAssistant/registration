@@ -92,7 +92,7 @@ HACK_NAME = getattr(hackathon_variables, 'HACKATHON_NAME', "HackAssistant")
 EXTRA_NAME = [' 2016 Fall', ' 2016 Winter', ' 2017 Fall', ' 2017 Winter', ' 2018', ' 2019', ' 2021', ' 2022', ' 2023']
 PREVIOUS_HACKS = [(i, HACK_NAME + EXTRA_NAME[i]) for i in range(0, len(EXTRA_NAME))]
 
-YEARS = [(int(size), size) for size in ('2022 2023 2024 2025 2026 2027 2028 2029'.split(' '))]
+YEARS = [(int(size), size) for size in ('2023 2024 2025 2026 2027 2028 2029 2030'.split(' '))]
 DEFAULT_YEAR = datetime.now().year + 1
 
 ENGLISH_LEVEL = [(i, str(i)) for i in range(1, 5 + 1)]

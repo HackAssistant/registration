@@ -4,7 +4,7 @@ from .base import _BaseApplicationForm
 
 class MentorApplicationForm(_BaseApplicationForm):
     first_timer = common_first_timer()
-    university = common_university()
+    #university = common_university()
     degree = common_degree()
     #Mandatory social fields
     linkedin = social_required("linkedin", "https://www.linkedin.com/in/john_biene")
@@ -73,9 +73,9 @@ class MentorApplicationForm(_BaseApplicationForm):
         label="What is your current role?",
     )
 
-    university = forms.CharField(
-        initial="NA", widget=forms.HiddenInput(), required=False
-    )
+    #university = forms.CharField(
+    #    initial="NA", widget=forms.HiddenInput(), required=False
+    #)
 
     degree = forms.CharField(
         required=False,
@@ -110,7 +110,7 @@ class MentorApplicationForm(_BaseApplicationForm):
             "fields": [
                 {"name": "study_work", "space": 12},
                 {"name": "company", "space": 12},
-                {"name": "university", "space": 12},
+                #{"name": "university", "space": 12},
                 {"name": "degree", "space": 12},
                 {"name": "graduation_year", "space": 12},
                 {"name": "english_level", "space": 12},
@@ -184,8 +184,8 @@ class MentorApplicationForm(_BaseApplicationForm):
             self.add_error("which_hack", "Choose the hackathons you mentored")
         study = self.cleaned_data["study_work"]
         if study:
-            if not self.cleaned_data["university"]:
-                self.add_error("university", "Type your university, please")
+            #if not self.cleaned_data["university"]:
+            #    self.add_error("university", "Type your university, please")
             if not self.cleaned_data["degree"]:
                 self.add_error("degree", "Type your degree, please")
             if not self.cleaned_data["graduation_year"]:
