@@ -52,7 +52,7 @@ HEARABOUTUS_ES = [
 
 DIETS_ES = [
     (D_NONE, 'Sin requerimientos'),
-    (D_VEGETERIAN, 'Vegetariano'),
+    (D_VEGETARIAN, 'Vegetariano'),
     (D_VEGAN, 'Vegano'),
     (D_GLUTEN_FREE, 'Sin gluten'),
     (D_OTHER, 'Otros')

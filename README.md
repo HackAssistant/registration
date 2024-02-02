@@ -40,23 +40,6 @@ Stable at v. 3.10.X
 - `python manage.py migrate`
 - `python manage.py createsuperuser` (creates super user to manage all the app)
 
-### FAQ
-**The library backports.zoneinfo fails to install**
-If you are experiencing an error similar to this one:
-
-``
-ERROR: Could not build wheels for backports.zoneinfo, which is required to install pyproject.toml-based projects
-``
-
-Plase make sure to use *Python **3.8.10***
-
-
-**The library Pillow fails to install**
-Ths did the trick (note the python and -m flag are placed in purpouse to make sure you install it using the correct virtualenv python version):
-```
-python -m pip install --upgrade Pillow
-```
-
 ### Dummy data
 
 _Coming soon_
