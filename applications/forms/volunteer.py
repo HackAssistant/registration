@@ -40,7 +40,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
         required=True,
         label="¿Estarias de acuerdo en seguir ayudando pasado medianoche?",
         coerce=lambda x: x == "True",
-        choices=((False, "No"), (True, "Sí"), (None, "Puede ser")),
+        choices=models.NIGHT_SHIFT_ES,
         help_text="No exigimos a nadie quedarse hasta ninguna hora en particular",
         widget=forms.RadioSelect,
     )
