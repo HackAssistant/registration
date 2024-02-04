@@ -58,6 +58,12 @@ DIETS_ES = [
     (D_OTHER, 'Otros')
 ]
 
+NIGHT_SHIFT_ES = [
+    ('No', 'No'),
+    ('Yes', 'Sí'),
+    ('Maybe', 'Puede ser')
+]
+
 class VolunteerApplication(BaseApplication):
 
     # gender
@@ -94,7 +100,7 @@ class VolunteerApplication(BaseApplication):
     fav_movie = models.CharField(max_length=60, null=True, blank=True)
     friends = models.CharField(max_length=100, null=True, blank=True)
     pronouns = models.CharField(max_length=100, null=True, blank=True)
-    night_shifts = models.BooleanField(null=True)
+    night_shifts = MultiSelectField(choices=NIGHT_SHIFT_ES, default='No')
     hobbies = models.CharField(max_length=150, null=False)
     volunteer_motivation = models.CharField(max_length=500)
 
