@@ -226,6 +226,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
             "graduation_year": "What year will you graduate?",
             "tshirt_size": "¿Cuál es tu talla de camiseta?",
             "diet": "Restricciones alimentarias",
+            "other_diet": "Otras dietas",
             "origin": "¿Cuál es tu lugar de residencia actual?",
             "which_hack": "¿En qué ediciones de %s has participado como voluntari@?" % settings.HACKATHON_NAME,
             "attendance": "¿Qué días asistirás a HackUPC?",
