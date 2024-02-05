@@ -11,6 +11,7 @@ class HackerApplicationForm(_BaseApplicationForm):
                 {"name": "graduation_year", "space": 12},
                 {"name": "gender", "space": 12},
                 {"name": "other_gender", "space": 12},
+                {"name": "phone_number", "space": 12},
                 {"name": "tshirt_size", "space": 12},
                 {"name": "under_age", "space": 12},
                 {"name": "lennyface", "space": 12},
@@ -222,6 +223,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             "gender": "This is for demographic purposes. You can skip this question if you want.",
             "degree": "What's your major/degree?",
             "other_diet": "Please fill here in your dietary requirements. We want to make sure we have food for you!",
+            "phone_number": "This field is NOT mandatory.",
             "lennyface": 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
             " http://textsmili.es/</a>",
             "projects": "You can talk about about past hackathons, personal projects, awards etc. "
@@ -230,7 +232,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             "resume": "Accepted file formats: %s"
             % (", ".join(extensions) if extensions else "Any"),
             "origin": "If you don’t see your city, choose the closest one! "
-            "Plase type following this schema: <strong>city, province, country</strong>",
+            "Please type following this schema: <strong>city, province, country</strong>",
         }
 
         discover_choices = (
