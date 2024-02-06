@@ -31,9 +31,9 @@ class VolunteerApplicationForm(_BaseApplicationForm):
     under_age = forms.TypedChoiceField(
         required=True,
         label="¿Tienes o tendrás la mayoría de edad antes de la fecha del evento?",
-        initial=False,
+        initial=True,
         coerce=lambda x: x == "True",
-        choices=((False, "No"), (True, "Sí")),
+        choices=((True, "Sí"),(False, "No")),
         widget=forms.RadioSelect,
     )
     night_shifts = forms.TypedChoiceField(
@@ -181,11 +181,11 @@ class VolunteerApplicationForm(_BaseApplicationForm):
                 'margin-bottom: 1em;line-height: 1.25em;">Nosotros, Hackers at UPC, '
                 "procesamos tu información para organizar la mejor hackathon posible. "
                 "También incluirá imágenes y videos tuyos durante el evento. "
-                "Tus datos se utilizarán principalmente para admisiones. También podríamos contactarte  "
-                "(enviándote un correo electrónico) sobre otros eventos que estamos organizando y"
-                "que son de una naturaleza similar a los que previamente solicitaste. Para más"
-                "información sobre el procesamiento de tus datos personales y sobre cómo ejercer tus"
-                "derechos de acceso, rectificación, supresión, limitación, portabilidad y oposición, por"
+                "Tus datos se utilizarán principalmente para admisiones. También podríamos contactarte "
+                "(enviándote un correo electrónico) sobre otros eventos que estamos organizando y "
+                "que son de una naturaleza similar a los que previamente solicitaste. Para más "
+                "información sobre el procesamiento de tus datos personales y sobre cómo ejercer tus "
+                "derechos de acceso, rectificación, supresión, limitación, portabilidad y oposición, por "
                 "favor visita nuestra Política de Privacidad y Cookies.</p>",
             }
         return fields
@@ -226,6 +226,7 @@ class VolunteerApplicationForm(_BaseApplicationForm):
             "graduation_year": "What year will you graduate?",
             "tshirt_size": "¿Cuál es tu talla de camiseta?",
             "diet": "Restricciones alimentarias",
+            "other_diet": "Otras dietas",
             "origin": "¿Cuál es tu lugar de residencia actual?",
             "which_hack": "¿En qué ediciones de %s has participado como voluntari@?" % settings.HACKATHON_NAME,
             "attendance": "¿Qué días asistirás a HackUPC?",
