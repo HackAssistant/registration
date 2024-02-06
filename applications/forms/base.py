@@ -41,7 +41,9 @@ def get_exclude_fields():
 class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
     diet = forms.ChoiceField(label='Dietary requirements', choices=models.DIETS, required=True)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': '+#########'}))
+        attrs={'class': 'form-control', 'placeholder': '+#########'}),
+        help_text='This field is not mandatory.'
+    )
     under_age = forms.TypedChoiceField(
         required=True,
         label='How old will you be at time of the event?',

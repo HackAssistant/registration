@@ -223,7 +223,6 @@ class HackerApplicationForm(_BaseApplicationForm):
             "gender": "This is for demographic purposes. You can skip this question if you want.",
             "degree": "What's your major/degree?",
             "other_diet": "Please fill here in your dietary requirements. We want to make sure we have food for you!",
-            "phone_number": "This field is NOT mandatory.",
             "lennyface": 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
             " http://textsmili.es/</a>",
             "projects": "You can talk about about past hackathons, personal projects, awards etc. "
