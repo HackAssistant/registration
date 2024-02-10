@@ -71,7 +71,7 @@ def signup(request, u_type):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST, type=u_type)
-        if form.is_valid(): and request.recaptcha_is_valid:
+        if form.is_valid() and request.recaptcha_is_valid:
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             name = form.cleaned_data['name']
