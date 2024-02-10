@@ -46,15 +46,15 @@ class HackerApplicationForm(_BaseApplicationForm):
     online = common_online()
 
 
-    def clean_resume(self):
-        resume = self.cleaned_data["resume"]
-        size = getattr(resume, "_size", 0)
-        if size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError(
-                "Please keep resume size under %s. Current filesize %s"
-                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
-            )
-        return resume
+    #def clean_resume(self):
+    #    resume = self.cleaned_data["resume"]
+    #    size = getattr(resume, "_size", 0)
+    #    if size > settings.MAX_UPLOAD_SIZE:
+    #        raise forms.ValidationError(
+    #            "Please keep resume size under %s. Current filesize %s"
+    #            % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
+    #        )
+    #    return resume
 
     def clean_github(self):
         data = self.cleaned_data["github"]
@@ -78,6 +78,11 @@ class HackerApplicationForm(_BaseApplicationForm):
             raise forms.ValidationError(
                 "Please fill this in order for us to know you a bit better."
             )
+        return data
+
+    def clean_site(self):
+        data = self.cleaned_data["site"]
+        validate_url(data, "website")
         return data
 
     first_timer = common_first_timer()
@@ -177,9 +182,9 @@ class HackerApplicationForm(_BaseApplicationForm):
         if not hybrid:
             self.fields["online"].widget = forms.HiddenInput()
         polices_fields = [
-            {"name": "terms_and_conditions", "space": 12},
             {"name": "cvs_edition", "space": 12},
             {"name": "email_subscribe", "space": 12},
+            {"name": "terms_and_conditions", "space": 12},
         ]
         if not discord:
             personal_info_fields.extend(
@@ -194,7 +199,7 @@ class HackerApplicationForm(_BaseApplicationForm):
         deadline = getattr(settings, "REIMBURSEMENT_DEADLINE", False)
         r_enabled = getattr(settings, "REIMBURSEMENT_ENABLED", False)
         personal_info_fields.append({"name": "origin", "space": 12})
-        
+
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -259,7 +264,8 @@ class HackerApplicationForm(_BaseApplicationForm):
             "graduation_year": "What year are you expecting to graduate?",
             "tshirt_size": "What's your t-shirt size?",
             "diet": "Dietary requirements",
-            "lennyface": 'Describe yourself with a "lenny face":',
+            "phone_number": "Phone number (Optional)",
+            "lennyface": 'Which "lenny face" represents you better?',
             "discover": "How did you hear about us?",
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,

@@ -1,4 +1,4 @@
-import os 
+import os
 import json
 from django import forms
 from django.conf import settings
@@ -42,6 +42,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
     diet = forms.ChoiceField(label='Dietary requirements', choices=models.DIETS, required=True)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': '+#########'}),
+        label='Phone number (Optional)',
         help_text='This field is not mandatory.'
     )
     under_age = forms.TypedChoiceField(
@@ -54,7 +55,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
     )
 
     terms_and_conditions = forms.BooleanField(
-        required=False,
+        required=True,
         label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
               'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
               'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
@@ -114,9 +115,9 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
         origin = self.cleaned_data['origin']
         # read from json file on local machine
 
-        # actual file path 
+        # actual file path
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        
+
         # get static relative path
         STATIC_ROOT = os.path.join(dir_path, "../static")
 
