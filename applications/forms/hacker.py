@@ -45,16 +45,15 @@ class HackerApplicationForm(_BaseApplicationForm):
 
     online = common_online()
 
-
-    #def clean_resume(self):
-    #    resume = self.cleaned_data["resume"]
-    #    size = getattr(resume, "_size", 0)
-    #    if size > settings.MAX_UPLOAD_SIZE:
-    #        raise forms.ValidationError(
-    #            "Please keep resume size under %s. Current filesize %s"
-    #            % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
-    #        )
-    #    return resume
+    def clean_resume(self):
+        resume = self.cleaned_data["resume"]
+        size = getattr(resume, "_size", 0)
+        if size > settings.MAX_UPLOAD_SIZE:
+            raise forms.ValidationError(
+                "Please keep resume size under %s. Current filesize %s"
+                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
+            )
+        return resume
 
     def clean_github(self):
         data = self.cleaned_data["github"]
@@ -135,19 +134,7 @@ class HackerApplicationForm(_BaseApplicationForm):
         cc = self.cleaned_data.get("cvs_edition", False)
         return cc
 
-    def clean_resume(self):
-        resume = self.cleaned_data["resume"]
-        size = getattr(resume, "_size", 0)
-        if size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError(
-                "Please keep resume size under %s. Current filesize %s!"
-                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
-            )
-        if not resume and not self.instance.pk:
-            raise forms.ValidationError(
-                "In order to apply and attend you have to provide a resume."
-            )
-        return resume
+
 
     def clean_reimb_amount(self):
         data = self.cleaned_data["reimb_amount"]
