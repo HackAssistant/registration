@@ -44,7 +44,6 @@ class HackerApplicationForm(_BaseApplicationForm):
 
     online = common_online()
 
-
     def clean_resume(self):
         resume = self.cleaned_data["resume"]
         size = getattr(resume, "_size", 0)
@@ -91,7 +90,6 @@ class HackerApplicationForm(_BaseApplicationForm):
             attrs={"class": "typeahead-degrees", "autocomplete": "off"}
         ),
     )
-
 
     cvs_edition = forms.BooleanField(
         required=False,
@@ -193,7 +191,6 @@ class HackerApplicationForm(_BaseApplicationForm):
         deadline = getattr(settings, "REIMBURSEMENT_DEADLINE", False)
         r_enabled = getattr(settings, "REIMBURSEMENT_ENABLED", False)
         personal_info_fields.append({"name": "origin", "space": 12})
-        
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -233,7 +230,24 @@ class HackerApplicationForm(_BaseApplicationForm):
             "Plase type following this schema: <strong>city, province, country</strong>",
         }
 
+        class CustomSelect(forms.Select):
+            def create_option(
+                self, name, value, label, selected, index, subindex=None, attrs=None
+            ):
+                if index == 0:
+                    attrs = {"disabled": "disabled"}
+                return super().create_option(
+                    name, value, label, selected, index, subindex=subindex, attrs=attrs
+                )
+
+        def clean_discover(self):
+            discover = self.cleaned_data.get("discover")
+            if discover == "":
+                raise forms.ValidationError("Please select an option.")
+            return discover
+
         discover_choices = (
+            ("", "- Select an option -"),
             (1, "HackUPC's social media"),
             (2, "Through your university (social media, emails...)"),
             (3, "Friends"),
@@ -248,7 +262,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             "origin": forms.TextInput(attrs={"autocomplete": "off"}),
             "description": forms.Textarea(attrs={"rows": 3, "cols": 40}),
             "projects": forms.Textarea(attrs={"rows": 3, "cols": 40}),
-            "discover": forms.Select(choices=discover_choices),
+            "discover": CustomSelect(choices=discover_choices),
             "graduation_year": forms.RadioSelect(),
         }
 
@@ -263,5 +277,5 @@ class HackerApplicationForm(_BaseApplicationForm):
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,
             "projects": "What projects have you worked on?",
-            "resume": "Upload your resume"
+            "resume": "Upload your resume",
         }
