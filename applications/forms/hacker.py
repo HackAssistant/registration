@@ -79,10 +79,12 @@ class HackerApplicationForm(_BaseApplicationForm):
             )
         return data
 
-    def clean_site(self):
-        data = self.cleaned_data["site"]
-        validate_url(data, "website")
-        return data
+    # def clean_site(self,):
+    #     data = self.cleaned_data["site"]
+
+    #     if not URLValidator(data):
+    #         raise forms.ValidationError("Please enter a valid website url")
+    #     return data
 
     first_timer = common_first_timer()
 
@@ -96,7 +98,6 @@ class HackerApplicationForm(_BaseApplicationForm):
             attrs={"class": "typeahead-degrees", "autocomplete": "off"}
         ),
     )
-
 
     cvs_edition = forms.BooleanField(
         required=False,
@@ -133,8 +134,6 @@ class HackerApplicationForm(_BaseApplicationForm):
     def clean_cvs_edition(self):
         cc = self.cleaned_data.get("cvs_edition", False)
         return cc
-
-
 
     def clean_reimb_amount(self):
         data = self.cleaned_data["reimb_amount"]
@@ -186,7 +185,6 @@ class HackerApplicationForm(_BaseApplicationForm):
         deadline = getattr(settings, "REIMBURSEMENT_DEADLINE", False)
         r_enabled = getattr(settings, "REIMBURSEMENT_ENABLED", False)
         personal_info_fields.append({"name": "origin", "space": 12})
-
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -257,5 +255,5 @@ class HackerApplicationForm(_BaseApplicationForm):
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,
             "projects": "What projects have you worked on?",
-            "resume": "Upload your resume"
+            "resume": "Upload your resume",
         }
