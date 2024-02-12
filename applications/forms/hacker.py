@@ -101,7 +101,7 @@ class HackerApplicationForm(_BaseApplicationForm):
 
     cvs_edition = forms.BooleanField(
         required=False,
-        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2023 Sponsors.',
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2024 Sponsors.',
     )
 
     def __init__(
@@ -224,7 +224,24 @@ class HackerApplicationForm(_BaseApplicationForm):
             "Please type following this schema: <strong>city, province, country</strong>",
         }
 
+        class CustomSelect(forms.Select):
+            def create_option(
+                self, name, value, label, selected, index, subindex=None, attrs=None
+            ):
+                if index == 0:
+                    attrs = {"disabled": "disabled"}
+                return super().create_option(
+                    name, value, label, selected, index, subindex=subindex, attrs=attrs
+                )
+
+        def clean_discover(self):
+            discover = self.cleaned_data.get("discover")
+            if discover == "":
+                raise forms.ValidationError("Please select an option.")
+            return discover
+
         discover_choices = (
+            ("", "- Select an option -"),
             (1, "HackUPC's social media"),
             (2, "Through your university (social media, emails...)"),
             (3, "Friends"),
@@ -239,7 +256,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             "origin": forms.TextInput(attrs={"autocomplete": "off"}),
             "description": forms.Textarea(attrs={"rows": 3, "cols": 40}),
             "projects": forms.Textarea(attrs={"rows": 3, "cols": 40}),
-            "discover": forms.Select(choices=discover_choices),
+            "discover": CustomSelect(choices=discover_choices),
             "graduation_year": forms.RadioSelect(),
         }
 
