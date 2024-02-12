@@ -43,6 +43,7 @@ def social_media_field(field_name, placeholder):
         label=field_name.capitalize(),
     )
 
+
 def social_required(field_name, placeholder):
     return forms.CharField(
         required=True,
@@ -51,6 +52,7 @@ def social_required(field_name, placeholder):
         ),
         label=field_name.capitalize(),
     )
+
 
 def common_online():
     return forms.TypedChoiceField(
