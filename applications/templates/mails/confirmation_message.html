@@ -14,5 +14,5 @@
 
     {% include 'mails/include/cancel.html' %}
     {% include 'mails/include/arrival_departure_info.html' %}
-  {% include 'mails/include/closing.html' %}
+  {% include 'mails/include/closing.html' with travel="false"%}
 {% endblock %}
