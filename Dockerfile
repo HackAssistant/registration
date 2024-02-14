@@ -8,14 +8,14 @@ ENV PYTHONUNBUFFERED 1
 
 # Upgrade pip before installing dependencies
 RUN pip install --upgrade pip
-COPY --chown=biene:biene requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 # Add bin to path to avoid wanring
 ENV PATH="/home/biene/.local/bin:${PATH}"
 # Disable cache because it won't be used because it will be installed only when creating image
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Mounts the application code to the image
-COPY --chown=biene:biene . code
+COPY . code
 WORKDIR /code
 
 # Generate static files in the container

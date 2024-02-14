@@ -34,6 +34,7 @@ def common_degree():
     )
 
 
+
 def social_media_field(field_name, placeholder):
     return forms.CharField(
         required=False,

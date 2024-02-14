@@ -11,6 +11,7 @@ class HackerApplicationForm(_BaseApplicationForm):
                 {"name": "graduation_year", "space": 12},
                 {"name": "gender", "space": 12},
                 {"name": "other_gender", "space": 12},
+                {"name": "phone_number", "space": 12},
                 {"name": "tshirt_size", "space": 12},
                 {"name": "under_age", "space": 12},
                 {"name": "lennyface", "space": 12},
@@ -78,6 +79,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             )
         return data
 
+
     first_timer = common_first_timer()
 
     university = common_university()
@@ -127,20 +129,6 @@ class HackerApplicationForm(_BaseApplicationForm):
         cc = self.cleaned_data.get("cvs_edition", False)
         return cc
 
-    def clean_resume(self):
-        resume = self.cleaned_data["resume"]
-        size = getattr(resume, "_size", 0)
-        if size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError(
-                "Please keep resume size under %s. Current filesize %s!"
-                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
-            )
-        if not resume and not self.instance.pk:
-            raise forms.ValidationError(
-                "In order to apply and attend you have to provide a resume."
-            )
-        return resume
-
     def clean_reimb_amount(self):
         data = self.cleaned_data["reimb_amount"]
         reimb = self.cleaned_data.get("reimb", False)
@@ -174,9 +162,9 @@ class HackerApplicationForm(_BaseApplicationForm):
         if not hybrid:
             self.fields["online"].widget = forms.HiddenInput()
         polices_fields = [
-            {"name": "terms_and_conditions", "space": 12},
             {"name": "cvs_edition", "space": 12},
             {"name": "email_subscribe", "space": 12},
+            {"name": "terms_and_conditions", "space": 12},
         ]
         if not discord:
             personal_info_fields.extend(
@@ -227,7 +215,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             "resume": "Accepted file formats: %s"
             % (", ".join(extensions) if extensions else "Any"),
             "origin": "If you don’t see your city, choose the closest one! "
-            "Plase type following this schema: <strong>city, province, country</strong>",
+            "Please type following this schema: <strong>city, province, country</strong>",
         }
 
         class CustomSelect(forms.Select):
@@ -272,7 +260,8 @@ class HackerApplicationForm(_BaseApplicationForm):
             "graduation_year": "What year are you expecting to graduate?",
             "tshirt_size": "What's your t-shirt size?",
             "diet": "Dietary requirements",
-            "lennyface": 'Describe yourself with a "lenny face":',
+            "phone_number": "Phone number (Optional)",
+            "lennyface": 'Which "lenny face" represents you better?',
             "discover": "How did you hear about us?",
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,
