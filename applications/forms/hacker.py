@@ -79,12 +79,6 @@ class HackerApplicationForm(_BaseApplicationForm):
             )
         return data
 
-    # def clean_site(self,):
-    #     data = self.cleaned_data["site"]
-
-    #     if not URLValidator(data):
-    #         raise forms.ValidationError("Please enter a valid website url")
-    #     return data
 
     first_timer = common_first_timer()
 

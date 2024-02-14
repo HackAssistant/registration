@@ -1,6 +1,5 @@
 from django import forms
 from django.conf import settings
-from django.core.validators import URLValidator
 
 
 def common_first_timer():
@@ -35,20 +34,8 @@ def common_degree():
     )
 
 
-# class CustomURLValidator(URLValidator):
-#     message = "Please enter a valid URL"
-
 
 def social_media_field(field_name, placeholder):
-    if field_name == "website":
-        return forms.CharField(
-            required=False,
-            widget=forms.TextInput(
-                attrs={"class": "form-control", "placeholder": placeholder},
-                validators=[URLValidator(message="Please enter a valid URL")],
-            ),
-            label=field_name.capitalize(),
-        )
     return forms.CharField(
         required=False,
         widget=forms.TextInput(
