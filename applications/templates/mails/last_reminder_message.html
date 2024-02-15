@@ -15,5 +15,5 @@
     {% include 'mails/include/email_button.html' with text='Confirm' url=confirm_url %}
 
     {% include 'mails/include/cancel.html' %}
-    {% include 'mails/include/closing.html' %}
+    {% include 'mails/include/closing.html' with travel="true"%}
 {% endblock %}

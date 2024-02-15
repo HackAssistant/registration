@@ -4,13 +4,14 @@ from .base import _BaseApplicationForm
 
 class MentorApplicationForm(_BaseApplicationForm):
     first_timer = common_first_timer()
-    university = common_university()
+    #university = common_university()
     degree = common_degree()
+    #Mandatory social fields
+    linkedin = social_required("linkedin", "https://www.linkedin.com/in/john_biene")
 
     # Socials
     github = social_media_field("github", "https://github.com/johnBiene")
     devpost = social_media_field("devpost", "https://devpost.com/JohnBiene")
-    linkedin = social_media_field("linkedin", "https://www.linkedin.com/in/john_biene")
     site = social_media_field("site", "https://biene.space")
 
     online = common_online()
@@ -39,6 +40,7 @@ class MentorApplicationForm(_BaseApplicationForm):
         data = self.cleaned_data["linkedin"]
         validate_url(data, "linkedin.com")
         return data
+
 
     def clean_projects(self):
         data = self.cleaned_data["projects"]
@@ -71,9 +73,9 @@ class MentorApplicationForm(_BaseApplicationForm):
         label="What is your current role?",
     )
 
-    university = forms.CharField(
-        initial="NA", widget=forms.HiddenInput(), required=False
-    )
+    #university = forms.CharField(
+    #    initial="NA", widget=forms.HiddenInput(), required=False
+    #)
 
     degree = forms.CharField(
         required=False,
@@ -108,7 +110,7 @@ class MentorApplicationForm(_BaseApplicationForm):
             "fields": [
                 {"name": "study_work", "space": 12},
                 {"name": "company", "space": 12},
-                {"name": "university", "space": 12},
+                #{"name": "university", "space": 12},
                 {"name": "degree", "space": 12},
                 {"name": "graduation_year", "space": 12},
                 {"name": "english_level", "space": 12},
@@ -182,8 +184,8 @@ class MentorApplicationForm(_BaseApplicationForm):
             self.add_error("which_hack", "Choose the hackathons you mentored")
         study = self.cleaned_data["study_work"]
         if study:
-            if not self.cleaned_data["university"]:
-                self.add_error("university", "Type your university, please")
+            #if not self.cleaned_data["university"]:
+            #    self.add_error("university", "Type your university, please")
             if not self.cleaned_data["degree"]:
                 self.add_error("degree", "Type your degree, please")
             if not self.cleaned_data["graduation_year"]:
@@ -221,8 +223,8 @@ class MentorApplicationForm(_BaseApplicationForm):
             "experience": forms.Textarea(attrs={"rows": 2, "cols": 40}),
             "why_mentor": forms.Textarea(attrs={"rows": 2, "cols": 40}),
             "first_timer": forms.HiddenInput(),
-            "resume": forms.HiddenInput(),
             "lennyface": forms.HiddenInput(),
+            "resume": forms.FileInput(),
         }
 
         labels = {

@@ -228,7 +228,10 @@ class HackerDashboard(DashboardMixin, TabsView):
             new_application = False
         except Exception:
             form = ApplicationForm(request.POST, request.FILES)
+        print("is valid:", form.is_valid())
+        print("form errors: ", form.errors)
         if form.is_valid():
+            print("is valid!!")
             email_subscribe = form.cleaned_data.get("email_subscribe", False)
             application = form.save(commit=False)
             application.user = request.user

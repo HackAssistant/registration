@@ -51,7 +51,7 @@ class SponsorApplication(models.Model):
     def get_diet_color(self):
         colors = {
             D_NONE: 'white',
-            D_VEGETERIAN: '#7ABE6F',
+            D_VEGETARIAN: '#7ABE6F',
         }
         return colors.get(self.diet, '#42A2CB')
 

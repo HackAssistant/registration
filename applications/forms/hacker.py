@@ -38,9 +38,9 @@ class HackerApplicationForm(_BaseApplicationForm):
         },
     }
 
-    github = social_media_field("github", "https://github.com/johnBiene")
-    devpost = social_media_field("devpost", "https://devpost.com/JohnBiene")
-    linkedin = social_media_field("linkedin", "https://www.linkedin.com/in/john_biene")
+    github = social_media_field("github", "https://github.com/biene")
+    devpost = social_media_field("devpost", "https://devpost.com/biene")
+    linkedin = social_media_field("linkedin", "https://www.linkedin.com/in/biene")
     site = social_media_field("site", "https://biene.space")
 
     online = common_online()
@@ -79,6 +79,7 @@ class HackerApplicationForm(_BaseApplicationForm):
             )
         return data
 
+
     first_timer = common_first_timer()
 
     university = common_university()
@@ -92,18 +93,9 @@ class HackerApplicationForm(_BaseApplicationForm):
         ),
     )
 
-    reimb = forms.TypedChoiceField(
-        required=False,
-        label="Do you need a travel reimbursement to attend?",
-        coerce=lambda x: x == "True",
-        choices=((False, "No"), (True, "Yes")),
-        initial=False,
-        widget=forms.RadioSelect(),
-    )
-
     cvs_edition = forms.BooleanField(
         required=False,
-        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2023 Sponsors.',
+        label='I authorize "Hackers at UPC" to share my CV with HackUPC 2024 Sponsors.',
     )
 
     def __init__(
@@ -137,20 +129,6 @@ class HackerApplicationForm(_BaseApplicationForm):
         cc = self.cleaned_data.get("cvs_edition", False)
         return cc
 
-    def clean_resume(self):
-        resume = self.cleaned_data["resume"]
-        size = getattr(resume, "_size", 0)
-        if size > settings.MAX_UPLOAD_SIZE:
-            raise forms.ValidationError(
-                "Please keep resume size under %s. Current filesize %s!"
-                % (filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(size))
-            )
-        if not resume and not self.instance.pk:
-            raise forms.ValidationError(
-                "In order to apply and attend you have to provide a resume."
-            )
-        return resume
-
     def clean_reimb_amount(self):
         data = self.cleaned_data["reimb_amount"]
         reimb = self.cleaned_data.get("reimb", False)
@@ -178,16 +156,15 @@ class HackerApplicationForm(_BaseApplicationForm):
         fields = super().get_bootstrap_field_info()
         # Fieldsets ordered and with description
         discord = getattr(settings, "DISCORD_HACKATHON", False)
-        hardware = getattr(settings, "HARDWARE_ENABLED", False)
         hybrid = getattr(settings, "HYBRID_HACKATHON", False)
         personal_info_fields = fields["Personal Info"]["fields"]
         personal_info_fields.append({"name": "online", "space": 12})
         if not hybrid:
             self.fields["online"].widget = forms.HiddenInput()
         polices_fields = [
-            {"name": "terms_and_conditions", "space": 12},
             {"name": "cvs_edition", "space": 12},
             {"name": "email_subscribe", "space": 12},
+            {"name": "terms_and_conditions", "space": 12},
         ]
         if not discord:
             personal_info_fields.extend(
@@ -197,46 +174,11 @@ class HackerApplicationForm(_BaseApplicationForm):
                 ]
             )
             polices_fields.append({"name": "diet_notice", "space": 12})
-        if hardware:
-            personal_info_fields.append({"name": "hardware", "space": 12})
+
+        personal_info_fields.append({"name": "discover", "space": 12})
         deadline = getattr(settings, "REIMBURSEMENT_DEADLINE", False)
         r_enabled = getattr(settings, "REIMBURSEMENT_ENABLED", False)
-        if (
-            r_enabled
-            and deadline
-            and deadline <= timezone.now()
-            and not self.instance.pk
-        ):
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                ],
-                "description": "Reimbursement applications are now closed. "
-                "Sorry for the inconvenience.",
-            }
-        elif self.instance.pk and r_enabled:
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                ],
-                "description": "If you applied for reimbursement, check out the Travel tab. "
-                "Email us at %s for any change needed on reimbursements."
-                % settings.HACKATHON_CONTACT_EMAIL,
-            }
-        elif not r_enabled:
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                ],
-            }
-        else:
-            fields["Traveling"] = {
-                "fields": [
-                    {"name": "origin", "space": 12},
-                    {"name": "reimb", "space": 12},
-                    {"name": "reimb_amount", "space": 12},
-                ],
-            }
+        personal_info_fields.append({"name": "origin", "space": 12})
 
         # Fields that we only need the first time the hacker fills the application
         # https://stackoverflow.com/questions/9704067/test-if-django-modelform-has-instance
@@ -267,36 +209,62 @@ class HackerApplicationForm(_BaseApplicationForm):
             "other_diet": "Please fill here in your dietary requirements. We want to make sure we have food for you!",
             "lennyface": 'tip: you can chose from here <a href="http://textsmili.es/" target="_blank">'
             " http://textsmili.es/</a>",
-            "hardware": "Any hardware that you would like us to have. We can't promise anything, "
-            "but at least we'll try!",
             "projects": "You can talk about about past hackathons, personal projects, awards etc. "
             "(we love links) Show us your passion! :D",
             "reimb_amount": "We try our best to cover costs for all hackers, but our budget is limited",
             "resume": "Accepted file formats: %s"
             % (", ".join(extensions) if extensions else "Any"),
-            "origin": "Please select one of the dropdown options or write 'Others'. If the dropdown doesn't show up,"
-            " type following this schema: <strong>city, nation, country</strong>",
+            "origin": "If you don’t see your city, choose the closest one! "
+            "Please type following this schema: <strong>city, province, country</strong>",
         }
+
+        class CustomSelect(forms.Select):
+            def create_option(
+                self, name, value, label, selected, index, subindex=None, attrs=None
+            ):
+                if index == 0:
+                    attrs = {"disabled": "disabled"}
+                return super().create_option(
+                    name, value, label, selected, index, subindex=subindex, attrs=attrs
+                )
+
+        def clean_discover(self):
+            discover = self.cleaned_data.get("discover")
+            if discover == "":
+                raise forms.ValidationError("Please select an option.")
+            return discover
+
+        discover_choices = (
+            ("", "- Select an option -"),
+            (1, "HackUPC's social media"),
+            (2, "Through your university (social media, emails...)"),
+            (3, "Friends"),
+            (4, "Posters"),
+            (5, "Other hackathons"),
+            (6, "Online ads"),
+            (7, "Past editions"),
+            (8, "Other"),
+        )
 
         widgets = {
             "origin": forms.TextInput(attrs={"autocomplete": "off"}),
             "description": forms.Textarea(attrs={"rows": 3, "cols": 40}),
             "projects": forms.Textarea(attrs={"rows": 3, "cols": 40}),
+            "discover": CustomSelect(choices=discover_choices),
             "graduation_year": forms.RadioSelect(),
         }
 
         labels = {
             "gender": "What gender do you identify as?",
             "other_gender": "Self-describe",
-            "graduation_year": "What year will you graduate?",
+            "graduation_year": "What year are you expecting to graduate?",
             "tshirt_size": "What's your t-shirt size?",
             "diet": "Dietary requirements",
-            "lennyface": 'Describe yourself in one "lenny face"?',
-            "hardware": "Hardware you would like us to have",
+            "phone_number": "Phone number (Optional)",
+            "lennyface": 'Which "lenny face" represents you better?',
+            "discover": "How did you hear about us?",
             "origin": "Where are you joining us from?",
             "description": "Why are you excited about %s?" % settings.HACKATHON_NAME,
             "projects": "What projects have you worked on?",
             "resume": "Upload your resume",
-            "reimb_amount": "How much money (%s) would you need to afford traveling to %s?"
-            % (getattr(settings, "CURRENCY", "$"), settings.HACKATHON_NAME),
         }

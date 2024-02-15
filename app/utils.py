@@ -171,7 +171,9 @@ def validate_url(data, query):
     :return:
     """
     if data and query not in data:
-        raise forms.ValidationError("Please enter a valid {} url".format(query))
+        if query:
+            query += " "
+        raise forms.ValidationError("Enter a valid {}URL.".format(query))
 
 
 @keep_lazy_text
@@ -240,7 +242,7 @@ def generateGTicketUrl(qrValue: str):
             {
                 "header": "Disclaimer",
                 "body": "This is a copy of the official ticket, do not treat this as the official ticket "
-                        "since it is not updated in real time.",
+                "since it is not updated in real time.",
                 "id": "TEXT_MODULE_ID",
             }
         ],
@@ -289,9 +291,7 @@ def generateGTicketUrl(qrValue: str):
     }
 
     generic.create_object(issuer_id, objSufix, cardObject)
-    return generic.create_jwt_new_objects(
-        issuer_id, class_suffix, cardObject
-    )
+    return generic.create_jwt_new_objects(issuer_id, class_suffix, cardObject)
 
 
 #
@@ -310,6 +310,7 @@ def generateGTicketUrl(qrValue: str):
 # License for the specific language governing permissions and limitations under
 # the License.
 #
+
 
 class GenericPass:
     """Class for creating and managing Generic passes in Google Wallet.
@@ -348,10 +349,7 @@ class GenericPass:
 
     # [START createObject]
     def create_object(
-        self,
-        issuer_id: str,
-        object_suffix: str,
-        cardObject: dict
+        self, issuer_id: str, object_suffix: str, cardObject: dict
     ) -> str:
         """Create an object.
 

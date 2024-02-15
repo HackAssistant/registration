@@ -1,3 +1,5 @@
+import os
+import json
 from django import forms
 from django.conf import settings
 from django.forms import ModelForm
@@ -39,7 +41,10 @@ def get_exclude_fields():
 class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, ModelForm):
     diet = forms.ChoiceField(label='Dietary requirements', choices=models.DIETS, required=True)
     phone_number = forms.CharField(required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': '+#########'}))
+        attrs={'class': 'form-control', 'placeholder': '+#########'}),
+        label='Phone number (Optional)',
+        help_text='This field is not mandatory.'
+    )
     under_age = forms.TypedChoiceField(
         required=True,
         label='How old will you be at time of the event?',
@@ -50,7 +55,7 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
     )
 
     terms_and_conditions = forms.BooleanField(
-        required=False,
+        required=True,
         label='I\'ve read, understand and accept <a href="/terms_and_conditions" target="_blank">%s '
               'Terms & Conditions</a> and <a href="/privacy_and_cookies" target="_blank">%s '
               'Privacy and Cookies Policy</a>.<span style="color: red; font-weight: bold;"> *</span>' % (
@@ -100,29 +105,30 @@ class _BaseApplicationForm(OverwriteOnlyModelFormMixin, BootstrapFormMixin, Mode
         return data
 
     def clean_other_gender(self):
-        data = self.cleaned_data['other_gender']
-        gender = self.cleaned_data['gender']
-        if gender == models.GENDER_OTHER and not data:
+        gender = self.cleaned_data.get('gender')
+        other_gender = self.cleaned_data.get('other_gender', None)
+        if gender == "X" and not other_gender:
             raise forms.ValidationError("Please enter this field or select 'Prefer not to answer'")
-        return data
+        return other_gender
 
     def clean_origin(self):
         origin = self.cleaned_data['origin']
-        if origin == "Others":
-            origin_verified = origin
-        else:
-            response = requests.get('https://api.teleport.org/api/cities/', params={'search': origin})
-            if response.status_code / 100 != 2:
-                if len(origin.split(',')) == 3:
-                    return origin
-                raise forms.ValidationError("If the dropdown doesn't show up, type following this schema: "
-                                            "city, nation, country")
-            data = response.json()['_embedded']['city:search-results']
-            if not data:
-                raise forms.ValidationError("Please select one of the dropdown options or write 'Others'")
-            else:
-                origin_verified = data[0]['matching_full_name']
-        return origin_verified
+        # read from json file on local machine
+
+        # actual file path
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        # get static relative path
+        STATIC_ROOT = os.path.join(dir_path, "../static")
+
+        # open relative file
+        with open(os.path.join(STATIC_ROOT,'cities.json')) as f:
+            countries = json.load(f)
+
+            # check if is part of the list
+            if origin not in countries:
+                raise forms.ValidationError("Please select one of the dropdown options and don't forget to add commas")
+            return origin
 
     def __getitem__(self, name):
         item = super(_BaseApplicationForm, self).__getitem__(name)

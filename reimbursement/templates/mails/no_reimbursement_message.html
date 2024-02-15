@@ -8,5 +8,5 @@
     <p>Please remember to <a href="{{ confirm_url }}">confirm</a> your spot if you haven't already. If your plans
         have changed, please let us know by cancelling your invite <a href="{{ cancel_url }}">here</a>.
     </p>
-    {% include 'mails/include/closing.html' %}
+    {% include 'mails/include/closing.html' with travel="false"%}
 {% endblock %}

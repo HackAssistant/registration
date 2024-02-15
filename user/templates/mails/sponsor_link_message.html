@@ -22,6 +22,6 @@
     </p>
     <p style="text-align: center;">{{ app_sponsor_url|urlize }}</p>
 
-    {% include 'mails/include/closing.html' %}
+    {% include 'mails/include/closing.html' with travel="false"%}
 
 {% endblock %}
