@@ -7,13 +7,18 @@
 
 {% block body %}
     <style>
-        .text-black {
-            color: black;
+        .text-white {
+            color: white;
+        }
+        .custom-a {
+            color: #E3C3FF;
+            font-weight: bold;
+            text-decoration: underline;
         }
     </style>
-    <div class="text-black">
+    <div class="text-white">
         <h1 class="text-center margin-top">YOU SHALL NOT PASS!</h1>
         <h2 class="text-center">403 Access Forbidden</h2>
-        <p class="text-center">Please <a href="{% url 'account_login' %}">log in</a> with a more <b>powerful</b> account to access this page</p>
+        <p class="text-center">Please <a class='custom-a' "{% url 'account_login' %}">log in</a> with a more <b>powerful</b> account to access this page</p>
     </div>
 {% endblock %}

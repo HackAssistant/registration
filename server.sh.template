@@ -3,7 +3,7 @@ export PROD_MODE="True"
 # You can create it by running os.urandom(24) in Python
 export SECRET="SECRET"
 # Set up your postgres password
-export PG_PWD="password"
+export POSTGRES_PASSWORD="password"
 # If using Sendgrid set api key here
 export SG_KEY="API_KEY"
 # Optional: Slack  token and team

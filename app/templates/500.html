@@ -8,11 +8,16 @@
 
 {% block body %}
     <style>
-        .text-black {
-            color: black;
+        .text-white {
+            color: white;
+        }
+        .custom-a {
+            color: #E3C3FF;
+            font-weight: bold;
+            text-decoration: underline;
         }
     </style>
-    <div class="text-black">
+    <div class="text-white">
         <h1 class="text-center margin-top">500 Oops</h1>
         <h2 class="text-center">Server Error </h2>
         <p class="text-center">It seems like you found an error. Please reach us out
@@ -20,7 +25,7 @@
         {% if h_repo %}
             <p class="text-center">
                 Or you can open an issue
-                <a target="_blank" href="{{ h_repo }}issues/new">here</a>.
+                <a class='custom-a' target="_blank" href="{{ h_repo }}issues/new">here</a>.
             </p>
         {% endif %}
     </div>

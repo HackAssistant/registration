@@ -33,37 +33,34 @@
 
 <script src="{% static 'lib/typeahead.min.js' %}"></script>
 <script src="{% static 'js/form_modifiers.js' %}"></script>
+<!-- <script type="text/javascript" src=""></script> -->
 
 <script>
 
     $(document).ready(function () {
+        make_field_typeahead('university', '{% static 'schools.json' %}');
+        make_field_typeahead('degree', '{% static 'degrees.json' %}');
 
-            make_field_typeahead('university', '{% static 'schools.json' %}');
-            make_field_typeahead('degree', '{% static 'degrees.json' %}');
+        fetch('{% static 'cities.json' %}')
+        .then((response) => response.json())
+        .then((json) => {
+
             let cities_dict = {};
             $("#id_origin").typeahead({
                 minLength: 3,
                 source: function (query, process) {
-                    $.get('https://api.teleport.org/api/cities/', {search: query}, function (data) {
-                        jQuery.map(data._embedded["city:search-results"], function (c) {
-                            cities_dict[c.matching_full_name] = c._links['city:item'].href;
-                        });
-                        var cities = Object.keys(cities_dict)
-                        if ("others".includes(query.toLowerCase())){
-                          cities.push("Others");
+                    // read from cities.json and check if the query matches any city
+                    var matches = [];
+                    // find the strings starting with the query
+                    $.each(json, function (i, city) {
+                        if (city.toLowerCase().indexOf(query.toLowerCase()) !== -1) {
+                            matches.push(city);
                         }
-                        return process(cities);
                     });
-                },
-                afterSelect: function (data) {
-                    if (data !== 'Others') {
-                        let that = this;
-                        $.get(cities_dict[data], {}, function (data) {
-                            that.$element[0].value = data.full_name;
-                        })
-                    }
+                    return process(matches);
                 }
             });
+        });
 
             var other_gender = $('#id_other_gender');
             var gender = $('#id_gender');
