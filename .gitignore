@@ -27,4 +27,5 @@ cache/
 *.sh
 
 .env
+.env_old
 .google-service.account.json
