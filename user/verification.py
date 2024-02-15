@@ -76,7 +76,7 @@ def check_client_ip(view_func):
             except LoginRequest.DoesNotExist:
                 login_request = LoginRequest.objects.create(ip=client_ip, latestRequest=request_time)
                 login_request.save()
-            if login_request.login_tries < 4:
+            if login_request.login_tries < 14:
                 request.client_req_is_valid = True
             else:
                 request.client_req_is_valid = False
