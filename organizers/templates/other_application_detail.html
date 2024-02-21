@@ -44,7 +44,7 @@
                     {% if not app.first_time_volunteer %}
                       {% include 'include/field.html' with desc='Other editions' value=app.which_hack %}
                     {% endif %}
-                    {% include 'include/field.html' with desc='English Level' value=app.english_level %}
+                    {% include 'include/field.html' with desc='Languages' value=app.languages %}
                     {% include 'include/field.html' with desc='Attendance' value=app.attendance %}
                     {% include 'include/field.html' with desc='Motivation' value=app.volunteer_motivation %}
                     <hr>
@@ -57,6 +57,7 @@
                     {% include 'include/field.html' with desc='T-shirt size' value=app.tshirt_size %}
                     {% include 'include/field.html' with desc='Dietary restrictions' value=app.diet %}
                     {% include 'include/field.html' with desc='Other diet' value=app.other_diet %}
+                    {% include 'include/field.html' with desc='How you meet us' value=app.hear_about_us %}
                     <hr>
                     <dt>
                     <h3>Extra</h3>
