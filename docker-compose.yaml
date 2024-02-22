@@ -5,6 +5,8 @@ services:
         build: .
         ports:
             - "${MYHACKUPC_PORT}:8000"  # Map Gunicorn port
+        volumes:
+            - ./files:/code/files
         expose:
             - "${MYHACKUPC_PORT}"
         env_file:
