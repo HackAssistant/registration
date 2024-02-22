@@ -24,7 +24,7 @@
     </div>
 
     {% if not application or application.can_be_edit %}
-        <button class="btn btn-success btn-block" type="submit">{% if application %}Update application{% else %}
+        <button class="btn btn-success btn-block" type="submit" {% if application and not application.can_be_edit %} disabled {% endif %}>{% if application %}Update application{% else %}
             Submit application{% endif %}</button>
 
     {% endif %}
