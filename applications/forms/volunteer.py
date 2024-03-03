@@ -39,7 +39,6 @@ class VolunteerApplicationForm(_BaseApplicationForm):
     night_shifts = forms.TypedChoiceField(
         required=True,
         label="¿Estarias de acuerdo en seguir ayudando pasado medianoche?",
-        coerce=lambda x: x == "True",
         choices=models.NIGHT_SHIFT_ES,
         help_text="No exigimos a nadie quedarse hasta ninguna hora en particular",
         widget=forms.RadioSelect,
