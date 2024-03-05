@@ -1,0 +1,23 @@
+name: Deploy on Production
+
+on: 
+  push:
+    branches: 
+     - 'master'
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Git pull and rebuild docker
+      uses: appleboy/ssh-action@master  
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        port: ${{ secrets.PORT }}
+        key: ${{ secrets.SSHKEY }}
+        script: ${{ secrets.PRODSCRIPT }}
