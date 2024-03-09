@@ -1,1 +1,1 @@
-Ticket to {{ h_name }}
+Your ticket to {{ h_name }}
