@@ -50,7 +50,7 @@ class HackerApplication(
     reimb = models.BooleanField(default=False)
     reimb_amount = models.FloatField(blank=True, null=True, validators=[
         MinValueValidator(0, "Negative? Really? Please put a positive value"),
-        MaxValueValidator(150.0, "Not that much")])
+        MaxValueValidator(200.0, "Do not exceed the maximum amount of 200")])
 
     # Info for hardware
     hardware = models.CharField(max_length=300, null=True, blank=True)
