@@ -1,14 +1,30 @@
 # -*- coding: utf-8 -*-
 # HACKATHON PERSONALIZATION
+import datetime
 import os
 
 from django.utils import timezone
+# Hackathon timezone
+TIME_ZONE = "CET"
+# Applications deadline
+HACKATHON_APP_DEADLINE = timezone.datetime(
+    2026, 4, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE)
+)
+VOLUNTEER_APP_DEADLINE = timezone.datetime(
+    2026, 3, 27, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE)
+)
+MENTOR_APP_DEADLINE = timezone.datetime(
+    2026, 3, 27, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE)
+)
+
+# Event days (changes the navbar layout)
+HACKATHON_START_DAY = datetime.date(2026, 4, 24)
+HACKATHON_END_DAY = datetime.date(2026, 4, 26)
+
 
 HACKATHON_NAME = "HackUPC"
 # What's the name for the application
 HACKATHON_APPLICATION_NAME = "My HackUPC"
-# Hackathon timezone
-TIME_ZONE = "CET"
 # This description will be used on the html and sharing meta tags
 HACKATHON_DESCRIPTION = "Join us for BarcelonaTech's hackathon. 36h. April 24 - 26."
 # Domain where application is deployed, can be set by env variable
@@ -38,17 +54,6 @@ HACKATHON_INSTAGRAM_ACCOUNT = "hackupc"
 HACKATHON_MEDIUM_ACCOUNT = "hackupc"
 # (OPTIONAL) Github Repo for this project (so meta)
 HACKATHON_GITHUB_REPO = "https://github.com/hackupc/myhackupc/"
-
-# (OPTIONAL) Applications deadline
-HACKATHON_APP_DEADLINE = timezone.datetime(
-    2026, 4, 1, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE)
-)
-VOLUNTEER_APP_DEADLINE = timezone.datetime(
-    2026, 3, 27, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE)
-)
-MENTOR_APP_DEADLINE = timezone.datetime(
-    2026, 3, 27, 23, 59, tzinfo=timezone.pytz.timezone(TIME_ZONE)
-)
 
 # (OPTIONAL) Online checkin activated
 ONLINE_CHECKIN = timezone.datetime(

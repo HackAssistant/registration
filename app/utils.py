@@ -85,6 +85,14 @@ def is_online_checkin_closed():
         return False
 
 
+def is_event_weekend():
+    start = getattr(settings, "HACKATHON_START_DAY", None)
+    end = getattr(settings, "HACKATHON_END_DAY", None)
+    if not start or not end:
+        return False
+    return start <= timezone.localdate() <= end
+
+
 def get_substitutions_templates():
     return {
         "h_name": getattr(settings, "HACKATHON_NAME", None),
@@ -102,6 +110,7 @@ def get_substitutions_templates():
         "h_app_mentor_closed": is_app_closed("M"),
         "h_app_sponsor_closed": is_app_closed("S"),
         "h_app_timeleft": application_timeleft(),
+        "h_is_event_weekend": is_event_weekend(),
         "h_app_volunteer_timeleft": application_timeleft("V"),
         "h_app_mentor_timeleft": application_timeleft("M"),
         "h_app_sponsor_timeleft": application_timeleft("S"),

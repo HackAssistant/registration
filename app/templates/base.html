@@ -118,25 +118,49 @@
                             {% if request.user.is_organizer or request.user.is_volunteer_accepted %}
                                 <li class="{% if 'hacker' in request.build_absolute_uri %}active{% endif %}">
                                     {% if request.user.is_organizer %}
-                                        <a href="{% url 'app_list' %}">Hacker</a>
+                                        {% if h_is_event_weekend %}
+                                            <a href="{% url 'check_in_list' %}">Hacker</a>
+                                        {% else %}
+                                            <a href="{% url 'app_list' %}">Hacker</a>
+                                        {% endif %}
                                     {% else %}
                                         <a href="{% url 'check_in_list' %}">Check-in</a>
                                     {% endif %}
                                 </li>
+                                {% if h_is_event_weekend %}
+                                    {% include 'include/activities_tab.html' %}
+                                {% endif %}
                                 {% if request.user.is_organizer %}
-                                    <li class="{% if 'volunteer' in request.build_absolute_uri %}active{% endif %}"><a
-                                            href="{% url 'volunteer_list' %}">Volunteer</a></li>
-                                    {% if request.user.has_mentor_access %}
-                                        <li class="{% if 'mentor' in request.build_absolute_uri %}active{% endif %}"><a
-                                            href="{% url 'mentor_list' %}">Mentor</a></li>
-                                    {% endif %}
-                                    {% if request.user.has_sponsor_access %}
-                                        <li class="{% if 'sponsor' in request.build_absolute_uri %}active{% endif %}"><a
-                                            href="{% url 'sponsor_user_list' %}">Sponsor</a></li>
+                                    {% if h_is_event_weekend %}
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Other Users <span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="{% url 'check_in_volunteer_list' %}">Volunteer</a></li>
+                                                {% if request.user.has_mentor_access %}
+                                                    <li><a href="{% url 'check_in_mentor_list' %}">Mentor</a></li>
+                                                {% endif %}
+                                                {% if request.user.has_sponsor_access %}
+                                                    <li><a href="{% url 'check_in_sponsor_list' %}">Sponsor</a></li>
+                                                {% endif %}
+                                            </ul>
+                                        </li>
+                                    {% else %}
+                                        <li class="{% if 'volunteer' in request.build_absolute_uri %}active{% endif %}"><a
+                                                href="{% url 'volunteer_list' %}">Volunteer</a></li>
+                                        {% if request.user.has_mentor_access %}
+                                            <li class="{% if 'mentor' in request.build_absolute_uri %}active{% endif %}"><a
+                                                href="{% url 'mentor_list' %}">Mentor</a></li>
+                                        {% endif %}
+                                        {% if request.user.has_sponsor_access %}
+                                            <li class="{% if 'sponsor' in request.build_absolute_uri %}active{% endif %}"><a
+                                                href="{% url 'sponsor_user_list' %}">Sponsor</a></li>
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
-                            {% include 'include/activities_tab.html' %}
+                            {% if not h_is_event_weekend %}
+                                {% include 'include/activities_tab.html' %}
+                            {% endif %}
                             {% if request.user.is_organizer %}
                                 <li class="{% if 'stats' in request.build_absolute_uri %}active{% endif %}"><a
                                         href="{% url 'stats_home' %}">Stats</a></li>
