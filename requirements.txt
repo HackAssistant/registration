@@ -13,6 +13,7 @@ django-storages==1.9.1
 django-tables2==2.4.0
 djangorestframework==3.12.4
 django-jwt-oidc==1.0.10
+pycryptodome>=3,<4
 django-cors-headers
 dropbox==8.7.1
 et-xmlfile==1.0.1

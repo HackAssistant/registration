@@ -3,7 +3,16 @@
 ## Prerequisites
 
 - Python 3.10
-- `virtualenv`
+
+If you don't have Python 3.10 (e.g. Ubuntu 24.04 no longer ships it), install it with [uv](https://docs.astral.sh/uv/):
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv python install 3.10
+python3.10 --version
+```
+
+This puts a `python3.10` executable in `~/.local/bin`; make sure that directory is in your `PATH`.
 
 ---
 
@@ -11,10 +20,12 @@
 
 ```bash
 git clone https://github.com/hackupc/myhackupc && cd myhackupc
-virtualenv env --python=python3.10
+python3.10 -m venv env
 source ./env/bin/activate
 pip install -r requirements.txt
 ```
+
+> **Note on virtualenv:** Use `python -m venv` rather than the system `virtualenv` package. On Debian/Ubuntu, `virtualenv` installs a patched `setuptools` that fails to build some old dependencies with `AttributeError: install_layout`.
 
 > **Note on psycopg2-binary:** If you get an error, install openssl@3 and export LDFLAGS, CPPFLAGS, and PKG_CONFIG_PATH before running pip install.
 
