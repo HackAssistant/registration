@@ -104,9 +104,15 @@ class BaseApplication(models.Model):
     def get_diet_color(self):
         colors = {
             D_NONE: "white",
-            D_VEGETARIAN: "#7ABE6F",
+            D_VEGETARIAN: "#1B7F3B",
+            D_VEGAN: "#1B7F3B",
         }
         return colors.get(self.diet, "#42A2CB")
+
+    def get_qr_color(self):
+        if self.diet in (D_VEGAN, D_VEGETARIAN):
+            return "1B7F3B"
+        return "000000"
 
     def __str__(self):
         return self.user.email

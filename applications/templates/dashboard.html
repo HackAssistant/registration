@@ -95,7 +95,7 @@
             {% if not h_discord %}
                 <div class="col-md-4">
                     <img class="img-responsive "
-                        src="https://quickchart.io/qr?size=350&text={{ application.uuid_str }}"/>
+                        src="https://quickchart.io/qr?size=350&dark={{ application.get_qr_color }}&text={{ application.uuid_str }}"/>
                     {% if gwallet_enabled %}
                         <a href="{{ gwalleturl }}">
                             <img src='{% static 'img/button.svg' %}' class="img-responsive">
