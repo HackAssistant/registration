@@ -83,6 +83,9 @@
                 </dt>
                 <dd></dd>
                 {% include 'include/field.html' with desc='Votes' value=app.vote_set.count %}
+                {% if not vote %}
+                    {% include 'include/field.html' with desc='My vote' value=my_vote %}
+                {% endif %}
                 {% include 'include/field.html' with desc='Lenny face' value=app.lennyface %}
                 {% include 'include/field.html' with desc='Name' value=app.user.name %}
                 {% include 'include/field.html' with desc='Submitted' value=app.submission_date|naturaltime %}

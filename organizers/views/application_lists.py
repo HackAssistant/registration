@@ -25,7 +25,7 @@ from applications.models import (
 from organizers import models
 from organizers.tables import (
     ApplicationsListTable,
-    ApplicationFilter,
+    HackerApplicationFilter,
     AdminApplicationsListTable,
     InviteFilter,
     DubiousListTable,
@@ -148,9 +148,9 @@ class ApplicationsListView(
 ):
     template_name = "applications_list.html"
     table_class = ApplicationsListTable
-    filterset_class = ApplicationFilter
+    filterset_class = HackerApplicationFilter
     table_pagination = {"per_page": 100}
-    exclude_columns = ("detail", "status", "vote_avg")
+    exclude_columns = ("detail", "status", "vote_avg", "my_vote")
     export_name = "applications"
 
     def get(self, request, *args, **kwargs):
@@ -161,8 +161,11 @@ class ApplicationsListView(
         return hacker_tabs(self.request.user)
 
     def get_queryset(self):
-        return models.HackerApplication.annotate_vote(
-            models.HackerApplication.objects.all()
+        return models.annotate_my_vote(
+            models.HackerApplication.annotate_vote(
+                models.HackerApplication.objects.all()
+            ),
+            self.request.user,
         )
 
     def get_context_data(self, **kwargs):

@@ -12,6 +12,7 @@ from applications.models import (
     SponsorApplication,
 )
 from organizers.forms import InviteFilterForm
+from organizers.models import MY_VOTE_CHOICES
 from user.models import User
 
 
@@ -36,6 +37,12 @@ class ApplicationFilter(django_filters.FilterSet):
             if getattr(settings, "HYBRID_HACKATHON", False)
             else ["search", "status", "under_age"]
         )
+
+
+class HackerApplicationFilter(ApplicationFilter):
+    my_vote = django_filters.ChoiceFilter(
+        "my_vote", label="My vote", choices=MY_VOTE_CHOICES, empty_label="Any"
+    )
 
 
 class DubiousApplicationFilter(django_filters.FilterSet):
@@ -110,7 +117,7 @@ def get_application_list_fields():
     fields = ["user.name", "user.email", "vote_avg", "university", "origin"]
     if getattr(settings, "HYBRID_HACKATHON", False):
         fields.append("online")
-    fields.extend(["votes", "detail"])
+    fields.extend(["my_vote", "votes", "detail"])
     return fields
 
 
@@ -121,9 +128,13 @@ class ApplicationsListTable(tables.Table):
         orderable=False,
     )
     origin = tables.Column(accessor="origin", verbose_name="Origin")
+    my_vote = tables.Column(accessor="my_vote", verbose_name="My vote")
     votes = tables.Column(
         accessor="vote_set.count", verbose_name="Votes", orderable=False
     )
+
+    def render_my_vote(self, value):
+        return dict(MY_VOTE_CHOICES).get(value, value)
 
     class Meta:
         model = HackerApplication

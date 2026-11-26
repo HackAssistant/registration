@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 # Votes weight
-from django.db.models import Avg, F
+from django.db.models import Avg, Case, CharField, Exists, F, OuterRef, Value, When
 from django.utils import timezone
 
 from django.conf import settings
@@ -17,6 +17,15 @@ TECH_WEIGHT = 0.2
 PERSONAL_WEIGHT = 0.8
 
 VOTES = [(i, str(i)) for i in range(1, MAX_VOTES + 1)]
+
+MY_VOTE_VOTED = 'voted'
+MY_VOTE_SKIPPED = 'skipped'
+MY_VOTE_NONE = 'none'
+MY_VOTE_CHOICES = [
+    (MY_VOTE_VOTED, 'Voted'),
+    (MY_VOTE_SKIPPED, 'Skipped'),
+    (MY_VOTE_NONE, 'Not voted'),
+]
 
 
 class Vote(models.Model):
@@ -80,6 +89,21 @@ class Vote(models.Model):
 
     class Meta:
         unique_together = ('application', 'user')
+
+
+def annotate_my_vote(queryset, user):
+    """
+    Annotate each HackerApplication with `my_vote`: whether `user` voted it,
+    skipped it (a skip is stored as a Vote without scores) or did neither.
+    """
+    my_votes = Vote.objects.filter(user=user, application=OuterRef('pk'))
+    scored = my_votes.filter(tech__isnull=False, personal__isnull=False)
+    return queryset.annotate(my_vote=Case(
+        When(Exists(scored), then=Value(MY_VOTE_VOTED)),
+        When(Exists(my_votes), then=Value(MY_VOTE_SKIPPED)),
+        default=Value(MY_VOTE_NONE),
+        output_field=CharField(),
+    ))
 
 
 class ApplicationComment(models.Model):

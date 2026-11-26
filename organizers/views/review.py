@@ -106,6 +106,16 @@ class ApplicationDetailView(TabsViewMixin, IsOrganizerMixin, TemplateView):
         )
         context["vote"] = self.can_vote()
         context["max_vote"] = dict(models.VOTES)
+        if application:
+            my_vote = (
+                models.annotate_my_vote(
+                    models.HackerApplication.objects.filter(pk=application.pk),
+                    self.request.user,
+                )
+                .values_list("my_vote", flat=True)
+                .first()
+            )
+            context["my_vote"] = dict(models.MY_VOTE_CHOICES).get(my_vote)
         if self.can_vote():
             context["apps_left_to_vote"] = (
                 models.HackerApplication.objects.exclude(
